@@ -18,6 +18,10 @@ npm run build
 
 The production-ready static site is written to `out/`. The GitHub Actions workflow runs both verification commands for pull requests and changes to `main`.
 
+## Production hosting
+
+The site deploys to GitHub Pages on every push to `main`. `public/CNAME` pins the generated artifact to `mantleplatform.com`; GitHub Pages must also be configured with that custom domain. Cloudflare is the DNS/CDN layer. Add `CLOUDFLARE_ZONE_ID` and `CLOUDFLARE_API_TOKEN` as repository secrets to enable the post-deploy cache purge.
+
 ## Project layout
 
 - `app/` — routes, metadata, sitemap, robots, and site-wide configuration
