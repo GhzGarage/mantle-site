@@ -1,0 +1,4 @@
+html { scroll-behavior: smooth; }
+body { margin: 0; }
+.skip-link { position: fixed; top: 1rem; left: 1rem; z-index: 100; transform: translateY(-200%); border: 1px solid rgba(255,105,22,.7); border-radius: .5rem; background: #090c13; color: #edf1f7; padding: .75rem 1rem; }
+.skip-link:focus { transform: translateY(0); }
