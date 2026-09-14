@@ -11,6 +11,10 @@ export function readStaticDocument(filename: "index.html" | "privacy.html"): Sta
   if (!body) throw new Error(`Could not find a body in ${filename}`);
   return {
     styles: styles.replace(/'?Inter'?/g, "var(--font-inter)").replace(/'?Space Grotesk'?/g, "var(--font-space-grotesk)"),
-    body: body.replace(/<main(?![^>]*\bid=)/i, '<main id="main-content"').replaceAll('href="privacy.html"', 'href="/privacy/"').replaceAll('href="index.html"', 'href="/"'),
+    body: body
+      .replace(/<main(?![^>]*\bid=)/i, '<main id="main-content"')
+      .replaceAll('src="assets/', 'src="/assets/')
+      .replaceAll('href="privacy.html"', 'href="/privacy/"')
+      .replaceAll('href="index.html"', 'href="/"'),
   };
 }
