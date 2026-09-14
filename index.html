@@ -5,24 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mantle — Publish a multiplayer world in seconds</title>
 <meta name="description" content="Mantle is a platform built on Unreal Engine 5 where creators publish multiplayer worlds in seconds and players join instantly, with no downloads. From QBCore Studios.">
-<link rel="icon" href="assets/mantle-icon-dark.png" type="image/png">
+<link rel="icon" href="assets/mantle-logo.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #0b0a09;
-    --bg-raised: #131110;
-    --bg-card: #17140f;
-    --line: rgba(245,242,236,0.10);
-    --line-strong: rgba(245,242,236,0.18);
-    --ink: #f5f2ec;
-    --ink-dim: #b8b2a6;
-    --ink-faint: #7d766a;
-    --ember: #ff7a3d;
-    --ember-dim: #b8562a;
-    --ember-glow: rgba(255,122,61,0.35);
-    --gold: #e8b45c;
+    --bg: #090c13;
+    --bg-raised: #10141d;
+    --bg-card: #121722;
+    --line: rgba(237,241,247,0.10);
+    --line-strong: rgba(237,241,247,0.18);
+    --ink: #edf1f7;
+    --ink-dim: #a8b0be;
+    --ink-faint: #778191;
+    --ember: #ff6916;
+    --ember-dim: #bb450e;
+    --ember-glow: rgba(255,105,22,0.35);
+    --gold: #ffae28;
     --radius: 18px;
     --maxw: 1160px;
   }
@@ -52,9 +52,9 @@
   .strata{
     position:fixed;inset:0;z-index:0;pointer-events:none;
     background:
-      radial-gradient(1200px 700px at 18% -10%, rgba(255,122,61,0.10), transparent 60%),
-      radial-gradient(900px 600px at 105% 10%, rgba(232,180,92,0.07), transparent 55%),
-      repeating-linear-gradient(180deg, rgba(245,242,236,0.02) 0px, rgba(245,242,236,0.02) 1px, transparent 1px, transparent 88px);
+      radial-gradient(1200px 700px at 18% -10%, rgba(255,105,22,0.12), transparent 60%),
+      radial-gradient(900px 600px at 105% 10%, rgba(255,174,40,0.07), transparent 55%),
+      repeating-linear-gradient(180deg, rgba(237,241,247,0.02) 0px, rgba(237,241,247,0.02) 1px, transparent 1px, transparent 88px);
   }
   main{position:relative;z-index:1;}
 
@@ -62,7 +62,7 @@
   header.nav{
     position:sticky;top:0;z-index:50;
     backdrop-filter:blur(10px);
-    background:rgba(11,10,9,0.78);
+    background:rgba(9,12,19,0.78);
     border-bottom:1px solid var(--line);
   }
   .nav-row{
@@ -112,8 +112,8 @@
     border:1px solid transparent;
   }
   .btn-primary{
-    background:linear-gradient(135deg, var(--ember) 0%, #ff9a5f 100%);
-    color:#180d06;
+    background:linear-gradient(135deg, var(--ember) 0%, var(--gold) 100%);
+    color:#17120d;
     box-shadow:0 10px 30px -10px var(--ember-glow);
   }
   .btn-ghost{
@@ -206,7 +206,7 @@
   .script-features li div{color:var(--ink-dim);font-size:0.96rem;}
   .code-card{
     border:1px solid var(--line);border-radius:var(--radius);
-    background:#0e0c0a;overflow:hidden;
+    background:#0c1018;overflow:hidden;
     box-shadow:0 30px 60px -30px rgba(0,0,0,0.6);
   }
   .code-head{
@@ -312,7 +312,7 @@
   .footer-links a{text-decoration:none;}
   .footer-links a:hover{color:var(--ink);}
 
-  ::selection{background:var(--ember);color:#180d06;}
+  ::selection{background:var(--ember);color:#17120d;}
 </style>
 </head>
 <body>
@@ -322,7 +322,7 @@
   <header class="nav">
     <div class="nav-row">
       <div class="brand">
-        <img src="assets/mantle-icon-dark.png" alt="">
+        <img src="assets/mantle-logo.png" alt="">
         MANTLE
       </div>
       <nav class="links">
@@ -341,7 +341,7 @@
   <section class="hero">
     <div class="wrap">
       <span class="badge"><span class="dot"></span> Built on Unreal Engine 5</span>
-      <img class="mark" src="assets/mantle-mark-dark.png" alt="Mantle">
+      <img class="mark" src="assets/mantle-logo.png" alt="Mantle">
       <h1>From idea to a live world your friends can join. In seconds.</h1>
       <p class="sub">
         Mantle is a platform where anyone building in Unreal Engine 5 can publish a
@@ -700,13 +700,14 @@
   <div class="wrap">
     <div class="footer-row">
       <div class="footer-brand">
-        <img src="assets/mantle-icon-dark.png" alt="">
+        <img src="assets/mantle-logo.png" alt="">
         <span>Mantle — a project by QBCore Studios</span>
       </div>
       <div class="footer-links">
         <a href="#how-it-works">How it works</a>
         <a href="#creators">Creators</a>
         <a href="#players">Players</a>
+        <a href="privacy.html">Privacy</a>
       </div>
     </div>
     <p class="footer-note" style="margin-top:22px;">
