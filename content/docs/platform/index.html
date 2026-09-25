@@ -1,0 +1,56 @@
+<div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
+
+<h2 id="system-map">What you need to know</h2>
+<ul>
+<li><span class="status live">Live</span> <b>The Mantle app</b> runs on Windows and comes through Steam and the Epic Games Store. You use it to browse worlds, join them and play.</li>
+<li><span class="status live">Live</span> <b>Official servers</b> run worlds for players. Mantle starts one near you when you press Play.</li>
+<li><span class="status live">Live</span> <b>Community servers</b> let players run a world server on their own machine. Players find them on a world's Servers tab. See <a href="/docs/platform/community-servers/">Community-hosted servers</a>.</li>
+</ul>
+
+<h2 id="sessions">What happens when you press Play <span class="status live">Live</span></h2>
+<ul>
+<li><b>You join an official server.</b> If one for that world has room, you join it. If you already had a spot on one, you get it back. Otherwise Mantle starts a new one near you, which can take up to about 5 minutes. See <a href="#player-limits">How many players</a>.</li>
+<li><b>Play never puts you on a community server.</b> You join those from the world's Servers tab.</li>
+<li><b>Your copy of Mantle must be up to date.</b> If it isn't, you're turned away with "This version of Mantle is out of date. Update it through Steam or the Epic Games Store, then try again."</li>
+<li><b>The world loads on your PC,</b> along with any meshes, materials and textures its creator uploaded, then you connect.</li>
+<li><b>New versions of a world:</b> if the creator is rolling out a new version gradually, you might get either the new version or the current one.</li>
+<li><b>When the last player leaves,</b> the server stops. Players who join later start from the top.</li>
+</ul>
+
+<h2 id="player-limits">How many players</h2>
+<ul>
+<li><span class="status live">Live</span> Worlds take 16 players by default and up to 100 per server. A community server can set a lower limit, but never a higher one than the world's.</li>
+<li><span class="status wip">In progress</span> Tuning and larger-scale tests.</li>
+</ul>
+
+<h2 id="performance">Performance testing <span class="status live">Live</span></h2>
+<p>We load-test Mantle game servers with bot players joining over the internet, the same way real players do. Each bot walks, sprints, jumps and stands around at random. Based on that testing, here is what a server uses at each player count:</p>
+<div class="table-wrap"><table><thead><tr><th>Moving players</th><th>Server CPU (one core)</th><th>Server memory</th></tr></thead><tbody>
+<tr><td class="num">10</td><td class="num">5.7%</td><td class="num">482 MB</td></tr>
+<tr><td class="num">25</td><td class="num">12.4%</td><td class="num">537 MB</td></tr>
+<tr><td class="num">50</td><td class="num">23.6%</td><td class="num">613 MB</td></tr>
+<tr><td class="num">75</td><td class="num">35%</td><td class="num">690 MB</td></tr>
+<tr><td class="num">100</td><td class="num">46%</td><td class="num">770 MB</td></tr>
+</tbody></table></div>
+<ul>
+<li><b>Smooth at 50 players:</b> no slowdowns or errors throughout.</li>
+<li><b>Fast joins:</b> all 50 players joined in about 40 seconds.</li>
+<li><b>Room to grow:</b> a single CPU core ran 50 players using about a quarter of its capacity, and memory stayed flat for the whole test.</li>
+</ul>
+
+<h3 id="server-specs">Recommended server specs</h3>
+<p>If you plan to host a world yourself, these are the specs we recommend for the whole machine, including the operating system. They leave headroom for worlds with scripts, weapons and vehicles, which use more than the test above.</p>
+<div class="table-wrap"><table><thead><tr><th>Players</th><th>Linux CPU</th><th>Linux memory</th><th>Windows CPU</th><th>Windows memory</th><th>Upload speed</th></tr></thead><tbody>
+<tr><td class="num">Up to 10</td><td>1 core</td><td class="num">2 GB</td><td>2 cores</td><td class="num">4 GB</td><td class="num">5 Mbps</td></tr>
+<tr><td class="num">Up to 25</td><td>1 core</td><td class="num">2 GB</td><td>2 cores</td><td class="num">4 GB</td><td class="num">10 Mbps</td></tr>
+<tr><td class="num">Up to 50</td><td>2 cores</td><td class="num">2 GB</td><td>4 cores</td><td class="num">6 GB</td><td class="num">20 Mbps</td></tr>
+<tr><td class="num">Up to 75</td><td>2 cores</td><td class="num">3 GB</td><td>4 cores</td><td class="num">8 GB</td><td class="num">35 Mbps</td></tr>
+<tr><td class="num">Up to 100</td><td>4 cores</td><td class="num">4 GB</td><td>6 cores</td><td class="num">8 GB</td><td class="num">50 Mbps</td></tr>
+</tbody></table></div>
+<ul>
+<li><b>Linux</b> figures assume a server install without a desktop, such as a VPS or a spare machine. It's the lightest way to host.</li>
+<li><b>Windows</b> figures assume Windows 10 or 11 with nothing demanding running alongside. If you also play on the same PC, you'll need more on top.</li>
+<li><b>Single-core speed matters most.</b> A Mantle server does most of its work on one core, so a modern desktop or server CPU with good per-core speed goes further than more, slower cores.</li>
+<li><b>Upload speed is usually the limit at home.</b> Check your connection's upload speed (not download) before hosting a large world.</li>
+</ul>
+<p>Ready to host? See <a href="/docs/platform/community-servers/#operator">Setting up a self-hosted server</a>.</p>

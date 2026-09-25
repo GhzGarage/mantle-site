@@ -1,0 +1,171 @@
+<h2 id="sides">Server, client, shared</h2>
+    <p>The <b>server</b> owns the game: it moves things for everyone, keeps score and decides who wins. A <b>client</b> script runs on one player's machine and handles what that player sees: HUD, toasts, local effects.</p>
+    <p>Every part of the API exists on both sides, so types and autocomplete are the same everywhere. But some members only <em>work</em> on one side. If you call one on the wrong side, you get a clear error:</p>
+    <div class="code"><pre data-example-kind="snippet">UI:Toast can only be called from the client.</pre></div>
+    <div class="two">
+      <div class="pane"><h4><span class="side s">Server</span> changes reach everyone</h4><ul>
+        <li>Setting <code>Position</code>, <code>Visible</code> and similar, tweens, attributes, tags, clones and destroys are all synced from the server to every player, including players who join later. (This is called replication.)</li>
+        <li><code>State:Set</code>, teleporting and kicking players.</li>
+        <li>Firing remotes to one player or all of them.</li></ul></div>
+      <div class="pane"><h4><span class="side c">Client</span> changes are local</h4><ul>
+        <li>Setting a property of an entity (the object your script uses to work with an actor in the world) on a client changes only that player's view, as on Roblox. When the server next changes it, the server's value wins.</li>
+        <li>HUD text and toasts. Use <code>Players.LocalPlayer</code> to get the local player when it's available.</li>
+        <li>Asking the server for things with <code>Remote:FireServer</code>.</li></ul></div>
+    </div>
+    <p>For quick local checks, a standalone client (a separate program, not the editor) can run both sides in one world. In a dedicated session, server scripts run on the server and client scripts run on each player's machine as they join. Test multiplayer behaviour in these separate programs, and include a player who joins late. Scripts don't run in the editor's Play (PIE) mode.</p>
+    <h2 id="tags">Tags connect scripts to things</h2>
+    <p>Give actors a tag in the editor, then write one script for every actor with that tag. These examples use the tag <code>guide_code_killbrick</code>. The script covers every tagged actor already placed and any added later, clones included. You never need to attach a script to an actor.</p>
+    <div class="v has-ts">
+      <div class="code" data-v="luau"><span class="tag">Scripts/Server/KillBricks.luau</span><pre id="ex-killbricks-luau" data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_killbrick&quot;, function(brick)
+	brick.Touched:Connect(function(player)
+		player:Teleport(Vector3.new(0, 0, 150))
+	end)
+end)
+</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/KillBricks.ts</span><pre id="ex-killbricks-ts" data-example-kind="source" data-language="typescript">World.onTagged(&quot;guide_code_killbrick&quot;, (brick: Entity) =&gt; {
+	brick.touched.connect((player: Player) =&gt; {
+		player.teleport(new Vector3(0, 0, 150));
+	});
+});
+</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/KillBricks.js</span><pre id="ex-killbricks-js" data-example-kind="source" data-language="javascript">World.onTagged(&quot;guide_code_killbrick&quot;, (brick) =&gt; {
+	brick.touched.connect((player) =&gt; {
+		player.teleport(new Vector3(0, 0, 150));
+	});
+});
+</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/KillBricks.py</span><pre id="ex-killbricks-py" data-example-kind="source" data-language="python">def setup(brick):
+    def on_touch(player):
+        player.teleport(Vector3(0, 0, 150))
+    brick.touched.connect(on_touch)
+
+World.on_tagged(&quot;guide_code_killbrick&quot;, setup)
+</pre></div>
+    </div>
+    <p>Other ways to find things: <code>World:FindByTag(tag)</code> returns a list, and <code>World:FindFirst(name)</code> finds by the actor's name in the Outliner. The same actor always gives you the same object, so you can use entities and players as table keys.</p>
+    <h2 id="signals">Signals: reacting to things</h2>
+    <p>When something happens in the game, it fires a <b>signal</b>, such as <code>Touched</code>, <code>PlayerAdded</code>, <code>State.Changed</code> or a remote's event. Connect a function to a signal to react to it. Each call runs on its own, so a handler can wait without holding up anything else.</p>
+    <div class="table-wrap"><table class="api"><thead><tr><th>Member</th><th>What it does</th></tr></thead><tbody>
+      <tr><td><code>Connect(fn)</code> → Connection</td><td>Call <code>fn</code> every time it fires.</td></tr>
+      <tr><td><code>Once(fn)</code> → Connection</td><td>Call <code>fn</code> the next time only.</td></tr>
+      <tr><td><code>Wait()</code></td><td>Pause until it fires, then return its arguments. In JavaScript it returns a Promise. In Python, save <code>token = signal.wait()</code>, yield that token, then read <code>token.result</code>.</td></tr>
+      <tr><td><code>Connection:Disconnect()</code></td><td>Stop listening. Everything a script connected is disconnected automatically when the script stops or reloads.</td></tr>
+      <tr><td><code>Fire(...)</code></td><td>Only for your own events from <code>Events:Get(name)</code>. Built-in signals can't be faked.</td></tr>
+    </tbody></table></div>
+    <h2 id="waiting">Waiting and timers</h2>
+    <p>Every language can pause without freezing the game. Each one uses the style its programmers already know:</p>
+    <div class="v has-ts">
+      <div class="code" data-v="luau"><span class="tag">Luau · like Roblox</span><pre data-example-kind="snippet">task.wait(2)                        -- pause this thread 2 s
+task.spawn(function() ... end)      -- run now, in parallel
+task.delay(5, function() ... end)   -- run in 5 s
+local thread = task.delay(9, boom)
+task.cancel(thread)                 -- never mind</pre></div>
+      <div class="code" data-v="ts"><span class="tag">TypeScript · async/await</span><pre data-example-kind="snippet">await task.wait(2);                  // inside an async function
+task.spawn(async () => { ... });
+const id = task.delay(5, () => { ... });
+task.cancel(id);
+setTimeout(() => { ... }, 500);       // web-style timers work too</pre></div>
+      <div class="code" data-v="js"><span class="tag">JavaScript · async/await</span><pre data-example-kind="snippet">await task.wait(2);                  // inside an async function
+task.spawn(async () => { ... });
+const id = task.delay(5, () => { ... });
+task.cancel(id);
+setTimeout(() => { ... }, 500);       // web-style timers work too</pre></div>
+      <div class="code" data-v="py"><span class="tag">Python · generators (like Unity coroutines)</span><pre data-example-kind="snippet">def countdown():
+    for n in range(3, 0, -1):
+        print(n)
+        yield task.wait(1)        # a function that yields can wait
+    print("go!")
+
+task.spawn(countdown)             # start it
+task.delay(5, lambda: print("5 s later"))
+
+def wait_for_join():
+    token = Players.player_added.wait()
+    yield token                   # waits for the signal
+    player = token.result[0]      # what it fired with</pre></div>
+    </div>
+    <div class="callout warn"><strong>Long loops must wait</strong><p>Each script gets a CPU budget of 8 ms per second and a memory budget of 16 MiB. If a script goes over its CPU or memory budget, or hits a host limit, Mantle stops that script, along with its tasks and connections. Split long work into chunks with waits in between.</p><p>In Python, an operation that would take a script over 16 MiB is refused, and the script is stopped.</p></div>
+    <h2 id="values">Values</h2>
+    <p>Pass ordinary values of your language: numbers, strings, booleans, lists, tables/objects/dicts, <code>Vector3</code>, entities and players. They go into State, attributes and remotes as they are, and come back the same way. Functions can't be stored or sent.</p>
+    <div class="v has-ts">
+      <div class="code" data-v="luau"><pre data-example-kind="snippet">State:Set("round", { number = 3, leader = "ana", spawn = Vector3.new(0, 0, 200) })
+local round = State:Get("round")
+print(round.number, round.spawn.Z)          -- 3  200</pre></div>
+      <div class="code" data-v="ts"><pre data-example-kind="snippet">State.set("round", { number: 3, leader: "ana", spawn: new Vector3(0, 0, 200) });
+const round = State.get("round");
+console.log(round.number, round.spawn.z);    // 3 200</pre></div>
+      <div class="code" data-v="js"><pre data-example-kind="snippet">State.set("round", { number: 3, leader: "ana", spawn: new Vector3(0, 0, 200) });
+const round = State.get("round");
+console.log(round.number, round.spawn.z);    // 3 200</pre></div>
+      <div class="code" data-v="py"><pre data-example-kind="snippet">State.set("round", {"number": 3, "leader": "ana", "spawn": Vector3(0, 0, 200)})
+r = State.get("round")
+print(r["number"], r["spawn"].z)             # 3 200</pre></div>
+    </div>
+    <p>Positions are in centimetres (100 = 1 m), like Unreal. Rotations are <code>Vector3(pitch, yaw, roll)</code> in degrees.</p>
+    <h2 id="modules">Sharing code</h2>
+    <p>Put reusable code in <code>Shared/</code> (both sides) or a <code>Modules/</code> folder (that side only), then load it from your scripts. The <code>@Shared</code> path shortcut also works in Luau and TypeScript code editors.</p>
+    <div class="v has-ts">
+      <div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Shared/Modules/Examples/Config.luau</span><pre id="ex-module-luau" data-example-kind="source" data-language="luau">return { RoundSeconds = 60, SpawnPoint = Vector3.new(0, 0, 150) }
+</pre></div><div class="code"><span class="tag">Scripts/Server/ReadConfig.luau</span><pre id="ex-read-module-luau" data-example-kind="source" data-language="luau">local Config = require(&quot;@Shared/Modules/Examples/Config&quot;)
+</pre></div></div>
+      <div class="v" data-v="ts"><div class="code"><span class="tag">Scripts/Shared/Modules/Examples/Config.ts</span><pre id="ex-module-ts" data-example-kind="source" data-language="typescript">export const roundSeconds = 60;
+</pre></div><div class="code"><span class="tag">Scripts/Server/ReadConfig.ts</span><pre id="ex-read-module-ts" data-example-kind="source" data-language="typescript">import { roundSeconds } from "@Shared/Modules/Examples/Config";
+console.log(roundSeconds);
+</pre></div></div>
+      <div class="v" data-v="js"><div class="code"><span class="tag">Scripts/Shared/Modules/Examples/Config.js</span><pre id="ex-module-js" data-example-kind="source" data-language="javascript">export const roundSeconds = 60;
+</pre></div><div class="code"><span class="tag">Scripts/Server/ReadConfig.js</span><pre id="ex-read-module-js" data-example-kind="source" data-language="javascript">import { roundSeconds } from &quot;@Shared/Modules/Examples/Config&quot;;
+</pre></div></div>
+      <div class="v" data-v="py"><div class="code"><span class="tag">Scripts/Shared/Modules/Examples/Config.py</span><pre id="ex-module-py" data-example-kind="source" data-language="python">ROUND_SECONDS = 60
+</pre></div><div class="code"><span class="tag">Scripts/Server/ReadConfig.py</span><pre id="ex-read-module-py" data-example-kind="source" data-language="python">Config = require(&quot;@Shared/Modules/Examples/Config&quot;)   # the module itself, loaded once
+print(Config.ROUND_SECONDS)
+</pre></div></div>
+    </div>
+    <p>Each labelled block is a separate file. Type <code>Shared/Modules/Examples/Config</code> exactly as shown: paths must match capital letters exactly, on Windows as well as Linux.</p><ul>
+      <li>A <code>Modules</code> folder nested inside another folder still only holds modules.</li>
+      <li>If the capitalisation is wrong, or you require an entry script (a script that runs on its own rather than a module), you get a clear error. A path outside Scripts isn't found.</li>
+      <li>Luau and Python modules must finish loading without waiting.</li>
+      <li>Circular requires (modules that require each other in a loop) are an error.</li>
+      <li>Dynamic <code>import()</code> is blocked in JavaScript and TypeScript.</li>
+      <li>Editing a module restarts all scripts rather than hot-reloading just one.</li>
+      <li>A module is loaded once and reused. In Luau and Python it's shared by the scripts on a side; in JS/TS each script gets its own copy.</li>
+      <li>Python uses <code>require(...)</code> rather than <code>import</code> for your own files: it returns the module object, so <code>Config.ROUND_SECONDS</code> works as usual. Python's own built-in modules (like <code>math</code>) still use <code>import</code>.</li>
+      <li>Client scripts can't load server code; it never leaves the server. Server scripts can't load client code.</li>
+      <li>Luau and Python can only load files in their own language; JavaScript and TypeScript can import each other. Give modules unique names across languages, since an extensionless path can match a file in another language. To share between languages, use State, Events or a Remote (see <a href="#languages">Mixing languages</a>).</li>
+    </ul>
+    <h2 id="network">Talking over the network</h2>
+    <p><b>State</b> is for shared facts such as the score, round or phase. The server sets them. Every script can read them and be told when they change.</p>
+    <div class="v has-ts">
+      <div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Server/NetworkState.luau</span><pre id="ex-state-server-luau" data-example-kind="source" data-language="luau">State:Set(&quot;guide.example.timeLeft&quot;, 30)
+</pre></div><div class="code"><span class="tag">Scripts/Client/NetworkHud.luau</span><pre id="ex-state-client-luau" data-example-kind="source" data-language="luau">local label = UI:Create(&quot;text&quot;)
+State:Observe(&quot;guide.example.timeLeft&quot;, function(seconds)
+	label:SetText(`Time left: {seconds}s`)
+end)
+</pre></div></div>
+      <div class="v" data-v="ts"><div class="code"><span class="tag">Scripts/Server/NetworkState.ts</span><pre id="ex-state-server-ts" data-example-kind="source" data-language="typescript">State.set(&quot;guide.example.timeLeft&quot;, 30);
+</pre></div><div class="code"><span class="tag">Scripts/Client/NetworkHud.ts</span><pre id="ex-state-client-ts" data-example-kind="source" data-language="typescript">const label = UI.create(&quot;text&quot;);
+State.observe(&quot;guide.example.timeLeft&quot;, (seconds: number) =&gt; {
+	label.setText(`Time left: ${seconds}s`);
+});
+</pre></div></div>
+      <div class="v" data-v="js"><div class="code"><span class="tag">Scripts/Server/NetworkState.js</span><pre id="ex-state-server-js" data-example-kind="source" data-language="javascript">State.set(&quot;guide.example.timeLeft&quot;, 30);
+</pre></div><div class="code"><span class="tag">Scripts/Client/NetworkHud.js</span><pre id="ex-state-client-js" data-example-kind="source" data-language="javascript">const label = UI.create(&quot;text&quot;);
+State.observe(&quot;guide.example.timeLeft&quot;, (seconds) =&gt; {
+	label.setText(`Time left: ${seconds}s`);
+});
+</pre></div></div>
+      <div class="v" data-v="py"><div class="code"><span class="tag">Scripts/Server/NetworkState.py</span><pre id="ex-state-server-py" data-example-kind="source" data-language="python">State.set(&quot;guide.example.timeLeft&quot;, 30)
+</pre></div><div class="code"><span class="tag">Scripts/Client/NetworkHud.py</span><pre id="ex-state-client-py" data-example-kind="source" data-language="python">label = UI.create(&quot;text&quot;)
+State.observe(&quot;guide.example.timeLeft&quot;, lambda s: label.set_text(f&quot;Time left: {s}s&quot;))
+</pre></div></div>
+    </div>
+    <p><b>Remotes</b> are for one-off messages. A remote is a named channel with <code>FireServer</code> (client to server), and <code>FireClient</code> / <code>FireAllClients</code> (server to clients). On the server, the handler's first argument is the player who actually sent the message.</p>
+    <p>A few messages sent before a handler connects are held for it (see <a href="/docs/scripting/api/#errors">Errors and limits</a>). But a remote doesn't store anything, and it doesn't replay earlier messages to players who join late. Put things like the current score, round and door status in State instead.</p>
+    <div class="callout warn"><strong>Never trust a client</strong><p>A client can send anything. When a message says “I pressed the button”, check on the server that the player really is near the button, as in the <a href="#r-button">button recipe</a>.</p></div>
+    <h2 id="languages">Mixing languages</h2>
+    <p>Scripts in different languages share one world. They talk through the same three channels, which work the same way in every language:</p>
+    <ul>
+      <li><b>State</b> (with the <code>Changed</code> signal) for shared values.</li>
+      <li><b>Events</b>: <code>Events:Get("GoalScored")</code> is a named signal for scripts on the same side. Any script can <code>Fire</code> it or connect to it.</li>
+      <li><b>Remotes</b> between server and clients.</li>
+    </ul>
+    <p>The <a href="/docs/scripting/recipes/#r-cross">checkpoint recipe</a> pairs <code>Server/GuideCheckpoint.ts</code> with <code>Server/GuideKillBricks.luau</code>: TypeScript writes a checkpoint vector into State; Luau reads it when the player touches a kill brick. Neither language imports the other's module.</p>

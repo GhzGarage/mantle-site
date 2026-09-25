@@ -1,0 +1,309 @@
+<h2 id="recipes">Copy-ready recipes</h2>
+<p class="section-intro">Each code block is one file, and the label above it shows where the file goes. The main recipes fit together into one place written in Luau, JavaScript and TypeScript. If a recipe imports the shared configuration module, copy that module too. The language switch only changes the standalone versions, which come in every language.</p>
+<p>Each recipe finds the actors in your level by a tag that starts with <code>guide_code_</code>. Give your actors matching tags, or change the tags in the code. The <a href="/docs/scripting/visual-scripting/#graph-examples">visual scripting examples</a> use their own tags so both can live in one place.</p><h3 id="r-config">Shared configuration module</h3><p>This module holds the settings the other recipes share. Copy it into the same nested folders, keeping the exact capitalisation of every folder and file name. By default, coins respawn after five seconds and a round lasts 60 seconds. Anything in a Modules folder is only ever used as a module, never run as a script by itself.</p><div class="code"><span class="tag">Scripts/Shared/Modules/Config/GuideConfig.luau</span><pre id="ex-canonical-guideconfig" data-example-kind="source" data-language="luau">-- Shared configuration is module-only, including nested Modules directories.
+return {
+	SafeSpawn = Vector3.new(0, 0, 120),
+	CoinRespawnSeconds = 5,
+	RoundSeconds = 60,
+	HighScoreMode = "disabled", -- "earn" then "verify" in separate authenticated sessions.
+	HighScoreProofOnly = false, -- Must be true for either isolated persistence mode.
+	HighScoreEarnedTarget = 1, -- Earn proof: actual pickups to this score (integer 1..5, above baseline).
+	HighScoreKey = "creator-guide.best.v1",
+	ExpectedPreviousBest = 0, -- Operator supplies the observed previous value, never a made-up identity.
+}
+</pre></div><h3 id="r-killbrick">A kill brick that returns the player to safety</h3><p>This builds a hazard that sends players back to safety when they touch it: tag the hazard actor in your level <code>guide_code_killbrick</code>. The script teleports the player to their saved checkpoint, or to the configured safe spawn if they haven't reached a checkpoint yet.</p><div class="code"><span class="tag">Scripts/Server/GuideKillBricks.luau</span><pre id="ex-canonical-guidekillbricks" data-example-kind="source" data-language="luau">local Config = require(&quot;Shared/Modules/Config/GuideConfig&quot;)
+World:OnTagged(&quot;guide_code_killbrick&quot;, function(brick)
+	brick.Touched:Connect(function(player)
+		local spawn = State:Get(`guide.respawn:{player.UserId}`) or Config.SafeSpawn
+		player:Teleport(spawn)
+	end)
+end)
+State:Set(&quot;guide.ready.killbrick&quot;, true)
+</pre></div><h3 id="r-coins">Coins that bob, score and respawn</h3><p>This builds coins that bob up and down and give a point when collected: tag each coin actor in your level <code>guide_code_coin</code>. The server bobs the coin 40 cm up and down with a tween. When a player touches it, the server hides it, awards one point and shows it again after five seconds. Checking <code>Visible</code> first stops two touches at the same moment from scoring the same pickup twice. Keep these long-lived coins separate from templates you clone and throw away. The tween uses <code>Sine</code> easing with <code>InOut</code>, so the coin slows down gently at the top and bottom of each bob.</p><div class="code"><span class="tag">Scripts/Server/Modules/Recipes/ScoreRules.luau</span><pre id="ex-canonical-scorerules" data-example-kind="source" data-language="luau">local Rules = {}
+function Rules.key(player)
+	return `guide.score:{player.UserId}`
+end
+function Rules.award(player)
+	local key = Rules.key(player)
+	local value = (State:Get(key) or 0) + 1
+	State:Set(key, value)
+	return value
+end
+return Rules
+</pre></div><div class="code"><span class="tag">Scripts/Server/GuideCoins.luau</span><pre id="ex-canonical-guidecoins" data-example-kind="source" data-language="luau">local Config = require(&quot;Shared/Modules/Config/GuideConfig&quot;)
+local Score = require(&quot;./Modules/Recipes/ScoreRules&quot;)
+World:OnTagged(&quot;guide_code_coin&quot;, function(coin)
+	local home = coin.Position
+	task.spawn(function()
+		while true do
+			coin:Tween({ Position = home + Vector3.new(0, 0, 40) }, 1, &quot;Sine&quot;, &quot;InOut&quot;):Wait()
+			coin:Tween({ Position = home }, 1, &quot;Sine&quot;, &quot;InOut&quot;):Wait()
+		end
+	end)
+	coin.Touched:Connect(function(player)
+		if not coin.Visible then return end
+		coin.Visible = false
+		Score.award(player)
+		task.wait(Config.CoinRespawnSeconds)
+		coin.Visible = true
+	end)
+end)
+State:Set(&quot;guide.ready.coin&quot;, true)
+</pre></div><details><summary>Standalone coin versions in all four languages</summary><p>These are self-contained versions of the coin recipe, one for each language. Use one of them instead of the main coin recipe, not as well as it. They save the score under <code>score:&lt;UserId&gt;</code>, which is separate from the main recipes' score.</p><div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Coins.luau</span><pre id="ex-coins-luau" data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_coin&quot;, function(coin)
+	local home = coin.Position
+	task.spawn(function()
+		while true do
+			coin:Tween({ Position = home + Vector3.new(0, 0, 40) }, 1, &quot;Sine&quot;, &quot;InOut&quot;):Wait()
+			coin:Tween({ Position = home }, 1, &quot;Sine&quot;, &quot;InOut&quot;):Wait()
+		end
+	end)
+
+	coin.Touched:Connect(function(player)
+		if not coin.Visible then return end
+		coin.Visible = false
+		local key = `score:{player.UserId}`
+		State:Set(key, (State:Get(key) or 0) + 1)
+		task.wait(5)
+		coin.Visible = true
+	end)
+end)
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/Coins.ts</span><pre id="ex-coins-ts" data-example-kind="source" data-language="typescript">World.onTagged(&quot;guide_code_coin&quot;, (coin: Entity) =&gt; {
+	const home = coin.position;
+	task.spawn(async () =&gt; {
+		while (true) {
+			await coin.tween({ position: home.add(new Vector3(0, 0, 40)) }, 1, &quot;Sine&quot;, &quot;InOut&quot;).wait();
+			await coin.tween({ position: home }, 1, &quot;Sine&quot;, &quot;InOut&quot;).wait();
+		}
+	});
+
+	coin.touched.connect(async (player: Player) =&gt; {
+		if (!coin.visible) return;
+		coin.visible = false;
+		const key = `score:${player.userId}`;
+		State.set(key, (State.get(key) ?? 0) + 1);
+		await task.wait(5);
+		coin.visible = true;
+	});
+});
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/Coins.js</span><pre id="ex-coins-js" data-example-kind="source" data-language="javascript">World.onTagged(&quot;guide_code_coin&quot;, (coin) =&gt; {
+	const home = coin.position;
+	task.spawn(async () =&gt; {
+		while (true) {
+			await coin.tween({ position: home.add(new Vector3(0, 0, 40)) }, 1, &quot;Sine&quot;, &quot;InOut&quot;).wait();
+			await coin.tween({ position: home }, 1, &quot;Sine&quot;, &quot;InOut&quot;).wait();
+		}
+	});
+
+	coin.touched.connect(async (player) =&gt; {
+		if (!coin.visible) return;
+		coin.visible = false;
+		const key = `score:${player.userId}`;
+		State.set(key, (State.get(key) ?? 0) + 1);
+		await task.wait(5);
+		coin.visible = true;
+	});
+});
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/Coins.py</span><pre id="ex-coins-py" data-example-kind="source" data-language="python">def setup(coin):
+    home = coin.position
+
+    def bob():
+        while True:
+            yield coin.tween({&quot;position&quot;: home + Vector3(0, 0, 40)}, 1, &quot;Sine&quot;, &quot;InOut&quot;).wait()
+            yield coin.tween({&quot;position&quot;: home}, 1, &quot;Sine&quot;, &quot;InOut&quot;).wait()
+    task.spawn(bob)
+
+    def on_touch(player):
+        if not coin.visible:
+            return
+        coin.visible = False
+        key = f&quot;score:{player.user_id}&quot;
+        State.set(key, (State.get(key) or 0) + 1)
+        yield task.wait(5)
+        coin.visible = True
+    coin.touched.connect(on_touch)
+
+World.on_tagged(&quot;guide_code_coin&quot;, setup)
+</pre></div></div></details><h3 id="r-door">A door that opens when someone walks up</h3><p>This builds a door that slides open when a player comes close: tag the door actor in your level <code>guide_code_door</code>. Every 0.2 seconds, the script checks whether any player is within 450 cm of the door's saved closed position. If so, the door tweens 390 cm downward over 0.6 seconds. It closes again once everyone has left. The trigger area stays at the door's original position and doesn't move with the door.</p><div class="code"><span class="tag">Scripts/Server/GuideDoor.luau</span><pre id="ex-canonical-guidedoor" data-example-kind="source" data-language="luau">local door = World:FindByTag(&quot;guide_code_door&quot;)[1]
+local closed = door.Position
+local isOpen = false
+State:Set(&quot;guide.door.closed&quot;, closed)
+State:Set(&quot;guide.ready.door&quot;, true)
+while true do
+	local near = false
+	for _, player in Players:GetPlayers() do
+		if player.Position and (player.Position - closed).Magnitude &lt; 450 then
+			near = true
+		end
+	end
+	if near ~= isOpen then
+		isOpen = near
+		State:Set(&quot;guide.door.open&quot;, isOpen)
+		door:Tween({ Position = if isOpen then closed - Vector3.new(0, 0, 390) else closed }, 0.6)
+	end
+	task.wait(0.2)
+end
+</pre></div><h3 id="r-hud">Round timer on every client HUD</h3><p>This builds a round timer that shows the current round and time left on every player's screen. You don't need to tag anything in the level: just add both scripts. The server keeps track of the round and the time left. The JavaScript client creates its UI nodes first and then observes State, so players who join late still get the current values. The round-start announcement is a toast, which appears briefly and then goes away.</p><div class="code"><span class="tag">Scripts/Server/GuideRounds.luau</span><pre id="ex-canonical-guiderounds" data-example-kind="source" data-language="luau">local Config = require("Shared/Modules/Config/GuideConfig")
+local announce = Net:Remote("GuideAnnounce")
+local round = 0
+State:Set("guide.ready.rounds", true)
+while true do
+	round += 1
+	State:Set("guide.round", round)
+	announce:FireAllClients(`Round {round} started`)
+	for remaining = Config.RoundSeconds, 0, -1 do
+		State:Set("guide.timeLeft", remaining)
+		if remaining &gt; 0 then task.wait(1) end
+	end
+end
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideHud.js</span><pre id="ex-canonical-guidehud" data-example-kind="source" data-language="javascript">// Create retained widgets before subscribing. Observe replays current State for late joiners.
+const frame = UI.create(&quot;frame&quot;);
+const roundLabel = UI.create(&quot;text&quot;);
+const timeLabel = UI.create(&quot;text&quot;);
+roundLabel.setParent(frame);
+timeLabel.setParent(frame);
+roundLabel.setSemantics(&quot;label&quot;, &quot;Current round&quot;, &quot;The current round number&quot;, 0);
+timeLabel.setSemantics(&quot;label&quot;, &quot;Time remaining&quot;, &quot;Seconds left in this round&quot;, 0);
+State.observe(&quot;guide.round&quot;, (round) =&gt; {
+	roundLabel.setText(`Round ${round ?? 0}`);
+	Events.get(&quot;GuideHudModel&quot;).fire(&quot;round&quot;, roundLabel.text);
+});
+State.observe(&quot;guide.timeLeft&quot;, (seconds) =&gt; {
+	timeLabel.setText(`Time left: ${seconds ?? 0}s`);
+	Events.get(&quot;GuideHudModel&quot;).fire(&quot;time&quot;, timeLabel.text);
+});
+Net.remote(&quot;GuideAnnounce&quot;).onClientEvent.connect((message) =&gt; UI.toast(message, 3));
+// A local query lets headless acceptance inspect actual widget properties; it does not claim rendering.
+Events.get(&quot;GuideHudQuery&quot;).connect(() =&gt; {
+	Events.get(&quot;GuideHudModel&quot;).fire(&quot;round&quot;, roundLabel.text);
+	Events.get(&quot;GuideHudModel&quot;).fire(&quot;time&quot;, timeLabel.text);
+});
+</pre></div><h3 id="r-button">A button players ask the server to press</h3><p>This builds a button that squashes down and springs back when a player presses it: tag the button actor in your level <code>guide_code_button</code>. When the local player touches the button, the client asks the server to press it. The server checks the message and where the sending player really is, and turns away new presses while the button is still busy. It plays both scale tweens, then tells the player the press worked. The client's message never picks which player pressed, and never adds a press by itself.</p><div class="code"><span class="tag">Scripts/Client/GuideButtonPrompt.luau</span><pre id="ex-canonical-guidebuttonprompt" data-example-kind="source" data-language="luau">local button = World:FindByTag(&quot;guide_code_button&quot;)[1]
+button.Touched:Connect(function(player)
+	if player == Players.LocalPlayer then
+		Net:Remote(&quot;GuidePressButton&quot;):FireServer(&quot;press&quot;)
+	end
+end)
+</pre></div><div class="code"><span class="tag">Scripts/Server/GuideButton.luau</span><pre id="ex-canonical-guidebutton" data-example-kind="source" data-language="luau">local button = World:FindByTag(&quot;guide_code_button&quot;)[1]
+local busy = false
+local result = Net:Remote(&quot;GuideButtonResult&quot;)
+Net:Remote(&quot;GuidePressButton&quot;).OnServerEvent:Connect(function(player, message)
+	if message ~= &quot;press&quot; then
+		result:FireClient(player, &quot;payload&quot;)
+		return
+	end
+	if not player.Position or (player.Position - button.Position).Magnitude &gt; 400 then
+		result:FireClient(player, &quot;distance&quot;)
+		return
+	end
+	if busy then
+		result:FireClient(player, &quot;busy&quot;)
+		return
+	end
+	busy = true
+	local size = button.Scale
+	button:Tween({ Scale = Vector3.new(size.X, size.Y, size.Z * 0.3) }, 0.15):Wait()
+	button:Tween({ Scale = size }, 0.4, &quot;Back&quot;, &quot;Out&quot;):Wait()
+	State:Set(&quot;guide.button.presses&quot;, (State:Get(&quot;guide.button.presses&quot;) or 0) + 1)
+	busy = false
+	result:FireClient(player, &quot;pressed&quot;)
+end)
+State:Set(&quot;guide.button.presses&quot;, 0)
+State:Set(&quot;guide.ready.button&quot;, true)
+</pre></div><h3 id="r-spawn">Cloning and destroying things</h3><p>This shows how to copy and remove objects from a script: place a separate template actor tagged <code>guide_code_template</code>, and another actor tagged <code>guide_code_retired</code>. The script hides the template and makes one visible clone that stays. It then makes a second clone and destroys it, and destroys the retired actor you placed in the level. Players who join later see the clone that stayed and none of the destroyed objects. Clones copy their template's tags, so don't put pickup tags on a template unless you want every clone to be picked up by that recipe too.</p><div class="code"><span class="tag">Scripts/Server/GuideClones.luau</span><pre id="ex-canonical-guideclones" data-example-kind="source" data-language="luau">local template = World:FindByTag(&quot;guide_code_template&quot;)[1]
+template.Visible = false
+local survivor = template:Clone()
+survivor.Position = Vector3.new(4500, 2000, 120)
+survivor.Visible = true
+survivor:AddTag(&quot;guide_code_survivor&quot;)
+local doomed = template:Clone()
+doomed:AddTag(&quot;guide_code_destroyed&quot;)
+doomed:Destroy()
+local retired = World:FindByTag(&quot;guide_code_retired&quot;)[1]
+retired:Destroy()
+State:Set(&quot;guide.clone.name&quot;, survivor.Name)
+State:Set(&quot;guide.clone.position&quot;, survivor.Position)
+State:Set(&quot;guide.ready.clones&quot;, true)
+</pre></div><h3 id="r-cross">TypeScript checkpoints and Luau respawns</h3><p>This builds checkpoints in TypeScript that work with the Luau kill brick: tag each checkpoint pad in your level <code>guide_code_checkpoint</code>. The TypeScript script imports its nested Rules module. When a player touches a pad, it saves a respawn position (a Vector3) in State. <a href="#r-killbrick">GuideKillBricks.luau</a>, shown above, reads that position the next time the player touches a hazard. Don't add a second kill brick handler.</p><div class="code"><span class="tag">Scripts/Server/Modules/Rules/CheckpointRules.ts</span><pre id="ex-canonical-checkpointrules" data-example-kind="source" data-language="typescript">export function key(userId: string): string {
+	return `guide.respawn:${userId}`;
+}
+export function destination(pad: Entity): Vector3 {
+	return pad.position.add(new Vector3(0, 0, 120));
+}
+</pre></div><div class="code"><span class="tag">Scripts/Server/GuideCheckpoint.ts</span><pre id="ex-canonical-guidecheckpoint" data-example-kind="source" data-language="typescript">import { key, destination } from &quot;./Modules/Rules/CheckpointRules&quot;;
+World.onTagged(&quot;guide_code_checkpoint&quot;, (pad: Entity) =&gt; {
+	pad.touched.connect((player: Player) =&gt; {
+		State.set(key(player.userId), destination(pad));
+	});
+});
+State.set(&quot;guide.ready.checkpoint&quot;, true);
+</pre></div><h3 id="r-highscore">Saving data across sessions</h3>
+<p>Use <code>DataStore</code> <span class="side s">Server</span> to save boolean, number or string values so they&rsquo;re still there in later sessions. You can save them for the whole place (<code>Get</code>/<code>Set</code>) or for each player (<code>GetForPlayer</code>/<code>SetForPlayer</code>). There&rsquo;s nothing to set up in the level.</p>
+<div class="callout warn"><strong>A missing value doesn&rsquo;t mean zero</strong><p>When <code>DataStore:GetForPlayer</code> returns nil, you can&rsquo;t tell whether this is the player&rsquo;s first visit, their data hasn&rsquo;t finished loading, or the load failed. Scripts can&rsquo;t yet get a signal when data has loaded, or confirmation that a write was saved. Don&rsquo;t turn nil into zero and write it back, or you could overwrite a larger saved value such as a best score.</p></div>
+<h3 id="r-alternate-hud">Standalone HUD and round timer</h3><p>This builds a self-contained round timer and HUD, with one server and client pair for each language to match the standalone coin versions. There&rsquo;s nothing to tag in the level. Use one pair instead of the main round timer and HUD recipe, not as well as it.</p><div class="v has-ts has-js has-py"><div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Server/Rounds.luau</span><pre id="ex-rounds-luau" data-example-kind="source" data-language="luau">local round = 0
+while true do
+    round += 1
+    State:Set("alt.round", round)
+    for seconds = 60, 0, -1 do
+        State:Set("alt.timeLeft", seconds)
+        if seconds &gt; 0 then task.wait(1) end
+    end
+end
+</pre></div><div class="code"><span class="tag">Scripts/Client/Hud.luau</span><pre id="ex-hud-luau" data-example-kind="source" data-language="luau">local frame = UI:Create(&quot;frame&quot;)
+local round = UI:Create(&quot;text&quot;)
+local time = UI:Create(&quot;text&quot;)
+round:SetParent(frame)
+time:SetParent(frame)
+State:Observe(&quot;alt.round&quot;, function(value) round:SetText(&quot;Round &quot; .. tostring(value or 0)) end)
+State:Observe(&quot;alt.timeLeft&quot;, function(value) time:SetText(&quot;Time left: &quot; .. tostring(value or 0) .. &quot;s&quot;) end)
+</pre></div></div><div class="v" data-v="ts"><div class="code"><span class="tag">Scripts/Server/Rounds.ts</span><pre id="ex-rounds-ts" data-example-kind="source" data-language="typescript">task.spawn(async () =&gt; {
+    let round = 0;
+    while (true) {
+        State.set("alt.round", ++round);
+        for (let seconds = 60; seconds &gt;= 0; --seconds) {
+            State.set("alt.timeLeft", seconds);
+            if (seconds &gt; 0) await task.wait(1);
+        }
+    }
+});
+</pre></div><div class="code"><span class="tag">Scripts/Client/Hud.ts</span><pre id="ex-hud-ts" data-example-kind="source" data-language="typescript">const frame = UI.create(&quot;frame&quot;);
+const round = UI.create(&quot;text&quot;);
+const time = UI.create(&quot;text&quot;);
+round.setParent(frame);
+time.setParent(frame);
+State.observe(&quot;alt.round&quot;, (value) =&gt; round.setText(&quot;Round &quot; + (value ?? 0)));
+State.observe(&quot;alt.timeLeft&quot;, (value) =&gt; time.setText(&quot;Time left: &quot; + (value ?? 0) + &quot;s&quot;));
+</pre></div></div><div class="v" data-v="js"><div class="code"><span class="tag">Scripts/Server/Rounds.js</span><pre id="ex-rounds-js" data-example-kind="source" data-language="javascript">task.spawn(async () =&gt; {
+    let round = 0;
+    while (true) {
+        State.set("alt.round", ++round);
+        for (let seconds = 60; seconds &gt;= 0; --seconds) {
+            State.set("alt.timeLeft", seconds);
+            if (seconds &gt; 0) await task.wait(1);
+        }
+    }
+});
+</pre></div><div class="code"><span class="tag">Scripts/Client/Hud.js</span><pre id="ex-hud-js" data-example-kind="source" data-language="javascript">const frame = UI.create(&quot;frame&quot;);
+const round = UI.create(&quot;text&quot;);
+const time = UI.create(&quot;text&quot;);
+round.setParent(frame);
+time.setParent(frame);
+State.observe(&quot;alt.round&quot;, (value) =&gt; round.setText(&quot;Round &quot; + (value ?? 0)));
+State.observe(&quot;alt.timeLeft&quot;, (value) =&gt; time.setText(&quot;Time left: &quot; + (value ?? 0) + &quot;s&quot;));
+</pre></div></div><div class="v" data-v="py"><div class="code"><span class="tag">Scripts/Server/Rounds.py</span><pre id="ex-rounds-py" data-example-kind="source" data-language="python">def rounds():
+    number = 0
+    while True:
+        number += 1
+        State.set("alt.round", number)
+        for seconds in range(60, -1, -1):
+            State.set("alt.timeLeft", seconds)
+            if seconds &gt; 0:
+                yield task.wait(1)
+task.spawn(rounds)
+</pre></div><div class="code"><span class="tag">Scripts/Client/Hud.py</span><pre id="ex-hud-py" data-example-kind="source" data-language="python">frame = UI.create(&quot;frame&quot;)
+round_label = UI.create(&quot;text&quot;)
+time_label = UI.create(&quot;text&quot;)
+round_label.set_parent(frame)
+time_label.set_parent(frame)
+State.observe(&quot;alt.round&quot;, lambda value: round_label.set_text(f&quot;Round {value or 0}&quot;))
+State.observe(&quot;alt.timeLeft&quot;, lambda value: time_label.set_text(f&quot;Time left: {value or 0}s&quot;))
+</pre></div></div></div>

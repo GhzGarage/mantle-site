@@ -1,0 +1,74 @@
+<div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
+
+<p>Players get your world as you built it, using Mantle's built-in assets plus any meshes and materials from your project, so you can only publish the object types below.</p>
+
+<h2 id="entities">What you can place</h2>
+<div class="table-wrap"><table><thead><tr><th>Unreal actor</th><th>What's kept</th><th>Status</th></tr></thead><tbody>
+<tr><td>Static Mesh Actor</td><td>Mesh, up to 16 material overrides, collision (none, blocking or overlap) and cast shadow</td><td><span class="status live">Live</span> library meshes and <a href="#custom-assets">meshes from your project</a></td></tr>
+<tr><td>An actor whose root is a plain Scene Component</td><td>Groups the actors attached to it</td><td><span class="status live">Live</span></td></tr>
+<tr><td>Player Start</td><td>Position and facing</td><td><span class="status live">Live</span></td></tr>
+<tr><td>Point Light</td><td>Intensity (0 to 100,000), colour, attenuation radius and cast shadow</td><td><span class="status live">Live</span></td></tr>
+<tr><td>Spot Light</td><td>Everything a Point Light keeps, plus inner and outer cone angles (0 to 90)</td><td><span class="status live">Live</span></td></tr>
+<tr><td>Directional Light</td><td>Intensity (0 to 200), colour and cast shadow. The first one becomes the sky's sun.</td><td><span class="status live">Live</span></td></tr>
+<tr><td>Trigger Box / Trigger Sphere (any actor whose root is a Box or Sphere component)</td><td>Shape and size</td><td><span class="status live">Live</span> an area that detects overlaps; add behaviour with <a href="/docs/scripting/">scripts</a></td></tr>
+<tr><td>Ambient Sound</td><td>Sound, volume, attenuation radius and looping</td><td><span class="status wip">In progress</span> can't be used yet: Mantle has no built-in sounds and you can't upload your own yet</td></tr>
+</tbody></table></div>
+<p>Actor names and tags are kept, and actors set to Movable stay dynamic. There's no visibility setting, so hidden actors show up in the published world.</p>
+
+<h3 id="place-settings">Place settings</h3>
+<p>Choose <b>Tools → Mantle → Place settings</b> to select the level's <b>Mantle Place Settings</b> actor (it's added if the level doesn't have one), then change these in the Details panel. A level without one publishes the defaults.</p>
+<div class="table-wrap"><table><thead><tr><th>Setting</th><th>Default</th><th>In game</th></tr></thead><tbody>
+<tr><td><b>Max Players</b> (1–100)</td><td class="num">16</td><td><span class="status live">Live</span> players per server</td></tr>
+<tr><td><b>Respawn Mode</b></td><td>Nearest</td><td><span class="status live">Live</span> where a player comes back after dying: Nearest (the Player Start closest to where they died), Random (any Player Start) or First (always the first one)</td></tr>
+<tr><td><b>Allow Community Servers</b></td><td>Off</td><td><span class="status live">Live</span> lets other players host community servers for your world. See <a href="/docs/creators/hosting-data/#community-hosting">Community hosting</a>.</td></tr>
+<tr><td><b>Maturity</b></td><td>Unrated</td><td><span class="status wip">In progress</span> Unrated, Everyone, Teen or Mature. Saved with your world, but nothing uses it yet.</td></tr>
+<tr><td><b>All Platforms</b> / <b>Platforms</b></td><td>All platforms</td><td><span class="status wip">In progress</span> turn All Platforms off to pick from PC, PlayStation, Xbox, Switch, iOS and Android (at least one). Saved with your world, but nothing restricts where it's offered yet.</td></tr>
+<tr><td>Gravity</td><td class="num">980</td><td><span class="status planned">Planned</span> not in the editor yet</td></tr>
+<tr><td>Ambient light</td><td>black</td><td><span class="status planned">Planned</span> not in the editor yet</td></tr>
+<tr><td>Streaming distance</td><td class="num">15000</td><td><span class="status planned">Planned</span> not in the editor yet</td></tr>
+<tr><td>Default language</td><td>None</td><td>Used by scripted UI for localisation</td></tr>
+</tbody></table></div>
+
+<h2 id="export">What happens when you publish</h2>
+<ul>
+<li><b>Left out with a warning:</b> BSP brushes, engine volumes (such as Trigger Volume and Blocking Volume), placed pawns, landscape and foliage. Use static meshes instead, and use Trigger Box or Trigger Sphere actors for trigger areas.</li>
+<li><b>Left out with a warning:</b> SkyAtmosphere, SkyLight, VolumetricCloud and ExponentialHeightFog ("Mantle provides the sky; this actor's settings are not published.").</li>
+<li><b>Converted and uploaded:</b> meshes and materials from your project. See <a href="#custom-assets">Your own assets</a>.</li>
+<li><b>Stops the publish with an error:</b> unsupported actors, post-process volumes, extra components, Ambient Sounds, names, tags or material overrides over the limits below, meshes over the mesh limits, and an empty level. See <a href="/docs/creators/#validation">What "Check this place" catches</a>.</li></ul>
+<div class="table-wrap"><table><thead><tr><th>Limit</th><th>Value</th></tr></thead><tbody>
+<tr><td>Place file size</td><td class="num">8 MiB</td></tr>
+<tr><td>Objects / nesting depth</td><td>No limit</td></tr>
+<tr><td>Name / tag length</td><td>80 / 40 characters</td></tr>
+<tr><td>Material overrides per mesh</td><td>Slots 0 to 15</td></tr>
+</tbody></table></div>
+
+<h2 id="assets">Assets</h2>
+<h3 id="library">Built-in library <span class="status live">Live</span></h3>
+<p>The library has 15 items. Use them straight from these folders so Mantle recognises them:</p>
+<ul>
+<li><b>Meshes:</b> the cube, sphere, cylinder, cone and plane from <code>/Engine/BasicShapes</code>, and the cube, plane, ramp, quarter cylinder, chamfered cube and cylinder from <code>/Game/LevelPrototyping</code>.</li>
+<li><b>Materials:</b> a basic material and three prototype grid materials.</li>
+<li>The library has no sounds or textures. The prototyping meshes don't all have their pivot in the same place.</li>
+</ul>
+
+<h3 id="custom-assets">Your own assets <span class="status live">Live</span></h3>
+<p>You can use static meshes and materials from your own project, such as a Fab pack. You don't upload them yourself: when you publish, Mantle picks up every mesh and material the level uses that isn't in the library and gets it ready for the game. Later publishes are quicker, because files you've already uploaded aren't sent again. For the full walkthrough, every limit and message, and how to fix problems, see <a href="/docs/creators/custom-assets/">Custom meshes and materials</a>.</p>
+<div class="table-wrap"><table><thead><tr><th>Kind</th><th>Rules</th></tr></thead><tbody>
+<tr><td>Mesh</td><td>Up to 500,000 triangles, 1,500,000 vertices and 8 material slots. Nanite meshes are sent as their fallback mesh, so raise Fallback Triangle Percent if it looks too coarse. A mesh whose material sections share vertices can't be converted.</td></tr>
+<tr><td>Material</td><td>Converted to work in the game. Opaque, masked and translucent materials work, one- or two-sided. Effects that can't be kept (such as animated materials, wind, refraction, subsurface scattering, parallax and vertex-colour blending) show as warnings in "Check this place". The material still publishes.</td></tr>
+<tr><td>Texture</td><td>Up to 2048 on a side. Larger textures are scaled down when you publish. Screened automatically.</td></tr>
+<tr><td>Sound</td><td>Not supported yet</td></tr>
+</tbody></table></div>
+<p>A world can't go live until every file it uses has been processed and approved. See <a href="/docs/creators/publishing/#publish-flow">How publishing works</a>.</p>
+
+<h3 id="custom-vehicles">Your own vehicles <span class="status planned">Planned</span></h3>
+<p>Uploading your own cars and other vehicles is coming later. See the <a href="/docs/creators/vehicles/">Vehicles</a> guide for how converting a car will work.</p>
+
+<h2 id="environment">Sky and environment</h2>
+<ul>
+<li><span class="status live">Live</span> <b>Default sky:</b> Mantle adds an atmosphere, a real-time sky light, clouds and fog to your world. If your place has no Directional Light, Mantle also adds a sun (intensity 3.5).</li>
+<li><span class="status live">Live</span> <b>Lights</b> are all Movable in the published world, and no lighting is baked.</li>
+<li><span class="status planned">Planned</span> <b>Custom sky</b>.</li>
+<li><span class="status planned">Planned</span> <b>Post-process</b>.</li>
+<li><span class="status planned">Planned</span> <b>Landscape, foliage and water</b> support.</li>
+</ul>

@@ -1,0 +1,43 @@
+<div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
+
+<div class="callout tip"><strong>Coming to the Mantle plugin</strong><p>The vehicle converter isn't in the Mantle plugin yet. This guide describes how it will work, so you can get a car ready now. Until it arrives, a vehicle placed in your level gets the "Check this place" warning "is a placed [type], which Mantle does not publish." and is left out when you publish.</p></div>
+
+<h2 id="overview">How it works <span class="status planned">Planned</span></h2>
+<p>Most cars you can make or buy for Unreal are built on Epic's <b>Chaos Vehicles</b> plugin. The converter takes a Chaos Vehicles car and turns it into a Mantle vehicle that:</p>
+<ul>
+<li><b>Looks the same:</b> the same skeletal mesh, animation and control rig, with the same meshes, glass and lights in the same places.</li>
+<li><b>Drives as close to the same as possible:</b> the car's engine, gearbox, suspension, tyre, brake, steering and camera settings come across with it.</li>
+</ul>
+<p>Players get in with <kbd>F</kbd> / Y and drive it with the usual <a href="/docs/players/playing/#vehicles">vehicle controls</a>.</p>
+
+<h2 id="what-you-can-convert">What you can convert</h2>
+<ul>
+<li>A <b>Wheeled Vehicle Pawn</b> Blueprint that uses the <b>Chaos Wheeled Vehicle Movement</b> component. Unreal's Vehicle template cars are built this way.</li>
+<li>A skeletal mesh with a bone at the centre of each wheel, a physics asset for the body, and an animation blueprint that uses <b>Wheel Controller</b> nodes to spin and steer the wheels.</li>
+</ul>
+<p>Vehicles built some other way, such as ones with their own C++ movement code, can't be converted.</p>
+
+<h2 id="prepare">Getting a car ready</h2>
+<ol class="steps">
+<li><b>Check it drives in its own project</b><p>Drive the car in the project it came from first. The converter copies its settings as they are, so tune it there until it handles the way you want.</p></li>
+<li><b>Keep its content together</b><p>The converter uses everything the car's Blueprint points to: the skeletal mesh, skeleton, physics asset, animation blueprint, control rig, and any static meshes, materials and textures attached to it. It doesn't use the car's own Blueprint graph or C++ classes, so gameplay logic in those doesn't come across.</p></li>
+<li><b>Mark the driver's seat</b><p>Give the seat a material slot whose name contains <code>Seat</code>, and the converter places the driver there. If your car has no such slot, you'll set the driver's position yourself.</p></li>
+<li><b>Check the wheel bones</b><p>Each wheel needs its own bone at the wheel's centre. It doesn't matter which way the wheel bones face.</p></li>
+</ol>
+
+<h2 id="conversion">What you get</h2>
+<p>The converter gives you a vehicle you can drag into your level, plus a vehicle definition holding its settings. You can edit the definition afterwards, including the driver's seat position. Your original car isn't changed.</p>
+
+<h2 id="differences">What's different</h2>
+<ul>
+<li><b>Handling:</b> the converted car drives close to the original rather than identically. Test drive it and adjust the definition if you need to.</li>
+<li><b>Not carried across:</b> a few advanced settings, such as a front-to-rear torque split other than 50/50, don't come across.</li>
+</ul>
+
+<h2 id="problems">When a conversion stops</h2>
+<div class="table-wrap"><table><thead><tr><th>Problem</th><th>What to do</th></tr></thead><tbody>
+<tr><td>The Blueprint isn't a Chaos Vehicles Wheeled Vehicle Pawn</td><td>Only Chaos Vehicles cars can be converted. See <a href="#what-you-can-convert">What you can convert</a>.</td></tr>
+<tr><td>Some of the car's content is missing</td><td>Bring every asset the car uses into your project, not just the Blueprint.</td></tr>
+<tr><td>The converted animation blueprint doesn't compile</td><td>Make sure the original animation blueprint compiles and drives the wheels with Wheel Controller nodes.</td></tr>
+<tr><td>No driver's seat found</td><td>Name the seat's material slot with <code>Seat</code>, or set the driver's position yourself.</td></tr>
+</tbody></table></div>

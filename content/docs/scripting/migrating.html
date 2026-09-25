@@ -1,0 +1,39 @@
+<h2 id="from-roblox">Coming from Roblox</h2>
+    <div class="table-wrap"><table><thead><tr><th>Roblox</th><th>Mantle</th></tr></thead><tbody>
+      <tr><td>ServerScriptService Script</td><td>A file in <code>Scripts/Server/</code></td></tr>
+      <tr><td>StarterPlayerScripts LocalScript</td><td>A file in <code>Scripts/Client/</code></td></tr>
+      <tr><td>ModuleScript in ReplicatedStorage / ServerStorage</td><td><code>Scripts/Shared/</code> / <code>Scripts/Server/Modules/</code>, <code>require("@Shared/X")</code></td></tr>
+      <tr><td>CollectionService:GetTagged / GetInstanceAddedSignal</td><td><code>World:FindByTag</code> / <code>World:OnTagged</code> (existing and future)</td></tr>
+      <tr><td>part.Touched / TouchEnded</td><td><code>entity.Touched</code> / <code>TouchEnded</code> (fires once per contact, with the Player whose character is standing on, overlapping or within 4 cm of the entity; player characters only)</td></tr>
+      <tr><td>TweenService:Create(part, info, goal):Play()</td><td><code>entity:Tween(goal, seconds, style, direction)</code>, then <code>:Wait()</code>. Style and direction are strings with Roblox's EasingStyle and EasingDirection names, such as <code>"Quad"</code> and <code>"InOut"</code>.</td></tr>
+      <tr><td>RemoteEvent</td><td><code>Net:Remote(name)</code>, same method names</td></tr>
+      <tr><td>BindableEvent</td><td><code>Events:Get(name)</code></td></tr>
+      <tr><td>Attributes</td><td><code>SetAttribute</code> / <code>GetAttribute</code>; <code>AttributeChanged</code> fires with <code>(name, value)</code>, or use <code>entity:ObserveAttribute(name, fn)</code> for one attribute (values set on the server are synced to every player)</td></tr>
+      <tr><td>Instance:Clone() / Destroy()</td><td>Same</td></tr>
+      <tr><td>task library, signals, Vector3</td><td>Same shape</td></tr>
+      <tr><td>HumanoidDescription (reading what a player wears)</td><td><code>player.Avatar</code> and <code>player.Wearing</code>, read-only and server only</td></tr>
+      <tr><td>AvatarEditorService prompts, playing an emote</td><td><code>Avatar:OpenCustomizer()</code>, <code>Avatar:PlayEmote(itemId)</code> (client only; equipped emotes only)</td></tr>
+      <tr><td>ReplicatedStorage values for shared state</td><td><code>State</code> with <code>Observe</code></td></tr>
+    </tbody></table></div>
+
+    <h2 id="from-fivem">Coming from FiveM</h2>
+    <div class="table-wrap"><table><thead><tr><th>FiveM</th><th>Mantle</th></tr></thead><tbody>
+      <tr><td>A resource with <code>fxmanifest.lua</code> listing server/client/shared scripts</td><td>The level's <code>Scripts/</code> folder. The folders are the manifest: <code>Server/</code>, <code>Client/</code>, <code>Shared/</code>.</td></tr>
+      <tr><td><code>.lua</code> files</td><td><code>.lua</code> works and runs as Luau (Lua 5.1 based: no <code>goto</code>, no <code>&lt;const&gt;</code>; use <code>bit32</code> for bitwise operations)</td></tr>
+      <tr><td><code>RegisterNetEvent</code> + <code>AddEventHandler</code></td><td><code>Net:Remote(name).OnServerEvent:Connect(fn)</code>. The sending player is the first argument, instead of the global <code>source</code>.</td></tr>
+      <tr><td><code>TriggerServerEvent</code> / <code>TriggerClientEvent(name, id, …)</code> (-1 for all)</td><td><code>:FireServer</code> / <code>:FireClient(player, …)</code> / <code>:FireAllClients(…)</code></td></tr>
+      <tr><td><code>TriggerEvent</code> (local)</td><td><code>Events:Get(name):Fire(…)</code></td></tr>
+      <tr><td><code>Citizen.Wait</code>, <code>CreateThread</code></td><td><code>task.wait</code>, <code>task.spawn</code></td></tr>
+      <tr><td>GlobalState / state bags</td><td><code>State</code> (global), entity attributes (per object)</td></tr>
+      <tr><td>Lua + JS + C# resources sharing events</td><td>The same idea: Luau, TS/JS and Python share State, Events and Remotes</td></tr>
+    </tbody></table></div>
+
+    <h2 id="from-unreal">Coming from Unreal</h2>
+    <div class="table-wrap"><table><thead><tr><th>Unreal</th><th>Mantle</th></tr></thead><tbody>
+      <tr><td>A Blueprint or C++ component on an actor</td><td>A script that finds actors by <b>actor tag</b>. One script covers every tagged actor, and you don't attach it to any of them.</td></tr>
+      <tr><td>BeginPlay / Tick</td><td>Top-level code runs at start. For repeated work, loop with <code>task.wait</code> or use signals.</td></tr>
+      <tr><td>OnActorBeginOverlap / OnComponentHit</td><td><code>Touched</code> / <code>TouchEnded</code> fire for player characters standing on, overlapping or within 4 cm of the entity. Contact between two entities, or from a projectile, doesn't fire them.</td></tr>
+      <tr><td>Replicated properties, RPCs</td><td>Changes made on the server sync to every player automatically. For shared values use <code>State</code>; for messages use <code>Remote</code>.</td></tr>
+      <tr><td>Timelines</td><td><code>Tween</code></td></tr>
+      <tr><td>PIE with several clients</td><td>Scripts don't run in PIE. Use separate Mantle server and client processes, or a published session.</td></tr>
+    </tbody></table></div>

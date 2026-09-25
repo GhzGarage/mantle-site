@@ -1,0 +1,179 @@
+<div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
+
+<p><span class="status live">Live</span> You can build a world from static meshes, materials and textures in your own project, whether you made them yourself or they came from a Fab pack. You never upload them by hand: when you publish, the plugin finds every mesh and material the level uses that isn't in Mantle's <a href="/docs/creators/building/#library">built-in library</a>, prepares it for Mantle and uploads anything new.</p>
+
+<h2 id="before-you-start">Before you start</h2>
+<ul>
+<li>You need the Mantle plugin and to be <a href="/docs/creators/#sign-in">signed in</a> with a creator token.</li>
+<li>Only <b>Static Mesh Actors</b> are published. Skeletal meshes, Blueprint actors, landscape and foliage aren't. See <a href="/docs/creators/building/#entities">What you can place</a>.</li>
+<li>Sounds from your project can't be used yet, and <a href="/docs/creators/vehicles/">your own vehicles</a> are coming later.</li>
+</ul>
+
+<h2 id="steps">Getting your assets into a world</h2>
+<ol class="steps">
+<li><b>Bring the assets into your project</b><p>Add the Fab pack to your project, or import your own meshes and textures, as you normally would in Unreal. Nothing about them needs to change for Mantle.</p></li>
+<li><b>Place them in the level</b><p>Drag each Static Mesh into the level so it becomes a Static Mesh Actor. If a pack only gives you Blueprints, open the Blueprint and place the meshes it uses instead. You can change materials on the actor's slots as usual; a slot with no material uses Unreal's default material.</p></li>
+<li><b>Set collision and shadows on the actor</b><p>The actor's <b>Collision Enabled</b> decides how players meet it: No Collision publishes as none, Query Only as overlap, and anything else as blocking. <b>Cast Shadow</b> is kept too.</p></li>
+<li><b>Save your assets</b><p>Save the level and any meshes or materials you changed. Unsaved assets still publish, but they're prepared again on every publish, which is slower. See <a href="#cache">The conversion cache</a>.</p></li>
+<li><b>Run Check this place</b><p>Choose <b>Tools → Mantle → Check this place</b>. It checks every mesh and material from your project once, however many actors use it. Errors must be fixed before you can publish. Warnings tell you what will look different in Mantle, but don't stop anything. See <a href="#messages">Messages and how to fix them</a>.</p></li>
+<li><b>Publish</b><p>Choose <b>Tools → Mantle → Publish</b> (or <b>Save to Mantle</b> for a private draft). The <b>Mantle Publish</b> tab opens and shows each step. You can keep working while it runs.</p></li>
+</ol>
+
+<h3 id="publish-steps">What the Mantle Publish tab shows</h3>
+<div class="table-wrap"><table><thead><tr><th>Step</th><th>What happens</th></tr></thead><tbody>
+<tr><td><b>Check this place</b></td><td>The same checks as the menu command. If there are errors, you'll see "This place has N problem(s) to fix first." and nothing is uploaded.</td></tr>
+<tr><td><b>Prepare meshes and materials</b></td><td>Each mesh and material is prepared, shown as "Preparing meshes and materials for Mantle: N of M ('…')...". Anything unchanged since last time is quicker. A level built only from library assets shows "Nothing to prepare: only Mantle library assets".</td></tr>
+<tr><td><b>Upload to Mantle</b></td><td>Anything already on Mantle is skipped and counted as "already there", so an unchanged republish sends nothing.</td></tr>
+<tr><td><b>Mantle processes and screens them</b></td><td>Mantle checks each file before players can use it, and screens textures. The step shows "N of M ready". Publish waits here as long as it takes. <b>Save to Mantle</b> doesn't wait: "Mantle finishes these in the background; they are checked again when you publish".</td></tr>
+<tr><td><b>Publish</b></td><td>The place file is saved and, for Publish, goes live as a new revision.</td></tr>
+</tbody></table></div>
+<p>Anything that needs you appears under <b>Needs your attention</b>, with what to do underneath. Warnings from checking and preparing are listed under <b>Notes from Check this place</b>. <b>Cancel</b> stops at any point, and <b>Publish again</b> carries on from where it stopped: everything already uploaded stays on Mantle. See <a href="/docs/creators/publishing/#publish-flow">How publishing works</a> for the rest of the flow.</p>
+
+<h2 id="limits">Limits</h2>
+<div class="table-wrap"><table><thead><tr><th>Limit</th><th>Value</th><th>If you go over</th></tr></thead><tbody>
+<tr><td>Triangles per mesh</td><td class="num">500,000</td><td>Error in Check this place</td></tr>
+<tr><td>Vertices per mesh</td><td class="num">1,500,000</td><td>Error in Check this place</td></tr>
+<tr><td>Material slots per mesh</td><td class="num">8</td><td>Error in Check this place</td></tr>
+<tr><td>Converted mesh file</td><td class="num">64 MB</td><td>Error while preparing</td></tr>
+<tr><td>Texture size</td><td>2048 on the longest side</td><td>Scaled down, with a warning</td></tr>
+<tr><td>Texture file</td><td class="num">8 MB</td><td>Re-compressed or scaled down, with a warning</td></tr>
+<tr><td>Emissive strength</td><td>Up to 100</td><td>Capped, with a warning</td></tr>
+<tr><td>Texture tiling and offset</td><td>Up to 1024</td><td>Clamped, with a warning</td></tr>
+<tr><td>Uploads per hour</td><td>5,000 meshes, materials and textures, and 2 GiB in total</td><td>Publish pauses and carries on by itself. See <a href="#rate-limits">Upload limits</a>.</td></tr>
+</tbody></table></div>
+<p>Only the material slots the full-detail mesh actually draws with count.</p>
+
+<h2 id="conversion">What players see</h2>
+
+<h3 id="meshes">Meshes</h3>
+<ul>
+<li><b>Full detail:</b> players see the mesh at full detail.</li>
+<li><b>Nanite:</b> players see a Nanite mesh's fallback mesh. If it looks too coarse, raise <b>Fallback Triangle Percent</b> in the mesh's Nanite settings. If it's over the triangle limit, lower it.</li>
+<li><b>Collision:</b> a blocking or overlap mesh collides using its own triangles. Simple collision shapes set up on the mesh in Unreal aren't used.</li>
+</ul>
+
+<h3 id="materials">Materials</h3>
+<p>When you publish, Mantle converts each material to work in the game. This works for any material, including material instances and graphs built from material functions.</p>
+<ul>
+<li><b>Kept:</b> base colour, normal, roughness, metallic, ambient occlusion and emissive (with its strength, up to 100).</li>
+<li><b>Blend modes:</b> Opaque, Masked (with its opacity mask clip value) and Translucent. Other blend modes become ordinary translucency.</li>
+<li><b>Two Sided</b> is kept.</li>
+<li><b>Unlit materials</b> become a glowing material that lighting still touches.</li>
+</ul>
+<p>Some effects can't be kept. Check this place names each one as a warning, and the material still publishes:</p>
+<div class="table-wrap"><table><thead><tr><th>Effect</th><th>What players see</th></tr></thead><tbody>
+<tr><td>Time, Panner, Rotator, flipbooks</td><td>Frozen</td></tr>
+<tr><td>World Position Offset (wind, vertex animation)</td><td>The mesh doesn't sway or move</td></tr>
+<tr><td>World-aligned or triplanar mapping</td><td>The pattern doesn't line up across neighbouring meshes</td></tr>
+<tr><td>Refraction</td><td>Plain see-through</td></tr>
+<tr><td>Subsurface shading models</td><td>Flatter skin, wax and leaves</td></tr>
+<tr><td>Bump offset and parallax</td><td>A flat surface up close</td></tr>
+<tr><td>Vertex colour</td><td>Layers painted per vertex don't show</td></tr>
+<tr><td>Detail normal maps (two or more normal textures)</td><td>Fine detail may soften</td></tr>
+<tr><td>Pixel depth offset, displacement</td><td>Dropped</td></tr>
+<tr><td>Clear coat, hair, cloth, eye, single layer water, thin translucent</td><td>Standard shading</td></tr>
+<tr><td>Decal, light function and post-process materials</td><td>Flattened as a plain surface</td></tr>
+</tbody></table></div>
+<p>If an effect matters to how your place looks, bake it into the material's textures or pick another material.</p>
+
+<h3 id="textures">Textures</h3>
+<ul>
+<li>Textures are at most 2048 on the longest side. Larger ones are scaled down when you publish, keeping their shape. Detail finer than that is lost.</li>
+<li>Each texture file must fit in 8 MB. If one is too big, it's compressed harder or scaled down, with a warning.</li>
+<li>Every texture is screened before a place can go live with it.</li>
+<li>If one image is used for two different jobs, such as colour in one material and a normal map in another, one of them may be left out. See <a href="#upload-messages">the upload messages</a>.</li>
+</ul>
+
+<h2 id="messages">Messages and how to fix them</h2>
+<p>Messages name the Unreal asset, and often the actors using it, for example "(used by 'Crate' and 3 more)". Below, that part is shown as "(used by '…')".</p>
+
+<h3 id="check-errors">Errors in Check this place</h3>
+<p>These stop a publish before anything is uploaded.</p>
+<div class="table-wrap"><table><thead><tr><th>Message</th><th>How to fix it</th></tr></thead><tbody>
+<tr><td>Mesh '…' (used by '…') has N triangles; a place mesh may have at most 500,000.</td><td>"Use a lower-detail version of it, or reduce it with the mesh editor's LOD tools (for Nanite meshes, lower Fallback Triangle Percent)."</td></tr>
+<tr><td>Mesh '…' (used by '…') has N vertices; a place mesh may have at most 1,500,000.</td><td>"Use a lower-detail version of it."</td></tr>
+<tr><td>Mesh '…' (used by '…') has N material slots; a place mesh may have at most 8.</td><td>"Give it 8 materials or fewer (Merge Actors can bake several into one)."</td></tr>
+<tr><td>Mesh '…' (used by '…')'s material sections share vertices, which Mantle's mesh format cannot keep apart.</td><td>"Re-import the mesh, or give it one material."</td></tr>
+<tr><td>Mesh '…' (used by '…') has no render data, so it cannot be converted.</td><td>"Open the mesh in the editor once (or re-import it), then try again."</td></tr>
+</tbody></table></div>
+
+<h3 id="check-warnings">Warnings in Check this place</h3>
+<p>These don't stop a publish.</p>
+<div class="table-wrap"><table><thead><tr><th>Message</th><th>What to do</th></tr></thead><tbody>
+<tr><td>Mesh '…' (used by '…') uses Nanite, so it exports as its fallback mesh (N triangles), which is what players will see.</td><td>"If it looks too coarse up close, raise Fallback Triangle Percent in the mesh's Nanite settings."</td></tr>
+<tr><td>Texture '…' (in material '…') is WxH; it is downscaled to 2048² when published.</td><td>"Nothing to do: Mantle textures are at most 2048 on a side. Detail finer than that is lost."</td></tr>
+<tr><td>Material '…' (used by '…'): followed by one of:
+<ul>
+<li>time-based animation will be frozen (panners, flipbooks and Time nodes stop moving).</li>
+<li>world position offset (wind or vertex animation) is dropped, so the mesh will not sway or move.</li>
+<li>world-aligned or triplanar mapping is baked onto the mesh's own UVs, so its pattern will not line up across neighbouring meshes.</li>
+<li>refraction is dropped; it renders as plain see-through.</li>
+<li>subsurface scattering is dropped, so skin, wax and leaves look flatter.</li>
+<li>parallax depth is flattened, so the surface looks flat up close.</li>
+<li>vertex-colour blending is dropped, so layers painted per vertex will not show.</li>
+<li>its detail normals are baked at the material's texture size, so fine surface detail may soften.</li>
+<li>pixel depth offset is dropped.</li>
+<li>displacement is dropped, so the surface keeps the mesh's own shape.</li>
+<li>its [clear coat / hair / cloth / eye / single layer water / thin translucent] shading becomes standard shading.</li>
+<li>it is unlit; Mantle shows it as a glowing material that lighting still touches.</li>
+<li>its [additive / modulate / alpha composite / alpha holdout / coloured transmittance] blending becomes ordinary translucency.</li>
+<li>it is not a surface material (a decal, light function or post-process material), so it is flattened as a plain surface.</li>
+</ul></td><td>"It still publishes. Nothing to do unless the effect matters to how your place looks; if it does, bake the effect into the material's textures or pick another material."</td></tr>
+</tbody></table></div>
+
+<h3 id="prepare-messages">Messages while preparing</h3>
+<p>These come from the <b>Prepare meshes and materials</b> step and appear with the notes from Check this place. Errors stop the publish with "N mesh(es) or material(s) could not be prepared for Mantle. The list below says why."</p>
+<div class="table-wrap"><table><thead><tr><th>Level</th><th>Message</th><th>How to fix it</th></tr></thead><tbody>
+<tr><td>Error</td><td>Mesh '…' is N MB once converted; an upload may be at most 64 MB.</td><td>"Use a lower-detail version of it."</td></tr>
+<tr><td>Error</td><td>Mesh '…' could not be converted: [reason]</td><td>"Fix the mesh as the message says, or replace it, then try again."</td></tr>
+<tr><td>Error</td><td>A mesh this place uses could not be loaded. / A material this place uses could not be loaded.</td><td>"Check the level for missing assets, then try again."</td></tr>
+<tr><td>Warning</td><td>Material '…' could not be flattened ([reason]), so it publishes as plain grey.</td><td>"Try a simpler material on these meshes, or report it with the log if it keeps happening."</td></tr>
+<tr><td>Warning</td><td>Material '…': its [part] part is dropped.</td><td rowspan="8">"It still publishes. Nothing to do unless it matters to how your place looks."</td></tr>
+<tr><td>Warning</td><td>Material '…': its emissive strength of N is capped at 100.</td></tr>
+<tr><td>Warning</td><td>Material '…': its textures use different tiling or offsets; Mantle applies one to all of them, so some may line up differently.</td></tr>
+<tr><td>Warning</td><td>Material '…': it samples a second UV channel; Mantle uses the first, so that texture may land in the wrong place.</td></tr>
+<tr><td>Warning</td><td>Material '…': it rotates its texture coordinates, which Mantle does not, so its textures may appear turned.</td></tr>
+<tr><td>Warning</td><td>Material '…': its texture tiling is beyond what Mantle keeps (1024), so it is clamped.</td></tr>
+<tr><td>Warning</td><td>[texture] ([use] of material '…') was re-encoded at JPEG quality N to fit the 8 MB upload limit. / … was downscaled to [size] to fit the 8 MB upload limit.</td></tr>
+<tr><td>Warning</td><td>Material '…': its [base colour / normal map / emissive] image could not be read, so it is left out.</td></tr>
+</tbody></table></div>
+
+<h3 id="upload-messages">Messages while uploading and processing</h3>
+<p>A file Mantle refuses is listed on its own and the rest carry on uploading. If any file is refused, nothing goes live: "N file(s) this place uses could not be published, so nothing went live. The list below says why and what to do. Everything else is uploaded and kept: the next Publish only sends what changed."</p>
+<div class="table-wrap"><table><thead><tr><th>Message</th><th>How to fix it</th></tr></thead><tbody>
+<tr><td>'…' did not pass Mantle's content screening, so a place cannot go live with it. Replace it or remove what uses it, then Publish again.</td><td>A texture was rejected. Replace it or stop using it.</td></tr>
+<tr><td>Mantle could not process '…': [reason]. Fix it as that says, or replace it, then Publish again.</td><td>As the message says.</td></tr>
+<tr><td>'…' was removed from your account by a Mantle moderator (usually after a licence complaint), so it cannot be uploaded or used again. Remove it from the level or replace it, then Publish again.</td><td>See <a href="#removed">If a file is rejected or removed</a>.</td></tr>
+<tr><td>'…' is too large for Mantle ([reason]). Lower its resolution or simplify it, then Publish again.</td><td>As the message says.</td></tr>
+<tr><td>Material '…' goes live without its [base colour / normal / roughness, metal and occlusion / emissive] map. '…' has exactly the same pixels as an image already on Mantle for another use, and Mantle prepares each image for one use only.</td><td>"To keep the map, give '…' pixels that differ from the other image (a copy with a small change is enough), then Publish again." This one is a warning: the place still goes live.</td></tr>
+<tr><td>'…' is waiting for a Mantle moderator to look at it.</td><td>"Nothing to do but wait: choose Publish again once it is approved." Publish stops with "Everything is uploaded, but Mantle's moderators have to look at N file(s) first, such as '…'. Nothing went live yet. Choose Publish again once they are approved; nothing is uploaded twice."</td></tr>
+<tr><td>Could not reach Mantle while [doing something]. Check your connection, then choose Publish again: it continues where this stopped, and nothing is uploaded twice.</td><td>As the message says.</td></tr>
+</tbody></table></div>
+<p>The final publish can also be stopped because a file isn't ready, was rejected or isn't yours on Mantle. See <a href="/docs/creators/publishing/#publish-blocked">What stops a publish</a>.</p>
+
+<h2 id="cache">The conversion cache</h2>
+<p>The plugin keeps what it has prepared in your project's <code>Saved/Mantle/AssetCache</code> folder, so a later publish only prepares what changed.</p>
+<ul>
+<li>Only saved assets are kept. An asset with unsaved changes is prepared every time until you save it.</li>
+<li>A plugin update or a different engine version may convert everything again once.</li>
+<li>It's safe to delete the folder. Everything is simply converted again on the next publish.</li>
+</ul>
+
+<h2 id="updating">Updating or replacing an asset</h2>
+<ul>
+<li><b>To change an asset,</b> edit it in Unreal, save it and publish again. Only what changed is uploaded.</li>
+<li><b>To replace an asset,</b> swap it in the level (or on the actor's material slot) and publish again. The new one is uploaded like any other.</li>
+<li>Servers already running keep the revision they started with, so players in them see the old version until the server empties. See <a href="/docs/creators/publishing/#revisions">Revisions</a>.</li>
+<li>If you edit the level while a publish is running, the plugin prepares and uploads what's new before saving. If the level keeps changing, it stops with "The level kept changing while it was being published. Pause editing for a moment and choose Publish again; nothing is uploaded twice."</li>
+</ul>
+
+<h2 id="removed">If a file is rejected or removed</h2>
+<ul>
+<li><b>Rejected in screening or review:</b> the place can't go live with it. Replace the texture (or the material or mesh that uses it), or remove what uses it, then publish again.</li>
+<li><b>Waiting for a moderator:</b> nothing goes live until it's approved. Choose <b>Publish again</b> once it is. Nothing is uploaded twice.</li>
+<li><b>Removed by a moderator:</b> moderators can remove a file from your account, usually after a licence complaint (for example a Fab pack you don't have the rights to). After that it can't be uploaded or used again, and your world's next publish is stopped until you replace it or remove what uses it.</li>
+</ul>
+<div class="callout tip"><strong>Only use assets you have the rights to</strong><p>Everything you upload is tied to your account. Use your own work, or Fab and marketplace content whose licence lets you use it in your game.</p></div>
+
+<h2 id="rate-limits">Upload limits</h2>
+<p>Each account can upload up to 5,000 meshes, materials and textures and 2 GiB per hour. Files your account already has on Mantle aren't sent again, so they don't count. A big pack's first publish can reach the limit. When it does, Publish pauses by itself and shows "Mantle's hourly upload limit is reached. Uploading continues by itself at HH:MM (in about N minutes); you can keep working meanwhile." If the wait would be longer than about an hour, it stops instead and tells you when to try again. Everything uploaded so far is kept. See <a href="/docs/creators/hosting-data/#official-hosting">Official hosting</a> for the other limits.</p>

@@ -1,0 +1,66 @@
+<div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
+
+<h2 id="publish-flow">How publishing works <span class="status live">Live</span></h2>
+<p><b>Tools → Mantle</b> has two commands: <b>Save to Mantle</b> ("Upload this level as a private draft. Nobody else can see it.") and <b>Publish</b>. Both ask you to <a href="/docs/creators/#sign-in">sign in</a> first if you haven't. Publish also asks "What changed in this version?" for optional revision notes (up to 1,000 characters), which are kept with the revision.</p>
+<p>Both run in the background, so you can keep working. The <b>Mantle Publish</b> tab shows each step, with a progress bar, a "Needs your attention" list and a Details log:</p>
+<ol class="steps">
+<li><b>Check this place</b><p>Runs the same checks as "Check this place". If anything fails, you'll see "This place has N problem(s) to fix first."</p></li>
+<li><b>Prepare meshes and materials</b><p>Converts the meshes and materials from your project that the level uses. A level built only from library assets skips this.</p></li>
+<li><b>Upload to Mantle</b><p>Uploads the converted files and every script in the level's <code>Scripts</code> folder. Files you've uploaded before aren't sent again.</p></li>
+<li><b>Mantle processes and screens them</b><p>Mantle processes the files and screens textures and scripts. Something that needs a moderator shows as "waiting for a Mantle moderator to look at it."</p></li>
+<li><b>Publish</b><p>The first time you publish a level, this creates a new world with the level's name. Later publishes update that same world. Mantle saves your draft and, for Publish, makes it live as a new, numbered revision.</p></li>
+</ol>
+<p>When it works, you'll see "Saved to Mantle. Nobody can see it until you publish." or "Published revision N. Anyone can join it now." If it stops, the tab says why and what to do. <b>Cancel</b> stops at any point without publishing anything, and <b>Publish again</b> carries on from where it stopped: everything already uploaded stays on Mantle.</p>
+<p>For automation, the <code>Mantle.Publish</code> console command runs the same Publish on the open level and waits until it finishes (30 minutes at most by default, or set <code>-TimeoutMinutes=N</code>).</p>
+
+<h3 id="publish-blocked">What stops a publish</h3>
+<div class="table-wrap"><table><thead><tr><th>Problem</th><th>Message</th></tr></thead><tbody>
+<tr><td>Place file over 8 MiB</td><td>That place file is too large to publish.</td></tr>
+<tr><td>Place file breaks the place rules</td><td>That place file is not a valid Mantle place: [where] [what's wrong].</td></tr>
+<tr><td>Unreadable place file</td><td>That place file could not be read.</td></tr>
+<tr><td>Made with a newer version of Mantle</td><td>This place was made with a newer version of Mantle than the server understands.</td></tr>
+<tr><td>Fails compatibility checks (for example scripts that need a newer script API than the released game)</td><td>This revision is not compatible with the supported release matrix.</td></tr>
+<tr><td>Files still being processed</td><td>Your changes are saved, but Mantle is still processing N file(s), so it has not gone live yet. Choose Publish again in a minute; nothing is uploaded twice.</td></tr>
+<tr><td>Files waiting for a moderator</td><td>Everything is uploaded, but Mantle's moderators have to look at N file(s) first, such as '…'. Nothing went live yet. Choose Publish again once they are approved; nothing is uploaded twice.</td></tr>
+<tr><td>Files rejected in review</td><td>Mantle's review rejected N file(s) this place uses, so nothing went live. The list below names them.</td></tr>
+<tr><td>Files a moderator removed from your account</td><td>N file(s) this place uses are not yours on Mantle, so nothing went live. The list below names them.</td></tr>
+<tr><td>Scripts still being screened</td><td>Your changes are saved, but Mantle is still screening this place's new scripts, so it has not gone live yet. Choose Publish again in a minute.</td></tr>
+<tr><td>Scripts rejected</td><td>Some scripts in this place were rejected in review. Remove them to publish.</td></tr>
+<tr><td>Too many uploads in an hour</td><td>Mantle limits how much one account uploads per hour, and this account can upload again in about [time]. See <a href="/docs/creators/hosting-data/#official-hosting">upload limits</a>.</td></tr>
+<tr><td>Draft changed by another save while publishing</td><td>Your draft changed while this was running. Try again.</td></tr>
+</tbody></table></div>
+<p>Mantle screens new or changed scripts automatically before they can go live. If screening is still going, Publish tries again by itself for a short while.</p>
+
+<h2 id="revisions">Revisions</h2>
+<ul>
+<li><span class="status live">Live</span> <b>Every publish creates a new revision</b>, numbered in order. Until you publish, each save replaces your draft.</li>
+<li><span class="status live">Live</span> <b>Running games keep going.</b> Publishing doesn't disrupt players mid-game: games already running stay on the revision they started with. New games start on your latest revision.</li>
+<li><span class="status wip">In progress</span> <b>Previews and staged rollouts:</b> try a new revision privately, then release it to a percentage of players before everyone else. Controls are coming to the editor.</li>
+<li><span class="status wip">In progress</span> <b>Rollback:</b> go back to an earlier revision. Controls are coming to the editor. A revision that stops being live can be made live again for 180 days. A preview or staged revision that never went live can be for 30 days. After that you'll see "That revision is past its retention window and can no longer be made live."</li>
+</ul>
+
+<h2 id="metadata">World details</h2>
+<div class="table-wrap"><table><thead><tr><th>Detail</th><th>Rules</th><th>How it's set</th></tr></thead><tbody>
+<tr><td>Name</td><td>Up to 80 characters</td><td><span class="status live">Live</span> uses your level's name</td></tr>
+<tr><td>Description</td><td>Up to 4,000 characters</td><td><span class="status wip">In progress</span> coming to the editor</td></tr>
+<tr><td>Thumbnail</td><td>An uploaded image</td><td><span class="status wip">In progress</span> coming to the editor</td></tr>
+<tr><td>Players per server</td><td>1–100, default 16</td><td><span class="status live">Live</span> Max Players in <a href="/docs/creators/building/#place-settings">Place settings</a></td></tr>
+<tr><td>Maturity and platforms</td><td>See <a href="/docs/creators/building/#place-settings">Place settings</a></td><td><span class="status wip">In progress</span> set in Place settings, not used yet</td></tr>
+<tr><td>Visibility, tags and genres</td><td>None</td><td><span class="status planned">Planned</span> for now, published worlds are public</td></tr>
+</tbody></table></div>
+
+<h2 id="managing">Managing your worlds <span class="status wip">In progress</span></h2>
+<ul>
+<li>Screens for listing, editing and deleting your worlds in the editor and the Mantle client are coming soon.</li>
+<li>To change a world's details, save a new draft.</li>
+<li>Deleting a world removes it from the catalogue, featured list, charts and favourites. You can't undo this.</li>
+<li>Each world has one owner. <span class="status planned">Planned</span> Transferring ownership, plus collaborators and teams.</li>
+</ul>
+
+<h2 id="discovery">How worlds get discovered <span class="status live">Live</span></h2>
+<ul>
+<li><b>Catalogue and search:</b> published worlds are listed newest first. Search covers world names, descriptions and creator names, and results can be sorted by Best match (the default), Most played or Newest. Your creator page lists all your worlds.</li>
+<li><b>Featured:</b> up to 12 worlds hand-picked by Mantle.</li>
+<li><b>Charts:</b> "Top 10 this week" shows the most played worlds of the past week. "New and rising" shows worlds that are picking up players, then the newest worlds.</li>
+<li><b>Stats:</b> your profile shows how many worlds you've published. World cards show how many people are playing now. Charts show unique players and play time. <span class="status planned">Planned</span> Detailed stats for your own worlds.</li>
+</ul>
