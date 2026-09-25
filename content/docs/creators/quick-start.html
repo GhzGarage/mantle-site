@@ -1,0 +1,39 @@
+<div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
+
+<p>This page takes you from an empty Unreal project to a published world your friends can join. Each step links to the page with the full details.</p>
+
+<h2 id="before-you-start">What you need</h2>
+<ul>
+<li><b>Unreal Engine 5.8</b> from the Epic Games Launcher, on Windows. See <a href="/docs/creators/#requirements">What you need</a>.</li>
+<li><span class="status wip">In progress</span> <b>The Mantle plugin.</b> It's in early access (version 0.1.0, beta) and isn't publicly available yet. <span class="status planned">Planned</span> The plugin will be available on Fab. Once you have it, check that <b>Mantle Core</b> is turned on in <b>Edit → Plugins</b>, then restart the editor. You'll know it's working when <b>Tools</b> has a <b>Mantle</b> section.</li>
+<li><b>A Mantle account.</b> Mantle is in closed testing on Steam and the Epic Games Store. Start the Mantle game from either store and you're signed in automatically. See <a href="/docs/players/#sign-in">Signing in</a>.</li>
+</ul>
+
+<h2 id="steps">Your first world</h2>
+<ol class="steps">
+<li><b>Make a creator token</b><p>In the Mantle game, open <b>Settings → Account → Creator tokens</b>, give the token a name and choose <b>Create</b>. It's shown once, so copy it straight away. See <a href="/docs/creators/#sign-in">Signing in to publish</a>.</p></li>
+<li><b>Sign in from the editor</b><p>In Unreal, choose <b>Tools → Mantle → Sign in with creator token...</b> and paste your token. The menu then shows "Signed in as [your name]". The editor forgets the token when it closes, so you'll paste it again next time.</p></li>
+<li><b>Start a new place</b><p>Make a new empty level and save it with the name you want players to see: your world takes the level's name (up to 80 characters). Then choose <b>Tools → Mantle → Start a new place</b>. It adds a baseplate, a spawn point and a sun, and tells you "Build from here, then use 'Check what players receive' to check your work."</p></li>
+<li><b>Build something</b><p>Drag meshes from the built-in library (<code>/Engine/BasicShapes</code> and <code>/Game/LevelPrototyping</code>) into the level and arrange them. Players arrive at a <b>Player Start</b>: the new place already has one, and you can add more. See <a href="/docs/creators/building/#entities">What you can place</a> and <a href="/docs/creators/building/#library">Built-in library</a>.</p></li>
+<li><b>Add a script (optional)</b><p>Make a <code>Scripts/Server</code> folder next to your level and add a file, such as the hello example in <a href="/docs/scripting/#quick">Five-minute start</a>. For a hazard that reacts when players touch it, see the kill brick in <a href="/docs/scripting/concepts/#tags">Tags connect scripts to things</a>. Scripting is in preview.</p></li>
+<li><b>Set Max Players</b><p>Choose <b>Tools → Mantle → Place settings</b> and set <b>Max Players</b> (1 to 100, default 16) in the Details panel. See <a href="/docs/creators/building/#place-settings">Place settings</a> for respawning and community servers.</p></li>
+<li><b>Check this place</b><p>Choose <b>Tools → Mantle → Check this place</b> and fix anything it lists. When you see "No problems found. This place is ready to publish." you're ready. See <a href="/docs/creators/#validation">What "Check this place" catches</a>.</p></li>
+<li><b>Publish</b><p>Choose <b>Tools → Mantle → Publish</b>. Add a note if you like when it asks "What changed in this version?", then watch the <b>Mantle Publish</b> tab. When it's done you'll see "Published revision 1. Anyone can join it now." If it stops, the tab says why. See <a href="/docs/creators/publishing/#publish-flow">How publishing works</a> and <a href="/docs/creators/publishing/#publish-blocked">What stops a publish</a>.</p></li>
+<li><b>Find it and join</b><p>In the Mantle game, type your world's name in the "Search worlds and creators" box. Open the world and press "PLAY". See <a href="/docs/players/#discover">Finding worlds</a> and <a href="/docs/players/#joining">Joining a world</a>.</p></li>
+<li><b>Invite your friends</b><p>Published worlds are public, so friends can search for it too. Once you're in, friends on Steam or Epic can join you with the Join button in the Steam or Epic overlay. <span class="status planned">Planned</span> Invites and a Join button inside Mantle. See <a href="/docs/players/social/#friends">Friends and presence</a>.</p></li>
+</ol>
+<p>To change your world, edit the level and choose <b>Publish</b> again. Each publish makes a new revision, and new games start on the latest one. See <a href="/docs/creators/publishing/#revisions">Revisions</a>.</p>
+
+<h2 id="next-steps">Next steps</h2>
+<ul>
+<li><a href="/docs/creators/building/">Building a place</a>: everything you can place, place settings and the sky.</li>
+<li><a href="/docs/creators/custom-assets/">Custom meshes and materials</a>: use your own meshes or a Fab pack.</li>
+<li><a href="/docs/creators/avatar-items/">Making avatar items</a>: publish items with the Cosmetics panel.</li>
+<li><a href="/docs/creators/clothing/">Clothing, hair and accessories</a>: make items that fit every avatar.</li>
+<li><a href="/docs/creators/avatars-emotes/">Avatars and emotes</a>: whole avatars and emotes for the emote wheel.</li>
+<li><a href="/docs/creators/vehicles/">Vehicles</a>: bring a Chaos Vehicles car into Mantle.</li>
+<li><a href="/docs/scripting/">Scripting</a>: make your world do things.</li>
+</ul>
+
+<h2 id="get-help">Get help</h2>
+<p>Stuck, or found something that doesn't work? Email <a href="mailto:contact@mantleplatform.com">contact@mantleplatform.com</a> or ask in the <a href="https://discord.gg/xj4s9kUe7x">Mantle Discord</a>.</p>

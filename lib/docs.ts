@@ -48,6 +48,7 @@ export const docsNav: DocSection[] = [
       {
         title: "Build",
         pages: [
+          { slug: ["creators", "quick-start"], title: "Quick start: your first world", description: "From installing the Mantle plugin to a published world your friends can join, step by step." },
           { slug: ["creators"], title: "Editor setup and tools", description: "What you need, signing in, the Mantle editor tools, checking your place and testing it." },
           { slug: ["creators", "building"], title: "Building a place", description: "What you can put in a place, place settings, what gets published, your own meshes and materials, and the sky." },
         ],
@@ -88,6 +89,12 @@ export const docsNav: DocSection[] = [
         pages: [
           { slug: ["players", "social"], title: "Friends, chat and voice", description: "Friends, seeing what they're playing, chat, voice, blocking and Discord." },
           { slug: ["players", "safety"], title: "Safety and account", description: "Reporting, how moderation works, your account, privacy and age settings." },
+        ],
+      },
+      {
+        title: "Help",
+        pages: [
+          { slug: ["players", "troubleshooting"], title: "Troubleshooting and help", description: "What your PC needs, fixes for common problems joining worlds, voice and chat, and how to contact us or find the community." },
         ],
       },
     ],
