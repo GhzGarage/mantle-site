@@ -1,0 +1,71 @@
+<div class="callout tip"><strong>Scripting is in preview</strong><p>Luau, TypeScript, JavaScript, Python and visual scripts all work in development builds, and hosted sessions are rolling out. Details on these pages may change before general release.</p></div>
+    <h2 id="quick">Five-minute start</h2>
+    <ol class="steps">
+      <li><b>Find your level's folder</b><p>Your level lives somewhere under <code>Content/</code>, for example <code>Content/MyPlace/MyPlace.umap</code>. Its scripts go in a folder called <code>Scripts</code> right next to it: <code>Content/MyPlace/Scripts/</code>.</p></li>
+      <li><b>Make a <code>Server</code> folder inside it and add a file</b>
+        <div class="v has-ts">
+          <div class="code" data-v="luau"><span class="tag">Scripts/Server/Hello.luau</span><pre id="ex-hello-luau" data-example-kind="source" data-language="luau">print(&quot;Hello from the server!&quot;)
+
+Players:OnPlayer(function(player)
+	print(`{player.Name} joined`)
+end)
+</pre></div>
+          <div class="code" data-v="ts"><span class="tag">Scripts/Server/Hello.ts</span><pre id="ex-hello-ts" data-example-kind="source" data-language="typescript">console.log(&quot;Hello from the server!&quot;);
+
+Players.onPlayer((player: Player) =&gt; {
+	console.log(`${player.name} joined`);
+});
+</pre></div>
+          <div class="code" data-v="js"><span class="tag">Scripts/Server/Hello.js</span><pre id="ex-hello-js" data-example-kind="source" data-language="javascript">console.log(&quot;Hello from the server!&quot;);
+
+Players.onPlayer((player) =&gt; {
+	console.log(`${player.name} joined`);
+});
+</pre></div>
+          <div class="code" data-v="py"><span class="tag">Scripts/Server/Hello.py</span><pre id="ex-hello-py" data-example-kind="source" data-language="python">print(&quot;Hello from the server!&quot;)
+
+def on_join(player):
+    print(f&quot;{player.name} joined&quot;)
+
+Players.on_player(on_join)
+</pre></div>
+        </div>
+        <p><code>Players:OnPlayer</code> (JavaScript/TypeScript <code>Players.onPlayer</code>, Python <code>Players.on_player</code>) runs your function for every player already in the session, and again for each player who joins later. So the welcome still works if your script starts after someone is already in, including in standalone development. The name it prints is the real player's name.</p>
+        <p>If you only want players who join after you connect, use the <code>PlayerAdded</code> signal instead.</p>
+      </li>
+      <li><b>Check and publish</b><p>Run <b>Check All</b> in the Scripts panel, then publish with <b>Mantle → Publish</b>. Publishing creates a revision. When players join a session, it uses the published revision.</p></li>
+      <li><b>Join in a separate client</b><p>Start or request a session for your published place, then join it with the Mantle client. Anything a server script prints goes to the server log. Anything a client script prints goes to that client's log. Script messages appear under <code>LogMantleScript</code> and name the file they came from.</p><p>Scripts don't run when you press the editor's Play (PIE) button. Test in a separate Mantle server and client, or in a published session.</p></li>
+      <li><b>Edit, recheck and republish</b><p>Save your changes and publish a new revision. The next session uses it.</p><p>In development builds, you can skip publishing while you work. Start a server or client with <code>-MantlePlace=&lt;path&gt;/place.json</code> and it runs the <code>Scripts/</code> folder beside that file. It also picks up your changes while it's running (hot reload). An edited script is swapped in place. Adding or removing files, or editing a module, restarts all scripts. Published sessions never hot-reload.</p></li>
+    </ol>
+    <h2 id="rules">The three rules</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Rule</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><b>1. Scripts are files in the <code>Scripts</code> folder beside the level.</b></td><td><code>Content/Obby/Obby.umap</code> → <code>Content/Obby/Scripts/</code></td></tr>
+        <tr><td><b>2. The folder decides where a script runs.</b></td><td><code>Server/</code> runs on the server. <code>Client/</code> runs on each player's machine. <code>Shared/</code> and any <code>Modules/</code> folder hold libraries that only run when something requires them.</td></tr>
+        <tr><td><b>3. Tags connect scripts to things.</b></td><td>Tag actors in the editor (Details → Actor → Tags), then <code>World:OnTagged("killbrick", …)</code>.</td></tr>
+      </tbody>
+    </table></div>
+    <p>The file extension picks the language: <code>.luau</code>/<code>.lua</code>, <code>.ts</code>, <code>.js</code> or <code>.py</code>. You can mix languages in one place.</p>
+    <p>Inside <code>Server/</code>, <code>Client/</code> and <code>Shared/</code>, organise files however you like (<code>Server/Combat/Guns.luau</code> runs). A few rules apply:</p>
+    <ul>
+      <li>Folder names must match exactly, including capital letters. <code>server/</code> isn't recognised.</li>
+      <li>Files placed directly in <code>Scripts/</code>, or outside <code>Server/</code>, <code>Client/</code> and <code>Shared/</code>, are skipped with a warning in the log.</li>
+      <li>Script paths can use only letters, digits, <code>_</code>, <code>.</code> and <code>-</code> (no spaces), up to 200 characters.</li>
+      <li>Each file can be up to 1 MiB.</li>
+    </ul>
+<div class="code"><span class="tag">A level's scripts</span><pre data-example-kind="snippet">Content/MyPlace/
+  MyPlace.umap
+  Scripts/
+    Server/            runs on the server
+      Rounds.luau
+      Checkpoint.ts
+      Leaderboard.py
+      Modules/         server-only libraries (require them)
+    Client/            runs on every player's machine
+      Hud.luau
+      Welcome.js
+    Shared/            libraries both sides can require
+      Config.luau</pre></div>
+
+<p class="footer-note">Last updated September 2026.</p>

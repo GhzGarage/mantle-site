@@ -1,0 +1,60 @@
+<div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
+
+<h2 id="official-hosting">Official hosting <span class="status live">Live</span></h2>
+<p>When someone joins your world, Mantle starts a server for it, so you don't need to run anything.</p>
+<ul>
+<li><b>Region:</b> there's a single region at launch, and you can't choose it.</li>
+<li><b>Capacity:</b> players per server come from Max Players in <a href="/docs/creators/building/#place-settings">Place settings</a> (default 16, maximum 100).</li>
+<li><b>Lifetime:</b> a server closes when its last player leaves. Hosted servers run for up to 60 minutes (see <a href="/docs/platform/#sessions">What happens when you press Play</a>).</li>
+<li><b>Costs:</b> there are no per-creator costs.</li>
+<li><b>Upload limits:</b> each account can upload, per hour, up to 5,000 meshes, materials and textures, 300 other files, 2 GiB in total and 600 scripts, create up to 30 new worlds and create or edit up to 60 avatar items. Past a limit, you'll see "You've uploaded too much in the last hour. Try again in N minutes." Publish waits for a short limit by itself.</li>
+</ul>
+
+<h2 id="community-hosting">Community hosting <span class="status live">Live</span></h2>
+<p>Community servers are run by players on their own machines, with a server key from <b>Settings → Account → Hosting</b> in Mantle. See <a href="/docs/platform/community-servers/">Community-hosted servers</a> for how it works.</p>
+<ul>
+<li><b>Who can host your world:</b> you, as the owner, always can. To let other players host it too, turn on <b>Allow Community Servers</b> in <a href="/docs/creators/building/#place-settings">Place settings</a> and publish. It's off by default. Turning it off again stops new community servers for your world, but ones already running keep going.</li>
+<li><b>New revisions:</b> a community server moves to your latest revision once it's empty.</li>
+<li><b>What players see:</b> a Servers tab on the world page (see <a href="/docs/players/#world-page">World and creator pages</a>). Pressing Play never sends players to a community server.</li>
+</ul>
+
+<h2 id="datastore">Saved data (DataStore) <span class="status live">Live</span></h2>
+<p>Your scripts save data with <a href="/docs/scripting/api/#api">DataStore</a>. These are the limits:</p>
+<div class="table-wrap"><table><thead><tr><th>Limit</th><th>Value</th></tr></thead><tbody>
+<tr><td>Value size</td><td class="num">64 KiB</td></tr>
+<tr><td>Keys per subject</td><td class="num">1,024</td></tr>
+<tr><td>Total per world / per player</td><td class="num">10 MiB / 1 MiB</td></tr>
+<tr><td>Requests</td><td class="num">300 per minute per server</td></tr>
+<tr><td>Key format</td><td><code>^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$</code></td></tr>
+</tbody></table></div>
+<ul>
+<li><b>World and player data:</b> for world-wide data, use the subject <code>*</code>. For player data, use the player's id. That player must be in the session.</li>
+<li><b>Official and community data are kept apart:</b> all official servers share the same saved data. Each community server, including one you host yourself, has its own, so it can't read or write your official servers' data.</li>
+<li><b>Messages you may see:</b> "This experience has reached its saved-data limit." and "That saved value changed; read it again before writing."</li>
+<li><span class="status planned">Planned</span> Tools for creators to view and reset saved data.</li>
+</ul>
+
+<h2 id="creator-page">Your creator page <span class="status live">Live</span></h2>
+<p>Your creator page shows your picture (or your initial), your name, "N worlds" (plus "· M playing now" while anyone is playing) and a grid of your worlds titled "Worlds". If you haven't published anything, it shows "Nothing published yet." Other players see Report and Block in a "…" menu there.</p>
+<ul>
+<li>Your name comes from the account you sign in with (up to 32 characters). Profiles don't have a bio. The only thing you can change is your picture, and it has to pass review.</li>
+<li><span class="status planned">Planned</span> Creator verification and following.</li>
+</ul>
+
+<h2 id="analytics">Analytics <span class="status planned">Planned</span></h2>
+<p>A creator dashboard and stats are coming later. For now, the only numbers are public ones: how many players are in a world right now (on world cards), plus play minutes and unique players while the world is on the "Top 10 this week" or "New and rising" chart. See <a href="/docs/creators/publishing/#discovery">How worlds get discovered</a>.</p>
+
+<h2 id="monetisation">Monetisation and UGC items <span class="status planned">Planned</span></h2>
+<ul>
+<li><span class="status wip">In progress</span> <b>Creator-made avatar items:</b> publish hair, clothing, accessories, avatars and emotes to the Mantle catalogue from the <b>Mantle Cosmetics</b> tab in the editor. Everything in the catalogue is free for now. See <a href="/docs/creators/avatar-items/">Making avatar items</a>.</li>
+<li><b>Marketplace:</b> listing and buying items, a wallet and creator payouts are all planned. Mantle is also exploring private or paid access to worlds.</li>
+</ul>
+
+<h2 id="rules">Content rules</h2>
+<ul>
+<li><span class="status live">Live</span> Mantle screens uploaded textures and scripts automatically. Rejected content stops you publishing, and moderators can approve or reject assets and scripts.</li>
+<li><span class="status live">Live</span> Place files can be up to 8 MiB and must have a name. Meshes, materials and textures from your project are uploaded with your world. See <a href="/docs/creators/building/#custom-assets">Your own assets</a>.</li>
+<li><span class="status live">Live</span> Moderators can remove an uploaded file from your account. After that it can't be uploaded or used again ("A moderator removed this asset from your account, so it cannot be uploaded or used again."), so replace it to publish.</li>
+<li><span class="status planned">Planned</span> Moderator takedowns of worlds. For now, a world's owner can remove it.</li>
+<li><span class="status planned">Planned</span> Screening for community server names.</li>
+</ul>

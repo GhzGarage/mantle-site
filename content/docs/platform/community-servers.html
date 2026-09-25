@@ -1,0 +1,100 @@
+<div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
+
+<p>Community hosting lets players run world servers on their own machines. You can host any world you published, and any world whose creator allows community servers. Players find your server on that world's Servers tab.</p>
+
+<h2 id="operator">Setting up a self-hosted server <span class="status live">Live</span></h2>
+<p>You run a community server with a small program called <code>mantle-server</code>. It starts the Mantle game server, registers it with Mantle so players can find it, and keeps it running. It works on Windows and Linux.</p>
+
+<h3 id="before-you-start">Before you start</h3>
+<ul>
+<li><b>A machine that meets the <a href="/docs/platform/#server-specs">recommended specs</a></b> for the number of players you want.</li>
+<li><b>A server key</b> for your Mantle account. Create one in the Mantle app under <b>Settings &gt; Account &gt; Hosting</b>: type a server name (3 to 48 characters) and press <b>Create server</b>. Players see that name in the world's server list. The key is shown only once, so copy it somewhere safe. Anyone holding it can run a server as you. Each account can have 5 servers, and each server has one key.</li>
+<li><b>The Mantle server package</b>, which contains <code>mantle-server</code>, the game server and the server terms. Download it from <b>Download server build</b> in the same Hosting section. <b>Open</b> downloads it in your browser, and <b>Copy link</b> copies a link you can use on the machine that will run the server. Each link works for an hour.</li>
+<li><b>A public address</b> players can reach: your public IP address or a domain name that points to it.</li>
+<li><b>A UDP port</b> you can open. The default is 7777.</li>
+</ul>
+
+<ol class="steps">
+<li><b>Unpack the package</b><p>Extract it into its own folder and run every command below from inside that folder.</p></li>
+<li><b>Create your settings file</b><p>Run <code>mantle-server init</code>. It asks for the Mantle API URL, your server key, the world's place id (<code>plc_…</code>), a server name and your public address, then writes them to <code>server.json</code>. You can pass any of them as flags instead (see below). Read the server terms (<code>SERVER_TERMS.md</code>) and add <code>-accept-terms</code> to accept them. The server won't start until you do.</p></li>
+<li><b>Open the port</b><p>Allow the UDP port through your firewall. If the machine is behind a home router, forward the port on the router too. On a VPS, also open it in your provider's firewall or security group.</p></li>
+<li><b>Check your setup</b><p>Run <code>mantle-server check</code>. It checks your settings, confirms your server key works and makes sure the port is free on this machine. It also prints the firewall command for your system.</p></li>
+<li><b>Start the server</b><p>Run <code>mantle-server run</code>. It registers your server, downloads the world, starts the game server and lists it on the world's Servers tab. Leave it running for as long as you want to host.</p></li>
+<li><b>Stop the server</b><p>Press <kbd>Ctrl</kbd>+<kbd>C</kbd> to shut it down cleanly.</p></li>
+</ol>
+
+<div class="code"><span class="tag">Example</span><pre>mantle-server init -name "Sunset Hills EU" -address 203.0.113.10 -port 7777 -max-players 32 -region EU -accept-terms
+mantle-server check
+mantle-server run</pre></div>
+
+<div class="table-wrap"><table><thead><tr><th>Command</th><th>What it does</th></tr></thead><tbody>
+<tr><td><code>mantle-server init</code></td><td>Writes <code>server.json</code>. Flags: <code>-api-url</code>, <code>-key</code>, <code>-place</code>, <code>-name</code>, <code>-address</code>, <code>-port</code> (default 7777), <code>-max-players</code> (default 16), <code>-region</code>, <code>-server-dir</code>, <code>-log-dir</code>, <code>-accept-terms</code>, <code>-config</code> (where to write the file) and <code>-force</code> (overwrite an existing <code>server.json</code>). It asks for anything required that you leave out.</td></tr>
+<tr><td><code>mantle-server check</code></td><td>Checks your settings, key and port, and prints firewall guidance.</td></tr>
+<tr><td><code>mantle-server run</code></td><td>Registers, starts the game server and keeps it running.</td></tr>
+<tr><td><code>mantle-server version</code></td><td>Prints the version of <code>mantle-server</code> and of the server package.</td></tr>
+</tbody></table></div>
+<p><code>check</code> and <code>run</code> also take <code>-config</code> if your settings file isn't <code>server.json</code> in the current folder.</p>
+
+<div class="table-wrap"><table><thead><tr><th>System</th><th>Firewall command</th></tr></thead><tbody>
+<tr><td>Windows</td><td><code>netsh advfirewall firewall add rule name="Mantle server" dir=in action=allow protocol=UDP localport=7777</code></td></tr>
+<tr><td>Linux (ufw)</td><td><code>sudo ufw allow 7777/udp</code></td></tr>
+<tr><td>Linux (firewalld)</td><td><code>sudo firewall-cmd --add-port=7777/udp --permanent &amp;&amp; sudo firewall-cmd --reload</code></td></tr>
+</tbody></table></div>
+
+<h3 id="server-json">Server settings</h3>
+<p>You can edit <code>server.json</code> by hand at any time. Restart <code>mantle-server</code> afterwards.</p>
+<div class="table-wrap"><table><thead><tr><th>Setting</th><th>What it does</th><th>Default</th></tr></thead><tbody>
+<tr><td><code>apiUrl</code> / <code>serverKey</code> / <code>placeId</code></td><td>The Mantle API URL, your server key and the world to host</td><td>None (required)</td></tr>
+<tr><td><code>name</code></td><td>A name for this server in your settings. Players see the name you gave the server in Settings &gt; Account &gt; Hosting.</td><td>None (required)</td></tr>
+<tr><td><code>publicAddress</code></td><td>The address players connect to. It must match the address your server connects to Mantle from.</td><td>None (required)</td></tr>
+<tr><td><code>port</code></td><td>The UDP port players connect on</td><td>7777</td></tr>
+<tr><td><code>maxPlayers</code></td><td>How many players can join. It can't be higher than the world's own limit. If it's missing, the world's limit is used.</td><td>16 (set by <code>init</code>)</td></tr>
+<tr><td><code>region</code></td><td>A short label shown to players, such as EU or US East</td><td>None</td></tr>
+<tr><td><code>restart</code></td><td><code>"always"</code> restarts the game server if it stops. <code>"never"</code> stops instead, which helps when you're troubleshooting a crash.</td><td><code>"always"</code></td></tr>
+<tr><td><code>serverDir</code></td><td>The folder that holds the game server from the package</td><td><code>./MantleServer</code></td></tr>
+<tr><td><code>logDir</code> / <code>keepLogs</code></td><td>Where logs are saved, and how many old logs to keep</td><td><code>./logs</code> / 10</td></tr>
+<tr><td><code>acceptedTerms</code></td><td>Whether you've accepted the server terms</td><td><code>false</code></td></tr>
+</tbody></table></div>
+
+<h3 id="while-running">While it's running</h3>
+<ul>
+<li><b>Automatic restarts:</b> if the game server crashes, <code>mantle-server</code> restarts it. After 10 crashes in 10 minutes it stops, so check the logs.</li>
+<li><b>Daily restart:</b> the game server has to restart within 24 hours of starting. Near the end of that time, <code>mantle-server</code> restarts it as soon as it's empty, or at the last minute if players are still on it.</li>
+<li><b>New versions of the world:</b> when the creator publishes a new version, your server keeps running the one it started with and players can still join it. It restarts onto the new version once it's empty.</li>
+<li><b>New server builds:</b> Mantle only accepts recent server packages. If yours is too old, <code>mantle-server</code> stops and logs "this package version is no longer accepted" with the current version. Download the new package from Settings &gt; Account &gt; Hosting, unpack it into a new folder, copy your <code>server.json</code> across and start it from there.</li>
+<li><b>Registration can be refused</b> if the key already has a running server, the world isn't published, you aren't allowed to host it, your server package is out of date, your public address doesn't match where the server is connecting from, or the key is registering too often.</li>
+</ul>
+<p>These are the messages you can see while setting up or registering a server:</p>
+<div class="table-wrap"><table><thead><tr><th>Message</th><th>Where</th><th>What to do</th></tr></thead><tbody>
+<tr><td>This server key is registering too quickly.</td><td><code>mantle-server</code></td><td>Wait. It tries again on its own.</td></tr>
+<tr><td>This server key already has a running session.</td><td><code>mantle-server</code></td><td>Stop the other server using this key. If it just crashed, this clears within a couple of minutes.</td></tr>
+<tr><td>not allowed to host this place (not its owner, and it does not allow community servers)</td><td><code>mantle-server</code></td><td>Pick a world you own, or one that allows community servers.</td></tr>
+<tr><td>this package version is no longer accepted</td><td><code>mantle-server</code></td><td>Download the current package (the message names its version).</td></tr>
+<tr><td>publicAddress does not match the address the API saw</td><td><code>mantle-server</code></td><td>Set <code>publicAddress</code> to the address the message shows.</td></tr>
+<tr><td>You already have the maximum number of servers for your account.</td><td>Hosting settings</td><td>Revoke a server you no longer use.</td></tr>
+<tr><td>A server name must be between 3 and 48 characters.</td><td>Hosting settings</td><td>Choose another name.</td></tr>
+</tbody></table></div>
+
+<h2 id="players">What players see <span class="status live">Live</span></h2>
+<p>Players find and join community servers from a world's Servers tab. It says "Community servers are run by players. Play puts you on an official server; to play on one of these, join it here." If none are running, it shows "No community servers right now" and "Play still works: it starts an official server for you and anyone who joins."</p>
+<p>Each server shows its name, region, player count, who hosts it and how long it's been up. Only servers that are running and responding are listed, and server addresses are never shown.</p>
+<ul>
+<li><b>Badges:</b> "Verified" (players have joined it), "Not yet verified", "Full" and "Older version" (it's still running an earlier version of the world). Only full servers can't be joined.</li>
+<li><b>First join</b> shows a one-time notice: "Community servers are run by other players, not by Mantle. Mantle's safety tools still work here, but the server owner controls the experience."</li>
+<li>If a server disappears, players see: "That server is no longer available. Refreshing the list…"</li>
+<li><b>Play always uses official servers.</b> Players only reach a community server by choosing it. Every server in the list has a Report link.</li>
+</ul>
+
+<h2 id="controls">Controls</h2>
+<ul>
+<li><span class="status live">Live</span> <b>Hosting settings:</b> Settings &gt; Account &gt; Hosting lists your servers with their status (Online, Starting or Offline) and player count. Create a server there to get its key, or press <b>Revoke</b> to cancel a key. Revoking shuts down a server running with it straight away, and can't be undone.</li>
+<li><span class="status live">Live</span> <b>Creator opt-in:</b> by default, only a world's owner can host it. Turn on <b>Allow Community Servers</b> on the world's Mantle Place Settings actor in the editor, then publish to let other players host it. If you turn it off later, servers already running keep going, but new ones can't start.</li>
+<li><span class="status live">Live</span> <b>Moderators</b> can shut down any community server, and can see which server and owner are behind a reported session.</li>
+</ul>
+
+<h2 id="security">Trust and safety</h2>
+<ul>
+<li><b>Saved data stays separate:</b> each community server has its own saved data, so it can never touch a creator's official data.</li>
+<li><b>Operators can't</b> see players' network addresses.</li>
+<li>Mantle's safety tools, including reporting and blocking, work on community servers the same way as on official ones.</li>
+</ul>

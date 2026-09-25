@@ -1,0 +1,75 @@
+<div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
+
+<h2 id="requirements">What you need</h2>
+<ul>
+<li><span class="status live">Live</span> <b>Unreal Engine 5.8</b> from the Epic Games Launcher.</li>
+<li><span class="status live">Live</span> <b>Windows</b>, with Visual Studio 2022 for building the project.</li>
+<li><span class="status wip">In progress</span> <b>The Mantle plugin</b> is in early access (version 0.1.0, beta) and isn't publicly available yet. <span class="status planned">Planned</span> The plugin will be available on Fab.</li>
+</ul>
+
+<h3 id="sign-in">Signing in to publish <span class="status live">Live</span></h3>
+<p>The editor signs in with a <b>creator token</b> that you make in the Mantle game.</p>
+<ol class="steps">
+<li><b>Make a token</b><p>In Mantle, open <b>Settings → Account → Creator tokens</b>. Give the token a name (up to 48 characters, such as "My laptop"), pick when it expires (Never, 30 days, 90 days or 1 year) and choose <b>Create</b>. The token is shown once, so copy it straight away. An account can have up to 10 tokens.</p></li>
+<li><b>Paste it into the editor</b><p>Choose <b>Tools → Mantle → Sign in with creator token...</b> and paste it. If you skip this, Save to Mantle, Publish and the Cosmetics panel ask for a token when you use them.</p></li>
+</ol>
+<ul>
+<li>The editor keeps the token in memory until it closes. It's never saved to disk, so you'll paste it again after a restart.</li>
+<li>Once you're in, the Mantle menu shows "Signed in as [your name]" and a <b>Sign out</b> command.</li>
+<li>Revoking a token in Settings stops it at once. If a token is revoked or expires, the editor signs you out and asks for a new one the next time you save or publish.</li>
+<li>If a pasted token isn't right, you'll see why, for example "That isn't a creator token: they start with mct1. Create one in the Mantle game under Settings > Account > Creator tokens."</li>
+</ul>
+<p>You'll find the Mantle server address in <b>Project Settings → Plugins → Mantle → Connection → Api Base Url</b>.</p>
+
+<h2 id="editor">The Mantle editor tools <span class="status live">Live</span></h2>
+<p>You'll find these commands under <b>Tools → Mantle</b>:</p>
+<div class="table-wrap"><table><thead><tr><th>Command</th><th>What it does</th></tr></thead><tbody>
+<tr><td>Start a new place</td><td>Adds a baseplate, a spawn point and a sun, then shows: "Build from here, then use 'Check what players receive' to check your work."</td></tr>
+<tr><td>Place settings</td><td>Selects the level's <b>Mantle Place Settings</b> actor, adding one if the level has none, so you can edit it in the Details panel. See <a href="/docs/creators/building/#place-settings">Place settings</a>.</td></tr>
+<tr><td>Check this place</td><td>Checks your place and lists up to 12 problems ("...and N more."). When everything passes, you'll see "No problems found. This place is ready to publish."</td></tr>
+<tr><td>Check what players receive</td><td>Shows you what players will get, then tells you "N object(s) in this level will be sent to players." and lists anything that won't reach them.</td></tr>
+<tr><td>Save to Mantle</td><td>Uploads a private draft: "Saved to Mantle. Nobody can see it until you publish."</td></tr>
+<tr><td>Publish</td><td>Asks for optional revision notes, then checks, uploads and makes your world live: "Published revision N. Anyone can join it now." Progress shows in the <b>Mantle Publish</b> tab. See <a href="/docs/creators/publishing/">Publishing</a>.</td></tr>
+<tr><td>Cosmetics...</td><td>Opens the <b>Mantle Cosmetics</b> tab for publishing avatar items. See <a href="/docs/creators/avatar-items/">Making avatar items</a>.</td></tr>
+<tr><td>Sign in with creator token... / Sign out</td><td>See <a href="#sign-in">Signing in to publish</a>.</td></tr>
+</tbody></table></div>
+<ul>
+<li><b>Mantle Scripts</b> toolbar button and tab: New Script…, Open, Open Scripts Folder, Open in VS Code (whole project), Check All and Regenerate Types. See <a href="/docs/scripting/api/#editor">Editor setup</a>.</li>
+<li><b>Mantle Script Graph</b> assets let you script visually. Find them in the Content Browser under the "Mantle" category. Each one has Graph, Details, My Blueprint and Compiler Results tabs. See <a href="/docs/scripting/visual-scripting/">Visual scripting</a>.</li>
+<li><b>Project Settings → Plugins → Mantle → Places → Place Id By Level</b> remembers which world each level publishes to.</li>
+</ul>
+
+<h2 id="validation">What "Check this place" catches <span class="status live">Live</span></h2>
+<div class="table-wrap"><table><thead><tr><th>Level</th><th>Message</th></tr></thead><tbody>
+<tr><td>Error</td><td>"is a [type], which Mantle cannot publish." Remove or replace it. You can publish static meshes, groups, player starts, point, spot and directional lights, trigger volumes and ambient sounds.</td></tr>
+<tr><td>Error</td><td>Post-process volumes: "Post-process settings are not published yet, so the volume would be dropped."</td></tr>
+<tr><td>Error</td><td>"has an extra [component] component ('…') that Mantle cannot publish."</td></tr>
+<tr><td>Error</td><td>"has no mesh assigned."</td></tr>
+<tr><td>Error</td><td>Ambient Sound actors: "has no sound assigned." or "uses sound '…'. Custom sounds can't be published yet (uploading your own sounds with your place is coming), so remove this AmbientSound for now."</td></tr>
+<tr><td>Error</td><td>Size limits: "has a name N characters long; Mantle publishes names of at most 80.", "has tag '…', N characters long; Mantle publishes tags of at most 40." and "overrides material slot N; Mantle publishes overrides on slots 0 to 15 only."</td></tr>
+<tr><td>Error</td><td>Meshes from your project over the limits, for example "Mesh '…' has N triangles; a place mesh may have at most 500,000." Vertices (1,500,000) and material slots (8) are checked the same way. See <a href="/docs/creators/building/#custom-assets">Your own assets</a>.</td></tr>
+<tr><td>Error</td><td>"uses texture '…' at WxH, above the 2048 limit." (a library material override)</td></tr>
+<tr><td>Error</td><td>Mantle Place Settings: "limits the place to some platforms but selects none."</td></tr>
+<tr><td>Error</td><td>"This level is empty."</td></tr>
+<tr><td>Error</td><td>Script files with an unknown extension, or outside the <code>Server/</code>, <code>Client/</code> or <code>Shared/</code> folders (folder names must match exactly, including capitals). Also visual script compile errors and <code>require</code> errors.</td></tr>
+<tr><td>Warning</td><td>BSP brushes, volumes, placed pawns, landscape and foliage are named, for example "is BSP geometry, which Mantle does not publish." or "is a landscape, which Mantle cannot publish yet." The rest of the place still publishes without them.</td></tr>
+<tr><td>Warning</td><td>"Mantle provides the sky; this actor's settings are not published." (Sky Atmosphere, Sky Light, Volumetric Cloud, Exponential Height Fog)</td></tr>
+<tr><td>Warning</td><td>Materials from your project that lose an effect when they're converted, and textures above 2048 that are scaled down. See <a href="/docs/creators/building/#custom-assets">Your own assets</a>.</td></tr>
+<tr><td>Warning</td><td>"This place has no player start, so everyone will arrive, and respawn, at Mantle's default spawn point about 2 m above the world origin."</td></tr>
+<tr><td>Warning</td><td>"Scripts/… is a Shared module nothing requires."</td></tr>
+</tbody></table></div>
+<div class="callout tip"><strong>Things that aren't published</strong>
+<ul>
+<li>BSP brushes, engine volumes (Trigger Volume, Blocking Volume and so on), placed pawns, landscape and foliage are left out of the published world. Use static meshes instead, and use Trigger Box or Trigger Sphere actors for trigger areas.</li>
+<li>Ambient Sound actors can't be used yet: Mantle has no built-in sounds, and you can't upload your own yet.</li>
+<li>Actors set to Movable stay dynamic in the published world.</li>
+<li>Actor tags are kept, so your scripts can find things by tag.</li>
+</ul></div>
+
+<h2 id="testing">Testing a world</h2>
+<ul>
+<li><b>Play in Editor (PIE)</b> doesn't run Mantle worlds or scripts. To check your build, use "Check what players receive". To test gameplay, publish your world and join it with the Mantle client.</li>
+<li><span class="status planned">Planned</span> A one-click "Play in Mantle".</li>
+</ul>
+
+<p>Need help? Email <a href="mailto:contact@mantleplatform.com">contact@mantleplatform.com</a> or ask in the <a href="https://discord.gg/xj4s9kUe7x">Mantle Discord</a>. See <a href="/docs/creators/quick-start/#get-help">Get help</a>.</p>

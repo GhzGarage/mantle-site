@@ -1,0 +1,148 @@
+<div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
+
+<p>This guide covers how to build each kind of wearable item in Unreal so it passes Mantle's checks and fits players' avatars. For opening the Mantle Cosmetics tab, signing in, the listing fields, <b>Check only</b>, <b>Upload to Mantle</b> and screening, see <a href="/docs/creators/avatar-items/">Making avatar items</a>. Avatars themselves and emotes are in <a href="/docs/creators/avatars-emotes/">Avatars and emotes</a>.</p>
+
+<h2 id="kinds">What you can make <span class="status wip">In progress</span></h2>
+<p>In the Cosmetics tab, <b>What are you publishing?</b> sets the kind of item, and the box next to it sets its slot. Each slot holds one item at a time on an avatar.</p>
+<div class="table-wrap"><table><thead><tr><th>Kind (in the tab)</th><th>Unreal asset</th><th>Slots</th><th>In the players' catalog</th></tr></thead><tbody>
+<tr><td>Clothing (3D)</td><td>Skeletal Mesh skinned to the MetaHuman body skeleton</td><td><code>top</code>, <code>bottom</code>, <code>footwear</code></td><td>Clothing: "Tops", "Bottoms", "Shoes"</td></tr>
+<tr><td>Clothing (2D)</td><td>A square texture painted on the body UV template</td><td><code>shirt_2d</code>, <code>pants_2d</code></td><td>Clothing: "Shirts (2D)", "Pants (2D)"</td></tr>
+<tr><td>Hair</td><td>A groom, a hair cards Static Mesh, or one section of a Skeletal Mesh</td><td><code>hair</code>, <code>eyebrows</code>, <code>eyelashes</code>, <code>facial_hair</code></td><td>Hair: "Hair", "Eyebrows", "Eyelashes", "Facial hair"</td></tr>
+<tr><td>Accessory</td><td>Static Mesh with one material</td><td><code>acc_hat</code>, <code>acc_face</code>, <code>acc_neck</code>, <code>acc_shoulder_l</code>, <code>acc_shoulder_r</code>, <code>acc_front</code>, <code>acc_back</code>, <code>acc_waist</code></td><td>Accessories: "Hats", "Face", "Neck", "Left shoulder", "Right shoulder", "Front", "Back", "Waist"</td></tr>
+</tbody></table></div>
+<p>3D clothing, 2D clothing and hair are only worn by avatars that take clothing (MetaHuman bodies exported the right way, see <a href="#fitting">How clothing fits every body</a>). Accessories go on any avatar whose skeleton has the socket.</p>
+
+<h2 id="3d-clothing">3D clothing <span class="status wip">In progress</span></h2>
+<p>A top, bottom or pair of shoes is a Skeletal Mesh skinned to the MetaHuman body skeleton (<code>metahuman_base_skel</code>). You make it on one MetaHuman body, and Mantle fits it to every other body that wears it.</p>
+<ol class="steps">
+<li><b>Start from a MetaHuman body</b><p>Export the MetaHuman you'll dress with <b>UE Optimized</b> at <b>Medium</b> or <b>High</b> quality, without clothing. Garments made on a body exported this way fit other bodies.</p></li>
+<li><b>Model and skin the garment on that body</b><p>Skin it to the body's own skeleton, with the bones in the same place as the body's reference pose. Use the MetaHuman bone names (<code>pelvis</code>, <code>spine_01</code> to <code>spine_05</code>, <code>clavicle_l</code>, <code>upperarm_l</code>, <code>thigh_l</code>, <code>calf_l</code>, <code>foot_l</code> and so on, plus the MetaHuman twist and corrective bones). Letter case doesn't matter. Use at most 8 bone influences per vertex.</p></li>
+<li><b>Choose Clothing (3D) and the slot</b><p>In <b>What are you publishing?</b> choose <b>Clothing (3D)</b>, then <code>top</code>, <code>bottom</code> or <code>footwear</code>. Under <b>Asset</b>, pick the garment's Skeletal Mesh.</p></li>
+<li><b>Check Authored on</b><p><b>Authored on</b> is the MetaHuman body you made the garment on. The tab fills it in when it finds a suitable body in your project; if it picked the wrong one, choose yours. This body uploads with the item as its body shape.</p></li>
+<li><b>Check only, then upload</b><p>Choose <b>Check only</b> and fix anything marked "Problem". Then <b>Upload to Mantle</b> (see <a href="/docs/creators/avatar-items/">Making avatar items</a>).</p></li>
+</ol>
+
+<h3 id="fitting">How clothing fits every body</h3>
+<ul>
+<li>Mantle fits the garment to each wearer's body, starting from the body it was <b>Authored on</b>. That's why the Authored on body must be a MetaHuman body exported the right way, and why every bone that carries weight has to be bound in that body's reference pose.</li>
+<li>The plugin adds everything the Authored on body needs for fitting when you upload, so there's nothing extra for you to do.</li>
+<li>Body skin under a top, bottom or shoes is hidden, so it can't poke through the garment. Hair doesn't hide anything.</li>
+<li>Only avatars that take clothing wear 3D clothing: MetaHuman bodies exported with UE Optimized at Medium or High quality, without clothing. UE5 Mannequin avatars and MetaHumans exported another way wear accessories and emotes only.</li>
+</ul>
+
+<h3 id="long-garments">Skirts, dresses and long coats</h3>
+<p>A garment that hangs below the knee of the body it was made on can still be published. It may clip through the legs when the wearer moves, so the tab shows "Note: this garment hangs below the knee, so it may clip through the legs when the wearer moves. It can still be published: Mantle marks it "may clip in motion" so players know." After upload the result adds "It hangs below the knee, so Mantle marks it "may clip in motion": the legs can show through it when the wearer moves." Shoes are below the knee by nature and are never marked.</p>
+
+<h3 id="3d-limits">Limits</h3>
+<div class="table-wrap"><table><thead><tr><th>Limit</th><th>Value</th></tr></thead><tbody>
+<tr><td>Skeleton</td><td>MetaHuman body skeleton only</td></tr>
+<tr><td>Triangles</td><td>6,000. If LOD 0 has more, the tab uploads a lower LOD that fits and says so.</td></tr>
+<tr><td>Vertices</td><td>18,000</td></tr>
+<tr><td>Material slots (sections)</td><td>4, each with its own, unique name</td></tr>
+<tr><td>Bone influences per vertex</td><td>8</td></tr>
+<tr><td>Textures</td><td>A base colour and a normal map per section, up to 2048 x 2048. Bigger textures are scaled down when exported.</td></tr>
+<tr><td>Each uploaded file</td><td>64 MiB</td></tr>
+</tbody></table></div>
+<p>Give each section's material a base colour texture parameter (for example <code>BaseColor</code>) and a normal map. If the tab can't find a base colour texture, the section uploads as a flat colour and the tab says so. Helper bones that carry no weight and aren't on the MetaHuman skeleton, which some exports add, are left out automatically.</p>
+
+<h2 id="2d-clothing">2D clothing <span class="status wip">In progress</span></h2>
+<p>2D clothing is a picture painted straight onto the body, like a printed shirt or leggings. There are two slots, <code>shirt_2d</code> and <code>pants_2d</code>, so a player can wear one of each.</p>
+<ol class="steps">
+<li><b>Get the template</b><p>The body UV template comes with the Mantle plugin, in its <code>Resources/AvatarContract</code> folder as <code>body-uv-template-v1.png</code>. It's the MetaHuman body's UV layout at 1024 x 1024: light grey islands for the torso, arms, legs, hands and feet, with dark outlines on the seams. Everything outside the islands is transparent.</p></li>
+<li><b>Paint over it</b><p>Paint your design on a layer above the template, only where you want it to show, and leave the rest fully transparent. Paint a few pixels past each seam outline so no gap shows on the body. Hide the template layer before you save.</p></li>
+<li><b>Import it as a texture</b><p>Import the image as a normal 2D texture. It should be exactly 1024 x 1024. A larger square image is scaled down to 1024 x 1024 for you. It can't be a UDIM, cube or array texture.</p></li>
+<li><b>Choose Clothing (2D)</b><p>Choose <b>Clothing (2D)</b>, pick <code>shirt_2d</code> or <code>pants_2d</code>, pick the texture under <b>Asset</b>, then check and upload.</p></li>
+</ol>
+<p>Its transparency is kept. 2D clothing only shows on avatars that take clothing and were uploaded through the Cosmetics tab. Mantle's base avatars keep their own skin, so 2D clothing doesn't show on them.</p>
+
+<h2 id="hair">Hair, eyebrows, eyelashes and facial hair <span class="status wip">In progress</span></h2>
+<p>Hair has four slots: <code>hair</code>, <code>eyebrows</code>, <code>eyelashes</code> and <code>facial_hair</code> (beards and moustaches). A player can wear one item in each, all at once. Every hair item is built from hair cards and follows the wearer's head.</p>
+<ol class="steps">
+<li><b>Choose Hair and the slot</b><p>Choose <b>Hair</b>, then the slot.</p></li>
+<li><b>Pick the source under Asset</b><p>It can be one of three things:</p>
+<ul>
+<li><b>A groom:</b> Mantle converts the groom's cards (Groom editor → Cards), not its strands. A second box lists the groom's cards as "Group N, LOD N: [mesh] (N textures)". By default it picks the LOD MetaHuman draws at Medium. Pick a lower-detail entry if the cards are over budget. MetaHuman grooms exported at Medium have cards.</li>
+<li><b>A hair cards Static Mesh:</b> keep the groom's cards atlas textures in the same folder as the cards mesh, so the tab finds them. Otherwise it uses the textures of the mesh's material.</li>
+<li><b>One section of a Skeletal Mesh:</b> for example a MetaHuman face's eyelashes. A box asks you to "Choose the section to lift (for example the eyelashes)".</li>
+</ul></li>
+<li><b>Check Authored on</b><p>As with 3D clothing, <b>Authored on</b> is the MetaHuman body the hair was made on. It must have a <code>head</code> bone.</p></li>
+<li><b>Check only, then upload</b></li>
+</ol>
+<div class="table-wrap"><table><thead><tr><th>Limit (per hair item)</th><th>Value</th></tr></thead><tbody>
+<tr><td>Triangles</td><td>6,000</td></tr>
+<tr><td>Vertices</td><td>18,000</td></tr>
+<tr><td>Material slots (sections)</td><td>4</td></tr>
+<tr><td>Textures</td><td>At most 4 different textures, each up to 2048 x 2048, and about 24 MB of graphics memory in total</td></tr>
+</tbody></table></div>
+<p>Like clothing, hair is only worn by avatars that take clothing. How hair is shaded in game is still being finished.</p>
+
+<h2 id="accessories">Accessories <span class="status wip">In progress</span></h2>
+<p>An accessory is a rigid Static Mesh that attaches to one socket on the avatar's skeleton. It doesn't bend. A player can wear one accessory per socket, so 8 at most.</p>
+<ol class="steps">
+<li><b>Set the pivot</b><p>The mesh's pivot is where it attaches: model it so the pivot sits on the point that touches the body, near the socket. How far the mesh reaches from its pivot is limited (below).</p></li>
+<li><b>Use one material</b><p>Merge the mesh's materials into one. The accessory uploads that material's base colour texture, up to 1024 x 1024. If the tab says the mesh has no CPU copy of its vertices, turn on <b>Allow CPU Access</b> on the mesh.</p></li>
+<li><b>Choose Accessory and the slot</b><p>Choose <b>Accessory</b>, pick the slot (its socket), and pick the Static Mesh under <b>Asset</b>. LOD 0 is uploaded.</p></li>
+<li><b>Offset it if you need to</b><p>Under <b>Attachment</b>, tick <b>Offset it from the socket</b> to move it: <b>Location (cm)</b> from -50 to 50 on each axis, <b>Rotation (degrees)</b> from -180 to 180, and <b>Scale</b> from 0.5 to 2.</p></li>
+<li><b>Check only, then upload</b></li>
+</ol>
+<div class="table-wrap"><table><thead><tr><th>Slot</th><th>Socket's bone</th><th>Longest side at most</th><th>Reach from pivot at most</th></tr></thead><tbody>
+<tr><td><code>acc_hat</code></td><td><code>head</code></td><td>60 cm</td><td>50 cm</td></tr>
+<tr><td><code>acc_face</code></td><td><code>head</code></td><td>35 cm</td><td>30 cm</td></tr>
+<tr><td><code>acc_neck</code></td><td><code>neck_01</code></td><td>45 cm</td><td>35 cm</td></tr>
+<tr><td><code>acc_shoulder_l</code></td><td><code>clavicle_l</code></td><td>40 cm</td><td>40 cm</td></tr>
+<tr><td><code>acc_shoulder_r</code></td><td><code>clavicle_r</code></td><td>40 cm</td><td>40 cm</td></tr>
+<tr><td><code>acc_front</code></td><td><code>spine_04</code></td><td>60 cm</td><td>50 cm</td></tr>
+<tr><td><code>acc_back</code></td><td><code>spine_03</code></td><td>80 cm</td><td>70 cm</td></tr>
+<tr><td><code>acc_waist</code></td><td><code>pelvis</code></td><td>70 cm</td><td>55 cm</td></tr>
+</tbody></table></div>
+<p>"Longest side" is the longest edge of the mesh's bounding box. "Reach" is how far the box's farthest corner is from the pivot. Other limits: 4,000 triangles, 12,000 vertices, exactly 1 material.</p>
+<p>The sockets come with Mantle's supported skeletons (MetaHuman and UE5 Mannequin). An avatar creator can move a socket for bodies whose proportions put a hat, glasses or backpack in the wrong place, under <b>Socket offsets</b> when uploading the avatar (see <a href="/docs/creators/avatars-emotes/">Avatars and emotes</a>). Your accessory then follows the moved socket. On an avatar whose skeleton doesn't have the socket, the accessory is set aside.</p>
+
+<h2 id="messages">Messages and how to fix them</h2>
+<p>The tab starts each line with "Problem:" (must be fixed), "Note:" (worth knowing, doesn't block) or "Done:" (what it did for you). [Brackets] show values that change.</p>
+<div class="table-wrap"><table><thead><tr><th>Message</th><th>What to do</th></tr></thead><tbody>
+<tr><td>Problem: choose the MetaHuman body this was made on (Authored on). It is uploaded with the item so the item fits every body; any MetaHuman body exported at Medium or High works.</td><td>Pick the body under <b>Authored on</b>.</td></tr>
+<tr><td>Problem: the body [name] has no LOD with Mantle's reference topology (8568 vertices), so it cannot be the body this was authored on. Choose the MetaHuman body you made it on, exported with UE Optimized at Medium or High quality, without clothing.</td><td>Re-export the MetaHuman as it says and use that body.</td></tr>
+<tr><td>Problem: clothing uploads a skeletal mesh skinned to the MetaHuman body.</td><td>Pick a Skeletal Mesh under <b>Asset</b>.</td></tr>
+<tr><td>Problem: not skinned to a supported skeleton: bone "[bone]" is not on the metahuman skeleton. Clothing must be skinned to the MetaHuman body skeleton (metahuman_base_skel).</td><td>Remove the weights from that bone, or rename it to the MetaHuman bone it stands for.</td></tr>
+<tr><td>Problem: not skinned to a supported skeleton: bone "[bone]" has parent "[parent]", the metahuman skeleton has "[parent]". Clothing must be skinned to the MetaHuman body skeleton (metahuman_base_skel).</td><td>Fix the bone hierarchy to match the MetaHuman skeleton.</td></tr>
+<tr><td>Problem: bone "[bone]" is bound [N] cm and [N] degrees from the body shape's reference pose; upload the garment with the body it was authored on. Choose, under Authored on, the MetaHuman body this garment was skinned to.</td><td>Choose the right body, or rebind the garment in that body's reference pose.</td></tr>
+<tr><td>Problem: bone "[bone]" carries weight but is not in the body shape's skeleton.</td><td>Skin the garment to the Authored on body's bones only.</td></tr>
+<tr><td>Done: LOD [N] is uploaded: LOD 0 has [N] triangles, the limit is 6000.</td><td>Nothing: the tab used a lower LOD. Check it still looks right.</td></tr>
+<tr><td>Problem: [N] triangles, the limit is [limit]. Use a lower LOD of the mesh, or reduce it (Skeletal Mesh editor &gt; LOD Settings, or Modeling &gt; Simplify).</td><td>Reduce the mesh, or for a groom, pick a lower-detail cards entry.</td></tr>
+<tr><td>Problem: [N] material sections, the limit is [limit]. Merge materials so the mesh uses fewer material slots.</td><td>Merge materials.</td></tr>
+<tr><td>Problem: a vertex has [N] influences, the limit is 8. Set the mesh's Max Bone Influences (LOD settings) to 8 or fewer and reimport.</td><td>As it says.</td></tr>
+<tr><td>Problem: material slot [N] has no name; sections are identified by material name. Name every material slot in the mesh editor.</td><td>As it says.</td></tr>
+<tr><td>Problem: two materials are named "[name]"; sections are identified by material name. Rename one of the material slots in the mesh editor.</td><td>As it says.</td></tr>
+<tr><td>Problem: [mesh] LOD [N] has no CPU copy of its vertices, weights or triangles. Open the mesh once in the editor and try again.</td><td>As it says.</td></tr>
+<tr><td>Note: [Garment, Hair or Accessory] "[section]" base colour: no base colour texture was found, so it uploads as a flat [material or grey] colour. Give the material a BaseColor texture parameter if it should look textured.</td><td>Add a <code>BaseColor</code> texture parameter to the material, or accept the flat colour.</td></tr>
+<tr><td>Note: this garment hangs below the knee, so it may clip through the legs when the wearer moves. It can still be published: Mantle marks it "may clip in motion" so players know.</td><td>Nothing, unless you'd rather shorten it. See <a href="#long-garments">Skirts, dresses and long coats</a>.</td></tr>
+<tr><td>Problem: 2D clothing must be exactly 1024x1024, this is [W]x[H]. Paint it on the body UV template at its own size.</td><td>Use a square image of 1024 x 1024 (or larger).</td></tr>
+<tr><td>Done: [N]x[N] is scaled to 1024x1024.</td><td>Nothing.</td></tr>
+<tr><td>Problem: [texture] is a UDIM, cube or array texture; Mantle takes one 2D image.</td><td>Use a plain 2D texture.</td></tr>
+<tr><td>Problem: [groom] has no hair cards mesh. Mantle converts a groom's cards (Groom editor &gt; Cards). MetaHuman grooms exported at Medium have them.</td><td>Add cards to the groom, or use a MetaHuman groom exported at Medium.</td></tr>
+<tr><td>Note: no hair cards atlases were found next to the cards mesh, so its material's textures are used. Keep the groom's CardsAtlas textures in the same folder as the cards mesh, or upload the groom itself.</td><td>As it says.</td></tr>
+<tr><td>Problem: choose which section of the mesh to lift (for example the eyelashes).</td><td>Pick the section in the box under <b>Asset</b>.</td></tr>
+<tr><td>Problem: hair uploads a groom, a hair cards static mesh, or one section of a skeletal mesh.</td><td>Pick one of those under <b>Asset</b>.</td></tr>
+<tr><td>Problem: [body] has no head bone; hair binds to a MetaHuman body's head.</td><td>Choose a MetaHuman body under <b>Authored on</b>.</td></tr>
+<tr><td>Problem: an accessory uploads a static mesh whose pivot is where it attaches.</td><td>Pick a Static Mesh under <b>Asset</b>.</td></tr>
+<tr><td>Problem: an accessory has exactly 1 material; [mesh] has [N]. Merge its materials into one.</td><td>As it says.</td></tr>
+<tr><td>Problem: the accessory is [N] cm across, [slot] allows [N] cm. Scale it down in the mesh (its pivot is the socket).</td><td>Make it smaller in the mesh.</td></tr>
+<tr><td>Problem: the accessory reaches [N] cm from its pivot, [slot] allows [N] cm. Its pivot is where it attaches: move the mesh so the pivot sits on it, near the socket.</td><td>Move the pivot onto the mesh where it touches the body.</td></tr>
+<tr><td>Problem: [mesh] LOD 0 has no CPU copy of its vertices. Enable Allow CPU Access on the mesh and try again.</td><td>As it says.</td></tr>
+<tr><td>Problem: [file] is [N] MiB, uploads can be at most 64 MiB.</td><td>Use smaller textures or a lighter mesh.</td></tr>
+</tbody></table></div>
+<p>Mantle checks every file again after upload. If it refuses one, the tab shows "[file]: Mantle's processing refused it: [reason]", usually repeating one of the checks above. Two refusals come only from Mantle:</p>
+<ul>
+<li>"This body shape has no warp weights, which garments need to fit other bodies. Upload it again with the Mantle plugin, which adds them."</li>
+<li>"The body shape this item was made on has no warp weights, so it cannot fit other bodies. Upload the item again with the Mantle plugin, which sends a body shape that has them."</li>
+</ul>
+<p>A hair item with too many or too large textures is refused when the item is created, for example "Mantle refused the item: a hair item may use at most 4 textures; [texture] (materials) is the 5th (materials)". Use fewer textures, or smaller ones.</p>
+
+<h2 id="avatar-screen">How your items show to players <span class="status wip">In progress</span></h2>
+<p>Once an item passes screening, it appears in the Catalog on the players' <a href="/docs/players/playing/#avatar">Avatar screen</a>, under "Clothing", "Hair" or "Accessories" and the slot's own filter.</p>
+<ul>
+<li><b>Fits my avatar:</b> this filter is on by default. While a player's avatar can't wear clothing, 3D clothing, 2D clothing and hair are hidden from the Catalog. Accessories are always listed.</li>
+<li><b>SET ASIDE:</b> if a player switches to an avatar that can't wear clothing, their clothing and hair are marked "SET ASIDE". They stay owned and go back on when the player switches to an avatar they fit. The Avatar screen says, for example, "1 item is set aside: it doesn't fit this avatar, and goes back on with one it fits."</li>
+<li><b>Fitting:</b> the same 3D clothing item fits every avatar that takes clothing.</li>
+</ul>

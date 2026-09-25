@@ -1,0 +1,113 @@
+<h2 id="graphs">Build scripts visually</h2>
+<p>To make a visual script, create a <b>MantleScriptGraph</b> asset in your level&rsquo;s <code>Scripts/Server</code> or <code>Scripts/Client</code> folder. The folder name must match exactly, including capital letters. Graphs can&rsquo;t go in <code>Shared/</code>. A graph saved anywhere else won&rsquo;t compile, and you&rsquo;ll see a warning that tells you why. Open the asset to edit it in the graph editor.</p>
+<ul>
+<li><b>Palette.</b> Add nodes from the palette or its search. Categories are Flow Control, Variables, Custom Events, Functions, Literals, Math, Compare, Boolean, Text (Concat, Format), Vector3 and Utilities (Reroute), plus comments and every scripting API member, grouped by class.</li>
+<li><b>Pins.</b> Execution pins set the order things happen in. Data pins carry values. The editor checks the types when you connect pins, and each pin is colour-coded by its type.</li>
+<li><b>My Blueprint.</b> Declare graph variables, custom events and functions here. The palette then offers Get/Set nodes for each variable, Fire/On nodes for each event, and Call/Function/Return nodes for each function.</li>
+</ul>
+<h3 id="graph-compile">Compiling and errors</h3>
+<p>When you save a graph, Mantle compiles it. The graph also compiles when you first open it. Results appear in the <b>Compiler Results</b> panel, and nodes with errors get an error badge. Click or double-click a result to jump to its node. A few problems affect the whole graph rather than one node, such as an execution wire left unconnected at one end, so they don&rsquo;t point at a single node.</p>
+<p>Saving also writes a generated file next to the asset. You don&rsquo;t edit or upload it yourself. When you publish, Mantle compiles the asset again. That way the published script always matches the published graph.</p>
+<p>If a graph script hits an error while your game is running, the error names the graph and node (<code>Server/GraphKillBricks.graph, node &quot;&lt;title&gt;&quot; (&lt;id&gt;): &hellip;</code>) and shows up in the open graph&rsquo;s Compiler Results.</p>
+<h3 id="graph-examples">Example graphs</h3>
+<p>These three graphs mirror the <a href="#r-killbrick">kill brick</a>, <a href="#r-coins">coin</a> and <a href="#r-door">door</a> code recipes. They use their own tags and names (<code>GuideGraphKillBrick</code>, <code>GuideGraphCoin</code> and an actor named <code>GuideGraphDoor</code>), so you can use them in the same place as the code recipes without both reacting to the same actors.</p>
+<p>Each graph is shown as JSON, the text form of what you build in the graph editor. Node kinds such as <code>event</code>, <code>call</code>, <code>branch</code>, <code>while</code>, <code>foreach</code> and <code>delay</code> correspond to palette nodes. The coin and door graphs use the <b>Position Tween Goal</b> node (Vector3 category) to build the goal for <code>Entity.Tween</code>.</p>
+<details><summary>KillBricks graph</summary><p>A server graph saved as <code>Scripts/Server/GraphKillBricks</code>.</p><div class="code"><span class="tag">GraphKillBricks · graph JSON</span><pre id="ex-graph-killbricks" data-example-kind="graph" data-language="graph">{
+  &quot;name&quot;: &quot;KillBricks&quot;,
+  &quot;side&quot;: &quot;server&quot;,
+  &quot;nodes&quot;: [
+    {&quot;id&quot;: &quot;tagged&quot;, &quot;kind&quot;: &quot;event&quot;, &quot;member&quot;: &quot;World.OnTagged&quot;, &quot;inputs&quot;: {&quot;tag&quot;: &quot;GuideGraphKillBrick&quot;}},
+    {&quot;id&quot;: &quot;touch&quot;, &quot;kind&quot;: &quot;event&quot;, &quot;member&quot;: &quot;Entity.Touched&quot;, &quot;target&quot;: &quot;@tagged.entity&quot;},
+    {&quot;id&quot;: &quot;tp&quot;, &quot;kind&quot;: &quot;call&quot;, &quot;member&quot;: &quot;Player.Teleport&quot;, &quot;target&quot;: &quot;@touch.player&quot;, &quot;inputs&quot;: {&quot;position&quot;: {&quot;vector&quot;: [0, 0, 150]}}},
+    {&quot;id&quot;: &quot;log&quot;, &quot;kind&quot;: &quot;print&quot;, &quot;text&quot;: &quot;a player hit a killbrick&quot;}
+  ],
+  &quot;exec&quot;: [[&quot;tagged&quot;, &quot;touch&quot;], [&quot;touch&quot;, &quot;tp&quot;], [&quot;tp&quot;, &quot;log&quot;]]
+}
+</pre></div></details><details><summary>Coins graph</summary><p>A server graph saved as <code>Scripts/Server/GraphCoins</code>.</p><div class="code"><span class="tag">GraphCoins · graph JSON</span><pre id="ex-graph-coins" data-example-kind="graph" data-language="graph">{
+  &quot;name&quot;: &quot;Coins&quot;, &quot;side&quot;: &quot;server&quot;,
+  &quot;functions&quot;: [{&quot;name&quot;: &quot;Bob&quot;, &quot;params&quot;: [{&quot;name&quot;: &quot;coin&quot;, &quot;type&quot;: &quot;Entity&quot;}, {&quot;name&quot;: &quot;home&quot;, &quot;type&quot;: &quot;Vector3&quot;}], &quot;returns&quot;: []}],
+  &quot;nodes&quot;: [
+    {&quot;id&quot;: &quot;tagged&quot;, &quot;kind&quot;: &quot;event&quot;, &quot;member&quot;: &quot;World.OnTagged&quot;, &quot;inputs&quot;: {&quot;tag&quot;: &quot;GuideGraphCoin&quot;}},
+    {&quot;id&quot;: &quot;setup&quot;, &quot;kind&quot;: &quot;sequence&quot;},
+    {&quot;id&quot;: &quot;touch&quot;, &quot;kind&quot;: &quot;event&quot;, &quot;member&quot;: &quot;Entity.Touched&quot;, &quot;target&quot;: &quot;@tagged.entity&quot;},
+    {&quot;id&quot;: &quot;visibleGet&quot;, &quot;kind&quot;: &quot;get&quot;, &quot;member&quot;: &quot;Entity.Visible&quot;, &quot;target&quot;: &quot;@tagged.entity&quot;},
+    {&quot;id&quot;: &quot;guard&quot;, &quot;kind&quot;: &quot;branch&quot;, &quot;condition&quot;: &quot;@visibleGet&quot;},
+    {&quot;id&quot;: &quot;hide&quot;, &quot;kind&quot;: &quot;set&quot;, &quot;member&quot;: &quot;Entity.Visible&quot;, &quot;target&quot;: &quot;@tagged.entity&quot;, &quot;value&quot;: false},
+    {&quot;id&quot;: &quot;playerId&quot;, &quot;kind&quot;: &quot;get&quot;, &quot;member&quot;: &quot;Player.UserId&quot;, &quot;target&quot;: &quot;@touch.player&quot;},
+    {&quot;id&quot;: &quot;keyFmt&quot;, &quot;kind&quot;: &quot;format&quot;, &quot;text&quot;: &quot;score:{}&quot;, &quot;values&quot;: [&quot;@playerId&quot;]},
+    {&quot;id&quot;: &quot;curScore&quot;, &quot;kind&quot;: &quot;call&quot;, &quot;member&quot;: &quot;State.Get&quot;, &quot;inputs&quot;: {&quot;key&quot;: &quot;@keyFmt&quot;}},
+    {&quot;id&quot;: &quot;curOr0&quot;, &quot;kind&quot;: &quot;bool&quot;, &quot;op&quot;: &quot;or&quot;, &quot;a&quot;: &quot;@curScore.value&quot;, &quot;b&quot;: 0},
+    {&quot;id&quot;: &quot;newScore&quot;, &quot;kind&quot;: &quot;math&quot;, &quot;op&quot;: &quot;add&quot;, &quot;a&quot;: &quot;@curOr0&quot;, &quot;b&quot;: 1},
+    {&quot;id&quot;: &quot;setScore&quot;, &quot;kind&quot;: &quot;call&quot;, &quot;member&quot;: &quot;State.Set&quot;, &quot;inputs&quot;: {&quot;key&quot;: &quot;@keyFmt&quot;, &quot;value&quot;: &quot;@newScore&quot;}},
+    {&quot;id&quot;: &quot;wait&quot;, &quot;kind&quot;: &quot;delay&quot;, &quot;seconds&quot;: 5},
+    {&quot;id&quot;: &quot;show&quot;, &quot;kind&quot;: &quot;set&quot;, &quot;member&quot;: &quot;Entity.Visible&quot;, &quot;target&quot;: &quot;@tagged.entity&quot;, &quot;value&quot;: true},
+    {&quot;id&quot;: &quot;home&quot;, &quot;kind&quot;: &quot;get&quot;, &quot;member&quot;: &quot;Entity.Position&quot;, &quot;target&quot;: &quot;@tagged.entity&quot;},
+    {&quot;id&quot;: &quot;startBob&quot;, &quot;kind&quot;: &quot;callfunction&quot;, &quot;function&quot;: &quot;Bob&quot;, &quot;inputs&quot;: {&quot;coin&quot;: &quot;@tagged.entity&quot;, &quot;home&quot;: &quot;@home&quot;}},
+    {&quot;id&quot;: &quot;bob&quot;, &quot;kind&quot;: &quot;function&quot;, &quot;function&quot;: &quot;Bob&quot;},
+    {&quot;id&quot;: &quot;bobLoop&quot;, &quot;kind&quot;: &quot;while&quot;, &quot;condition&quot;: true},
+    {&quot;id&quot;: &quot;raised&quot;, &quot;kind&quot;: &quot;vectormath&quot;, &quot;op&quot;: &quot;add&quot;, &quot;a&quot;: &quot;@bob.home&quot;, &quot;b&quot;: {&quot;vector&quot;: [0, 0, 40]}},
+    {&quot;id&quot;: &quot;upGoal&quot;, &quot;kind&quot;: &quot;positiongoal&quot;, &quot;position&quot;: &quot;@raised&quot;},
+    {&quot;id&quot;: &quot;homeGoal&quot;, &quot;kind&quot;: &quot;positiongoal&quot;, &quot;position&quot;: &quot;@bob.home&quot;},
+    {&quot;id&quot;: &quot;up&quot;, &quot;kind&quot;: &quot;call&quot;, &quot;member&quot;: &quot;Entity.Tween&quot;, &quot;target&quot;: &quot;@bob.coin&quot;, &quot;inputs&quot;: {&quot;goal&quot;: &quot;@upGoal&quot;, &quot;seconds&quot;: 1, &quot;style&quot;: &quot;Sine&quot;, &quot;direction&quot;: &quot;InOut&quot;}},
+    {&quot;id&quot;: &quot;upWait&quot;, &quot;kind&quot;: &quot;call&quot;, &quot;member&quot;: &quot;Signal.Wait&quot;, &quot;target&quot;: &quot;@up.value&quot;},
+    {&quot;id&quot;: &quot;down&quot;, &quot;kind&quot;: &quot;call&quot;, &quot;member&quot;: &quot;Entity.Tween&quot;, &quot;target&quot;: &quot;@bob.coin&quot;, &quot;inputs&quot;: {&quot;goal&quot;: &quot;@homeGoal&quot;, &quot;seconds&quot;: 1, &quot;style&quot;: &quot;Sine&quot;, &quot;direction&quot;: &quot;InOut&quot;}},
+    {&quot;id&quot;: &quot;downWait&quot;, &quot;kind&quot;: &quot;call&quot;, &quot;member&quot;: &quot;Signal.Wait&quot;, &quot;target&quot;: &quot;@down.value&quot;}
+  ],
+  &quot;exec&quot;: [
+    [&quot;tagged&quot;, &quot;setup&quot;], {&quot;from&quot;:&quot;setup&quot;, &quot;port&quot;:&quot;0&quot;, &quot;to&quot;:&quot;touch&quot;}, {&quot;from&quot;:&quot;setup&quot;, &quot;port&quot;:&quot;1&quot;, &quot;to&quot;:&quot;startBob&quot;},
+    [&quot;touch&quot;, &quot;guard&quot;], {&quot;from&quot;:&quot;guard&quot;, &quot;port&quot;:&quot;true&quot;, &quot;to&quot;:&quot;hide&quot;},
+    [&quot;hide&quot;, &quot;curScore&quot;], [&quot;curScore&quot;, &quot;setScore&quot;], [&quot;setScore&quot;, &quot;wait&quot;], [&quot;wait&quot;, &quot;show&quot;],
+    [&quot;bob&quot;, &quot;bobLoop&quot;], {&quot;from&quot;:&quot;bobLoop&quot;, &quot;port&quot;:&quot;body&quot;, &quot;to&quot;:&quot;up&quot;},
+    [&quot;up&quot;, &quot;upWait&quot;], [&quot;upWait&quot;, &quot;down&quot;], [&quot;down&quot;, &quot;downWait&quot;]
+  ]
+}</pre></div></details><details><summary>Door graph</summary><p>A server graph saved as <code>Scripts/Server/GraphDoor</code>.</p><div class="code"><span class="tag">GraphDoor · graph JSON</span><pre id="ex-graph-door" data-example-kind="graph" data-language="graph">{
+  &quot;name&quot;: &quot;Door&quot;, &quot;side&quot;: &quot;server&quot;,
+  &quot;variables&quot;: [{&quot;name&quot;:&quot;DoorClosedPos&quot;, &quot;type&quot;:&quot;Vector3&quot;}, {&quot;name&quot;:&quot;IsOpen&quot;, &quot;type&quot;:&quot;boolean&quot;}, {&quot;name&quot;:&quot;Near&quot;, &quot;type&quot;:&quot;boolean&quot;}],
+  &quot;nodes&quot;: [
+    {&quot;id&quot;:&quot;begin&quot;, &quot;kind&quot;:&quot;start&quot;},
+    {&quot;id&quot;:&quot;findDoor&quot;, &quot;kind&quot;:&quot;call&quot;, &quot;member&quot;:&quot;World.FindFirst&quot;, &quot;inputs&quot;:{&quot;name&quot;:&quot;GuideGraphDoor&quot;}},
+    {&quot;id&quot;:&quot;doorPos&quot;, &quot;kind&quot;:&quot;get&quot;, &quot;member&quot;:&quot;Entity.Position&quot;, &quot;target&quot;:&quot;@findDoor.value&quot;},
+    {&quot;id&quot;:&quot;captureClosed&quot;, &quot;kind&quot;:&quot;setvar&quot;, &quot;variable&quot;:&quot;DoorClosedPos&quot;, &quot;value&quot;:&quot;@doorPos&quot;},
+    {&quot;id&quot;:&quot;getClosed&quot;, &quot;kind&quot;:&quot;getvar&quot;, &quot;variable&quot;:&quot;DoorClosedPos&quot;},
+    {&quot;id&quot;:&quot;getOpen&quot;, &quot;kind&quot;:&quot;getvar&quot;, &quot;variable&quot;:&quot;IsOpen&quot;},
+    {&quot;id&quot;:&quot;getNear&quot;, &quot;kind&quot;:&quot;getvar&quot;, &quot;variable&quot;:&quot;Near&quot;},
+    {&quot;id&quot;:&quot;poll&quot;, &quot;kind&quot;:&quot;while&quot;, &quot;condition&quot;:true},
+    {&quot;id&quot;:&quot;clearNear&quot;, &quot;kind&quot;:&quot;setvar&quot;, &quot;variable&quot;:&quot;Near&quot;, &quot;value&quot;:false},
+    {&quot;id&quot;:&quot;players&quot;, &quot;kind&quot;:&quot;call&quot;, &quot;member&quot;:&quot;Players.GetPlayers&quot;},
+    {&quot;id&quot;:&quot;each&quot;, &quot;kind&quot;:&quot;foreach&quot;, &quot;array&quot;:&quot;@players.value&quot;},
+    {&quot;id&quot;:&quot;playerPos&quot;, &quot;kind&quot;:&quot;get&quot;, &quot;member&quot;:&quot;Player.Position&quot;, &quot;target&quot;:&quot;@each.value&quot;},
+    {&quot;id&quot;:&quot;hasPosition&quot;, &quot;kind&quot;:&quot;bool&quot;, &quot;op&quot;:&quot;and&quot;, &quot;a&quot;:&quot;@playerPos&quot;, &quot;b&quot;:true},
+    {&quot;id&quot;:&quot;positionGuard&quot;, &quot;kind&quot;:&quot;branch&quot;, &quot;condition&quot;:&quot;@hasPosition&quot;},
+    {&quot;id&quot;:&quot;offset&quot;, &quot;kind&quot;:&quot;vectormath&quot;, &quot;op&quot;:&quot;sub&quot;, &quot;a&quot;:&quot;@playerPos&quot;, &quot;b&quot;:&quot;@getClosed&quot;},
+    {&quot;id&quot;:&quot;parts&quot;, &quot;kind&quot;:&quot;breakvector3&quot;, &quot;value&quot;:&quot;@offset&quot;},
+    {&quot;id&quot;:&quot;x2&quot;, &quot;kind&quot;:&quot;math&quot;, &quot;op&quot;:&quot;mul&quot;, &quot;a&quot;:&quot;@parts.x&quot;, &quot;b&quot;:&quot;@parts.x&quot;},
+    {&quot;id&quot;:&quot;y2&quot;, &quot;kind&quot;:&quot;math&quot;, &quot;op&quot;:&quot;mul&quot;, &quot;a&quot;:&quot;@parts.y&quot;, &quot;b&quot;:&quot;@parts.y&quot;},
+    {&quot;id&quot;:&quot;z2&quot;, &quot;kind&quot;:&quot;math&quot;, &quot;op&quot;:&quot;mul&quot;, &quot;a&quot;:&quot;@parts.z&quot;, &quot;b&quot;:&quot;@parts.z&quot;},
+    {&quot;id&quot;:&quot;xy2&quot;, &quot;kind&quot;:&quot;math&quot;, &quot;op&quot;:&quot;add&quot;, &quot;a&quot;:&quot;@x2&quot;, &quot;b&quot;:&quot;@y2&quot;},
+    {&quot;id&quot;:&quot;distance2&quot;, &quot;kind&quot;:&quot;math&quot;, &quot;op&quot;:&quot;add&quot;, &quot;a&quot;:&quot;@xy2&quot;, &quot;b&quot;:&quot;@z2&quot;},
+    {&quot;id&quot;:&quot;inRange&quot;, &quot;kind&quot;:&quot;compare&quot;, &quot;op&quot;:&quot;lt&quot;, &quot;a&quot;:&quot;@distance2&quot;, &quot;b&quot;:202500},
+    {&quot;id&quot;:&quot;rangeGuard&quot;, &quot;kind&quot;:&quot;branch&quot;, &quot;condition&quot;:&quot;@inRange&quot;},
+    {&quot;id&quot;:&quot;markNear&quot;, &quot;kind&quot;:&quot;setvar&quot;, &quot;variable&quot;:&quot;Near&quot;, &quot;value&quot;:true},
+    {&quot;id&quot;:&quot;afterScan&quot;, &quot;kind&quot;:&quot;sequence&quot;},
+    {&quot;id&quot;:&quot;changed&quot;, &quot;kind&quot;:&quot;compare&quot;, &quot;op&quot;:&quot;ne&quot;, &quot;a&quot;:&quot;@getNear&quot;, &quot;b&quot;:&quot;@getOpen&quot;},
+    {&quot;id&quot;:&quot;changeGuard&quot;, &quot;kind&quot;:&quot;branch&quot;, &quot;condition&quot;:&quot;@changed&quot;},
+    {&quot;id&quot;:&quot;rememberOpen&quot;, &quot;kind&quot;:&quot;setvar&quot;, &quot;variable&quot;:&quot;IsOpen&quot;, &quot;value&quot;:&quot;@getNear&quot;},
+    {&quot;id&quot;:&quot;direction&quot;, &quot;kind&quot;:&quot;branch&quot;, &quot;condition&quot;:&quot;@getOpen&quot;},
+    {&quot;id&quot;:&quot;openPos&quot;, &quot;kind&quot;:&quot;vectormath&quot;, &quot;op&quot;:&quot;sub&quot;, &quot;a&quot;:&quot;@getClosed&quot;, &quot;b&quot;:{&quot;vector&quot;:[0,0,390]}},
+    {&quot;id&quot;:&quot;openGoal&quot;, &quot;kind&quot;:&quot;positiongoal&quot;, &quot;position&quot;:&quot;@openPos&quot;},
+    {&quot;id&quot;:&quot;closedGoal&quot;, &quot;kind&quot;:&quot;positiongoal&quot;, &quot;position&quot;:&quot;@getClosed&quot;},
+    {&quot;id&quot;:&quot;open&quot;, &quot;kind&quot;:&quot;call&quot;, &quot;member&quot;:&quot;Entity.Tween&quot;, &quot;target&quot;:&quot;@findDoor.value&quot;, &quot;inputs&quot;:{&quot;goal&quot;:&quot;@openGoal&quot;, &quot;seconds&quot;:0.6}},
+    {&quot;id&quot;:&quot;close&quot;, &quot;kind&quot;:&quot;call&quot;, &quot;member&quot;:&quot;Entity.Tween&quot;, &quot;target&quot;:&quot;@findDoor.value&quot;, &quot;inputs&quot;:{&quot;goal&quot;:&quot;@closedGoal&quot;, &quot;seconds&quot;:0.6}},
+    {&quot;id&quot;:&quot;tick&quot;, &quot;kind&quot;:&quot;delay&quot;, &quot;seconds&quot;:0.2}
+  ],
+  &quot;exec&quot;: [
+    [&quot;begin&quot;,&quot;findDoor&quot;], [&quot;findDoor&quot;,&quot;captureClosed&quot;], [&quot;captureClosed&quot;,&quot;poll&quot;],
+    {&quot;from&quot;:&quot;poll&quot;,&quot;port&quot;:&quot;body&quot;,&quot;to&quot;:&quot;clearNear&quot;}, [&quot;clearNear&quot;,&quot;players&quot;], [&quot;players&quot;,&quot;each&quot;],
+    {&quot;from&quot;:&quot;each&quot;,&quot;port&quot;:&quot;body&quot;,&quot;to&quot;:&quot;positionGuard&quot;}, {&quot;from&quot;:&quot;positionGuard&quot;,&quot;port&quot;:&quot;true&quot;,&quot;to&quot;:&quot;rangeGuard&quot;},
+    {&quot;from&quot;:&quot;rangeGuard&quot;,&quot;port&quot;:&quot;true&quot;,&quot;to&quot;:&quot;markNear&quot;},
+    {&quot;from&quot;:&quot;each&quot;,&quot;port&quot;:&quot;done&quot;,&quot;to&quot;:&quot;afterScan&quot;},
+    {&quot;from&quot;:&quot;afterScan&quot;,&quot;port&quot;:&quot;0&quot;,&quot;to&quot;:&quot;changeGuard&quot;}, {&quot;from&quot;:&quot;afterScan&quot;,&quot;port&quot;:&quot;1&quot;,&quot;to&quot;:&quot;tick&quot;},
+    {&quot;from&quot;:&quot;changeGuard&quot;,&quot;port&quot;:&quot;true&quot;,&quot;to&quot;:&quot;rememberOpen&quot;}, [&quot;rememberOpen&quot;,&quot;direction&quot;],
+    {&quot;from&quot;:&quot;direction&quot;,&quot;port&quot;:&quot;true&quot;,&quot;to&quot;:&quot;open&quot;}, {&quot;from&quot;:&quot;direction&quot;,&quot;port&quot;:&quot;false&quot;,&quot;to&quot;:&quot;close&quot;}
+  ]
+}</pre></div></details>
