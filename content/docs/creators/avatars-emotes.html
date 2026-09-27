@@ -19,7 +19,7 @@
 <li>Extra bones that carry no weight, such as cloth or helper bones some exports add, are left out for you.</li>
 <li>The skeleton's root bone (<code>root</code>) must be included, and the bones must form one hierarchy.</li>
 <li>Bone names match whatever their case, so <code>Root</code> counts as <code>root</code>. Two bones whose names differ only in case are refused, because Unreal treats them as one bone.</li>
-<li>Up to 8 bone influences per vertex.</li>
+<li>Up to 8 bone influences per vertex. Extra influences on the body and face are dropped for you, lightest first, with a "Done:" line (a "Note:" if a dropped weight was over 0.1).</li>
 <li>The mesh must be bound in its reference pose. Morph targets aren't uploaded.</li>
 </ul>
 
@@ -36,8 +36,8 @@
 </ol>
 
 <h3 id="metahuman-clothing">MetaHumans that wear clothing</h3>
-<p>3D clothing, hair, eyebrows, eyelashes, facial hair and 2D clothing fit an avatar only if its body is exported the right way: export the MetaHuman with <b>UE Optimized</b> at <b>Medium</b> or <b>High</b> quality, without clothing. The plugin finds the right LOD and uploads it, and <b>Check only</b> shows "Done: Garment-compatible: LOD N has Mantle's reference topology, so it takes 3D clothing."</p>
-<p>A MetaHuman body without that LOD still uploads, with "Note: not garment-compatible: export the MetaHuman with UE Optimized at Medium or High quality, without clothing. It still uploads: it wears accessories and emotes, not 3D clothing." A UE5 Mannequin avatar never wears clothing.</p>
+<p>3D clothing, hair, eyebrows, eyelashes and facial hair fit an avatar only if its body is exported the right way: export the MetaHuman with <b>UE Optimized</b> at <b>Medium</b>, <b>High</b> or <b>Cinematic</b> quality, without clothing. For a Cinematic MetaHuman from Fab, the body is <code>SKM_&lt;Name&gt;_Body</code> under <code>CharacterAssemblies/&lt;Name&gt;/Body</code>. The plugin finds the right LOD and uploads it, and <b>Check only</b> shows "Done: Garment-compatible: LOD N has Mantle's reference topology, so it takes 3D clothing."</p>
+<p>A MetaHuman body without that LOD still uploads, with "Note: not garment-compatible: export the MetaHuman with UE Optimized at Medium, High or Cinematic quality, without clothing. It still uploads: it wears accessories and emotes, not 3D clothing." A UE5 Mannequin avatar never wears clothing.</p>
 <p>Players on an avatar that can't wear clothing keep their clothing and hair: those items are marked "SET ASIDE" on the Avatar screen and go back on when they switch to an avatar that fits them. Accessories and emotes work on every avatar.</p>
 
 <h3 id="face">The face</h3>
@@ -99,9 +99,10 @@
 <tr><td>Problem: not skinned to a supported skeleton: bone "[bone]" is not on the metahuman skeleton. An avatar is skinned to the MetaHuman body skeleton or the UE5 Mannequin skeleton (SK_Mannequin).</td><td>A weighted bone isn't on either skeleton. Retarget or re-skin the mesh onto one of them.</td></tr>
 <tr><td>Problem: not skinned to a supported skeleton: bone "[bone]" has parent "[parent]", the metahuman skeleton has "[parent]". …</td><td>The hierarchy differs from the skeleton's. Put the bone back under the parent the message names.</td></tr>
 <tr><td>Problem: not skinned to a supported skeleton: the skin has no "root" bone; the metahuman skeleton's root must be included. …</td><td>Keep the <code>root</code> bone in the mesh's skeleton.</td></tr>
-<tr><td>Problem: [N] triangles, the limit is 20000. Use a lower LOD of the mesh, or reduce it (Skeletal Mesh editor > LOD Settings, or Modeling > Simplify).</td><td>Add or pick a lighter LOD. The plugin uses the first LOD under the limit.</td></tr>
+<tr><td>Problem: [N] triangles, the limit is 20000. followed by "It has no lower LOD. Add one in the Skeletal Mesh editor…" or "None of its N LODs is within the limit. Reduce its last LOD…"</td><td>Add or reduce a LOD as the message says. The plugin uses the first LOD under the limit.</td></tr>
 <tr><td>Problem: [N] material sections, the limit is 8. Merge materials so the mesh uses fewer material slots.</td><td>Merge materials.</td></tr>
-<tr><td>Problem: a vertex has [N] influences, the limit is 8. Set the mesh's Max Bone Influences (LOD settings) to 8 or fewer and reimport.</td><td>As the message says.</td></tr>
+<tr><td>Done: the body: [N] vertices had more than 8 influences; the lightest were dropped and the rest renormalised (largest weight dropped: [W]). (The same for "the face:".)</td><td>Nothing. Above 0.1 it's a Note: to choose the weights yourself, set the mesh's Max Bone Influences (LOD settings) to 8 and reimport.</td></tr>
+<tr><td>Problem: section "[name]" spans [N] UV tiles (UDIM 1001, …); Mantle maps one 0..1 texture per section.</td><td>Bake the tiles into one texture with the UVs laid out in 0..1, then reimport the mesh and the texture.</td></tr>
 <tr><td>Problem: the body's lowest point is at z = [N] cm; the feet must stand on the origin (within 10 cm). Move the mesh so its feet are at the origin and reimport.</td><td>As the message says.</td></tr>
 <tr><td>Problem: the avatar is [N] cm tall, the limit is 218.1 cm.</td><td>Scale the body down.</td></tr>
 <tr><td>Problem: the avatar is [N] cm tall, the minimum is 151.1 cm.</td><td>A UE5 Mannequin body is too short. Scale it up.</td></tr>
