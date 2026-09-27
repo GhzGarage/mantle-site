@@ -169,3 +169,147 @@ State.observe(&quot;guide.example.timeLeft&quot;, lambda s: label.set_text(f&quo
       <li><b>Remotes</b> between server and clients.</li>
     </ul>
     <p>The <a href="/docs/scripting/recipes/#r-cross">checkpoint recipe</a> pairs <code>Server/GuideCheckpoint.ts</code> with <code>Server/GuideKillBricks.luau</code>: TypeScript writes a checkpoint vector into State; Luau reads it when the player touches a kill brick. Neither language imports the other's module.</p>
+
+    <h2 id="next-release">Coming in the next release <span class="status wip">Next release</span></h2>
+    <p>The sections below cover services added in script API 1.4 to 1.24. They're in the Mantle plugin now, so Check All and the type files know them, but publishing refuses a place whose scripts use them until the game release that carries them is out (see <a href="#versions">API versions</a>). Each section names the version it needs. The examples are in Luau; the other languages use the same members with their own spelling. Every member is listed in the <a href="#reference">full reference</a>.</p>
+
+    <h3 id="script-assets">Assets your scripts use</h3>
+    <p>A script can only spawn a mesh, show a material or play a sound that was published with the place. Anything placed in the level is published automatically. For an asset nothing in the level uses, such as a projectile a script spawns or a sound it plays on an event, add it to <b>Script Assets</b>:</p>
+    <ol>
+      <li>Choose <b>Tools → Mantle → Place settings</b>. This selects the level's Mantle Place Settings actor, and adds one if the level has none.</li>
+      <li>In the Details panel, under <b>Mantle → Scripts</b>, add entries to <b>Script Assets</b> and pick each asset. It takes static meshes, materials and sound waves.</li>
+      <li>Publish. Script Assets are checked and uploaded exactly like placed content, with the same limits.</li>
+      <li>Find each asset's id in the publish log, one line per asset: <code>Script asset /Game/Props/SM_Boulder.SM_Boulder = ast_u…</code>. The same ids show in the read-only <b>Script Asset Ids</b> list until you close the editor. Use that id in your script.</li>
+    </ol>
+    <p>A mesh brings its slot materials with it. An asset that's also placed in the level, or listed twice, is published once. Check this place names anything the list can't publish, such as a texture, a Sound Cue or MetaSound, or a deleted asset, and Publish refuses the same entries.</p>
+
+    <h3 id="lights">Lights (API 1.7)</h3>
+    <p>Every point, spot and directional light in the place is an <code>Entity</code> with <code>LightEnabled</code>, <code>LightColor</code> (<code>"#RRGGBB"</code>), <code>LightIntensity</code>, <code>LightRange</code> and, for spot lights, <code>LightInnerCone</code>/<code>LightOuterCone</code>. <code>LightKind</code> says which kind it is, or nil for anything that isn't a light. Set them on the server and every player sees the change, including players who join later; set them on a client and only that player does. <code>Lights:Spawn</code> <span class="side s">Server</span> adds a new light. Shadows are off unless you pass <code>CastShadow = true</code>. A place can have at most 64 spawned lights at once; lights you placed in the editor don't count.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Lamp.luau</span><pre data-example-kind="snippet">local lamp = Lights:Spawn("Point", Vector3.new(0, 0, 300), {
+	Color = "#FFD9A0", Intensity = 40, Range = 1200,
+})
+lamp:AddTag("streetlamp")
+lamp:Tween({ LightIntensity = 0 }, 5)   -- fade it out over five seconds (API 1.8)</pre></div></div>
+
+    <h3 id="spawn-meshes">Spawning and recolouring meshes (API 1.8)</h3>
+    <p><code>Assets:Spawn(assetId, position, props?)</code> <span class="side s">Server</span> places one of the place's meshes (placed in the level or listed under <a href="#script-assets">Script Assets</a>) and returns it as an <code>Entity</code>. Spawned meshes count towards the same 512 limit as clones. Any mesh can be tinted with <code>Color</code>, faded with <code>Transparency</code> (0 solid to 1 invisible), or given another of the place's materials with <code>SetMaterial(assetId, slot?)</code>. Only materials uploaded with the place can be tinted or made see-through.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Crates.luau</span><pre data-example-kind="snippet">local CRATE = "ast_u…"   -- the id from the publish log
+
+local crate = Assets:Spawn(CRATE, Vector3.new(200, 0, 100), {
+	Scale = 1.5, Color = "#C0392B", Collision = "Blocking",
+})
+task.wait(3)
+crate:Tween({ Color = "#FFFFFF" }, 1)   -- fade the tint away
+crate.Transparency = 0.5</pre></div></div>
+
+    <h3 id="physics">Physics objects (API 1.15)</h3>
+    <p>A static mesh with <b>Simulate Physics</b> turned on in the editor is published as a physics object: the server simulates it and every player sees it move. On the server, <code>ApplyImpulse</code> and <code>ApplyAngularImpulse</code> push and spin it, <code>Velocity</code> reads or replaces its speed in cm/s, <code>Anchored = true</code> pins it in place and <code>false</code> lets it fall, and <code>Mass</code> reads its mass in kg. <code>Collided(other)</code> fires on the server when it starts touching something: another entity, a player's character, or nil. Every other entity is always anchored, and physics objects can't be cloned yet. A place can hold 500 physics objects.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Crate.luau</span><pre data-example-kind="snippet">local crate = World:FindFirst("PhysicsCrate")
+crate.Collided:Connect(function(other)
+	print("hit", other and other.Name or "the world")
+end)
+-- Launch it upwards: an impulse in kg·cm/s, so divide by Mass for the speed change.
+crate:ApplyImpulse(Vector3.new(0, 0, 800) * crate.Mass)</pre></div></div>
+
+    <h3 id="raycast">Raycasts and area queries (API 1.6)</h3>
+    <p><code>World:Raycast(origin, direction, params?)</code> returns the first thing a ray hits as a table of <code>Entity</code>, <code>Player</code> (set when it hit a character), <code>Position</code>, <code>Normal</code> and <code>Distance</code>, or nil. <code>Spherecast</code> and <code>Blockcast</code> sweep a ball or box the same way, and <code>GetEntitiesInRadius</code> and <code>GetEntitiesInBox</code> list everything inside a shape, nearest first. <code>params</code> takes <code>MaxDistance</code>, <code>Include</code>, <code>Exclude</code>, <code>Tag</code> and <code>IgnorePlayers</code>. Queries run on the machine that asks, work on both sides, and reach at most 1 km.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Laser.luau</span><pre data-example-kind="snippet">local laser = World:FindFirst("Laser")
+while true do
+	local hit = World:Raycast(laser.Position, Vector3.new(1, 0, 0), { MaxDistance = 3000, Exclude = { laser } })
+	if hit and hit.Player then
+		hit.Player:TakeDamage(10)   -- API 1.9
+	end
+	task.wait(0.25)
+end</pre></div></div>
+
+    <h3 id="health">Health and damage (API 1.9)</h3>
+    <p>Each player's character has <code>Health</code> and <code>MaxHealth</code> (100 unless a script changes it), plus <code>WalkSpeed</code> (500 cm/s) and <code>JumpHeight</code> (about 90 cm). Read them anywhere; set them on the server. <code>TakeDamage(amount, source?)</code> goes through the same path weapons use, and <code>source</code> is the player credited with a kill. <code>Heal</code>, <code>Kill</code> and <code>Respawn(position?)</code> return false when they can't apply, for example while the player is dead or driving. <code>Died(player, killer)</code> and <code>HealthChanged(player, old, new)</code> fire on the server and on every client.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Health.luau</span><pre data-example-kind="snippet">Players:OnPlayer(function(player)
+	player.Died:Connect(function(_, killer)
+		if killer then
+			print(`{killer.Name} got {player.Name}`)
+		end
+	end)
+end)
+
+World:OnTagged("healpad", function(pad)
+	pad.Touched:Connect(function(player)
+		player:Heal(25)
+	end)
+end)</pre></div></div>
+
+    <h3 id="input-camera">Input and camera (API 1.10)</h3>
+    <p>On a client, <code>Input:BindAction(name, keys, callback)</code> calls you with <code>"Began"</code> when the player presses one of the keys and <code>"Ended"</code> when they let go. Keys are named like <code>"Q"</code>, <code>"5"</code>, <code>"F4"</code>, <code>"MouseMiddle"</code> or <code>"ButtonX"</code>. Keys Mantle uses for its own controls can't be bound; <code>Input:GetBindableKeys()</code> lists the free ones. From API 1.22, <code>BindAxis</code> reads the sticks, triggers and mouse wheel. <code>Camera</code> can hold the view in first person (<code>Camera.Mode = "FirstPerson"</code>), cut or tween to a fixed shot (<code>SetFixed</code>, <code>TweenFixed</code>), follow an entity (<code>Follow</code>), change <code>FieldOfView</code> and <code>Shake</code>. Everything goes back to Mantle's own camera when the script stops or the player respawns, or when you call <code>Camera:Reset()</code>.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Client/Overview.luau</span><pre data-example-kind="snippet">local tower = World:FindFirst("Tower")
+
+Input:BindAction("overview", { "Q" }, function(phase)
+	if phase == "Began" then
+		Camera:TweenFixed(tower.Position + Vector3.new(-2000, 0, 1500), tower.Position, 1.5, "Sine", "InOut")
+	else
+		Camera:Reset()
+	end
+end)</pre></div></div>
+
+    <h3 id="sounds">Sounds and music (API 1.12)</h3>
+    <p><code>Sounds:Play(sound, params?)</code> plays one of the place's uploaded sounds: a sound emitter's <code>SoundId</code>, or a sound's asset id. Give it a <code>Position</code> or <code>AttachTo</code> entity to place it in the world, where it fades out at <code>Radius</code> (4,000 cm by default); without either it plays flat, like an interface sound. From a server script every player hears it, or only <code>params.Player</code>; from a client script only that player does. It returns a <code>SoundHandle</code> with <code>Stop</code>, <code>SetVolume</code> and <code>IsPlaying</code>. Each player has one music track: <code>Sounds:PlayMusic</code> crossfades to a new one and <code>StopMusic</code> ends it. A placed sound emitter is an <code>Entity</code> with <code>PlaySound</code>, <code>StopSound</code> and <code>SoundVolume</code>.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Bell.luau</span><pre data-example-kind="snippet">local bell = World:FindFirst("Bell")
+local BELL_SOUND = "ast_u…"   -- a sound listed under Script Assets
+
+bell.Touched:Connect(function(player)
+	Sounds:Play(BELL_SOUND, { AttachTo = bell, Radius = 3000, Pitch = 0.9 })
+end)</pre></div></div>
+
+    <h3 id="effects">Particle effects (API 1.19)</h3>
+    <p>Mantle has five built-in particle effects: <code>Smoke</code>, <code>Fire</code>, <code>Sparks</code>, <code>Dust</code> and <code>Glow</code>. You can't upload your own particle systems. <code>Effects:Play(archetype, position, params?)</code> shows one for <code>Duration</code> seconds (1 by default, at most 10), and <code>params</code> can change its <code>Color</code>, <code>Size</code>, <code>Rate</code>, <code>Speed</code>, <code>Lifetime</code> and <code>Rotation</code>. From a server script every player sees it, but a player who joins later doesn't; from a client script only that player does. A <b>Mantle Effect</b> placed in the level is an <code>Entity</code> with <code>PlayEffect</code>, <code>StopEffect</code>, <code>SetEffectColor</code> and <code>SetEffectRate</code>, and those changes do reach late joiners. The five effect systems ship with the same release; until a build carries them, effects draw nothing.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Explosion.luau</span><pre data-example-kind="snippet">local function explode(position)
+	Effects:Play("Fire", position, { Size = 120, Rate = 150, Duration = 0.4 })
+	Effects:Play("Smoke", position, { Duration = 2 })
+end</pre></div></div>
+
+    <h3 id="environment">Time of day and weather (API 1.4 and 1.11)</h3>
+    <p>Every server has one sky, shared by every player. <code>Environment.TimeOfDay</code> runs from 0 to 24 (servers start at 9, and a day lasts 30 real minutes), <code>IsNight</code> is true while the sun is down, and <code>Weather</code> is <code>Clear</code>, <code>PartlyCloudy</code>, <code>Overcast</code>, <code>Rain</code> or <code>Storm</code>. <code>WeatherChanged</code> fires when the weather turns, and <code>LightningStrike</code> <span class="side c">Client</span> fires with each flash so you can play your own thunder. From API 1.11, server scripts can change it: set <code>ClockTime</code> or <code>TimeScale</code>, <code>FreezeClock()</code>, hold the weather with <code>SetWeather</code> until <code>ResumeNaturalWeather</code>, and adjust the fog, stars, sun and the picture's colour. <code>PropertyChanged</code> fires everywhere when a script changes one of these.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Storm.luau</span><pre data-example-kind="snippet">Environment.ClockTime = 21        -- jump to night
+Environment:SetWeather("Storm", 30)  -- blend into a storm over 30 s
+task.wait(120)
+Environment:ResumeNaturalWeather()</pre></div></div>
+
+    <h3 id="chat-hooks">Chat (API 1.14)</h3>
+    <p><code>Chat.MessagePosted(player, text)</code> fires for what players say, with the text already filtered. On the server it fires for every player's line; on a client, for each line that player's chat box shows. <code>Chat:SendSystemMessage(text, player?)</code> <span class="side s">Server</span> posts a line from the place, to everyone or to one player. It goes through the same chat filter, is at most 500 characters, and a server can send 10 a minute. It returns false when it can't be sent right now.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Commands.luau</span><pre data-example-kind="snippet">Chat.MessagePosted:Connect(function(player, text)
+	if text == "!spawn" then
+		player:Respawn()
+		Chat:SendSystemMessage("Sent you back to the start.", player)
+	end
+end)</pre></div></div>
+
+    <h3 id="npcs">NPCs (API 1.17)</h3>
+    <p><code>NPCs:Spawn(position, look?, yaw?)</code> <span class="side s">Server</span> adds a character that the server walks and animates, and every player sees. <code>look</code> picks the base body (<code>Body = "male"</code> or <code>"female"</code>, <code>SkinTone</code>, <code>EyeColor</code>, <code>Height</code>). <code>MoveTo(position)</code> walks it around walls and obstacles, and <code>MoveCompleted(success)</code> fires when the walk ends. <code>PlayClip</code> plays <code>"walk"</code>, <code>"idle"</code>, <code>"turn_left"</code> or <code>"turn_right"</code>. From API 1.23 NPCs have <code>Health</code>, take weapon damage and <code>TakeDamage</code>, fire <code>Died</code>, and can play the place's own animation clips with <code>PlayAssetClip</code>. A place holds at most 50 NPCs at once, and spawning past that is an error. <code>NPCs:FromEntity</code> turns a raycast hit back into its NPC. To play one of the place's own clips on an NPC, use <code>PlayAssetClip</code> rather than passing the clip's id to <code>PlayClip</code>, so the place records the API version it needs.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Guard.luau</span><pre data-example-kind="snippet">local a, b = Vector3.new(0, 0, 0), Vector3.new(2000, 0, 0)
+local guard = NPCs:Spawn(a, { Body = "female" })
+
+local target = b
+guard.MoveCompleted:Connect(function(success)
+	target = if target == a then b else a
+	task.wait(2)
+	guard:MoveTo(target)
+end)
+guard:MoveTo(target)</pre></div></div>
+
+    <h3 id="animated-meshes">Animated meshes (API 1.18)</h3>
+    <p>A Skeletal Mesh Actor set to <b>Use Animation Asset</b> publishes as an animated mesh that plays its clip in step on every screen (see <a href="/docs/creators/building/">Building a place</a>). <code>PlayClip(clipAssetId?, params?)</code> plays one of the place's animation clips on it, or restarts the one it plays now when you leave the id out. <code>params</code> takes <code>Loop</code> (true by default; false holds the last frame), <code>PlayRate</code> (0 to 10) and <code>StartOffset</code> in seconds. <code>StopClip()</code> returns it to its resting pose, and <code>ClipTime</code> reads how far into the clip it is. From the server every player sees it, late joiners included; from a client only that player does. The clip must be made for the mesh's own skeleton.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Windmill.luau</span><pre data-example-kind="snippet">local windmill = World:FindFirst("Windmill")
+windmill:PlayClip(nil, { PlayRate = 3 })   -- spin three times as fast
+task.wait(10)
+windmill:StopClip()</pre></div></div>
+
+    <h3 id="crowds">Crowds (API 1.16)</h3>
+    <p>A <b>Mantle Crowd Spawner</b> placed in the level fills its lanes with ambient walkers. <code>Crowds:Get(spawner)</code> <span class="side s">Server</span> returns its <code>Crowd</code>: set <code>Density</code> (0 to 1 of the count you authored), <code>Enabled</code>, <code>Paused</code> or, from API 1.21, <code>Seed</code>, and every player sees it. From API 1.24, <code>Crowds.PointReached(spawner, point, npc)</code> <span class="side c">Client</span> fires when one of the crowd's people arrives at one of the spawner's points of interest. Crowd Spawners themselves can't be published until the next release either.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Rush.luau</span><pre data-example-kind="snippet">local crowd = Crowds:Get(World:FindFirst("MarketCrowd"))
+crowd.Density = if Environment.IsNight then 0.2 else 1</pre></div></div>
+
+    <h3 id="vehicles-api">Vehicles</h3>
+    <p><code>Vehicles:Spawn("offroad" | "sports", position)</code> <span class="side s">Server</span> (API 1.1) works today and returns the car as an <code>Entity</code>. <code>Seat</code>, <code>Eject</code>, <code>GetSpeed</code> and <code>SetPaintColor</code> work with it. <span class="status wip">Next release</span> <code>Spawn</code> also takes the id of a creator vehicle the place lists, and <code>Vehicles:SetLivery(vehicle, index)</code> (API 1.20) puts on one of that vehicle's liveries, or takes it off with -1.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Taxi.luau</span><pre data-example-kind="snippet">Players:OnPlayer(function(player)
+	local car = Vehicles:Spawn("sports", Vector3.new(0, 400, 50))
+	Vehicles:SetPaintColor(car, "#F4C20D")
+end)</pre></div></div>

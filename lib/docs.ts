@@ -21,20 +21,20 @@ export const docsNav: DocSection[] = [
         title: "Basics",
         pages: [
           { slug: ["scripting"], title: "Get started", description: "Scripts are plain files beside your level. The folder decides where a script runs, tags connect it to things in the world, and the file extension picks the language." },
-          { slug: ["scripting", "concepts"], title: "Core concepts", description: "How scripts run on the server and on players' machines, and how tags, events, timers, values and modules fit together." },
+          { slug: ["scripting", "concepts"], title: "Core concepts", description: "How scripts run on the server and on players' machines, how tags, events, timers, values and modules fit together, and the lights, sounds, effects, physics, NPCs and other services coming in the next release." },
           { slug: ["scripting", "visual-scripting"], title: "Visual scripting", description: "Build gameplay by connecting nodes in a graph instead of writing code." },
         ],
       },
       {
         title: "Reference",
         pages: [
-          { slug: ["scripting", "api"], title: "API reference", description: "Every service at a glance, tween easing, common errors, script limits and setting up your editor." },
+          { slug: ["scripting", "api"], title: "API reference", description: "Every service and member with its side and API version, API versions and releases, common errors, script limits and setting up your editor." },
         ],
       },
       {
         title: "Guides",
         pages: [
-          { slug: ["scripting", "recipes"], title: "Recipes", description: "Ready-to-use scripts for kill bricks, coins, doors, round timers, buttons, cloning and saving progress." },
+          { slug: ["scripting", "recipes"], title: "Recipes", description: "Ready-to-use scripts for kill bricks, coins, doors, round timers, buttons, cloning, saving progress, leaderboards and lamps that turn on at night." },
           { slug: ["scripting", "migrating"], title: "Coming from other engines", description: "How Roblox, FiveM and Unreal concepts map to Mantle." },
         ],
       },
