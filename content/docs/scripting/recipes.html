@@ -257,7 +257,15 @@ repeat
 until cursor == nil
 </pre></div>
 <h3 id="r-leaderboard">A leaderboard across every server <span class="status wip">Next release</span></h3>
-<p>This keeps a wins leaderboard for your place and shows the top 10 on every player's screen. It needs API 1.13. An ordered store keeps one whole number per key and reads them back sorted, across every server of the place. Key it by <code>player.UserId</code> exactly, so each player has one row: that's also how Mantle removes a player's rows when they delete their account, and includes them in their data export. Every ordered-store call returns a Signal that fires once with a result table: <code>ok</code>, <code>error</code> when it failed, and the answer (<code>value</code>, or <code>entries</code> and <code>nextCursor</code> for a page). Call <code>:Wait()</code> on it straight away, or connect with <code>:Once</code>. <code>IncrementAsync</code> is one step on the backend, so two servers adding a win at the same moment never lose one.</p>
+<p><b>The easy way (API 1.26).</b> Fill an ordered store keyed by <code>player.UserId</code>, then show it with the built-in panel players open with Tab:</p>
+<div class="code"><span class="tag">Scripts/Server/GuideWins.luau</span><pre data-example-kind="snippet">local wins = DataStore:GetOrderedDataStore("wins")
+Leaderboard:Configure("wins", { title = "Most wins", valueLabel = "Wins" })
+
+local function onRoundWon(player)
+	wins:IncrementAsync(player.UserId, 1)
+end</pre></div>
+<p>Use <code>ascending = true</code> in the options table for "lowest is best" (race times), and <code>Leaderboard:Clear()</code> to hide the panel. Keys that aren't a UserId show as written (team names). Server scripts only.</p>
+<p><b>Your own leaderboard UI.</b> This keeps a wins leaderboard for your place and shows the top 10 on every player's screen with your own widgets, for when you want more than the built-in panel. It needs API 1.13. An ordered store keeps one whole number per key and reads them back sorted, across every server of the place. Key it by <code>player.UserId</code> exactly, so each player has one row: that's also how Mantle removes a player's rows when they delete their account, and includes them in their data export. Every ordered-store call returns a Signal that fires once with a result table: <code>ok</code>, <code>error</code> when it failed, and the answer (<code>value</code>, or <code>entries</code> and <code>nextCursor</code> for a page). Call <code>:Wait()</code> on it straight away, or connect with <code>:Once</code>. <code>IncrementAsync</code> is one step on the backend, so two servers adding a win at the same moment never lose one.</p>
 <p>Fire the <code>GuideRoundWon</code> event with the winning player from whichever script decides a round, for example <code>Events:Get(&quot;GuideRoundWon&quot;):Fire(player)</code>. The store only holds ids, so the server fills in names for players who are in this session.</p>
 <div class="code"><span class="tag">Scripts/Server/GuideLeaderboard.luau</span><pre id="ex-guide-leaderboard" data-example-kind="source" data-language="luau">local wins = DataStore:GetOrderedDataStore(&quot;wins&quot;)
 
@@ -319,6 +327,43 @@ while true do
 	task.wait(5)
 end
 </pre></div>
+<h3 id="r-door-hinge">A hinged door that swings open <span class="status wip">Next release</span></h3>
+<p>This builds a door on a hinge that a player can push open, rather than one that tweens by script: place a <b>Physics Constraint Actor</b> between the door's Static Mesh Actor (Simulate Physics on) and nothing (Constraint Actor 2 left empty, so it joins to the world), with Linear Locked and Swing 1 free within a limit. It needs API 1.30. Tag the door actor <code>guide_code_hingedoor</code>; the script listens for the hinge to break under a hard enough shove and reports it.</p>
+<div class="code"><span class="tag">Scripts/Server/GuideHingeDoor.luau</span><pre data-example-kind="source" data-language="luau">local door = World:FindByTag(&quot;guide_code_hingedoor&quot;)[1]
+local hinge = Constraints:FromEntity(door)
+	or Constraints:Create({
+		Type = &quot;hinge&quot;, EntityA = door, AnchorA = Vector3.new(0, -50, 0),
+		Axis = Vector3.new(0, 0, 1), Limits = { -90, 0 }, BreakForce = 20000,
+	})
+hinge.Broken:Connect(function()
+	State:Set(&quot;guide.hingedoor.broken&quot;, true)
+end)
+State:Set(&quot;guide.ready.hingedoor&quot;, true)
+</pre></div>
+<p>A door already built as a Physics Constraint Actor in the level publishes as a Constraint automatically, so <code>Constraints:FromEntity</code> finds its joint; a script only needs <code>Constraints:Create</code> for a door it builds itself at runtime. A place holds at most 200 joints, its own included, and pulling a joint harder than <code>BreakForce</code> newtons breaks it for good.</p>
+<h3 id="r-local-look">A haunted room with its own look, for one player <span class="status wip">Next release</span></h3>
+<p>This dims and desaturates the picture for one player only, without touching what anyone else sees: tag the trigger volume in your level <code>guide_code_hauntedroom</code>. It needs API 1.29. A client script applies the look a server script sends it over a Remote, so nothing needs to replicate.</p>
+<div class="code"><span class="tag">Scripts/Server/GuideHauntedRoom.luau</span><pre data-example-kind="source" data-language="luau">local look = Net:Remote(&quot;GuideLook&quot;)
+World:OnTagged(&quot;guide_code_hauntedroom&quot;, function(zone)
+	zone.Touched:Connect(function(player)
+		look:FireClient(player, { Saturation = 0, Vignette = 0.6, ColorGrading = &quot;Noir&quot; })
+	end)
+	zone.TouchEnded:Connect(function(player)
+		look:FireClient(player, false)
+	end)
+end)
+State:Set(&quot;guide.ready.hauntedroom&quot;, true)
+</pre></div>
+<div class="code"><span class="tag">Scripts/Client/GuideLook.luau</span><pre data-example-kind="source" data-language="luau">local look = Net:Remote(&quot;GuideLook&quot;)
+look.OnClientEvent:Connect(function(t)
+	if t then
+		Environment:SetLocalLook(t)
+	else
+		Environment:ClearLocalLook()
+	end
+end)
+</pre></div>
+<p>What the look sets wins over the server's own values; what it leaves out, such as <code>Bloom</code>, keeps following the server. The look goes when the client script that set it stops, so a bad table sent from the server only fails on that one player's client.</p>
 <h3 id="r-alternate-hud">Standalone HUD and round timer</h3><p>This builds a self-contained round timer and HUD, with one server and client pair for each language to match the standalone coin versions. There&rsquo;s nothing to tag in the level. Use one pair instead of the main round timer and HUD recipe, not as well as it.</p><div class="v has-ts has-js has-py"><div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Server/Rounds.luau</span><pre id="ex-rounds-luau" data-example-kind="source" data-language="luau">local round = 0
 while true do
     round += 1
