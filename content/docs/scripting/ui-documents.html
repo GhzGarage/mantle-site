@@ -1,0 +1,485 @@
+<div class="callout tip"><strong>UI documents arrive in the next release <span class="status wip">Next release</span></strong><p>UI documents need script API 1.31 and the game release that brings it. Until then, a place whose scripts use UI documents can't be published, because its scripts need a newer script API than the released game. Details on this page may change before then.</p></div>
+
+    <h2 id="uidoc-what">What UI documents are</h2>
+    <p>A <b>UI document</b> is a screen of your world's interface written as markup and styles, like a small web page: a shop, a menu, a scoreboard, a quest log or a HUD panel. You write it in two kinds of plain text file:</p>
+    <ul>
+      <li><code>.rml</code> files hold the markup. RML reads like HTML: <code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;h1&gt;</code>, <code>&lt;button&gt;</code>, <code>&lt;img&gt;</code> and so on.</li>
+      <li><code>.rcss</code> files hold the styles. RCSS reads like CSS, with flexbox, transitions, animations and transforms, and a few differences listed under <a href="#uidoc-styling">Styling</a>.</li>
+    </ul>
+    <p>They go in a <code>UI/</code> folder next to your level's <code>Scripts/</code> folder. A <b>client script</b> opens a document with <code>UI:OpenDocument</code>, gives it values to show with <code>SetData</code>, and hears the player's clicks through its <code>Event</code> signal. Documents contain no code of their own: all the logic stays in your scripts.</p>
+    <p>UI documents publish the same way scripts do. Publish uploads them with your scripts, Mantle screens them, and they go live with the revision. Nothing is cooked or packaged, so publishing a changed document takes seconds.</p>
+    <p>Documents are drawn by <a href="https://mikke89.github.io/RmlUiDoc/">RmlUi</a> 6.3, an open-source (MIT) HTML/CSS-like interface library, through the game's own UI. RmlUi's documentation is a good reference for RML elements and RCSS properties. Where Mantle differs, this page wins.</p>
+
+    <h3 id="uidoc-when">UI documents or UI nodes?</h3>
+    <p>Mantle already has a simpler way to put UI on screen from a script: <code>UI:Create(kind)</code> builds <b>UI nodes</b> (frames, text, images, buttons, toggles, lists, grids, scroll areas and prompts) one at a time from code (see the <a href="#ui">UI reference</a>). Both work in the same place, and you can use both at once.</p>
+    <div class="table-wrap"><table><thead><tr><th>Use</th><th>When</th></tr></thead><tbody>
+      <tr><td><code>UI:Toast</code>, <code>UI:SetText</code></td><td>A quick message or a single line of HUD text.</td></tr>
+      <tr><td>UI nodes (<code>UI:Create</code>)</td><td>A few widgets you build and change from code: a label, a button, a prompt. Up to 256 nodes per script.</td></tr>
+      <tr><td>UI documents (<code>UI:OpenDocument</code>)</td><td>A designed screen with real layout and styling: shops, inventories, menus, dialogue, scoreboards, styled HUD panels. You describe it once in markup, and it redraws itself when your script changes its data. Documents also handle mouse, keyboard and gamepad input, and closing with Back, for you.</td></tr>
+    </tbody></table></div>
+
+    <h2 id="uidoc-first">Your first document</h2>
+    <p>This builds a welcome panel that shows how many players are in the world and closes when the player presses <b>Play</b>.</p>
+    <ol class="steps">
+      <li><b>Make a <code>UI</code> folder beside <code>Scripts</code></b><p>If your level is <code>Content/MyPlace/MyPlace.umap</code>, its scripts are in <code>Content/MyPlace/Scripts/</code> and its documents go in <code>Content/MyPlace/UI/</code>.</p></li>
+      <li><b>Add the document</b>
+<div class="code"><span class="tag">UI/welcome.rml</span><pre data-example-kind="source">&lt;rml&gt;
+&lt;head&gt;
+	&lt;title&gt;Welcome&lt;/title&gt;
+	&lt;link type="text/rcss" href="welcome.rcss"/&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;div class="card"&gt;
+		&lt;h1&gt;Welcome!&lt;/h1&gt;
+		&lt;p&gt;{{online}} players are here.&lt;/p&gt;
+		&lt;button data-event-click="emit('play')"&gt;Play&lt;/button&gt;
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/rml&gt;</pre></div>
+        <p><code>{{online}}</code> shows a value your script sets. <code>data-event-click="emit('play')"</code> tells your script the button was clicked.</p>
+      </li>
+      <li><b>Add a stylesheet</b>
+<div class="code"><span class="tag">UI/welcome.rcss</span><pre data-example-kind="source">body { display: flex; justify-content: center; align-items: center; }
+
+.card {
+	width: 420dp;
+	padding: 24dp;
+	border-radius: 14dp;
+	background-color: #191919E6;
+	border: 1dp #444443;
+}</pre></div>
+        <p>You don't need to style the heading, the text or the button: Mantle's <a href="#uidoc-base">base stylesheet</a> already gives them sizes, colours, a focus ring and keyboard and gamepad navigation.</p>
+      </li>
+      <li><b>Open it from a client script</b>
+        <div class="v has-ts">
+          <div class="code" data-v="luau"><span class="tag">Scripts/Client/Welcome.luau</span><pre id="ex-uidoc-welcome-luau" data-example-kind="source" data-language="luau">local welcome = UI:OpenDocument(&quot;UI/welcome.rml&quot;)
+welcome:SetData(&quot;online&quot;, #Players:GetPlayers())
+
+welcome.Event:Connect(function(name, args)
+	if name == &quot;play&quot; then
+		welcome:Close()
+	end
+end)
+</pre></div>
+          <div class="code" data-v="ts"><span class="tag">Scripts/Client/Welcome.ts</span><pre id="ex-uidoc-welcome-ts" data-example-kind="source" data-language="typescript">const welcome = UI.openDocument(&quot;UI/welcome.rml&quot;);
+welcome.setData(&quot;online&quot;, Players.getPlayers().length);
+
+welcome.event.connect((name: string, args: any[]) =&gt; {
+	if (name === &quot;play&quot;) {
+		welcome.close();
+	}
+});
+</pre></div>
+          <div class="code" data-v="js"><span class="tag">Scripts/Client/Welcome.js</span><pre id="ex-uidoc-welcome-js" data-example-kind="source" data-language="javascript">const welcome = UI.openDocument(&quot;UI/welcome.rml&quot;);
+welcome.setData(&quot;online&quot;, Players.getPlayers().length);
+
+welcome.event.connect((name, args) =&gt; {
+	if (name === &quot;play&quot;) {
+		welcome.close();
+	}
+});
+</pre></div>
+          <div class="code" data-v="py"><span class="tag">Scripts/Client/Welcome.py</span><pre id="ex-uidoc-welcome-py" data-example-kind="source" data-language="python">welcome = UI.open_document(&quot;UI/welcome.rml&quot;)
+welcome.set_data(&quot;online&quot;, len(Players.get_players()))
+
+def on_event(name, args):
+    if name == &quot;play&quot;:
+        welcome.close()
+
+welcome.event.connect(on_event)
+</pre></div>
+        </div>
+        <p>With no mode given, the document opens as a <b>modal</b>: the player's character stops taking input, the cursor appears, the Play button has focus, and Esc or the gamepad's B button closes the panel too.</p>
+      </li>
+      <li><b>Check, publish and join</b><p>Run <b>Check All</b> in the Scripts panel for your script and <a href="#validation">Check this place</a> for the document, then publish with <b>Mantle → Publish</b> and join in the Mantle client. Check this place loads every document the way players' games do, so a broken link or a typo in the markup shows up in the editor (see <a href="#uidoc-limits">Limits and checks</a>).</p><p>In development builds you can skip publishing: a server or client started with <code>-MantlePlace=&lt;path&gt;/place.json</code> reads the <code>UI/</code> folder beside that file. It reads the folder once, when the world loads, so restart the client after you edit a document. Script hot reload doesn't re-read UI files.</p></li>
+    </ol>
+
+    <h2 id="uidoc-files">Files and folders</h2>
+<div class="code"><span class="tag">A level with UI documents</span><pre data-example-kind="snippet">Content/MyPlace/
+  MyPlace.umap
+  Scripts/
+    Client/
+      Shop.luau        opens UI/shop.rml
+  UI/
+    shop.rml           a document
+    shop.rcss          its stylesheet
+    hud/
+      coins.rml        folders inside UI/ are fine
+    common.rcss        a stylesheet several documents link</pre></div>
+    <ul>
+      <li>Only <code>.rml</code> and <code>.rcss</code> files are published from <code>UI/</code>. Extensions must be lower case.</li>
+      <li>File and folder names can use only letters, digits, <code>_</code>, <code>.</code> and <code>-</code>. A path, starting at <code>UI/</code>, can be up to 200 characters. Two paths that differ only in capital letters aren't allowed.</li>
+      <li>Each file can be up to 256 KiB, and a place can have up to 64 UI files.</li>
+      <li>A <code>.rml</code> or <code>.rcss</code> file inside <code>Scripts/</code> is an error. Check tells you to move it to <code>UI/</code>.</li>
+      <li>Image files in <code>UI/</code> aren't published. Check warns about them. See <a href="#uidoc-images">Images</a>.</li>
+    </ul>
+    <p>You open a document by its path from the level folder, exactly as spelled: <code>UI:OpenDocument("UI/hud/coins.rml")</code>. Paths are case-sensitive. If only the case is wrong, the error tells you the right spelling. You can only open <code>.rml</code> files; stylesheets are linked from documents.</p>
+    <p>Inside a document, links are relative to the document's own folder: <code>&lt;link type="text/rcss" href="shop.rcss"/&gt;</code> next to it, <code>href="../common.rcss"</code> one folder up, or <code>href="/UI/common.rcss"</code> from the top. A document can link any <code>.rcss</code> file and any RmlUi template (an <code>.rml</code> file) in your place's <code>UI/</code> folder, and nothing else: web addresses, drive paths and anything above <code>UI/</code> are refused. A document can also hold styles inline in a <code>&lt;style&gt;</code> element in its <code>&lt;head&gt;</code>.</p>
+    <p>RML is stricter than HTML: every element needs a closing tag or a self-closing <code>/&gt;</code>, attribute values need quotes, and the whole file sits inside <code>&lt;rml&gt;</code> with a <code>&lt;head&gt;</code> and a <code>&lt;body&gt;</code>.</p>
+
+    <h2 id="uidoc-api">The script API</h2>
+    <p>Everything is <span class="side c">Client</span> only: calling it from a server script is an error. Names are shown in Luau. In JavaScript and TypeScript they're <code>UI.openDocument</code>, <code>setData</code>, <code>setMode</code>, <code>close</code>, <code>isOpen</code>, <code>event</code> and <code>closed</code>. In Python they're <code>UI.open_document</code>, <code>set_data</code>, <code>set_mode</code>, <code>close</code>, <code>is_open</code>, <code>event</code> and <code>closed</code>.</p>
+    <div class="table-wrap"><table class="api"><thead><tr><th>Member</th><th>What it does</th></tr></thead><tbody>
+      <tr><td><code>UI:OpenDocument(path, mode?)</code> → UiDocument</td><td>Open one of your place's documents on this player's screen. <code>mode</code> is <code>"modal"</code> (the default), <code>"overlay"</code> or <code>"hud"</code> (see <a href="#uidoc-modes">Modes and input</a>). An unknown path or mode is an error. A script can have up to 16 documents open at once. The call returns straight away and the document appears on the next frame; values you set in the meantime are there for its first frame.</td></tr>
+      <tr><td><code>doc:SetData(key, value)</code></td><td>Give the document a value to show (see <a href="#uidoc-data">Data binding</a>). Does nothing once the document has closed.</td></tr>
+      <tr><td><code>doc:SetMode(mode)</code></td><td>Switch between <code>"modal"</code>, <code>"overlay"</code> and <code>"hud"</code> while it's open. Does nothing once it has closed.</td></tr>
+      <tr><td><code>doc:Close()</code></td><td>Close it. Closing twice is fine, and <code>Closed</code> doesn't fire for your own <code>Close</code>.</td></tr>
+      <tr><td><code>doc.IsOpen</code></td><td>True until the document closes, for whatever reason.</td></tr>
+      <tr><td><code>doc.Event(name, args)</code></td><td>Signal. The document called <code>emit(name, ...)</code>. <code>args</code> is a list of the other values it passed (see <a href="#uidoc-events">Events</a>).</td></tr>
+      <tr><td><code>doc.Closed(reason)</code></td><td>Signal. The document closed by itself: the player pressed Back, or it failed to load or went over a limit (see <a href="#uidoc-closed">Closed reasons</a>).</td></tr>
+    </tbody></table></div>
+    <p>A document belongs to the script that opened it. Only that script can change or close it, and it closes when that script stops, including on a hot reload. When the place unloads, documents close along with your scripts.</p>
+
+    <h2 id="uidoc-modes">Modes and input</h2>
+    <div class="table-wrap"><table><thead><tr><th>Mode</th><th>What the player gets</th><th>Good for</th></tr></thead><tbody>
+      <tr><td><code>"modal"</code> (default)</td><td>Gameplay input stops while it's open: the character doesn't move or look around. The cursor appears, the first control gets focus, and mouse, keyboard and gamepad all go to the document. Back (Esc, or B on a gamepad) closes it.</td><td>Shops, menus, dialogue, anything the player stops to use.</td></tr>
+      <tr><td><code>"overlay"</code></td><td>Play goes on. The cursor appears, and the mouse works on the document's controls; mouse buttons and the wheel over its elements never reach the game, while clicks on the world outside them still do. Keys stay with the game unless one of its text fields has focus. The gamepad stays with the game until the player presses <b>View</b>.</td><td>A panel the player uses while moving: a map, a build palette, a quick inventory.</td></tr>
+      <tr><td><code>"hud"</code></td><td>Drawn only. It never takes input, and clicks go straight through it.</td><td>Health, coins, timers, objective markers, kill feeds.</td></tr>
+    </tbody></table></div>
+    <p>Modal documents draw above overlays, and overlays above HUD documents.</p>
+    <h3 id="uidoc-controls">Keyboard, mouse and gamepad</h3>
+    <div class="table-wrap"><table><thead><tr><th>Input</th><th>Modal</th><th>Overlay</th></tr></thead><tbody>
+      <tr><td>Mouse</td><td>Hover, click and scroll the document.</td><td>The same, over the document's elements.</td></tr>
+      <tr><td>Tab, arrow keys</td><td>Move focus between controls.</td><td>The game's. A focused text field takes typing.</td></tr>
+      <tr><td>Enter, Space</td><td>Click the focused control.</td><td>The game's.</td></tr>
+      <tr><td>Esc</td><td>Back: closes the document.</td><td>The game's. In a text field, leaves the field.</td></tr>
+      <tr><td>D-pad, left stick</td><td>Move focus. Holding the stick repeats after half a second.</td><td>The game's.</td></tr>
+      <tr><td>A (bottom face button)</td><td>Click the focused control.</td><td>The game's.</td></tr>
+      <tr><td>B (right face button)</td><td>Back: closes the document.</td><td>The game's.</td></tr>
+      <tr><td>View</td><td>Nothing.</td><td>Turns on UI navigation: the keyboard and gamepad then work as they do in a modal document, until View, Esc or B hands them back to the game. The document stays open.</td></tr>
+    </tbody></table></div>
+    <p>A few things decide whether a document takes input at all:</p>
+    <ul>
+      <li><b>It needs something to focus.</b> A modal or overlay document only takes input when it has at least one visible focusable element. The base stylesheet makes <code>&lt;button&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;textarea&gt;</code> and <code>&lt;select&gt;</code> focusable. To make any other element a control, give it <code>tab-index: auto; nav: auto;</code> in RCSS. <code>nav: auto</code> lets the arrow keys, D-pad and stick move to it. A document with nothing focusable is drawn but takes no input, like a HUD.</li>
+      <li><b>It waits its turn.</b> If something else already shows the cursor, such as the game menu or a script's interactive UI nodes, the document waits and takes input once that lets go. When the document closes, the player's input goes back exactly as it was.</li>
+      <li><b>The script chooses the mode.</b> The mode you pass to <code>OpenDocument</code> or <code>SetMode</code> is the one that counts.</li>
+    </ul>
+    <p>Back always closes a modal document, and your script hears it as <code>Closed("back")</code>. If you want to react to that, for example to reopen a shop later or unpause a timer, connect to <code>Closed</code>.</p>
+
+    <h2 id="uidoc-data">Data binding</h2>
+    <p>Your script owns the data; the document shows it. Call <code>SetData(key, value)</code> with a number, string, boolean, <code>Vector3</code>, list or table (object in JavaScript, dict in Python), and every part of the document that uses that key redraws by itself. Nothing else is touched, so setting one value is cheap.</p>
+    <div class="table-wrap"><table><thead><tr><th>In the document</th><th>What it does</th><th>Example</th></tr></thead><tbody>
+      <tr><td><code>{{ expression }}</code></td><td>Shows a value in text.</td><td><code>{{coins}} coins</code>, <code>{{stats.kills}}</code>, <code>{{items.size}} items</code></td></tr>
+      <tr><td><code>data-for</code></td><td>Repeats the element once for each item of a list. Add a second name for the position, counted from 0.</td><td><code>data-for="item : items"</code>, <code>data-for="item, i : items"</code></td></tr>
+      <tr><td><code>data-if</code></td><td>Shows the element only while the expression is true. Otherwise it's hidden and takes up no room.</td><td><code>data-if="coins &gt;= 100"</code></td></tr>
+      <tr><td><code>data-visible</code></td><td>Like <code>data-if</code>, but a hidden element keeps its space.</td><td><code>data-visible="!loading"</code></td></tr>
+      <tr><td><code>data-class-<i>name</i></code></td><td>Adds the class <i>name</i> while the expression is true.</td><td><code>data-class-owned="item.owned"</code></td></tr>
+      <tr><td><code>data-style-<i>property</i></code></td><td>Sets one style property from a value.</td><td><code>data-style-width="health + '%'"</code></td></tr>
+      <tr><td><code>data-attr-<i>name</i></code></td><td>Sets an attribute from a value.</td><td><code>data-attr-src="icon"</code>, <code>data-attr-mantle-label="coins + ' coins'"</code></td></tr>
+      <tr><td><code>data-attrif-<i>name</i></code></td><td>Adds the attribute while the expression is true.</td><td><code>data-attrif-checked="musicOn"</code></td></tr>
+      <tr><td><code>data-value</code>, <code>data-checked</code></td><td>Ties a text field's text, or a checkbox, to a key in both directions (see <a href="#uidoc-forms">Forms</a>).</td><td><code>&lt;input type="text" data-value="nickname"/&gt;</code></td></tr>
+      <tr><td><code>data-event-<i>event</i></code></td><td>Runs an expression when the event happens, usually <code>emit(...)</code> (see <a href="#uidoc-events">Events</a>).</td><td><code>data-event-click="emit('buy', item.id)"</code></td></tr>
+    </tbody></table></div>
+    <p>Expressions can use arithmetic, comparisons, <code>&amp;&amp;</code>, <code>||</code>, <code>!</code>, the <code>a ? b : c</code> choice, and <code>+</code> to join text. After a <code>|</code> you can apply <code>format(digits)</code>, <code>round</code>, <code>to_upper</code> or <code>to_lower</code>: <code>{{ speed | format(1) }} m/s</code>. Whole numbers show without decimals. A <code>Vector3</code>'s parts are <code>.x</code>, <code>.y</code> and <code>.z</code>, in lower case.</p>
+    <p>A key the script hasn't set yet shows as empty, so a document can open before its data arrives. Some rules for keys and values:</p>
+    <ul>
+      <li>A key starts with a letter and uses only letters, digits and <code>_</code>, up to 64 characters. Keys are case-sensitive. <code>it</code>, <code>it_index</code>, <code>ev</code>, <code>true</code>, <code>false</code>, <code>size</code> and <code>literal</code> are taken.</li>
+      <li>A document holds up to 256 keys.</li>
+      <li>A value can be up to 64 KiB once encoded and nested up to 16 levels. It can't hold functions, entities or players (send the fields you need, such as <code>player.Name</code>), or NaN or infinity. A value that breaks these rules is an error in your script.</li>
+      <li>Use lists for anything you repeat with <code>data-for</code>. A table with named keys repeats its values in an order you can't count on.</li>
+      <li>The document gets a copy. Changing your table afterwards changes nothing on screen until you call <code>SetData</code> again.</li>
+    </ul>
+    <p>Mantle connects the document to your script's data automatically. Leave out RmlUi's <code>data-model</code> attribute: a <code>&lt;body&gt;</code> that names a different data model gets no script data, and Check warns about it.</p>
+<div class="code"><span class="tag">UI/quests.rml (body only)</span><pre data-example-kind="snippet">&lt;body&gt;
+	&lt;div class="quests"&gt;
+		&lt;h2&gt;Quests ({{quests.size}})&lt;/h2&gt;
+		&lt;div class="quest" data-for="quest : quests" data-class-done="quest.done"&gt;
+			&lt;div class="title"&gt;{{quest.title}}&lt;/div&gt;
+			&lt;div class="bar"&gt;&lt;div class="fill" data-style-width="(quest.progress * 100) + '%'"&gt;&lt;/div&gt;&lt;/div&gt;
+			&lt;div data-if="quest.done"&gt;Complete!&lt;/div&gt;
+		&lt;/div&gt;
+		&lt;p data-if="quests.size == 0"&gt;No quests yet.&lt;/p&gt;
+	&lt;/div&gt;
+&lt;/body&gt;</pre></div>
+    <div class="v has-ts">
+      <div class="code" data-v="luau"><span class="tag">Scripts/Client/Quests.luau</span><pre id="ex-uidoc-quests-luau" data-example-kind="source" data-language="luau">local log = UI:OpenDocument(&quot;UI/quests.rml&quot;, &quot;hud&quot;)
+log:SetData(&quot;quests&quot;, {
+	{ title = &quot;Find the lighthouse&quot;, progress = 1, done = true },
+	{ title = &quot;Collect 10 shells&quot;, progress = 0.4, done = false },
+})
+</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Client/Quests.ts</span><pre id="ex-uidoc-quests-ts" data-example-kind="source" data-language="typescript">const log = UI.openDocument(&quot;UI/quests.rml&quot;, &quot;hud&quot;);
+log.setData(&quot;quests&quot;, [
+	{ title: &quot;Find the lighthouse&quot;, progress: 1, done: true },
+	{ title: &quot;Collect 10 shells&quot;, progress: 0.4, done: false },
+]);
+</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Client/Quests.js</span><pre id="ex-uidoc-quests-js" data-example-kind="source" data-language="javascript">const log = UI.openDocument(&quot;UI/quests.rml&quot;, &quot;hud&quot;);
+log.setData(&quot;quests&quot;, [
+	{ title: &quot;Find the lighthouse&quot;, progress: 1, done: true },
+	{ title: &quot;Collect 10 shells&quot;, progress: 0.4, done: false },
+]);
+</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Client/Quests.py</span><pre id="ex-uidoc-quests-py" data-example-kind="source" data-language="python">log = UI.open_document(&quot;UI/quests.rml&quot;, &quot;hud&quot;)
+log.set_data(&quot;quests&quot;, [
+    {&quot;title&quot;: &quot;Find the lighthouse&quot;, &quot;progress&quot;: 1, &quot;done&quot;: True},
+    {&quot;title&quot;: &quot;Collect 10 shells&quot;, &quot;progress&quot;: 0.4, &quot;done&quot;: False},
+])
+</pre></div>
+    </div>
+
+    <h2 id="uidoc-events">Events: from the document to your script</h2>
+    <p>A document tells your script something happened by calling <code>emit(name, ...)</code> in a <code>data-event-*</code> attribute. The first value is the event's name; the rest arrive in <code>args</code>, in order. Your script's <code>Event</code> handler runs on the next frame.</p>
+<div class="code"><span class="tag">In the document</span><pre data-example-kind="snippet">&lt;button data-event-click="emit('buy', item.id, item.price)"&gt;Buy&lt;/button&gt;
+&lt;div class="tab" data-event-mouseover="emit('hover', 'gear')"&gt;Gear&lt;/div&gt;</pre></div>
+    <div class="v has-ts">
+      <div class="code" data-v="luau"><span class="tag">In a client script</span><pre data-example-kind="snippet">shop.Event:Connect(function(name, args)
+	if name == &quot;buy&quot; then
+		local itemId, price = args[1], args[2]
+		-- ...
+	end
+end)</pre></div>
+      <div class="code" data-v="ts"><span class="tag">In a client script</span><pre data-example-kind="snippet">shop.event.connect((name: string, args: any[]) =&gt; {
+	if (name === &quot;buy&quot;) {
+		const [itemId, price] = args;
+		// ...
+	}
+});</pre></div>
+      <div class="code" data-v="js"><span class="tag">In a client script</span><pre data-example-kind="snippet">shop.event.connect((name, args) =&gt; {
+	if (name === &quot;buy&quot;) {
+		const [itemId, price] = args;
+		// ...
+	}
+});</pre></div>
+      <div class="code" data-v="py"><span class="tag">In a client script</span><pre data-example-kind="snippet">def on_event(name, args):
+    if name == &quot;buy&quot;:
+        item_id, price = args[0], args[1]
+        # ...
+
+shop.event.connect(on_event)</pre></div>
+    </div>
+    <p>Numbers, text and booleans arrive as they are. Anything else, such as a colour, arrives as text. Across all open documents, up to 256 events are delivered per frame; more than that in one frame are dropped, with a warning in the log.</p>
+    <p>Any event RmlUi raises can trigger <code>data-event-*</code>: <code>click</code>, <code>dblclick</code>, <code>mouseover</code>, <code>mouseout</code>, <code>focus</code>, <code>blur</code>, <code>change</code>, <code>submit</code>, <code>keydown</code> and others. In the expression, <code>ev</code> holds the event's details, such as <code>ev.value</code> in a <code>change</code> event.</p>
+    <p>An event expression can also set one of the document's own values, for UI state your script doesn't care about, such as which tab is showing: <code>data-event-click="tab = 'gear'"</code> with <code>data-if="tab == 'gear'"</code> on the tab's content. Set the key's starting value with <code>SetData</code> first. The next <code>SetData</code> for that key replaces what the document set.</p>
+
+    <h3 id="uidoc-forms">Forms</h3>
+    <p><code>data-value</code> keeps a text field's text in one of the document's values. Your script doesn't see it until the document sends it:</p>
+<div class="code"><span class="tag">UI/rename.rml (body only)</span><pre data-example-kind="snippet">&lt;body&gt;
+	&lt;div class="card"&gt;
+		&lt;input type="text" data-value="nickname"/&gt;
+		&lt;button data-event-click="emit('rename', nickname)"&gt;Save&lt;/button&gt;
+	&lt;/div&gt;
+&lt;/body&gt;</pre></div>
+    <p>Call <code>SetData("nickname", "")</code> (or the current name) when you open it, so the field has a value to write to.</p>
+
+    <h3 id="uidoc-closed">Closed reasons</h3>
+    <div class="table-wrap"><table><thead><tr><th><code>reason</code></th><th>Why it closed</th></tr></thead><tbody>
+      <tr><td><code>"back"</code></td><td>The player pressed Back (Esc, or B on a gamepad) on a modal document.</td></tr>
+      <tr><td><code>"load failed"</code></td><td>The document couldn't be loaded, for example because of broken markup. The client log says why.</td></tr>
+      <tr><td><code>"element budget"</code></td><td>It had more than 4,096 elements, when it loaded or after a <code>SetData</code>.</td></tr>
+      <tr><td><code>"layout time"</code></td><td>Loading it, or laying it out again after a <code>SetData</code>, took longer than 500 ms.</td></tr>
+    </tbody></table></div>
+    <p><code>Closed</code> doesn't fire for your own <code>Close</code>, or when your script stops. <code>IsOpen</code> is already false when your handler runs.</p>
+
+    <h3 id="uidoc-server">Buying things: check on the server</h3>
+    <p>A document runs on the player's machine, and so does the client script that hears its events. Treat an event like any other message from a player: fine for choosing a tab, never enough on its own to give out coins or items. Send the request to the server with a remote, check it there, and send the result back for the document to show. Shown in Luau; the other languages work the same way.</p>
+    <div class="v">
+<div class="code"><span class="tag">Scripts/Server/ShopServer.luau</span><pre id="ex-uidoc-shopserver-luau" data-example-kind="source" data-language="luau">local PRICES = { ember_cape = 120, spark_trail = 80 }
+local buy = Net:Remote(&quot;ShopBuy&quot;)
+local coins = Net:Remote(&quot;ShopCoins&quot;)
+local wallet = {}
+
+Players:OnPlayer(function(player)
+	wallet[player] = 500
+	coins:FireClient(player, wallet[player])
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+	wallet[player] = nil
+end)
+
+buy.OnServerEvent:Connect(function(player, itemId)
+	local price = PRICES[itemId]
+	if price == nil or wallet[player] == nil or wallet[player] &lt; price then
+		return
+	end
+	wallet[player] -= price
+	coins:FireClient(player, wallet[player])
+end)
+</pre></div>
+<div class="code"><span class="tag">Scripts/Client/Shop.luau</span><pre id="ex-uidoc-shopclient-luau" data-example-kind="source" data-language="luau">local shop = UI:OpenDocument(&quot;UI/shop.rml&quot;)
+shop:SetData(&quot;items&quot;, {
+	{ id = &quot;ember_cape&quot;, name = &quot;Ember Cape&quot;, price = 120 },
+	{ id = &quot;spark_trail&quot;, name = &quot;Spark Trail&quot;, price = 80 },
+})
+
+Net:Remote(&quot;ShopCoins&quot;).OnClientEvent:Connect(function(amount)
+	shop:SetData(&quot;coins&quot;, amount)
+end)
+
+shop.Event:Connect(function(name, args)
+	if name == &quot;buy&quot; then
+		Net:Remote(&quot;ShopBuy&quot;):FireServer(args[1])
+	end
+end)
+</pre></div>
+    </div>
+<div class="code"><span class="tag">UI/shop.rml</span><pre data-example-kind="source">&lt;rml&gt;
+&lt;head&gt;
+	&lt;title&gt;Shop&lt;/title&gt;
+	&lt;link type="text/rcss" href="shop.rcss"/&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;div class="panel"&gt;
+		&lt;h2 mantle-label="Shop" mantle-role="heading"&gt;Shop&lt;/h2&gt;
+		&lt;div class="coins"&gt;{{coins}} coins&lt;/div&gt;
+		&lt;div class="row" data-for="item : items"&gt;
+			&lt;div class="name"&gt;{{item.name}}&lt;/div&gt;
+			&lt;div class="price"&gt;{{item.price}}&lt;/div&gt;
+			&lt;button data-event-click="emit('buy', item.id)"
+				data-attr-mantle-label="'Buy ' + item.name"
+				data-attr-mantle-hint="item.price + ' coins'"&gt;Buy&lt;/button&gt;
+		&lt;/div&gt;
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/rml&gt;</pre></div>
+<div class="code"><span class="tag">UI/shop.rcss</span><pre data-example-kind="source">body { display: flex; justify-content: center; align-items: center; }
+.panel { width: 460dp; padding: 18dp 20dp; background-color: #191919E6; border: 1dp #444443; border-radius: 14dp; }
+.coins { font-weight: bold; color: #FFAE28; margin-bottom: 10dp; }
+.row { display: flex; align-items: center; height: 40dp; margin-top: 4dp; padding: 0 10dp; border-radius: 8dp; background-color: #232322; }
+.name { flex: 1; }
+.price { width: 60dp; text-align: right; margin-right: 12dp; color: #A19E98; }</pre></div>
+
+    <h2 id="uidoc-styling">Styling</h2>
+    <p>RCSS is close to CSS: selectors (classes, ids, descendants, <code>:hover</code>, <code>:active</code>, <code>:focus</code>, <code>:focus-visible</code>, <code>:checked</code>, <code>:nth-child</code> and more), the box model, <code>box-sizing</code>, block, inline, inline-block, flexbox, tables, <code>position: absolute | relative | fixed</code>, <code>z-index</code>, <code>overflow</code>, <code>opacity</code>, <code>transform</code>, <code>border-radius</code>, transitions and <code>@keyframes</code> all work. The differences that catch people out:</p>
+    <ul>
+      <li><b>Use <code>dp</code> for sizes.</b> <code>dp</code> follows the player's screen and UI scale, so a panel is the same size on a 1080p and a 4K screen. <code>px</code> is a physical pixel. <code>%</code>, <code>em</code>, <code>rem</code>, <code>vw</code> and <code>vh</code> work as in CSS.</li>
+      <li><b>No browser defaults.</b> RmlUi starts every element as <code>display: inline</code> with no margins. Mantle's <a href="#uidoc-base">base stylesheet</a> fills in the common cases; anything it doesn't cover (<code>h4</code>, <code>ol</code>, table elements) needs your own rules.</li>
+      <li><b>No CSS grid.</b> Use flexbox (<code>flex-wrap: wrap</code> gives you grids of tiles) or tables.</li>
+      <li><b>Borders are always solid</b> and the shorthand takes a width and a colour: <code>border: 1dp #444443</code>. There's no <code>solid</code>/<code>dashed</code> keyword.</li>
+      <li><b>Backgrounds are a colour.</b> <code>background-color</code> works; for images use <code>&lt;img&gt;</code>. For a simple two-colour gradient use a decorator: <code>decorator: horizontal-gradient(#EB6036 #FFAE28)</code> or <code>vertical-gradient(...)</code>.</li>
+      <li><b>Text shadows and outlines</b> are font effects: <code>font-effect: shadow(2dp 2dp #000000AA)</code> or <code>font-effect: outline(1dp #000000)</code>.</li>
+      <li><b>Colours</b> can be names, <code>#RGB</code>, <code>#RRGGBB</code>, <code>#RRGGBBAA</code> (with alpha), <code>rgb()</code>, <code>rgba()</code>, <code>hsl()</code> and <code>hsla()</code>.</li>
+      <li><b>Cursors:</b> <code>cursor: pointer</code> shows a hand and <code>default</code> the normal arrow. Other cursor names aren't supported.</li>
+      <li><b>Scroll areas</b> (<code>overflow: auto</code> or <code>scroll</code>) scroll with the mouse wheel, but RmlUi draws no scrollbar until you style one (its <code>scrollbarvertical</code>, <code>slidertrack</code> and <code>sliderbar</code> elements).</li>
+    </ul>
+    <div class="callout warn"><strong>What doesn't draw</strong><p>Mantle draws documents through the game's own UI renderer, which doesn't support RmlUi's shader, filter and layer effects. These load without an error but have no effect: <code>box-shadow</code>, <code>filter</code> and <code>backdrop-filter</code> (so no blur), <code>mask-image</code>, and the <code>linear-gradient</code>, <code>radial-gradient</code> and <code>conic-gradient</code> decorators (and their <code>repeating-</code> forms). <code>overflow: hidden</code> clips to the element's rectangle, even when it has rounded corners. Check doesn't warn about any of these, so if something looks plain in the game, check this list.</p></div>
+
+    <h3 id="uidoc-base">The base stylesheet</h3>
+    <p>Every document gets Mantle's base stylesheet underneath its own styles, so plain markup looks right straight away. Your own rules win over it.</p>
+    <div class="table-wrap"><table><thead><tr><th>Element</th><th>You get</th></tr></thead><tbody>
+      <tr><td><code>body</code></td><td>Fills the screen. Roboto at 16dp in <code>#E8E6E2</code>.</td></tr>
+      <tr><td><code>div</code>, <code>p</code>, <code>h1</code>–<code>h3</code>, <code>section</code>, <code>header</code>, <code>footer</code>, <code>ul</code>, <code>li</code>, <code>form</code></td><td><code>display: block</code></td></tr>
+      <tr><td><code>h1</code>, <code>h2</code>, <code>h3</code></td><td>Bold at 32, 24 and 19dp, with space below.</td></tr>
+      <tr><td><code>p</code></td><td>8dp of space below.</td></tr>
+      <tr><td><code>button</code></td><td>A dark rounded button (<code>#272726</code> with a <code>#444443</code> border), a warmer colour on hover, an orange <code>#EB6036</code> border when focused from the keyboard or gamepad, a hand cursor, and <code>tab-index: auto; nav: auto</code>.</td></tr>
+      <tr><td><code>input</code>, <code>textarea</code>, <code>select</code></td><td>Dark fields with a border, the same focus colour, and <code>tab-index: auto; nav: auto</code>.</td></tr>
+    </tbody></table></div>
+    <p>Note that <code>li</code> has no bullet: RmlUi doesn't draw list markers.</p>
+
+    <h3 id="uidoc-fonts">Fonts and languages</h3>
+    <p>Documents use Mantle's built-in fonts. You can't load your own, and <code>@font-face</code> is refused.</p>
+    <ul>
+      <li><code>Roboto</code>: regular, medium (<code>font-weight: 500</code>) and bold. The default.</li>
+      <li><code>"Roboto Condensed"</code>: bold only.</li>
+      <li><code>"Noto Naskh Arabic UI"</code>: Arabic. For joined, right-to-left Arabic, put <code>lang="ar"</code> on the element and give it <code>font-family: "Noto Naskh Arabic UI"</code>. Arabic in a Roboto element still draws, but as separate, unjoined letters.</li>
+    </ul>
+    <p>There's no italic face, so <code>font-style: italic</code> draws upright text. Text in scripts these fonts don't cover, such as Chinese, Japanese or Korean, doesn't draw.</p>
+
+    <h3 id="uidoc-images">Images</h3>
+    <p>A document can't load image files: nothing in <code>UI/</code> but <code>.rml</code> and <code>.rcss</code> is published, and documents can't reach the web. Instead, <code>&lt;img src="mantle-asset:<i>id</i>"/&gt;</code> shows one of your place's uploaded textures by its asset id. The texture must be one the place already loads as a colour texture, such as the base colour texture of a material used in the level. Script Assets doesn't accept textures, so an image used only by a document can't be published on its own. <code>image-color</code> tints an image, and <code>data-attr-src</code> lets your script choose it.</p>
+    <p>Check can't see place textures, so it doesn't check <code>mantle-asset:</code> images. In the game, a texture that isn't loaded draws nothing and the client log names it.</p>
+
+    <h2 id="uidoc-animation">Animations and transitions</h2>
+    <p>Transitions and <code>@keyframes</code> animations work as in CSS, with RmlUi's own names for the easing curves: <code>linear</code>, <code>sine</code>, <code>quadratic</code>, <code>cubic</code>, <code>quartic</code>, <code>quintic</code>, <code>exponential</code>, <code>circular</code>, <code>back</code>, <code>elastic</code> and <code>bounce</code>, each with <code>-in</code>, <code>-out</code> or <code>-in-out</code>. CSS names such as <code>ease-in-out</code> and <code>cubic-bezier()</code> don't exist.</p>
+<div class="code"><span class="tag">UI/hud.rcss</span><pre data-example-kind="snippet">button { transition: background-color 0.15s cubic-out; }
+
+.toast { animation: 0.4s back-out pop; }
+@keyframes pop {
+	from { transform: translate(0dp, 20dp) scale(0.8); opacity: 0; }
+	to   { transform: translate(0dp, 0dp) scale(1); opacity: 1; }
+}
+
+.pulse { animation: 1.2s sine-in-out infinite alternate glow; }
+@keyframes glow {
+	from { opacity: 0.6; }
+	to   { opacity: 1; }
+}</pre></div>
+    <p>Animate <code>transform</code> and <code>opacity</code> whenever you can. They move and fade what's already laid out. Animating <code>width</code>, <code>height</code>, margins or <code>top</code>/<code>left</code> makes RmlUi lay the document out again every frame (see <a href="#uidoc-performance">Performance</a>).</p>
+    <p>Respect players who asked for less motion: send <code>UI.ReducedMotion</code> to the document and turn animations off with a class.</p>
+<div class="code"><span class="tag">Document and stylesheet</span><pre data-example-kind="snippet">&lt;body data-class-calm="calm"&gt; ... &lt;/body&gt;
+
+.calm .pulse { animation: none; }</pre></div>
+    <div class="v"><div class="code"><span class="tag">Client script</span><pre data-example-kind="snippet">hud:SetData(&quot;calm&quot;, UI.ReducedMotion)</pre></div></div>
+
+    <h2 id="uidoc-accessibility">Accessibility</h2>
+    <p>Screen readers only see the elements you label. Three attributes describe an element:</p>
+    <div class="table-wrap"><table><thead><tr><th>Attribute</th><th>What it does</th></tr></thead><tbody>
+      <tr><td><code>mantle-label</code></td><td>What the screen reader says for the element. Without it, the element is invisible to screen readers.</td></tr>
+      <tr><td><code>mantle-hint</code></td><td>Read after the label: "Buy Ember Cape. 120 coins".</td></tr>
+      <tr><td><code>mantle-role</code></td><td><code>button</code>, <code>toggle</code>, <code>text</code>, <code>image</code> or <code>heading</code>, in lower case. Without it, a focusable element is a button and anything else is text. A heading is read as text. A <code>toggle</code> reads as checked while the element has the <code>checked</code> attribute.</td></tr>
+    </tbody></table></div>
+    <p>The screen reader follows focus as the player moves with the keyboard or gamepad, and activating a labelled button or toggle from the screen reader clicks it. Use <code>data-attr-mantle-label</code> and <code>data-attr-mantle-hint</code> for labels that change, as in the shop above. Also consider <code>UI.TextScale</code>, <code>UI.HighContrast</code> and <code>UI.ReducedMotion</code>: send them with <code>SetData</code> and adapt with <code>data-class-*</code> or <code>data-style-*</code>.</p>
+
+    <h2 id="uidoc-limits">Limits and checks</h2>
+    <p><a href="#validation">Check this place</a> and <b>Publish</b> load every document in <code>UI/</code> the way players' games do, laid out on a 1920 × 1080 screen with no data set. Anything players' games would refuse or close is an error, and Publish won't go ahead until it's fixed. (The Scripts panel's Check All checks scripts only.)</p>
+    <div class="table-wrap"><table><thead><tr><th>Checked when you publish</th><th>Limit</th></tr></thead><tbody>
+      <tr><td>UI files per place</td><td class="num">64</td></tr>
+      <tr><td>Size of one UI file</td><td class="num">256 KiB</td></tr>
+      <tr><td>Length of a UI file's path</td><td class="num">200 characters</td></tr>
+      <tr><td>Names</td><td>Letters, digits, <code>_</code>, <code>.</code> and <code>-</code>; lower-case <code>.rml</code>/<code>.rcss</code>; no <code>..</code>; no two paths that differ only in case</td></tr>
+      <tr><td>Refused anywhere in a file, even in a comment</td><td><code>&lt;script</code>, <code>@font-face</code>, and a <code>data-rml</code> attribute</td></tr>
+      <tr><td>Element nesting, counting templates and <code>data-for</code> views</td><td class="num">16 levels</td></tr>
+      <tr><td>Elements once loaded</td><td class="num">4,096</td></tr>
+      <tr><td>Load and layout time</td><td>An error over 500 ms, a warning over 50 ms</td></tr>
+      <tr><td>Any RmlUi error or warning while loading, such as a linked stylesheet that isn't in <code>UI/</code> or a property it doesn't know</td><td>An error</td></tr>
+      <tr><td>A <code>&lt;body&gt;</code> with its own <code>data-model</code></td><td>A warning</td></tr>
+      <tr><td>Image files in <code>UI/</code></td><td>A warning; they aren't published</td></tr>
+    </tbody></table></div>
+    <p>Players' games check again when a document opens, and again after every <code>SetData</code>, because data can add elements that Check never saw (a <code>data-for</code> over a long list, say):</p>
+    <div class="table-wrap"><table><thead><tr><th>In the game</th><th>Limit</th><th>What happens</th></tr></thead><tbody>
+      <tr><td>Open documents per script</td><td class="num">16</td><td><code>OpenDocument</code> is an error</td></tr>
+      <tr><td>Elements</td><td class="num">4,096</td><td>Closes with <code>"element budget"</code></td></tr>
+      <tr><td>Load, or layout after a <code>SetData</code></td><td class="num">500 ms</td><td>Closes with <code>"layout time"</code>; over 50 ms logs a warning</td></tr>
+      <tr><td>Keys per document</td><td class="num">256</td><td><code>SetData</code> is an error</td></tr>
+      <tr><td>One <code>SetData</code> value</td><td>64 KiB encoded, 16 levels deep</td><td><code>SetData</code> is an error</td></tr>
+      <tr><td>Events delivered per frame, all documents together</td><td class="num">256</td><td>The rest are dropped, with a warning</td></tr>
+      <tr><td>Frame cost</td><td class="num">4 ms</td><td>A document whose cost stays above 4 ms a frame for about a second logs a warning that it's costing frame rate. It stays open.</td></tr>
+    </tbody></table></div>
+    <p>Layout time grows fast with deeply nested flex, table and inline-block layouts: each extra level can roughly double it. Keep structures shallow and the 16-level limit won't be close.</p>
+
+    <h2 id="uidoc-performance">Performance</h2>
+    <p>A typical HUD of a few hundred elements costs about 0.3 ms a frame. Documents get expensive when thousands of elements change every frame: thousands of elements animating at once cost several milliseconds, which players feel as a lower frame rate. To stay fast:</p>
+    <ul>
+      <li><b>Keep element counts modest.</b> Show the 20 visible rows of a long list, not all 2,000.</li>
+      <li><b>Animate <code>transform</code> and <code>opacity</code>.</b> Animating sizes, margins or positions re-lays out the document every frame. A few animated health bars are fine; hundreds of them at once are not.</li>
+      <li><b>Split fast-changing values into their own keys.</b> <code>SetData</code> only redraws what uses that key, so a timer in <code>SetData("time", t)</code> is cheap, while resending a large table ten times a second copies and redraws all of it.</li>
+      <li><b>Don't update faster than players can read.</b> A counter that changes 20 times a second rebuilds its text 20 times a second.</li>
+      <li><b>Close what isn't showing.</b> Open a document when the player needs it and close it afterwards, rather than keeping a screenful of hidden panels open.</li>
+    </ul>
+    <p>In development builds, the console command <code>Mantle.Rml.LogFrameCost 1</code> logs every document's update and draw cost, element count and the game's frame time every 5 seconds.</p>
+
+    <h2 id="uidoc-from-web">Coming from browser-based game UIs</h2>
+    <p>If you've built game UI as web pages running inside a game, most of what you know carries over. The big change is that <b>there's no JavaScript in the page</b>: the document is markup, styles and data bindings, and your client script plays the part of the page's code.</p>
+    <div class="table-wrap"><table><thead><tr><th>In a browser-based UI</th><th>In Mantle</th></tr></thead><tbody>
+      <tr><td>An HTML page</td><td>An <code>.rml</code> document in <code>UI/</code>. Stricter than HTML: close every tag, quote every attribute.</td></tr>
+      <tr><td>A CSS file</td><td>An <code>.rcss</code> file, linked the same way. Use <code>dp</code> instead of <code>px</code>; no grid; see <a href="#uidoc-styling">Styling</a> for what's different and what doesn't draw.</td></tr>
+      <tr><td>The page's JavaScript</td><td>A client script (Luau, TypeScript, JavaScript or Python) in <code>Scripts/Client/</code>. <code>&lt;script&gt;</code> is refused in documents.</td></tr>
+      <tr><td><code>addEventListener("click", ...)</code>, <code>onclick</code></td><td><code>data-event-click="emit('name', value)"</code> in the markup, and <code>doc.Event:Connect(...)</code> in the script.</td></tr>
+      <tr><td>Posting a message or a request from the page to the game</td><td><code>emit(name, ...)</code>. It arrives in your script's <code>Event</code> handler. There's no reply: the script answers by changing the document's data.</td></tr>
+      <tr><td>The game sending a message to the page</td><td><code>doc:SetData(key, value)</code>.</td></tr>
+      <tr><td>Changing the DOM: <code>innerHTML</code>, <code>createElement</code>, <code>classList</code>, <code>style</code></td><td>Data bindings: <code>{{ }}</code>, <code>data-for</code>, <code>data-if</code>, <code>data-class-*</code>, <code>data-style-*</code>, <code>data-attr-*</code>. Set the data and the document updates itself. Raw markup injection (<code>data-rml</code>) is refused.</td></tr>
+      <tr><td>Component state in a front-end framework</td><td>State lives in your script and goes to the document with <code>SetData</code>. Small UI-only state (the open tab) can live in the document through event assignments.</td></tr>
+      <tr><td>Showing the page and giving it the cursor and keyboard</td><td><code>UI:OpenDocument(path, "modal")</code>, or <code>"overlay"</code> to keep the game playable; <code>SetMode</code> to switch; <code>Close</code> to hide. Input goes back to the game by itself.</td></tr>
+      <tr><td>Listening for Escape to close the page</td><td>Built in for modal documents: Back closes it and fires <code>Closed("back")</code>.</td></tr>
+      <tr><td>Gamepad support written by hand</td><td>Built in: focus, D-pad and stick movement, A to click, B for Back. Give custom controls <code>tab-index: auto; nav: auto</code>.</td></tr>
+      <tr><td>Several pages or frames</td><td>Several documents, up to 16 per script, each with its own mode.</td></tr>
+      <tr><td>Images from a URL or a CDN, web fonts</td><td>Not available. Documents can't reach the network or files outside <code>UI/</code>. Use place textures (<code>mantle-asset:</code>) and the built-in fonts.</td></tr>
+      <tr><td>CSS animations and transitions</td><td>The same idea, with RmlUi's easing names (<code>cubic-in-out</code> and so on).</td></tr>
+      <tr><td>Canvas, video, WebGL</td><td>Not available.</td></tr>
+      <tr><td>Storing things in the page (local storage)</td><td>A document keeps nothing once closed. Keep state in your script, and save progress on the server.</td></tr>
+      <tr><td>The browser's developer tools</td><td>Check this place in the editor, and the client log: <code>LogMantleRml</code> for documents, <code>LogMantleScript</code> for your scripts.</td></tr>
+    </tbody></table></div>
+
+    <h2 id="uidoc-problems">Common problems</h2>
+    <div class="table-wrap"><table><thead><tr><th>Problem</th><th>Fix</th></tr></thead><tbody>
+      <tr><td><code>OpenDocument</code> says the path isn't one of the place's UI files</td><td>Paths start with <code>UI/</code> and are case-sensitive. The error suggests the right spelling when only the case is wrong. In a development build, restart the client after adding a file.</td></tr>
+      <tr><td>The document shows but ignores the mouse and gamepad</td><td>It's a <code>"hud"</code>, it has nothing focusable (give a control <code>tab-index: auto</code>), or another UI still has the cursor.</td></tr>
+      <tr><td>The D-pad doesn't move between my controls</td><td>Add <code>nav: auto</code> to them. Buttons and inputs have it already.</td></tr>
+      <tr><td><code>{{value}}</code> shows nothing</td><td>Check the key's spelling and case in <code>SetData</code>, and that the <code>&lt;body&gt;</code> has no <code>data-model</code> attribute.</td></tr>
+      <tr><td>Everything sits on one line</td><td>The element isn't one the base stylesheet makes a block. Give it <code>display: block</code> or <code>display: flex</code>.</td></tr>
+      <tr><td>A shadow, blur or gradient doesn't appear</td><td>See <a href="#uidoc-styling">What doesn't draw</a>.</td></tr>
+      <tr><td>The document closes by itself</td><td>Connect to <code>Closed</code> and print the reason, then see <a href="#uidoc-closed">Closed reasons</a>.</td></tr>
+    </tbody></table></div>
+
+<p class="footer-note">Last updated September 2026.</p>
