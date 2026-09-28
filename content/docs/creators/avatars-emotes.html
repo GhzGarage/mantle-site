@@ -124,20 +124,20 @@
 </ul>
 
 <h2 id="emotes">Emotes <span class="status wip">In progress</span></h2>
-<p>An emote is an Anim Sequence on the UEFN mannequin skeleton (<code>SK_UEFN_Mannequin</code>). Mantle plays it on whichever avatar the player wears, so one emote works on MetaHuman and UE5 Mannequin avatars alike.</p>
+<p>An emote is an Anim Sequence. Mantle plays it on whichever avatar the player wears, so one emote works on MetaHuman and UE5 Mannequin avatars alike. Animate it on the UEFN mannequin skeleton (<code>SK_UEFN_Mannequin</code>), or on a MetaHuman body or the UE5 Mannequin (<code>SK_Mannequin</code>): Mantle identifies which one you used from its bones and, for the latter two, retargets it onto the UEFN mannequin automatically when you upload. There's nothing to set: pick your Anim Sequence under Asset and upload it as usual.</p>
 
 <h3 id="emote-steps">Publishing an emote</h3>
 <ol class="steps">
-<li><b>Make the animation on the UEFN mannequin</b><p>Animate on <code>SK_UEFN_Mannequin</code>, or retarget an existing animation onto it (right-click it and choose <b>Retarget Animations</b>) and use the retargeted copy.</p></li>
+<li><b>Make the animation</b><p>Animate on <code>SK_UEFN_Mannequin</code>, a MetaHuman body, or the UE5 Mannequin (<code>SK_Mannequin</code>), or retarget an existing animation onto one of them (right-click it and choose <b>Retarget Animations</b>) and use the retargeted copy.</p></li>
 <li><b>Keep it in place</b><p>Keep the <code>root</code> bone within 50 cm of where it starts, and animate <code>pelvis</code>. See <a href="#emote-rules">Emote rules</a>.</p></li>
 <li><b>Mark a loop if you want one</b><p>Add an Anim Notify named <code>loop_start</code> where the loop should begin. See <a href="#looping">Looping</a>.</p></li>
 <li><b>Pick Emote</b><p>In the <b>Mantle Cosmetics</b> tab, pick <b>Emote</b> under "What are you publishing?". The slot is <code>emote</code>. Under "Asset", choose the Anim Sequence.</p></li>
-<li><b>Name, check and upload</b><p>Choose <b>Check only</b>, fix any "Problem" lines, then <b>Upload to Mantle</b>.</p></li>
+<li><b>Name, check and upload</b><p>Choose <b>Check only</b>, fix any "Problem" lines, then <b>Upload to Mantle</b>. If your clip is on a MetaHuman or UE5 Mannequin skeleton, Check shows a note saying it will be retargeted from that skeleton onto the UEFN mannequin.</p></li>
 </ol>
 
 <h3 id="emote-rules">Emote rules</h3>
 <div class="table-wrap"><table><thead><tr><th>Rule</th><th>Value</th></tr></thead><tbody>
-<tr><td>Skeleton</td><td>UEFN mannequin. Every animated bone must be one of its bones (names match whatever their case).</td></tr>
+<tr><td>Skeleton</td><td>The UEFN mannequin, a MetaHuman body or the UE5 Mannequin (<code>SK_Mannequin</code>). Every animated bone must be one of that skeleton's bones (names match whatever their case). A MetaHuman or UE5 Mannequin clip is retargeted onto the UEFN mannequin automatically; this needs a UEFN mannequin skeletal mesh (such as <code>SKM_UEFN_Mannequin</code> from the Game Animation Sample) somewhere in your project, or the upload stops asking you to add one.</td></tr>
 <tr><td>Length</td><td>Up to 10 seconds</td></tr>
 <tr><td>Frame rate</td><td>Any</td></tr>
 <tr><td>Required track</td><td><code>pelvis</code></td></tr>
@@ -159,7 +159,8 @@
 
 <h3 id="emote-messages">Emote messages</h3>
 <div class="table-wrap"><table><thead><tr><th>Message</th><th>How to fix it</th></tr></thead><tbody>
-<tr><td>Problem: track "[bone]" is not a bone of the uefn skeleton. Emotes play on the UEFN mannequin. Retarget the animation onto SK_UEFN_Mannequin (right-click it > Retarget Animations) and upload the retargeted copy.</td><td>As the message says.</td></tr>
+<tr><td>Problem: track "[bone]" is not a bone of the uefn skeleton. Emotes play on the UEFN mannequin. Retarget the animation onto SK_UEFN_Mannequin (right-click it > Retarget Animations) and upload the retargeted copy.</td><td>The clip isn't on the UEFN mannequin, a MetaHuman body or the UE5 Mannequin. As the message says, or re-export it on one of those three.</td></tr>
+<tr><td>[project has no UEFN mannequin]: [clip] is on the [metahuman/ue5mannequin] skeleton and emotes play on the UEFN mannequin, but this project has no UEFN mannequin to retarget it onto. Add SKM_UEFN_Mannequin (from the Game Animation Sample, or UEFN's mannequin) to the project and upload again.</td><td>Add a UEFN mannequin skeletal mesh to your project, then upload again.</td></tr>
 <tr><td>Problem: the clip is [N] s long, the limit is 10 s. Trim the animation (Animation editor > Remove frames) and try again.</td><td>As the message says.</td></tr>
 <tr><td>Problem: the clip has no "pelvis" track.</td><td>Key the <code>pelvis</code> bone.</td></tr>
 <tr><td>Problem: the root moves [N] cm, the limit is 50 cm. Emotes play in place: remove the root motion (or keep it within the limit).</td><td>As the message says.</td></tr>
