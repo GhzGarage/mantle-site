@@ -171,7 +171,7 @@ State.observe(&quot;guide.example.timeLeft&quot;, lambda s: label.set_text(f&quo
     <p>The <a href="/docs/scripting/recipes/#r-cross">checkpoint recipe</a> pairs <code>Server/GuideCheckpoint.ts</code> with <code>Server/GuideKillBricks.luau</code>: TypeScript writes a checkpoint vector into State; Luau reads it when the player touches a kill brick. Neither language imports the other's module.</p>
 
     <h2 id="next-release">Coming in the next release <span class="status wip">Next release</span></h2>
-    <p>The sections below cover services added in script API 1.4 to 1.24. They're in the Mantle plugin now, so Check All and the type files know them, but publishing refuses a place whose scripts use them until the game release that carries them is out (see <a href="#versions">API versions</a>). Each section names the version it needs. The examples are in Luau; the other languages use the same members with their own spelling. Every member is listed in the <a href="#reference">full reference</a>.</p>
+    <p>The sections below cover services added in script API 1.4 to 1.30. They're in the Mantle plugin now, so Check All and the type files know them, but publishing refuses a place whose scripts use them until the game release that carries them is out (see <a href="#versions">API versions</a>). Each section names the version it needs. The examples are in Luau; the other languages use the same members with their own spelling. Every member is listed in the <a href="#reference">full reference</a>.</p>
 
     <h3 id="script-assets">Assets your scripts use</h3>
     <p>A script can only spawn a mesh, show a material or play a sound that was published with the place. Anything placed in the level is published automatically. For an asset nothing in the level uses, such as a projectile a script spawns or a sound it plays on an event, add it to <b>Script Assets</b>:</p>
@@ -210,6 +210,20 @@ crate.Collided:Connect(function(other)
 end)
 -- Launch it upwards: an impulse in kg·cm/s, so divide by Mass for the speed change.
 crate:ApplyImpulse(Vector3.new(0, 0, 800) * crate.Mass)</pre></div></div>
+    <p>From API 1.25, <code>AngularVelocity</code> reads or (server only) replaces a physics object's spin, in degrees per second about the world axes. From API 1.28, <code>PhysicsMaterial</code> reads its surface preset (<code>"default"</code>, <code>"rubber"</code>, <code>"ice"</code>, <code>"metal"</code>, <code>"wood"</code> or <code>"stone"</code>), and a server script can change it, anchored or not; every player sees the new surface on its next bounce or slide. Setting either on an <code>Anchored</code> object, or one with no physics block, is an error.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/IcyWheel.luau</span><pre data-example-kind="snippet">local wheel = World:FindFirst("Wheel")
+wheel.Anchored = false
+wheel.PhysicsMaterial = "ice"          -- API 1.28: slides instead of gripping
+wheel.AngularVelocity = Vector3.new(0, 0, 180)  -- API 1.25: half a turn a second about world Z</pre></div></div>
+
+    <h3 id="joints">Joints: welds, hinges and ropes (API 1.30)</h3>
+    <p>A <b>Physics Constraint Actor</b> between two physics objects (or one and the world) publishes as a <code>Constraint</code>: a weld (no movement between them), a hinge (one turns about an axis, within limits) or a rope (the anchors stay within a length of each other). <code>Constraints:Create(params)</code> <span class="side s">Server</span> makes one at runtime and returns it; <code>Constraints:FromEntity(entity)</code> finds the joint a place's own Constraint made. Pull a joint harder than its <code>BreakForce</code> (newtons) and it breaks for good: <code>Broken</code> fires once, on the server. The two joined entities stop colliding with each other, and a place holds at most 200 joints, its own included. Nothing of the joint replicates: clients just see the entities move.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Door.luau</span><pre data-example-kind="snippet">local door = World:FindFirst("Door")
+local hinge = Constraints:Create({
+	Type = "hinge", EntityA = door, AnchorA = Vector3.new(0, -50, 0),
+	Axis = Vector3.new(0, 0, 1), Limits = { -90, 0 }, BreakForce = 20000,
+})
+hinge.Broken:Connect(function() print("the door came off") end)</pre></div></div>
 
     <h3 id="raycast">Raycasts and area queries (API 1.6)</h3>
     <p><code>World:Raycast(origin, direction, params?)</code> returns the first thing a ray hits as a table of <code>Entity</code>, <code>Player</code> (set when it hit a character), <code>Position</code>, <code>Normal</code> and <code>Distance</code>, or nil. <code>Spherecast</code> and <code>Blockcast</code> sweep a ball or box the same way, and <code>GetEntitiesInRadius</code> and <code>GetEntitiesInBox</code> list everything inside a shape, nearest first. <code>params</code> takes <code>MaxDistance</code>, <code>Include</code>, <code>Exclude</code>, <code>Tag</code> and <code>IgnorePlayers</code>. Queries run on the machine that asks, work on both sides, and reach at most 1 km.</p>
@@ -239,7 +253,7 @@ World:OnTagged("healpad", function(pad)
 end)</pre></div></div>
 
     <h3 id="input-camera">Input and camera (API 1.10)</h3>
-    <p>On a client, <code>Input:BindAction(name, keys, callback)</code> calls you with <code>"Began"</code> when the player presses one of the keys and <code>"Ended"</code> when they let go. Keys are named like <code>"Q"</code>, <code>"5"</code>, <code>"F4"</code>, <code>"MouseMiddle"</code> or <code>"ButtonX"</code>. Keys Mantle uses for its own controls can't be bound; <code>Input:GetBindableKeys()</code> lists the free ones. From API 1.22, <code>BindAxis</code> reads the sticks, triggers and mouse wheel. <code>Camera</code> can hold the view in first person (<code>Camera.Mode = "FirstPerson"</code>), cut or tween to a fixed shot (<code>SetFixed</code>, <code>TweenFixed</code>), follow an entity (<code>Follow</code>), change <code>FieldOfView</code> and <code>Shake</code>. Everything goes back to Mantle's own camera when the script stops or the player respawns, or when you call <code>Camera:Reset()</code>.</p>
+    <p>On a client, <code>Input:BindAction(name, keys, callback)</code> calls you with <code>"Began"</code> when the player presses one of the keys and <code>"Ended"</code> when they let go. Keys are named like <code>"Q"</code>, <code>"5"</code>, <code>"F4"</code>, <code>"MouseMiddle"</code>, <code>"ButtonX"</code> or <code>"Tab"</code>. Keys Mantle uses for its own controls can't be bound; <code>Input:GetBindableKeys()</code> lists the free ones. <code>Tab</code> also opens the built-in leaderboard panel (API 1.26; see <a href="#leaderboard">Leaderboard</a>), but it isn't reserved: your script's binding still gets the press. From API 1.22, <code>BindAxis</code> reads the sticks, triggers and mouse wheel; a trigger Mantle uses only as a button (fire, aim) can still be read as an axis, since only the sticks' movement and each trigger's click are reserved. <code>Camera</code> can hold the view in first person (<code>Camera.Mode = "FirstPerson"</code>), cut or tween to a fixed shot (<code>SetFixed</code>, <code>TweenFixed</code>), follow an entity (<code>Follow</code>), change <code>FieldOfView</code> and <code>Shake</code>. Everything goes back to Mantle's own camera when the script stops or the player respawns, or when you call <code>Camera:Reset()</code>.</p>
     <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Client/Overview.luau</span><pre data-example-kind="snippet">local tower = World:FindFirst("Tower")
 
 Input:BindAction("overview", { "Q" }, function(phase)
@@ -272,6 +286,32 @@ end</pre></div></div>
 Environment:SetWeather("Storm", 30)  -- blend into a storm over 30 s
 task.wait(120)
 Environment:ResumeNaturalWeather()</pre></div></div>
+    <p>From API 1.27, a server script can also set <code>Bloom</code> (0 to 4, how strongly bright things glow) and a fixed colour-grading look with <code>ColorGrading</code> (<code>"Warm"</code>, <code>"Cool"</code>, <code>"Noir"</code>, <code>"Sepia"</code>, <code>"Vivid"</code> or <code>"Faded"</code>) and <code>ColorGradingIntensity</code> (0 to 1, how strongly it shows). Creators can't upload their own colour-grading textures yet.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Flashback.luau</span><pre data-example-kind="snippet">-- A black-and-white flashback with a strong glow, fading back to colour.
+Environment.ColorGrading = "Noir"
+Environment.Bloom = 4
+task.wait(10)
+for i = 10, 0, -1 do
+	Environment.ColorGradingIntensity = i / 10
+	task.wait(0.2)
+end
+Environment.ColorGrading = nil
+Environment.Bloom = nil</pre></div></div>
+    <p>From API 1.29, a client script can give one player their own look on top of the server's, with <code>Environment:SetLocalLook(look)</code> <span class="side c">Client</span>. <code>look</code> takes any of <code>ExposureBias</code>, <code>Saturation</code>, <code>Contrast</code>, <code>Vignette</code>, <code>ColorTint</code>, <code>Bloom</code>, <code>ColorGrading</code> and <code>ColorGradingIntensity</code>, each clamped the same way as the server property of the same name. What the look sets wins over the server's value; what it leaves out follows the server, including later server changes. Each call replaces the whole look, nothing replicates, and the look goes when the script that set it stops. <code>Environment:ClearLocalLook()</code> <span class="side c">Client</span> gives the server's look back.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Client/HauntedWing.luau</span><pre data-example-kind="snippet">-- This player only: grey and vignetted, with a Noir grade the server's own bloom shows through.
+Environment:SetLocalLook({ Saturation = 0, Vignette = 0.6, ColorGrading = "Noir" })
+task.wait(5)
+Environment:ClearLocalLook()</pre></div></div>
+
+    <h3 id="leaderboard">Leaderboard (API 1.26)</h3>
+    <p>Mantle has one built-in leaderboard panel. A server script picks the board with <code>Leaderboard:Configure(store, options?)</code> <span class="side s">Server</span>, where <code>store</code> is the name of an ordered store from <code>DataStore:GetOrderedDataStore</code>. Players press <b>Tab</b> (or, on a gamepad, the settings drawer's Leaderboard row) to see its top 10, each row with the player's picture, name and value; <code>options.title</code> and <code>options.valueLabel</code> head the panel and its value column, and <code>options.ascending</code> shows lowest first. The panel re-reads the store every 30 seconds while anyone is playing. <code>Leaderboard:Clear()</code> <span class="side s">Server</span> takes the panel down. One board shows at a time; call <code>Configure</code> again to switch.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Wins.luau</span><pre data-example-kind="snippet">local wins = DataStore:GetOrderedDataStore("wins")
+Leaderboard:Configure("wins", { title = "Most wins", valueLabel = "Wins" })
+
+local function onRoundWon(player)
+	wins:IncrementAsync(player.UserId, 1)
+end</pre></div></div>
+    <p>See the <a href="/docs/scripting/recipes/#r-leaderboard">leaderboard recipe</a> for the manual, <code>GetSortedAsync</code>-driven version, useful when you want your own on-screen leaderboard instead of the built-in panel.</p>
 
     <h3 id="chat-hooks">Chat (API 1.14)</h3>
     <p><code>Chat.MessagePosted(player, text)</code> fires for what players say, with the text already filtered. On the server it fires for every player's line; on a client, for each line that player's chat box shows. <code>Chat:SendSystemMessage(text, player?)</code> <span class="side s">Server</span> posts a line from the place, to everyone or to one player. It goes through the same chat filter, is at most 500 characters, and a server can send 10 a minute. It returns false when it can't be sent right now.</p>

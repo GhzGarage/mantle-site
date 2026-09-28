@@ -34,7 +34,7 @@ export const docsNav: DocSection[] = [
       {
         title: "Guides",
         pages: [
-          { slug: ["scripting", "recipes"], title: "Recipes", description: "Ready-to-use scripts for kill bricks, coins, doors, round timers, buttons, cloning, saving progress, leaderboards and lamps that turn on at night." },
+          { slug: ["scripting", "recipes"], title: "Recipes", description: "Ready-to-use scripts for kill bricks, coins, doors (tweened or hinged with a joint), round timers, buttons, cloning, saving progress, leaderboards, per-player looks and lamps that turn on at night." },
           { slug: ["scripting", "migrating"], title: "Coming from other engines", description: "How Roblox, FiveM and Unreal concepts map to Mantle." },
         ],
       },
