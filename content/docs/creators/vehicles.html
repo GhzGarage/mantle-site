@@ -4,7 +4,7 @@
 
 <h2 id="overview">How it works <span class="status wip">Next release</span></h2>
 <p><b>Tools → Mantle → Convert vehicle</b> turns a car's skeletal mesh into a Mantle vehicle asset. It finds the wheel bones, measures the wheels and writes <code>&lt;Mesh&gt;_Vehicle</code> next to the mesh with default tuning for you to adjust. The car drives on Mantle's own vehicle physics, with the wheels spinning, steering and moving with the suspension. You then place it with a <b>Mantle Vehicle Spawn</b>. Players get in with <kbd>F</kbd> / Y and drive it with the usual <a href="/docs/players/playing/#vehicles">vehicle controls</a>.</p>
-<p>The converter reads only the skeletal mesh. It doesn't use the car's Blueprint, Chaos Vehicle movement settings, physics asset, animation blueprint or Control Rig, and static meshes attached to the Blueprint don't come across. Your original car isn't changed.</p>
+<p>The converter mainly reads the skeletal mesh: it doesn't use the car's Blueprint logic, animation blueprint or Control Rig, and it doesn't read a Blueprint's construction script directly (place the car in a level, or add its meshes as preview assets on the mesh in the Content Browser, and the converter finds them there instead). If your source car has a physics asset, converting it also reads collision shapes and a centre of mass from it, and a Chaos Vehicle movement component's centre-of-mass override, when Tuning doesn't already have its own (see <a href="#chassis-physics">Collision and centre of mass from your source car</a>). Your original car isn't changed.</p>
 
 <h2 id="what-you-can-convert">What you can convert</h2>
 <p>Any skeletal mesh that is the car's body, with a bone at the centre of each wheel named like a wheel:</p>
@@ -26,18 +26,39 @@
 <p>The vehicle asset holds everything Mantle needs:</p>
 <div class="table-wrap"><table><thead><tr><th>Section</th><th>What's in it</th></tr></thead><tbody>
 <tr><td>Body and Wheels</td><td>The skeletal mesh, and for each wheel its bone, whether it steers, drives or has the handbrake, its radius (up to 150 cm) and width (up to 100 cm), and an optional separate <b>Tire Mesh</b> with its transform (a negative scale mirrors a right-hand tyre).</td></tr>
-<tr><td>Tuning</td><td>Mass (50 to 20,000 kg), top speed, centre of mass, drag, engine torque curve (2 to 16 points), gears (1 to 8), suspension, steering angle (5 to 70°), brakes and tyres, the driver's <b>Seat Location</b>, the camera, and up to 8 collision boxes. Without a Seat Location, the driver sits behind the middle on the left; without collision boxes, the car collides as one box around the body.</td></tr>
+<tr><td>Tuning</td><td>Mass (50 to 20,000 kg), top speed, centre of mass, drag, engine torque curve (2 to 16 points), gears (1 to 8), suspension, steering angle (5 to 70°), brakes and tyres, the driver's <b>Seat Location</b>, the camera, and up to 8 collision boxes. Without a Seat Location, the driver sits behind the middle on the left; without collision boxes, the car collides as one box around the body. If your source car had a physics asset, converting it fills in collision boxes and a centre of mass measured from that physics asset (see <a href="#chassis-physics">Collision and centre of mass from your source car</a>) instead of the single default box.</td></tr>
 <tr><td>Paint</td><td>The material sections that are paint, and the paint's colour, metallic, roughness, flakes and clear coat. Painted sections use Mantle's car paint, and scripts can recolour them with <code>Vehicles:SetPaintColor</code>. The converter fills in sections whose material is a Clear Coat material.</td></tr>
-<tr><td>Liveries</td><td>Up to 8 images laid over the paint, with alpha where the paint shows through. They use the mesh's first UV channel. <b>Default Livery</b> picks the one it starts with (-1 for none), and scripts can switch them with <code>Vehicles:SetLivery</code> (script API 1.20).</td></tr>
+<tr><td>Liveries</td><td>Up to 8 images laid over the paint, with alpha where the paint shows through. They use the mesh's first UV channel (UV 0; that's the only one Mantle reads). <b>Default Livery</b> picks the one it starts with (-1 for none), and scripts can switch them with <code>Vehicles:SetLivery</code> (script API 1.20).</td></tr>
 <tr><td>Linkage</td><td>Up to 64 rules that move suspension parts with the wheels (aim, stretch or copy), found from bone names such as hub, knuckle, damper and shock. Empty it and convert again to have Mantle find them again.</td></tr>
+<tr><td>Parts <span class="status wip">Next release</span></td><td>Up to 16 meshes riding the body's bones, such as a body shell, glass, trim or bumpers: static meshes attached where the bone (or socket) is, moving with it. They're drawn only; they never collide or add weight, because the chassis's collision boxes do that job. A part's material slots can be painted with the vehicle's paint and liveries the same way body sections can. See <a href="#parts">Attached parts</a>.</td></tr>
 </tbody></table></div>
 <p>The <b>Mantle Vehicle Spawn</b> has <b>Vehicle</b>, <b>Respawn Seconds</b> (0 to 600, 5 by default), <b>Enabled</b> and <b>Livery</b> (-1 uses the vehicle's default).</p>
+<div class="callout tip"><strong>Paint Color is 0 to 1, not 0 to 255</strong><p>The vehicle asset's <b>Paint &gt; Color</b> field is a colour picker whose red, green and blue values run from 0 to 1 (as most of Unreal's colour pickers do), not 0 to 255. If you're typing values in rather than using the picker, a full-strength red is <code>(1, 0, 0)</code>, not <code>(255, 0, 0)</code>.</p></div>
 <div class="callout warn"><strong>Suspension linkage waits for its own release</strong><p>A vehicle with Linkage rules can't be uploaded until a game release reads them: "…is not read by the released game yet; upload this vehicle once a Mantle release reads linkage, or remove it for now". To upload the car without them, empty Linkage in the vehicle asset.</p></div>
+<div class="callout warn"><strong>Attached parts wait for their own release</strong><p>A vehicle with Parts can't be uploaded until a game release reads them, the same way as Linkage above: empty Parts in the vehicle asset to upload the car without them for now.</p></div>
+
+<h2 id="parts">Attached parts <span class="status wip">Next release</span></h2>
+<p>Converting a car finds its attached parts for you, so you usually don't add them by hand:</p>
+<ul>
+<li><b>From a car placed in a level:</b> the static meshes attached under the car's skeletal body (its body shell, glass, lights, bumpers, a spoiler, and so on), wherever they sit in the attachment hierarchy. Components hidden in game, and instanced meshes, are skipped, and a mesh on a wheel's bone becomes that wheel's Tire Mesh instead of a part.</li>
+<li><b>From a mesh in the Content Browser:</b> whatever you've attached to it as a preview asset (right-click a socket or bone in the Skeletal Mesh editor and choose Add Preview Asset), if you don't have the car placed in a level.</li>
+</ul>
+<p>Each part keeps its own transform relative to the bone it rides, and its own material overrides by slot, up to 8 per part (as a Static Mesh Actor's). Converting again keeps parts you've already found; empty <b>Parts</b> in the vehicle asset first if you want Mantle to look for them afresh. A place holds 16 parts per vehicle.</p>
+<p>To paint a part with the vehicle's paint and liveries, add its slot to that part's <b>Paint Slots</b> (the converter does this for you when the part's material is Clear Coat, has a Paint Tint parameter, or matches a body section that's already painted). A painted slot needs the part's mesh to actually draw with that slot; painting a slot the mesh doesn't have is a "Check this place" error naming the part and the slot.</p>
+
+<h3 id="chassis-physics">Collision and centre of mass from your source car</h3>
+<p>If your source car's skeletal mesh has a physics asset (and Tuning has no collision boxes or centre-of-mass override of your own set already), converting it reads the chassis's shape from that physics asset instead of leaving the default single box:</p>
+<ul>
+<li><b>Collision:</b> each body not on a wheel's bone (or under one) becomes an axis-aligned box in Tuning's collision boxes; a turned or round shape becomes the box around it, and more than 8 shapes merge into fewer boxes. If they don't fit Mantle's ranges, it falls back to today's single box, with a note.</li>
+<li><b>Centre of mass:</b> the volume-weighted centre of those same shapes, plus any centre-of-mass override you've set on your source's vehicle movement component (Chaos Vehicles' <b>Center Of Mass Override</b>), if it has one.</li>
+</ul>
+<p>Values you've already set in Tuning are always kept; this only fills them in when they're empty. The converter's notes say what it found ("Collision: N box(es) from [PhysicsAsset]'s chassis", "Centre of mass: … from the physics asset's chassis").</p>
 
 <h2 id="differences">What's different</h2>
 <ul>
 <li><b>Handling:</b> the car starts with Mantle's default tuning, not the original's settings. Test drive it and adjust the vehicle asset.</li>
-<li><b>Not carried across:</b> the Blueprint's logic, its attached static meshes (only a separate tyre, as Tire Mesh), and the original's Control Rig and animation blueprint.</li>
+<li><b>Not carried across:</b> the Blueprint's logic, and the original's Control Rig and animation blueprint. Its attached static meshes come across as Parts (see <a href="#parts">Attached parts</a>) or, on a wheel, as a Tire Mesh.</li>
+<li><b>Parked means braked:</b> a car with nobody driving it holds its brakes and handbrake, so a player sprinting into a parked car barely moves it, and it doesn't roll away by itself. As soon as someone drives off and gets back out, the car returns to holding its brakes the same way.</li>
 </ul>
 
 <h2 id="problems">When a conversion stops</h2>
