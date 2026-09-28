@@ -22,6 +22,7 @@
 <tr><td>Emote wheel (hold, unarmed)</td><td><kbd>B</kbd></td><td>Right bumper</td></tr>
 <tr><td>Throw grenade</td><td><kbd>H</kbd></td><td>D-pad up</td></tr>
 <tr><td>Enter / exit vehicle</td><td><kbd>F</kbd></td><td>Y</td></tr>
+<tr><td>Leaderboard</td><td><kbd>Tab</kbd></td><td>Menu, then "Leaderboard"</td></tr>
 <tr><td>Text chat</td><td><kbd>T</kbd></td><td>View</td></tr>
 <tr><td>Push to talk</td><td><kbd>V</kbd></td><td>D-pad down</td></tr>
 <tr><td>Menu</td><td><kbd>Esc</kbd></td><td>Menu</td></tr>
@@ -90,7 +91,14 @@
 <li><b>Change paint colour:</b> <kbd>C</kbd> / X cycles through six colours.</li>
 <li><b>Camera:</b> first person, close chase or far chase. It moves back behind the car shortly after you stop looking around.</li>
 <li>The screen shows your speed in KM/H and the current gear.</li>
+<li><b>Parked cars stay put:</b> walking or sprinting into an empty one won't push it out of the way.</li>
 </ul>
+
+<h2 id="leaderboard">Leaderboards <span class="status live">Live</span></h2>
+<p>Some worlds keep a leaderboard. Press <kbd>Tab</kbd> (on a gamepad, open the menu and choose "Leaderboard") to see the top 10, each row with a rank, the player's picture and name, and their score; your own row stands out. It updates every 30 seconds or so while you're watching it. Not every world has one — if it doesn't, nothing happens.</p>
+
+<h2 id="messages">World messages <span class="status live">Live</span></h2>
+<p>Some worlds show their own messages on screen: a short line stacked in the corner, or a pop-up across the top of the screen for a few seconds. These come from the world's own scripts, not from Mantle.</p>
 
 <h2 id="settings">Menu and settings <span class="status live">Live</span></h2>
 <p><kbd>Esc</kbd> opens the settings menu on top of the world. <b>The game doesn't pause.</b> While the menu is open, your cursor appears and your character won't respond to controls.</p>
@@ -114,5 +122,7 @@
 <ul>
 <li><span class="status live">Live</span> <b>Leave world</b> takes you back to the home screen.</li>
 <li><span class="status live">Live</span> <b>Respawning</b> happens automatically: 5 s after you die, you reappear at a spawn point. By default it's the one nearest to where you died, but a world can choose a random one or always the first. A death screen and countdown are coming later.</li>
+<li><span class="status live">Live</span> <b>Always a character:</b> if something is sitting on your spawn point, like a parked car, you're placed on the nearest clear ground nearby instead, so you always start with a character to play.</li>
+<li><span class="status live">Live</span> <b>Server restarts:</b> official and private servers run for a limited time. Watch for a notice across the top of the screen — "This server restarts in 5 minutes", then "in 1 minute" — followed by "This server restarted." on Discover. Mantle then rejoins you automatically, to the same world or (on a private server) that same private server, once a new one is ready. Leaving, quitting, or starting another join yourself cancels the automatic rejoin. Community servers don't have a time limit.</li>
 <li><b>What's saved:</b> your avatar, outfits and "Follows you" settings save to your account. "On this PC" settings save on your computer. Your backpack and ammo reset each time you join a world.</li>
 </ul>
