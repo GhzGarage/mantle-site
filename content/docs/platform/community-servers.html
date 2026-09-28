@@ -113,6 +113,7 @@ mantle-server run</pre></div>
 <li><b>Add it to server.json</b><p>Set <code>privateServerAttachCode</code> to the code and restart <code>mantle-server</code>. The server key must belong to the private server's owner. The server keeps using the code on every restart.</p></li>
 <li><b>Detach when you're done</b><p>The owner can press <b>Detach</b> on the private server. That stops the server and cancels the code. A key attached to a private server can't register as a public server until it's detached, or until you put the code back in <code>server.json</code>.</p></li>
 </ol>
+<p>A world's scripts can tell they're running on a private server, and who owns it, the same way whether it's hosted by Mantle or attached from a community server (see <a href="/docs/scripting/api/">Server.PrivateServerId</a> in the scripting reference).</p>
 <div class="table-wrap"><table><thead><tr><th>Message</th><th>What to do</th></tr></thead><tbody>
 <tr><td>privateServerAttachCode is not a valid attach code. Ask the private server's owner for a new one.</td><td>Check the code, or get a new one.</td></tr>
 <tr><td>privateServerAttachCode expired before this server used it. Ask the private server's owner for a new one.</td><td>Codes last an hour. Get a new one.</td></tr>
