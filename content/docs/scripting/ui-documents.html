@@ -8,7 +8,7 @@
     </ul>
     <p>They go in a <code>UI/</code> folder next to your level's <code>Scripts/</code> folder. A <b>client script</b> opens a document with <code>UI:OpenDocument</code>, gives it values to show with <code>SetData</code>, and hears the player's clicks through its <code>Event</code> signal. Documents contain no code of their own: all the logic stays in your scripts.</p>
     <p>UI documents publish the same way scripts do. Publish uploads them with your scripts, Mantle screens them, and they go live with the revision. Nothing is cooked or packaged, so publishing a changed document takes seconds.</p>
-    <p>Documents are drawn by <a href="https://mikke89.github.io/RmlUiDoc/">RmlUi</a> 6.3, an open-source (MIT) HTML/CSS-like interface library, through the game's own UI. RmlUi's documentation is a good reference for RML elements and RCSS properties. Where Mantle differs, this page wins.</p>
+    <p>Documents are drawn through the game's own UI. This page is the reference for the RML elements and RCSS properties Mantle supports.</p>
 
     <h3 id="uidoc-when">UI documents or UI nodes?</h3>
     <p>Mantle already has a simpler way to put UI on screen from a script: <code>UI:Create(kind)</code> builds <b>UI nodes</b> (frames, text, images, buttons, toggles, lists, grids, scroll areas and prompts) one at a time from code (see the <a href="#ui">UI reference</a>). Both work in the same place, and you can use both at once.</p>
@@ -115,7 +115,7 @@ welcome.event.connect(on_event)
       <li>A <code>.rml</code> or <code>.rcss</code> file inside <code>Scripts/</code> is an error. Check tells you to move it to <code>UI/</code>.</li>
     </ul>
     <p>You open a document by its path from the level folder, exactly as spelled: <code>UI:OpenDocument("UI/hud/coins.rml")</code>. Paths are case-sensitive. If only the case is wrong, the error tells you the right spelling. You can only open <code>.rml</code> files; stylesheets are linked from documents.</p>
-    <p>Inside a document, links are relative to the document's own folder: <code>&lt;link type="text/rcss" href="shop.rcss"/&gt;</code> next to it, <code>href="../common.rcss"</code> one folder up, or <code>href="/UI/common.rcss"</code> from the top. A document can link any <code>.rcss</code> file and any RmlUi template (an <code>.rml</code> file) in your place's <code>UI/</code> folder, and nothing else: web addresses, drive paths and anything above <code>UI/</code> are refused. A document can also hold styles inline in a <code>&lt;style&gt;</code> element in its <code>&lt;head&gt;</code>.</p>
+    <p>Inside a document, links are relative to the document's own folder: <code>&lt;link type="text/rcss" href="shop.rcss"/&gt;</code> next to it, <code>href="../common.rcss"</code> one folder up, or <code>href="/UI/common.rcss"</code> from the top. A document can link any <code>.rcss</code> file and any template (an <code>.rml</code> file) in your place's <code>UI/</code> folder, and nothing else: web addresses, drive paths and anything above <code>UI/</code> are refused. A document can also hold styles inline in a <code>&lt;style&gt;</code> element in its <code>&lt;head&gt;</code>.</p>
     <p>RML is stricter than HTML: every element needs a closing tag or a self-closing <code>/&gt;</code>, attribute values need quotes, and the whole file sits inside <code>&lt;rml&gt;</code> with a <code>&lt;head&gt;</code> and a <code>&lt;body&gt;</code>.</p>
 
     <h2 id="uidoc-api">The script API</h2>
@@ -180,7 +180,7 @@ welcome.event.connect(on_event)
       <li>Use lists for anything you repeat with <code>data-for</code>. A table with named keys repeats its values in an order you can't count on.</li>
       <li>The document gets a copy. Changing your table afterwards changes nothing on screen until you call <code>SetData</code> again.</li>
     </ul>
-    <p>Mantle connects the document to your script's data automatically. Leave out RmlUi's <code>data-model</code> attribute: a <code>&lt;body&gt;</code> that names a different data model gets no script data, and Check warns about it.</p>
+    <p>Mantle connects the document to your script's data automatically. Leave out the <code>data-model</code> attribute: a <code>&lt;body&gt;</code> that names a different data model gets no script data, and Check warns about it.</p>
 <div class="code"><span class="tag">UI/quests.rml (body only)</span><pre data-example-kind="snippet">&lt;body&gt;
 	&lt;div class="quests"&gt;
 		&lt;h2&gt;Quests ({{quests.size}})&lt;/h2&gt;
@@ -250,7 +250,7 @@ end)</pre></div>
 shop.event.connect(on_event)</pre></div>
     </div>
     <p>Numbers, text and booleans arrive as they are. Anything else, such as a colour, arrives as text. Across all open documents, up to 256 events are delivered per frame; more than that in one frame are dropped, with a warning in the log.</p>
-    <p>Any event RmlUi raises can trigger <code>data-event-*</code>: <code>click</code>, <code>dblclick</code>, <code>mouseover</code>, <code>mouseout</code>, <code>focus</code>, <code>blur</code>, <code>change</code>, <code>submit</code>, <code>keydown</code> and others. In the expression, <code>ev</code> holds the event's details, such as <code>ev.value</code> in a <code>change</code> event.</p>
+    <p>Any event an element raises can trigger <code>data-event-*</code>: <code>click</code>, <code>dblclick</code>, <code>mouseover</code>, <code>mouseout</code>, <code>focus</code>, <code>blur</code>, <code>change</code>, <code>submit</code>, <code>keydown</code> and others. In the expression, <code>ev</code> holds the event's details, such as <code>ev.value</code> in a <code>change</code> event.</p>
     <p>An event expression can also set one of the document's own values, for UI state your script doesn't care about, such as which tab is showing: <code>data-event-click="tab = 'gear'"</code> with <code>data-if="tab == 'gear'"</code> on the tab's content. Set the key's starting value with <code>SetData</code> first. The next <code>SetData</code> for that key replaces what the document set.</p>
 
     <h3 id="uidoc-forms">Forms</h3>
@@ -345,7 +345,7 @@ end)
     <p>RCSS is close to CSS: selectors (classes, ids, descendants, <code>:hover</code>, <code>:active</code>, <code>:focus</code>, <code>:focus-visible</code>, <code>:checked</code>, <code>:nth-child</code> and more), the box model, <code>box-sizing</code>, block, inline, inline-block, flexbox, tables, <code>position: absolute | relative | fixed</code>, <code>z-index</code>, <code>overflow</code>, <code>opacity</code>, <code>transform</code>, <code>border-radius</code>, transitions and <code>@keyframes</code> all work. The differences that catch people out:</p>
     <ul>
       <li><b>Use <code>dp</code> for sizes.</b> <code>dp</code> follows the player's screen and UI scale, so a panel is the same size on a 1080p and a 4K screen. <code>px</code> is a physical pixel. <code>%</code>, <code>em</code>, <code>rem</code>, <code>vw</code> and <code>vh</code> work as in CSS.</li>
-      <li><b>No browser defaults.</b> RmlUi starts every element as <code>display: inline</code> with no margins. Mantle's <a href="#uidoc-base">base stylesheet</a> fills in the common cases; anything it doesn't cover (<code>h4</code>, <code>ol</code>, table elements) needs your own rules.</li>
+      <li><b>No browser defaults.</b> Every element starts as <code>display: inline</code> with no margins. Mantle's <a href="#uidoc-base">base stylesheet</a> fills in the common cases; anything it doesn't cover (<code>h4</code>, <code>ol</code>, table elements) needs your own rules.</li>
       <li><b>No CSS grid.</b> Use flexbox (<code>flex-wrap: wrap</code> gives you grids of tiles) or tables.</li>
       <li><b>Borders are always solid</b> and the shorthand takes a width and a colour: <code>border: 1dp #444443</code>. There's no <code>solid</code>/<code>dashed</code> keyword.</li>
       <li><b>Backgrounds are a colour, a gradient or an image.</b> <code>background-color</code> works. A two-colour blend is a decorator: <code>decorator: horizontal-gradient(#EB6036 #FFAE28)</code> or <code>vertical-gradient(...)</code>; for more stops, an angle or a radial or conic sweep, <code>linear-gradient(...)</code>, <code>radial-gradient(...)</code> and <code>conic-gradient(...)</code> draw too (and their <code>repeating-</code> forms), up to 16 colour stops. For a picture, use <code>&lt;img&gt;</code> or <code>decorator: image(...)</code> with a file from your place's <code>UI/</code> folder (see <a href="#uidoc-images">Images</a>).</li>
@@ -353,9 +353,9 @@ end)
       <li><b>Text shadows and outlines</b> are font effects: <code>font-effect: shadow(2dp 2dp #000000AA)</code> or <code>font-effect: outline(1dp #000000)</code>.</li>
       <li><b>Colours</b> can be names, <code>#RGB</code>, <code>#RRGGBB</code>, <code>#RRGGBBAA</code> (with alpha), <code>rgb()</code>, <code>rgba()</code>, <code>hsl()</code> and <code>hsla()</code>.</li>
       <li><b>Cursors:</b> <code>cursor: pointer</code> shows a hand and <code>default</code> the normal arrow. Other cursor names aren't supported.</li>
-      <li><b>Scroll areas</b> (<code>overflow: auto</code> or <code>scroll</code>) scroll with the mouse wheel, but RmlUi draws no scrollbar until you style one (its <code>scrollbarvertical</code>, <code>slidertrack</code> and <code>sliderbar</code> elements).</li>
+      <li><b>Scroll areas</b> (<code>overflow: auto</code> or <code>scroll</code>) scroll with the mouse wheel, but no scrollbar is drawn until you style one (the <code>scrollbarvertical</code>, <code>slidertrack</code> and <code>sliderbar</code> elements).</li>
     </ul>
-    <div class="callout warn"><strong>What still doesn't draw</strong><p>Mantle draws documents through the game's own UI renderer, which doesn't yet support RmlUi's layer effects: <code>filter</code>, <code>backdrop-filter</code> (so no blur-behind) and <code>mask-image</code>. A document that uses one of these still loads, and the element still draws, just without that effect. <a href="#validation">Check this place</a> and <b>Publish</b> warn about each one, and the client log adds one line the first time a document that uses them loads. <code>overflow: hidden</code> still clips to the element's rectangle, even when it has rounded corners.</p></div>
+    <div class="callout warn"><strong>What still doesn't draw</strong><p>Mantle draws documents through the game's own UI renderer, which doesn't yet support layer effects: <code>filter</code>, <code>backdrop-filter</code> (so no blur-behind) and <code>mask-image</code>. A document that uses one of these still loads, and the element still draws, just without that effect. <a href="#validation">Check this place</a> and <b>Publish</b> warn about each one, and the client log adds one line the first time a document that uses them loads. <code>overflow: hidden</code> still clips to the element's rectangle, even when it has rounded corners.</p></div>
 
     <h3 id="uidoc-base">The base stylesheet</h3>
     <p>Every document gets Mantle's base stylesheet underneath its own styles, so plain markup looks right straight away. Your own rules win over it.</p>
@@ -367,7 +367,7 @@ end)
       <tr><td><code>button</code></td><td>A dark rounded button (<code>#272726</code> with a <code>#444443</code> border), a warmer colour on hover, an orange <code>#EB6036</code> border when focused from the keyboard or gamepad, a hand cursor, and <code>tab-index: auto; nav: auto</code>.</td></tr>
       <tr><td><code>input</code>, <code>textarea</code>, <code>select</code></td><td>Dark fields with a border, the same focus colour, and <code>tab-index: auto; nav: auto</code>.</td></tr>
     </tbody></table></div>
-    <p>Note that <code>li</code> has no bullet: RmlUi doesn't draw list markers.</p>
+    <p>Note that <code>li</code> has no bullet: list markers aren't drawn.</p>
 
     <h3 id="uidoc-fonts">Fonts and languages</h3>
     <p>Documents use Mantle's built-in fonts. You can't load your own, and <code>@font-face</code> is refused.</p>
@@ -398,7 +398,7 @@ end)
     <p><a href="#validation">Check this place</a> and <b>Publish</b> warn when a document or stylesheet names an image that isn't under <code>UI/</code>, exists only under a different case, or doesn't exist at all; a reference like that still won't draw in the game, and the client log names it. <code>UI:OpenDocument</code> on an image's path fails: open the <code>.rml</code> file that shows it instead.</p>
 
     <h2 id="uidoc-animation">Animations and transitions</h2>
-    <p>Transitions and <code>@keyframes</code> animations work as in CSS, with RmlUi's own names for the easing curves: <code>linear</code>, <code>sine</code>, <code>quadratic</code>, <code>cubic</code>, <code>quartic</code>, <code>quintic</code>, <code>exponential</code>, <code>circular</code>, <code>back</code>, <code>elastic</code> and <code>bounce</code>, each with <code>-in</code>, <code>-out</code> or <code>-in-out</code>. CSS names such as <code>ease-in-out</code> and <code>cubic-bezier()</code> don't exist.</p>
+    <p>Transitions and <code>@keyframes</code> animations work as in CSS, with their own names for the easing curves: <code>linear</code>, <code>sine</code>, <code>quadratic</code>, <code>cubic</code>, <code>quartic</code>, <code>quintic</code>, <code>exponential</code>, <code>circular</code>, <code>back</code>, <code>elastic</code> and <code>bounce</code>, each with <code>-in</code>, <code>-out</code> or <code>-in-out</code>. CSS names such as <code>ease-in-out</code> and <code>cubic-bezier()</code> don't exist.</p>
 <div class="code"><span class="tag">UI/hud.rcss</span><pre data-example-kind="snippet">button { transition: background-color 0.15s cubic-out; }
 
 .toast { animation: 0.4s back-out pop; }
@@ -412,7 +412,7 @@ end)
 	from { opacity: 0.6; }
 	to   { opacity: 1; }
 }</pre></div>
-    <p>Animate <code>transform</code> and <code>opacity</code> whenever you can. They move and fade what's already laid out. Animating <code>width</code>, <code>height</code>, margins or <code>top</code>/<code>left</code> makes RmlUi lay the document out again every frame (see <a href="#uidoc-performance">Performance</a>).</p>
+    <p>Animate <code>transform</code> and <code>opacity</code> whenever you can. They move and fade what's already laid out. Animating <code>width</code>, <code>height</code>, margins or <code>top</code>/<code>left</code> lays the document out again every frame (see <a href="#uidoc-performance">Performance</a>).</p>
     <p>Respect players who asked for less motion: send <code>UI.ReducedMotion</code> to the document and turn animations off with a class.</p>
 <div class="code"><span class="tag">Document and stylesheet</span><pre data-example-kind="snippet">&lt;body data-class-calm="calm"&gt; ... &lt;/body&gt;
 
@@ -442,7 +442,7 @@ end)
       <tr><td>Element nesting, counting templates and <code>data-for</code> views</td><td class="num">16 levels</td></tr>
       <tr><td>Elements once loaded</td><td class="num">4,096</td></tr>
       <tr><td>Load and layout time</td><td>An error over 500 ms, a warning over 50 ms</td></tr>
-      <tr><td>Any RmlUi error or warning while loading, such as a linked stylesheet that isn't in <code>UI/</code> or a property it doesn't know</td><td>An error</td></tr>
+      <tr><td>Any error or warning while loading, such as a linked stylesheet that isn't in <code>UI/</code> or a property it doesn't know</td><td>An error</td></tr>
       <tr><td>A <code>&lt;body&gt;</code> with its own <code>data-model</code></td><td>A warning</td></tr>
       <tr><td>A document or stylesheet uses <code>filter</code>, <code>backdrop-filter</code> or <code>mask-image</code></td><td>A warning; see <a href="#uidoc-styling">What still doesn't draw</a></td></tr>
       <tr><td>An image reference that's missing, wrong case, or outside <code>UI/</code></td><td>A warning; it won't draw</td></tr>
@@ -558,7 +558,7 @@ end)
       <tr><td>Several pages or frames</td><td>Several documents, up to 16 per script, each with its own mode.</td></tr>
       <tr><td>An image asset</td><td>A PNG or JPEG file in your place's <code>UI/</code> folder, referenced by a relative path (see <a href="#uidoc-images">Images</a>). No URLs and no CDN: documents can't reach the network.</td></tr>
       <tr><td>Web fonts</td><td>Not available. Use the built-in fonts.</td></tr>
-      <tr><td>CSS animations and transitions</td><td>The same idea, with RmlUi's easing names (<code>cubic-in-out</code> and so on).</td></tr>
+      <tr><td>CSS animations and transitions</td><td>The same idea, with Mantle's easing names (<code>cubic-in-out</code> and so on).</td></tr>
       <tr><td>Canvas, video, WebGL</td><td>Not available.</td></tr>
       <tr><td>Storing things in the page (local storage)</td><td>A document keeps nothing once closed. Keep state in your script, and save progress on the server.</td></tr>
       <tr><td>The browser's developer tools</td><td>Check this place in the editor, and the client log: <code>LogMantleRml</code> for documents, <code>LogMantleScript</code> for your scripts.</td></tr>
