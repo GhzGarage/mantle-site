@@ -464,8 +464,7 @@ end)
     <ul>
       <li><b>Keep element counts modest.</b> Show the 20 visible rows of a long list, not all 2,000.</li>
       <li><b>Animate <code>transform</code> and <code>opacity</code>.</b> Animating sizes, margins or positions re-lays out the document every frame. A few animated health bars are fine; hundreds of them at once are not.</li>
-      <!-- TODO(opacity): add specific guidance on animating opacity vs. other properties once the geometry-rebuild fix lands and clears its pass bar. -->
-      <li><b>Split fast-changing values into their own keys.</b> <code>SetData</code> only redraws what uses that key, so a timer in <code>SetData("time", t)</code> is cheap, while resending a large table ten times a second copies and redraws all of it.</li>
+            <li><b>Split fast-changing values into their own keys.</b> <code>SetData</code> only redraws what uses that key, so a timer in <code>SetData("time", t)</code> is cheap, while resending a large table ten times a second copies and redraws all of it.</li>
       <li><b>Don't update faster than players can read.</b> A counter that changes 20 times a second rebuilds its text 20 times a second.</li>
       <li><b>Close what isn't showing.</b> Open a document when the player needs it and close it afterwards, rather than keeping a screenful of hidden panels open.</li>
     </ul>
