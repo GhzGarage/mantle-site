@@ -23,12 +23,13 @@
 <h2 id="editor">The Mantle editor tools <span class="status live">Live</span></h2>
 <p>You'll find these commands under <b>Tools → Mantle</b>:</p>
 <div class="table-wrap"><table><thead><tr><th>Command</th><th>What it does</th></tr></thead><tbody>
-<tr><td>Start a new place</td><td>Adds a baseplate, a spawn point and a sun, then shows: "Build from here, then use 'Check what players receive' to check your work."</td></tr>
+<tr><td>Start a new place</td><td>Adds a baseplate, a spawn point and a sun to the open level, then shows: "Build from here, then use 'Check what players receive' to check your work."</td></tr>
 <tr><td>Place settings</td><td>Selects the level's <b>Mantle Place Settings</b> actor, adding one if the level has none, so you can edit it in the Details panel. See <a href="/docs/creators/building/#place-settings">Place settings</a>.</td></tr>
 <tr><td>Check this place</td><td>Checks your place and lists up to 12 problems ("...and N more."). When everything passes, you'll see "No problems found. This place is ready to publish."</td></tr>
 <tr><td>Check what players receive</td><td>Shows you what players will get, then tells you "N object(s) in this level will be sent to players." and lists anything that won't reach them.</td></tr>
 <tr><td>Save to Mantle</td><td>Uploads a private draft: "Saved to Mantle. Nobody can see it until you publish."</td></tr>
 <tr><td>Publish</td><td>Asks for optional revision notes, then checks, uploads and makes your world live: "Published revision N. Anyone can join it now." Progress shows in the <b>Mantle Publish</b> tab. See <a href="/docs/creators/publishing/">Publishing</a>.</td></tr>
+<tr><td>Convert vehicle</td><td>Turns the car skeletal mesh selected in the Content Browser, or a car placed in the level, into a Mantle vehicle asset. See <a href="/docs/creators/vehicles/">Vehicles</a>.</td></tr>
 <tr><td>Cosmetics...</td><td>Opens the <b>Mantle Cosmetics</b> tab for publishing avatar items. See <a href="/docs/creators/avatar-items/">Making avatar items</a>.</td></tr>
 <tr><td>Sign in with creator token... / Sign out</td><td>See <a href="#sign-in">Signing in to publish</a>.</td></tr>
 </tbody></table></div>
@@ -48,19 +49,24 @@
 <tr><td>Error</td><td>Size limits: "has a name N characters long; Mantle publishes names of at most 80.", "has tag '…', N characters long; Mantle publishes tags of at most 40." and "overrides material slot N; Mantle publishes overrides on slots 0 to 15 only."</td></tr>
 <tr><td>Error</td><td>Meshes from your project over the limits, for example "Mesh '…' has N triangles; a place mesh may have at most 500,000." Vertices (1,500,000) and material slots (8) are checked the same way. See <a href="/docs/creators/building/#custom-assets">Your own assets</a>.</td></tr>
 <tr><td>Error</td><td>Mantle Place Settings: "limits the place to some platforms but selects none."</td></tr>
-<tr><td>Error</td><td>"This level is empty."</td></tr>
+<tr><td>Error</td><td>"has a scale of …; Mantle publishes scales above zero on every axis." To mirror a mesh, use a mirrored copy of the mesh rather than a negative scale.</td></tr>
+<tr><td>Error</td><td>"This level is empty." Also a level name over 80 characters (your world takes the level's name) and, when you publish, revision notes over 2,000 characters.</td></tr>
+<tr><td>Error</td><td>A World Partition level with cells the editor hasn't loaded: "This is a World Partition level, and N actors in cells the editor has not loaded … would be left out of the place." Load the whole level (select every cell in the World Partition window and choose Load Region From Selection), then check again.</td></tr>
 <tr><td>Error</td><td>Script files with an unknown extension, or outside the <code>Server/</code>, <code>Client/</code> or <code>Shared/</code> folders (folder names must match exactly, including capitals). Also visual script compile errors and <code>require</code> errors.</td></tr>
+<tr><td>Error</td><td>Files in the <code>UI/</code> folder that can't be published: too many, too large, a name Mantle can't use, an image that isn't really PNG or JPEG, or a document players' games would refuse to open. A <code>.rml</code> or <code>.rcss</code> file inside <code>Scripts/</code> is an error too: "It is a UI file: move it to the UI/ folder beside Scripts/." See <a href="/docs/scripting/ui-documents/#uidoc-limits">UI documents: limits and checks</a>.</td></tr>
 <tr><td>Warning</td><td>BSP brushes, volumes, placed pawns and cameras are named, for example "is BSP geometry, which Mantle does not publish." The rest of the place still publishes without them.</td></tr>
 <tr><td>Warning</td><td>Blueprint logic, and prefab components Mantle drops: "Blueprint logic isn't published: the place gets this actor's components, not its behaviour." See <a href="/docs/creators/building/#prefabs">Blueprint prefabs</a>.</td></tr>
 <tr><td>Warning</td><td>"Mantle provides the sky; this actor's settings are not published." (Sky Atmosphere, Sky Light, Volumetric Cloud, Exponential Height Fog)</td></tr>
 <tr><td>Warning</td><td>Materials from your project that lose an effect when they're converted, and textures above 2048 that are scaled down. See <a href="/docs/creators/building/#custom-assets">Your own assets</a>.</td></tr>
 <tr><td>Warning</td><td>"This place has no player start, so everyone will arrive, and respawn, at Mantle's default spawn point about 2 m above the world origin."</td></tr>
 <tr><td>Warning</td><td>"Scripts/… is a Shared module nothing requires."</td></tr>
+<tr><td>Warning</td><td>A UI document that shows an image the <code>UI/</code> folder doesn't have ("…; it will not draw."), or a document slow to lay out. Players' games still open it.</td></tr>
 </tbody></table></div>
 <div class="callout tip"><strong>Things that aren't published</strong>
 <ul>
 <li>BSP brushes, engine volumes (Trigger Volume, Blocking Volume and so on) and placed pawns are left out of the published world. Use static meshes instead, and use Trigger Box or Trigger Sphere actors for trigger areas.</li>
-<li>Landscape, foliage, skeletal meshes, Rect Lights, decals, physics objects, Scatter fields and joints are checked, but can't be published until the next game release. See <a href="/docs/creators/building/#entities">What you can place</a>.</li>
+<li>Landscape, foliage, skeletal meshes, Rect Lights, decals, physics objects, particle effects, crowds, vehicles, Scatter fields, joints and the place's default look are checked, but can't be published until the next game release. See <a href="/docs/creators/building/#entities">What you can place</a>.</li>
+<li>UI documents, stylesheets and images in the level's <code>UI/</code> folder publish with the place. See <a href="/docs/scripting/ui-documents/">UI documents</a>.</li>
 <li>Ambient Sounds publish with your own sound waves, and players hear them once the next game release is out. Mantle has no built-in sounds.</li>
 <li>Actors set to Movable stay dynamic in the published world.</li>
 <li>Actor tags are kept, so your scripts can find things by tag.</li>

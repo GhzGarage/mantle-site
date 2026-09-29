@@ -9,15 +9,17 @@
 <h2 id="limits">Limits <span class="status live">Live</span></h2>
 <p>These limits cap how much can be sent or uploaded and how often.</p>
 <div class="table-wrap"><table><thead><tr><th>Limit</th><th>Value</th></tr></thead><tbody>
-<tr><td>Reports</td><td>20 per account per hour; details up to 1,000 characters</td></tr>
+<tr><td>Reports</td><td>20 per account per hour; details up to about 1,000 characters (fewer in non-Latin scripts)</td></tr>
 <tr><td>Chat</td><td>30 messages per minute; up to 500 characters each</td></tr>
 <tr><td>Saved data requests</td><td>300 per minute per server</td></tr>
 <tr><td>Community servers</td><td>5 per account</td></tr>
-<tr><td>Asset upload</td><td>64 MiB per file; images up to 8 MiB</td></tr>
-<tr><td>Uploads per hour</td><td>5,000 meshes, materials and textures; 300 other assets; 2 GiB in total; 600 scripts</td></tr>
+<tr><td>Asset upload</td><td>64 MiB per file; images up to 8 MiB; sounds up to 12 MiB</td></tr>
+<tr><td>Uploads per hour</td><td>5,000 meshes, materials and textures (including UI images); 300 other assets; 2 GiB in total; 600 scripts and UI documents</td></tr>
+<tr><td>Saving and publishing</td><td>120 draft saves (512 MiB in total), 60 publishes and 60 previews per account per hour</td></tr>
 <tr><td>New worlds</td><td>30 per account per hour</td></tr>
 <tr><td>Avatar items</td><td>60 created or edited per account per hour</td></tr>
 <tr><td>Script source</td><td>1 MiB per file</td></tr>
+<tr><td>UI documents</td><td>256 KiB per document or stylesheet; up to 64 documents and 64 images per world, images PNG or JPEG up to 2 MiB</td></tr>
 <tr><td>Place file</td><td>8 MiB</td></tr>
 <tr><td>Meshes</td><td>500,000 triangles / 1,500,000 vertices</td></tr>
 <tr><td>Textures</td><td>2048 × 2048</td></tr>
@@ -31,7 +33,7 @@
 <li><span class="status live">Live</span> <b>Avatar items:</b> each item's thumbnail, name and description are checked the same way.</li>
 <li><span class="status live">Live</span> <b>Chat filter:</b> chat messages are filtered before anyone sees them. Some words are replaced with asterisks, and some messages aren't sent at all: "That message was not sent because it breaks the chat rules."</li>
 <li><span class="status live">Live</span> <b>Review:</b> flagged content waits for a moderator to approve or reject it.</li>
-<li><span class="status wip">In progress</span> <b>Acting on reports:</b> reports are collected and moderators can review them. Tools to resolve reports and apply penalties are being built.</li>
+<li><span class="status wip">In progress</span> <b>Acting on reports:</b> moderators can review and resolve reports, take content down, shut down community servers and suspend private servers. Penalties for accounts are still being built.</li>
 <li><span class="status planned">Planned</span> Screening for display names and world names.</li>
 </ul>
 
@@ -53,7 +55,7 @@
 <ul>
 <li><b>Chat messages</b> are deleted after about 90 days.</li>
 <li><b>Play history</b> is deleted after about a year.</li>
-<li><b>Resolved reports</b> are deleted a year after they're resolved.</li>
-<li><b>Deleted worlds</b> are removed for good after 180 days.</li>
+<li><b>Resolved reports</b> are deleted a year after they're resolved. Reports nobody reviewed are deleted a year after they were filed.</li>
+<li><b>Deleted worlds</b>, including worlds you delete from My Places, are removed for good after 180 days.</li>
 <li><b>Old world versions</b> can be rolled back to for 180 days after they stop being live (30 days for previews and staged versions that never went live). After that they're deleted.</li>
 </ul>

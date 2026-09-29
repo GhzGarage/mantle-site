@@ -69,7 +69,7 @@
 <li><span class="status wip">Next release</span> <b>World-aligned textures:</b> a WorldAlignedTexture (or WorldAlignedNormal) node on Base Color, Normal or the ORM group, with one constant tile size and sharpness and no World Position input, samples by world position in game instead of the mesh's own UVs, so its pattern runs on unbroken across neighbouring meshes. Opaque materials only; emissive keeps using UVs.</li>
 <li><span class="status wip">Next release</span> <b>Vertex-painted layer blends:</b> a Lerp between two plain Texture Samples by one Vertex Color channel, on Base Color (with Normal and the ORM group blending the same way, or staying a plain sample), keeps the painted layer in game instead of dropping it. Opaque materials only.</li>
 </ul>
-<p>These five recognised shapes are the only ones Mantle carries: anything built differently, even if it looks similar in the material editor, still falls back to the plain conversion below. They aren't kept on car paint, or (other than swaying and a panned emissive) on unlit materials.</p>
+<p>These five recognised shapes are the only ones Mantle carries: anything built differently, even if it looks similar in the material editor, still falls back to the plain conversion below. They aren't kept on car paint, or (other than swaying and a panned emissive) on unlit materials. A material keeps at most one of swaying, a world-aligned texture or a layer blend: swaying wins, then a world-aligned texture. A texture that one of those already uses doesn't scroll.</p>
 <div class="callout warn"><strong>Some materials wait for the next release</strong><p>A material that uses any of the settings marked Next release above can't be uploaded until the game release that reads them is out. The Mantle Publish tab shows "Mantle could not process '…': /[setting] is not read by the released game yet; upload this material once a Mantle release reads [setting], or remove it for now." Until then, use a material without that setting on those meshes, for example with the same tiling on every texture.</p></div>
 <p>Some effects can't be kept. Check this place names each one as a warning, and the material still publishes. The four rows marked below are exceptions once <b>Next release</b> arrives: built in exactly one of the recognised shapes above, they carry across instead; anything else built the same way in spirit (a Panner feeding something other than a plain Texture Sample, wind on a translucent material, and so on) still falls back to the row's behaviour.</p>
 <div class="table-wrap"><table><thead><tr><th>Effect</th><th>What players see</th></tr></thead><tbody>
@@ -115,13 +115,13 @@
 <tr><td>Texture '…' (in material '…') is WxH; it is downscaled to 2048² when published.</td><td>"Nothing to do: Mantle textures are at most 2048 on a side. Detail finer than that is lost."</td></tr>
 <tr><td>Material '…' (used by '…'): followed by one of:
 <ul>
-<li>time-based animation will be frozen (panners, flipbooks and Time nodes stop moving).</li>
-<li>world position offset (wind or vertex animation) is dropped, so the mesh will not sway or move.</li>
-<li>world-aligned or triplanar mapping is baked onto the mesh's own UVs, so its pattern will not line up across neighbouring meshes.</li>
+<li>time-based animation will be frozen (panners, flipbooks and Time nodes stop moving; only a Panner straight into a texture's UVs, that texture straight into an output, keeps moving).</li>
+<li>world position offset (wind or vertex animation) is dropped, so the mesh will not sway or move (only the engine's SimpleGrassWind with constant intensity and speed is kept).</li>
+<li>world-aligned or triplanar mapping is baked onto the mesh's own UVs, so its pattern will not line up across neighbouring meshes (only the engine's WorldAlignedTexture and WorldAlignedNormal straight into an opaque material's outputs, with constant sizes, are kept).</li>
 <li>refraction is dropped; it renders as plain see-through.</li>
 <li>subsurface scattering is dropped, so skin, wax and leaves look flatter.</li>
 <li>parallax depth is flattened, so the surface looks flat up close.</li>
-<li>vertex-colour blending is dropped, so layers painted per vertex will not show (only Vertex Color's RGB multiplying the base colour is kept).</li>
+<li>vertex-colour blending is dropped, so layers painted per vertex will not show (only Vertex Color's RGB multiplying the base colour, and on an opaque material a Lerp between two textures by one Vertex Color channel, are kept).</li>
 <li>its detail normals are baked at the material's texture size, so fine surface detail may soften.</li>
 <li>pixel depth offset is dropped.</li>
 <li>displacement is dropped, so the surface keeps the mesh's own shape.</li>
@@ -134,7 +134,7 @@
 </tbody></table></div>
 
 <h3 id="prepare-messages">Messages while preparing</h3>
-<p>These come from the <b>Prepare meshes and materials</b> step and appear with the notes from Check this place. Errors stop the publish with "N mesh(es) or material(s) could not be prepared for Mantle. The list below says why."</p>
+<p>These come from the <b>Prepare meshes and materials</b> step and appear with the notes from Check this place. Errors stop the publish with "N mesh(es), material(s) or sound(s) could not be prepared for Mantle. The list below says why."</p>
 <div class="table-wrap"><table><thead><tr><th>Level</th><th>Message</th><th>How to fix it</th></tr></thead><tbody>
 <tr><td>Error</td><td>Mesh '…' is N MB once converted; an upload may be at most 64 MB.</td><td>"Use a lower-detail version of it."</td></tr>
 <tr><td>Error</td><td>Mesh '…' could not be converted: [reason]</td><td>"Fix the mesh as the message says, or replace it, then try again."</td></tr>

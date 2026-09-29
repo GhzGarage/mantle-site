@@ -50,13 +50,15 @@
 <li><b>Left out with a warning:</b> SkyAtmosphere, SkyLight, VolumetricCloud and ExponentialHeightFog ("Mantle provides the sky; this actor's settings are not published.").</li>
 <li><b>Left out with a warning:</b> Blueprint logic, in actors and in the Level Blueprint: "Blueprint logic isn't published: the place gets this actor's components, not its behaviour." Use <a href="/docs/scripting/">scripts</a> for behaviour.</li>
 <li><b>Converted and uploaded:</b> meshes, materials and sounds from your project, and your Script Assets. See <a href="#custom-assets">Your own assets</a>.</li>
-<li><b>Stops the publish with an error:</b> unsupported actors, post-process volumes, extra components on an actor Mantle knows by class (such as a Static Mesh Actor with a light added), names, tags or material overrides over the limits below, meshes over the mesh limits, an empty level, and a World Partition level with cells the editor hasn't loaded (load the whole level first). See <a href="/docs/creators/#validation">What "Check this place" catches</a>.</li></ul>
+<li><b>Uploaded with the place:</b> the scripts in the level's <code>Scripts</code> folder, and the UI documents (<code>.rml</code>), stylesheets (<code>.rcss</code>) and PNG or JPEG images in its <code>UI</code> folder, next to <code>Scripts</code>. Other files in <code>UI</code> are ignored. See <a href="/docs/scripting/ui-documents/">UI documents</a>.</li>
+<li><b>Stops the publish with an error:</b> unsupported actors, post-process volumes, extra components on an actor Mantle knows by class (such as a Static Mesh Actor with a light added), names, tags or material overrides over the limits below, a zero or negative scale, meshes over the mesh limits, UI files that break the <a href="/docs/scripting/ui-documents/#uidoc-limits">UI document limits</a>, an empty level, and a World Partition level with cells the editor hasn't loaded (load the whole level first). See <a href="/docs/creators/#validation">What "Check this place" catches</a>.</li></ul>
 <div class="table-wrap"><table><thead><tr><th>Limit</th><th>Value</th></tr></thead><tbody>
 <tr><td>Place file size</td><td class="num">8 MiB</td></tr>
 <tr><td>Objects / nesting depth</td><td>No limit</td></tr>
 <tr><td>Name / tag length</td><td>80 / 40 characters</td></tr>
 <tr><td>Material overrides per mesh</td><td>Slots 0 to 15</td></tr>
 <tr><td>Sound, decoded, per place</td><td class="num">64 MiB</td></tr>
+<tr><td>UI documents and stylesheets / UI images</td><td>64 / 64 per place (256 KiB per document, 2 MiB per image). See <a href="/docs/scripting/ui-documents/#uidoc-limits">Limits and checks</a>.</td></tr>
 <tr><td>Physics objects <span class="status wip">Next release</span></td><td class="num">500 per place; "Check this place" warns above 200</td></tr>
 <tr><td>Mantle Effects <span class="status wip">Next release</span></td><td class="num">64 per place</td></tr>
 <tr><td>Instanced meshes <span class="status wip">Next release</span></td><td class="num">100,000 instances per place</td></tr>

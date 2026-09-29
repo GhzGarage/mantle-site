@@ -49,13 +49,13 @@
 <p>Give each section's material a base colour texture parameter (for example <code>BaseColor</code>) and a normal map. If the tab can't find a base colour texture, the section uploads as a flat colour and the tab says so. Helper bones that carry no weight and aren't on the MetaHuman skeleton, which some exports add, are left out automatically.</p>
 
 <h2 id="hair">Hair, eyebrows, eyelashes and facial hair <span class="status wip">In progress</span></h2>
-<p>Hair has four slots: <code>hair</code>, <code>eyebrows</code>, <code>eyelashes</code> and <code>facial_hair</code> (beards and moustaches). A player can wear one item in each, all at once. Every hair item is built from hair cards and follows the wearer's head.</p>
+<p>Hair has four slots: <code>hair</code>, <code>eyebrows</code>, <code>eyelashes</code> and <code>facial_hair</code> (beards and moustaches). A player can wear one item in each, all at once. Every hair item follows the wearer's head. Grooms and cards meshes upload as hair cards; a section lifted from a Skeletal Mesh (such as eyelashes) uploads with its own material's textures.</p>
 <ol class="steps">
 <li><b>Choose Hair and the slot</b><p>Choose <b>Hair</b>, then the slot.</p></li>
 <li><b>Pick the source under Asset</b><p>It can be one of three things:</p>
 <ul>
-<li><b>A groom:</b> Mantle converts the groom's cards (Groom editor → Cards), not its strands, and uploads them with the hair's colour, read from the groom's materials or set under <b>Hair colour</b>. A second box lists the groom's cards as "Group N, LOD N: [mesh] (N textures)". By default it picks the LOD MetaHuman draws at Medium. Pick a lower-detail entry if the cards are over budget. MetaHuman grooms exported at Medium have cards.</li>
-<li><b>A hair cards Static Mesh:</b> keep the groom's cards atlas textures in the same folder as the cards mesh, so the tab finds them. Otherwise it uses the textures of the mesh's material.</li>
+<li><b>A groom:</b> Mantle converts the groom's cards (Groom editor → Cards), not its strands, and uploads them with the hair's colour, read from the groom's materials or set under <b>Hair colour</b>. A second box lists the groom's cards as "Group N, LOD N: [mesh] (N textures)". It starts on the cards MetaHuman draws at Medium. Pick a lower-detail entry if the cards are over budget. MetaHuman grooms exported at Medium have cards.</li>
+<li><b>A hair cards Static Mesh:</b> the tab looks for the cards' atlas textures through the mesh's materials or the groom named after the mesh, or next to the mesh by name (<code>[name]_CardsAtlas_Attribute</code> and <code>[name]_CardsAtlas_Tangent</code>). If it finds none, it uses the textures of the mesh's material.</li>
 <li><b>One section of a Skeletal Mesh:</b> for example a MetaHuman face's eyelashes. A box asks you to "Choose the section to lift (for example the eyelashes)".</li>
 </ul></li>
 <li><b>Check Authored on</b><p>As with 3D clothing, <b>Authored on</b> is the MetaHuman body the hair was made on. It must have a <code>head</code> bone.</p></li>
@@ -111,12 +111,12 @@
 <tr><td>Problem: [mesh] LOD [N] has no CPU copy of its vertices, weights or triangles. Open the mesh once in the editor and try again.</td><td>As it says.</td></tr>
 <tr><td>Note: [Garment, Hair or Accessory] "[section]" base colour: no base colour texture was found, so it uploads as a flat [material or grey] colour. Give the material a BaseColor texture parameter if it should look textured.</td><td>Add a <code>BaseColor</code> texture parameter to the material, or accept the flat colour.</td></tr>
 <tr><td>Note: this garment hangs below the knee, so it may clip through the legs when the wearer moves. It can still be published: Mantle marks it "may clip in motion" so players know.</td><td>Nothing, unless you'd rather shorten it. See <a href="#long-garments">Skirts, dresses and long coats</a>.</td></tr>
-<tr><td>Problem: [texture] is a UDIM, cube or array texture; Mantle takes one 2D image.</td><td>Use a plain 2D texture.</td></tr>
+<tr><td>Problem: [Garment, Hair or Accessory] "[section]" base colour could not be exported: [texture] is a UDIM, cube or array texture; Mantle takes one 2D image.</td><td>Use a plain 2D texture.</td></tr>
 <tr><td>Problem: [groom] has no hair cards mesh. Mantle converts a groom's cards (Groom editor &gt; Cards). MetaHuman grooms exported at Medium have them.</td><td>Add cards to the groom, or use a MetaHuman groom exported at Medium.</td></tr>
-<tr><td>Note: no hair cards atlases were found next to the cards mesh, so its material's textures are used. Keep the groom's CardsAtlas textures in the same folder as the cards mesh, or upload the groom itself.</td><td>As it says.</td></tr>
+<tr><td>Note: no hair cards atlas belonging to [mesh] was found (none of its materials or a groom named [name] references one, and no texture near it is named [name]_CardsAtlas_Attribute), so its material's textures are used. Keep the groom [name] next to its cards mesh, or its CardsAtlas textures named after it ([name]_CardsAtlas_Attribute, [name]_CardsAtlas_Tangent), or upload the groom itself.</td><td>As it says.</td></tr>
 <tr><td>Problem: choose which section of the mesh to lift (for example the eyelashes).</td><td>Pick the section in the box under <b>Asset</b>.</td></tr>
-<tr><td>Note: no hair colour was found in the groom's materials, so its cards upload in a default brown (…); set one under Hair colour.</td><td>Set <b>Hair colour</b>.</td></tr>
-<tr><td>Note: No MetaHuman face was found next to the body, so collars are fitted from the body alone.</td><td>Nothing, unless collars sit wrong: keep the MetaHuman's face next to its body in your project.</td></tr>
+<tr><td>Done: no hair colour was found in the groom's materials, so its cards upload in a default brown (…); set one under Hair colour.</td><td>Set <b>Hair colour</b>.</td></tr>
+<tr><td>Done: No MetaHuman face was found next to the body, so collars are fitted from the body alone.</td><td>Nothing, unless collars sit wrong: keep the MetaHuman's face next to its body in your project.</td></tr>
 <tr><td>Problem: hair uploads a groom, a hair cards static mesh, or one section of a skeletal mesh.</td><td>Pick one of those under <b>Asset</b>.</td></tr>
 <tr><td>Problem: [body] has no head bone; hair binds to a MetaHuman body's head.</td><td>Choose a MetaHuman body under <b>Authored on</b>.</td></tr>
 <tr><td>Problem: an accessory uploads a static mesh whose pivot is where it attaches.</td><td>Pick a Static Mesh under <b>Asset</b>.</td></tr>
@@ -131,7 +131,7 @@
 <li>"This body shape has no warp weights, which garments need to fit other bodies. Upload it again with the Mantle plugin, which adds them."</li>
 <li>"The body shape this item was made on has no warp weights, so it cannot fit other bodies. Upload the item again with the Mantle plugin, which sends a body shape that has them."</li>
 </ul>
-<p>A hair item with too many or too large textures is refused when the item is created, for example "Mantle refused the item: a hair item may use at most 4 textures; [texture] (materials) is the 5th (materials)". Use fewer textures, or smaller ones.</p>
+<p>A hair item with too many or too large textures is refused when the item is created, for example "Mantle refused the item: a hair item may use at most 4 textures; [texture] ([where it's used]) is the 5th". Use fewer textures, or smaller ones.</p>
 
 <h2 id="avatar-screen">How your items show to players <span class="status wip">In progress</span></h2>
 <p>Once an item passes screening, it appears in the Catalog on the players' <a href="/docs/players/playing/#avatar">Avatar screen</a>, under "Clothing", "Hair" or "Accessories" and the slot's own filter.</p>

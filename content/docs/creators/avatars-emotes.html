@@ -27,7 +27,7 @@
 <ol class="steps">
 <li><b>Prepare the body</b><p>Keep it in its reference pose with its feet on the origin, and check it fits the <a href="#avatar-limits">limits</a>. For a MetaHuman that should wear clothing, export it as described in <a href="#metahuman-clothing">MetaHumans that wear clothing</a>.</p></li>
 <li><b>Pick Avatar</b><p>In the <b>Mantle Cosmetics</b> tab, pick <b>Avatar</b> under "What are you publishing?". The slot is <code>avatar</code>.</p></li>
-<li><b>Pick the body</b><p>Under "Asset", choose the body Skeletal Mesh. If one of its LODs is over the triangle limit, the plugin uses the first LOD that fits.</p></li>
+<li><b>Pick the body</b><p>Under "Asset", choose the body Skeletal Mesh. For a MetaHuman exported to wear clothing, the plugin uploads the LOD that takes clothing. Otherwise, if LOD 0 is over the triangle limit, it uses the first LOD that fits.</p></li>
 <li><b>Add the face (MetaHuman only)</b><p>Under "Face and sections", choose the MetaHuman's face Skeletal Mesh. See <a href="#face">The face</a>.</p></li>
 <li><b>Check the section roles</b><p>Each material slot of the body is listed with a role: <code>skin</code>, <code>eyes</code> or <code>other</code>. See <a href="#skin-eyes">Skin tone and eye colour</a>.</p></li>
 <li><b>Set the jaw bone if needed</b><p>See <a href="#mouth">Mouth movement</a>.</p></li>
@@ -45,11 +45,11 @@
 <li>Only a MetaHuman body takes a face, and it must be a MetaHuman face on the MetaHuman face skeleton. A UE5 Mannequin's head is part of its body.</li>
 <li>A MetaHuman body ends at the neck, so its face counts towards the avatar's height. Without the face, a MetaHuman body is usually too short to pass the minimum height.</li>
 <li>The plugin uploads a LOD of the face that fits the 10,000-triangle limit.</li>
-<li>The face's skin takes the player's skin tone and its eyes the eye colour. MetaHuman's see-through face parts (eye shell, eye edge, eyelashes, saliva and cartilage) aren't drawn. Players add eyelashes, eyebrows and facial hair as separate items in the face slots, which are fitted like <a href="/docs/creators/clothing/#hair">hair</a>.</li>
+<li>The face's skin takes the player's skin tone and its eyes the eye colour. MetaHuman's see-through face parts (eye shell, eye edge, eyelashes, saliva and cartilage) aren't drawn. Players add eyelashes, eyebrows and facial hair as separate items in their own slots, which are fitted like <a href="/docs/creators/clothing/#hair">hair</a>.</li>
 </ul>
 
 <h3 id="skin-eyes">Skin tone and eye colour</h3>
-<p>When you publish, Mantle converts each section's materials from its base colour, normal and ORM textures (see <a href="/docs/creators/avatar-items/">Making avatar items</a>). The panel fills in a role for each section from its material slot name; change it if it's wrong. The role decides what the player's choices change:</p>
+<p>Each section uploads its material's base colour, normal and ORM textures. The panel fills in a role for each section from its material slot name; change it if it's wrong. The role decides what the player's choices change:</p>
 <div class="table-wrap"><table><thead><tr><th>Role</th><th>What happens</th></tr></thead><tbody>
 <tr><td><code>skin</code></td><td>Takes the player's <b>Skin tone</b></td></tr>
 <tr><td><code>eyes</code></td><td>Takes the player's <b>Eye colour</b> on the iris</td></tr>
@@ -118,8 +118,8 @@
 
 <h3 id="avatar-after">After you publish an avatar</h3>
 <ul>
-<li>Once it passes screening, it's listed under "Avatars" in the catalogue with a badge: "WEARS CLOTHING" or "NO CLOTHING: ACCESSORIES ONLY".</li>
-<li>The catalogue's "Fits my avatar" filter, which is on by default, only lists avatars that wear clothing. Players see an avatar that doesn't when they turn the filter off.</li>
+<li>Once it passes screening, it's listed under "Avatars" in the catalogue. Its page shows its skeleton ("METAHUMAN" or "UE5 MANNEQUIN") and "WEARS CLOTHING" or "NO CLOTHING: ACCESSORIES ONLY".</li>
+<li>Under "Avatars", every avatar is listed. Under "All", the "Fits my avatar" filter, which is on by default, hides avatars that don't wear clothing until the player turns it off.</li>
 <li>Players can wear it with their own skin tone, eye colour and height, and play their emotes on it.</li>
 </ul>
 
@@ -132,14 +132,14 @@
 <li><b>Keep it in place</b><p>Keep the <code>root</code> bone within 50 cm of where it starts, and animate <code>pelvis</code>. See <a href="#emote-rules">Emote rules</a>.</p></li>
 <li><b>Mark a loop if you want one</b><p>Add an Anim Notify named <code>loop_start</code> where the loop should begin. See <a href="#looping">Looping</a>.</p></li>
 <li><b>Pick Emote</b><p>In the <b>Mantle Cosmetics</b> tab, pick <b>Emote</b> under "What are you publishing?". The slot is <code>emote</code>. Under "Asset", choose the Anim Sequence.</p></li>
-<li><b>Name, check and upload</b><p>Choose <b>Check only</b>, fix any "Problem" lines, then <b>Upload to Mantle</b>. If your clip is on a MetaHuman or UE5 Mannequin skeleton, Check shows a note saying it will be retargeted from that skeleton onto the UEFN mannequin.</p></li>
+<li><b>Name, check and upload</b><p>Choose <b>Check only</b>, fix any "Problem" lines, then <b>Upload to Mantle</b>. If your clip is on a MetaHuman or UE5 Mannequin skeleton, <b>Files and details</b> notes that it was retargeted onto the UEFN mannequin.</p></li>
 </ol>
 
 <h3 id="emote-rules">Emote rules</h3>
 <div class="table-wrap"><table><thead><tr><th>Rule</th><th>Value</th></tr></thead><tbody>
-<tr><td>Skeleton</td><td>The UEFN mannequin, a MetaHuman body or the UE5 Mannequin (<code>SK_Mannequin</code>). Every animated bone must be one of that skeleton's bones (names match whatever their case). A MetaHuman or UE5 Mannequin clip is retargeted onto the UEFN mannequin automatically; this needs a UEFN mannequin skeletal mesh (such as <code>SKM_UEFN_Mannequin</code> from the Game Animation Sample) somewhere in your project, or the upload stops asking you to add one.</td></tr>
+<tr><td>Skeleton</td><td>The UEFN mannequin, a MetaHuman body or the UE5 Mannequin (<code>SK_Mannequin</code>). Every animated bone must be one of that skeleton's bones (names match whatever their case). A MetaHuman or UE5 Mannequin clip is retargeted onto the UEFN mannequin automatically. This needs the IK Rig plugin turned on, a UEFN mannequin skeletal mesh (such as <code>SKM_UEFN_Mannequin</code> from the Game Animation Sample) somewhere in your project, and a skeletal mesh on the clip's own skeleton.</td></tr>
 <tr><td>Length</td><td>Up to 10 seconds</td></tr>
-<tr><td>Frame rate</td><td>Any</td></tr>
+<tr><td>Frame rate</td><td>Any. The emote plays back at 30 frames a second.</td></tr>
 <tr><td>Required track</td><td><code>pelvis</code></td></tr>
 <tr><td>Root motion</td><td>The <code>root</code> bone can move at most 50 cm from its first frame. Emotes play in place: the player doesn't travel with the root.</td></tr>
 <tr><td>Anim Notifies</td><td>Only <code>footstep_l</code>, <code>footstep_r</code>, <code>impact</code> and <code>loop_start</code> are kept, up to 64. Other notifies are left out.</td></tr>
@@ -151,7 +151,7 @@
 
 <h3 id="emote-play">How players use emotes</h3>
 <ul>
-<li>Players get emotes from the catalogue and wear up to 8 at a time. They play them from the emote wheel: hold <kbd>B</kbd> or right bumper, point, and let go. See <a href="/docs/players/playing/#emotes">Emotes</a> for players.</li>
+<li>Players get emotes from the catalogue and wear up to 8 at a time. They play them from the emote wheel: hold <kbd>B</kbd> or right bumper while not holding a weapon, point, and let go. See <a href="/docs/players/playing/#emotes">Emotes</a> for players.</li>
 <li>The emote blends in over 0.2 s and out over 0.25 s. Everyone in the world sees it at the same point in the clip, even if they join partway through.</li>
 <li>It stops when the player moves, jumps or falls, sits down, gets hit, dies or ragdolls. It can't start while they're moving, in the air, seated or dead, or within half a second of their last emote.</li>
 <li>World scripts can play one of a player's equipped emotes with <code>Avatar:PlayEmote(itemId)</code>. See the <a href="/docs/scripting/api/">API reference</a>.</li>
@@ -160,7 +160,9 @@
 <h3 id="emote-messages">Emote messages</h3>
 <div class="table-wrap"><table><thead><tr><th>Message</th><th>How to fix it</th></tr></thead><tbody>
 <tr><td>Problem: track "[bone]" is not a bone of the uefn skeleton. Emotes play on the UEFN mannequin. Retarget the animation onto SK_UEFN_Mannequin (right-click it > Retarget Animations) and upload the retargeted copy.</td><td>The clip isn't on the UEFN mannequin, a MetaHuman body or the UE5 Mannequin. As the message says, or re-export it on one of those three.</td></tr>
-<tr><td>[project has no UEFN mannequin]: [clip] is on the [metahuman/ue5mannequin] skeleton and emotes play on the UEFN mannequin, but this project has no UEFN mannequin to retarget it onto. Add SKM_UEFN_Mannequin (from the Game Animation Sample, or UEFN's mannequin) to the project and upload again.</td><td>Add a UEFN mannequin skeletal mesh to your project, then upload again.</td></tr>
+<tr><td>Problem: the emote could not be retargeted onto the UEFN mannequin: [clip] is on the [metahuman or ue5mannequin] skeleton and emotes play on the UEFN mannequin, but this project has no UEFN mannequin to retarget it onto. Add SKM_UEFN_Mannequin (from the Game Animation Sample, or UEFN's mannequin) to the project and upload again.</td><td>Add a UEFN mannequin skeletal mesh to your project, then upload again.</td></tr>
+<tr><td>Problem: the emote could not be retargeted onto the UEFN mannequin: no skeletal mesh in this project uses [clip]'s skeleton [skeleton], so it cannot be retargeted. Give the skeleton a preview mesh and upload again.</td><td>As the message says.</td></tr>
+<tr><td>Problem: the emote could not be retargeted onto the UEFN mannequin: IK Rig's batch retarget cannot be called (…): enable the IK Rig plugin and restart the editor.</td><td>Turn on the IK Rig plugin (Edit &gt; Plugins) and restart the editor.</td></tr>
 <tr><td>Problem: the clip is [N] s long, the limit is 10 s. Trim the animation (Animation editor > Remove frames) and try again.</td><td>As the message says.</td></tr>
 <tr><td>Problem: the clip has no "pelvis" track.</td><td>Key the <code>pelvis</code> bone.</td></tr>
 <tr><td>Problem: the root moves [N] cm, the limit is 50 cm. Emotes play in place: remove the root motion (or keep it within the limit).</td><td>As the message says.</td></tr>

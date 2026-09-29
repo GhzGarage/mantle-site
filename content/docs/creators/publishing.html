@@ -6,8 +6,8 @@
 <ol class="steps">
 <li><b>Check this place</b><p>Runs the same checks as "Check this place". If anything fails, you'll see "This place has N problem(s) to fix first."</p></li>
 <li><b>Prepare meshes and materials</b><p>Converts the meshes and materials from your project that the level uses. A level built only from library assets skips this.</p></li>
-<li><b>Upload to Mantle</b><p>Uploads the converted files, your <a href="/docs/creators/building/#script-assets">Script Assets</a> and every script in the level's <code>Scripts</code> folder. Files you've uploaded before aren't sent again.</p></li>
-<li><b>Mantle processes and screens them</b><p>Mantle processes the files and screens textures and scripts. Something that needs a moderator shows as "waiting for a Mantle moderator to look at it."</p></li>
+<li><b>Upload to Mantle</b><p>Uploads the converted files, your <a href="/docs/creators/building/#script-assets">Script Assets</a>, every script in the level's <code>Scripts</code> folder, and the documents, stylesheets and images in its <code>UI</code> folder (see <a href="/docs/scripting/ui-documents/">UI documents</a>). Files you've uploaded before aren't sent again.</p></li>
+<li><b>Mantle processes and screens them</b><p>Mantle processes the files and screens textures (including UI images), scripts and UI documents. Something that needs a moderator shows as "waiting for a Mantle moderator to look at it."</p></li>
 <li><b>Publish</b><p>The first time you publish a level, this creates a new world with the level's name. Later publishes update that same world. Mantle saves your draft and, for Publish, makes it live as a new, numbered revision.</p></li>
 </ol>
 <p>When it works, you'll see "Saved to Mantle. Nobody can see it until you publish." or "Published revision N. Anyone can join it now." If it stops, the tab says why and what to do. <b>Cancel</b> stops at any point without publishing anything, and <b>Publish again</b> carries on from where it stopped: everything already uploaded stays on Mantle.</p>
@@ -69,10 +69,16 @@
 </tbody></table></div>
 
 <h2 id="managing">Managing your worlds <span class="status wip">In progress</span></h2>
+<p><span class="status live">Live</span> In the Mantle game, outside a world, open <b>Settings → Account</b> and choose <b>Manage places</b> (under "My Places") to open <b>My Places</b>: your published worlds and drafts, the most recently updated first. Each one shows its name, "Published" or "Draft", when it was last updated (in UTC), its description and its place ID. Names and descriptions come from your latest draft.</p>
 <ul>
-<li>Screens for listing, editing and deleting your worlds in the editor and the Mantle client are coming soon.</li>
-<li>To change a world's details, save a new draft.</li>
-<li>Deleting a world removes it from the catalogue, featured list, charts and favourites. You can't undo this. Deleted worlds are removed for good after 180 days.</li>
+<li><b>View place</b> opens the world's page. It's only available for a published world.</li>
+<li><b>Copy ID</b> copies the place ID to your clipboard.</li>
+<li><b>Delete</b> asks first: "Delete this place? It will disappear from discovery and your places. All active servers will close and players will be disconnected. You cannot undo this here." Choose <b>Delete place</b> to go ahead, or <b>Cancel</b>. You'll see "Place deleted."</li>
+<li><b>Refresh</b> reloads the list, and <b>Load more</b> shows older places.</li>
+</ul>
+<ul>
+<li>To change a world, edit the level and save or publish again from the editor. Editing a world's details in the editor or on My Places is coming later.</li>
+<li>Deleting a world removes it from the catalogue, featured list, charts and favourites, and closes its servers. You can't undo this. Deleted worlds are removed for good after 180 days.</li>
 <li>Each world has one owner. <span class="status planned">Planned</span> Transferring ownership, plus collaborators and teams.</li>
 </ul>
 

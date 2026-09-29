@@ -36,15 +36,15 @@ mantle-server run</pre></div>
 <tr><td><code>mantle-server stop</code> / <code>restart</code></td><td>Stops the server, or closes the session and starts a new one. Add <code>-force</code> if players are on it.</td></tr>
 <tr><td><code>mantle-server drain</code></td><td>Hides the server from the Servers tab and turns away new players; the players on it keep playing, and it restarts once it's empty. <code>-stop</code> stops it instead, and <code>-cancel</code> undoes a drain.</td></tr>
 <tr><td><code>mantle-server logs</code></td><td>Prints recent log lines (100 by default, <code>-n</code> to change). <code>-f</code> keeps following them.</td></tr>
-<tr><td><code>mantle-server service install</code> / <code>uninstall</code> / <code>status</code></td><td>Runs <code>mantle-server run</code> as a systemd service on Linux or a Windows service, so it starts with the machine.</td></tr>
+<tr><td><code>mantle-server service install</code> / <code>uninstall</code> / <code>status</code></td><td>Runs <code>mantle-server run</code> as a systemd service on Linux or a Windows service, so it starts with the machine. Run <code>install</code> with <code>sudo</code> on Linux or from an administrator prompt on Windows; add <code>-start</code> to start it straight away.</td></tr>
 <tr><td><code>mantle-server instance new &lt;name&gt;</code> / <code>instance list</code></td><td>Sets up another server on the same machine in <code>instances/&lt;name&gt;/</code>, with its own <code>server.json</code>, <code>server.key</code> and the next free port from 7777. Instances share downloaded server builds.</td></tr>
 <tr><td><code>mantle-server update</code></td><td>Downloads, checks and installs the current server build, and updates <code>mantle-server</code> itself. <code>-check</code> only looks.</td></tr>
-<tr><td><code>mantle-server rollback</code></td><td>Makes the previous server build current again, and holds back the one you left until you run <code>update</code>.</td></tr>
+<tr><td><code>mantle-server rollback</code></td><td>Makes the previous server build current again, and holds back the one you left until you run <code>update</code> or a newer build comes out.</td></tr>
 <tr><td><code>mantle-server ui</code></td><td>Opens a local web page with the server's status and logs, and buttons to restart, drain and stop it (see below).</td></tr>
 <tr><td><code>mantle-server version</code></td><td>Prints the version of <code>mantle-server</code> and of the server package.</td></tr>
 </tbody></table></div>
-<p>Most commands take <code>-config</code> if your settings file isn't <code>server.json</code> in the current folder. <code>status</code>, <code>stop</code>, <code>restart</code>, <code>drain</code> and <code>logs</code> talk to the running <code>mantle-server run</code>, and exit with code 10 if none is running there.</p>
-<p><code>mantle-server ui</code> only listens on this machine (127.0.0.1). It prints a sign-in link that works once, within 10 minutes; a sign-in lasts 12 hours. The page can't change <code>server.json</code> or install builds. To reach it from another computer, use an SSH tunnel.</p>
+<p>Most commands take <code>-config</code> if your settings file isn't <code>server.json</code> in the current folder. <code>status</code>, <code>stop</code>, <code>restart</code>, <code>drain</code> and <code>logs</code> talk to the running <code>mantle-server run</code>, and exit with code 10 if none is running there. <code>stop</code> and <code>restart</code> exit with code 12 if they're refused, for example because players are on the server and you left out <code>-force</code>.</p>
+<p><code>mantle-server ui</code> only listens on this machine (127.0.0.1). It prints a sign-in link that works once, within 10 minutes; a sign-in lasts 12 hours. The page can't change <code>server.json</code> or install builds. To reach it from another computer, pick a port with <code>-port</code> and use an SSH tunnel.</p>
 
 <div class="table-wrap"><table><thead><tr><th>System</th><th>Firewall command</th></tr></thead><tbody>
 <tr><td>Windows</td><td><code>netsh advfirewall firewall add rule name="Mantle server" dir=in action=allow protocol=UDP localport=7777</code></td></tr>
@@ -58,16 +58,16 @@ mantle-server run</pre></div>
 <tr><td><code>apiUrl</code> / <code>placeId</code></td><td>The Mantle API URL and the world to host</td><td>None (required)</td></tr>
 <tr><td><code>name</code></td><td>A name for this server in your settings. Players see the name you gave the server in Settings &gt; Account &gt; Hosting.</td><td>None (required)</td></tr>
 <tr><td><code>publicAddress</code></td><td>The address players connect to. It must match the address your server connects to Mantle from.</td><td>None (required)</td></tr>
-<tr><td><code>port</code></td><td>The UDP port players connect on</td><td>7777</td></tr>
+<tr><td><code>port</code></td><td>The UDP port players connect on</td><td>7777 (set by <code>init</code>)</td></tr>
 <tr><td><code>maxPlayers</code></td><td>How many players can join. It can't be higher than the world's own limit. If it's missing, the world's limit is used.</td><td>16 (set by <code>init</code>)</td></tr>
 <tr><td><code>region</code></td><td>A short label shown to players, such as EU or US East</td><td>None</td></tr>
 <tr><td><code>privateServerAttachCode</code></td><td>Runs this server for a private server instead of the public list (see <a href="#private">Private community servers</a>). Leave it out for a public server.</td><td>None (public)</td></tr>
 <tr><td><code>restart</code></td><td><code>"always"</code> restarts the game server if it stops. <code>"never"</code> stops instead, which helps when you're troubleshooting a crash.</td><td><code>"always"</code></td></tr>
-<tr><td><code>restartDelaySeconds</code></td><td>How long to wait before restarting a game server that stopped</td><td>5</td></tr>
+<tr><td><code>restartDelaySeconds</code></td><td>How long to wait before restarting a game server that stopped. The wait doubles after each crash in a row, up to 5 minutes.</td><td>5</td></tr>
 <tr><td><code>onRepublish</code></td><td>What to do when the creator publishes a new version of the world: <code>"restart-when-empty"</code>, <code>"drain"</code> (hide the server and restart once the players leave) or <code>"ignore"</code></td><td><code>"restart-when-empty"</code></td></tr>
 <tr><td><code>restartSchedule</code></td><td>A daily restart time, <code>"HH:MM"</code> in 24-hour time on this machine's clock. At that time the server drains, then restarts once it's empty.</td><td>None</td></tr>
 <tr><td><code>autoUpdate</code></td><td>When to switch to a new server build: <code>"restart-when-empty"</code>, <code>"drain"</code>, <code>"next-restart"</code> or <code>"off"</code></td><td><code>"restart-when-empty"</code></td></tr>
-<tr><td><code>readyTimeoutSeconds</code> / <code>heartbeatSeconds</code></td><td>How long the game server has to start, and how often <code>mantle-server</code> checks in with Mantle</td><td>180 / 30</td></tr>
+<tr><td><code>readyTimeoutSeconds</code></td><td>How long the game server has to start before it counts as a crash</td><td>180</td></tr>
 <tr><td><code>serverExtraArgs</code></td><td>Extra arguments added to the end of the game server's command line</td><td>None</td></tr>
 <tr><td><code>serverDir</code></td><td>The folder that holds the game server from the package</td><td><code>./MantleServer</code></td></tr>
 <tr><td><code>logDir</code> / <code>keepLogs</code></td><td>Where logs are saved, and how many old logs to keep</td><td><code>./logs</code> / 10</td></tr>
@@ -77,7 +77,7 @@ mantle-server run</pre></div>
 
 <h3 id="while-running">While it's running</h3>
 <ul>
-<li><b>Automatic restarts:</b> if the game server crashes, <code>mantle-server</code> restarts it. After 10 crashes in 10 minutes it stops, so check the logs.</li>
+<li><b>Automatic restarts:</b> if the game server crashes, <code>mantle-server</code> restarts it, waiting longer after each crash in a row. If it crashes more than 10 times in 10 minutes, <code>mantle-server</code> stops (exit code 6), so check the logs. A server that stays up for 10 minutes starts the count again.</li>
 <li><b>Daily restart:</b> the game server has to restart within 24 hours of starting. Near the end of that time, <code>mantle-server</code> restarts it as soon as it's empty, or at the last minute if players are still on it.</li>
 <li><b>New versions of the world:</b> when the creator publishes a new version, your server keeps running the one it started with and players can still join it. It restarts onto the new version once it's empty, or as <code>onRepublish</code> says.</li>
 <li><b>Draining:</b> a draining server is hidden from the Servers tab and turns away new players, but the players on it keep playing. A drain lasts at most until the daily restart.</li>
@@ -99,10 +99,10 @@ mantle-server run</pre></div>
 <p>Mantle only accepts the two newest server builds, and players can only join a server running the same build as their game. <code>mantle-server run</code> keeps up by itself:</p>
 <ul>
 <li>It checks for a new build when it starts and then about once an hour. It downloads the build in the background and installs it next to the current one in <code>builds/</code>, keeping the previous build.</li>
-<li>Every build is signed by Mantle, and <code>mantle-server</code> checks it before installing. A build that fails the check is refused and nothing changes (exit code 13).</li>
+<li>Every build is signed by Mantle, and <code>mantle-server</code> checks it before installing. A build that fails the check is refused and nothing changes: <code>mantle-server update</code> exits with code 13, and a running server logs it and keeps its current build.</li>
 <li>It switches to the new build as <code>autoUpdate</code> says. With the default, <code>"restart-when-empty"</code>, it waits until nobody is playing. Players are never cut off for an update.</li>
-<li>It updates <code>mantle-server</code> itself too, keeping the old copy as <code>mantle-server.old</code>.</li>
-<li>If a new build fails to start twice in a row, <code>mantle-server</code> goes back to the previous one and holds the new one back.</li>
+<li>It updates <code>mantle-server</code> itself too, keeping the old copy next to it with <code>.old</code> added (<code>mantle-server.exe.old</code> on Windows). The new copy runs from the next time <code>mantle-server</code> starts.</li>
+<li>If a new build fails to start twice in a row, <code>mantle-server</code> goes back to the previous one and holds the new one back until a newer build comes out or you run <code>mantle-server update</code>.</li>
 </ul>
 <p>A <code>mantle-server</code> from before signed builds can't update itself, and says it was built without a server build signing key. Download the current package from Settings &gt; Account &gt; Hosting once, and it updates itself from then on. With <code>autoUpdate</code> set to <code>"off"</code>, run <code>mantle-server update</code> yourself.</p>
 
@@ -119,6 +119,8 @@ mantle-server run</pre></div>
 <tr><td>privateServerAttachCode expired before this server used it. Ask the private server's owner for a new one.</td><td>Codes last an hour. Get a new one.</td></tr>
 <tr><td>privateServerAttachCode was already used by another server. Each code attaches one server.</td><td>Get a new code for this server.</td></tr>
 <tr><td>This server key belongs to another account than the private server's owner.</td><td>Use a server key from the private server owner's account.</td></tr>
+<tr><td>privateServerAttachCode is for a private server of another place than placeId.</td><td>Set <code>placeId</code> to the world the private server belongs to.</td></tr>
+<tr><td>That private server can't run right now.</td><td>The private server is suspended or its time has run out. Check with its owner.</td></tr>
 <tr><td>This server is attached to a private server. Put its privateServerAttachCode back in server.json, or have the private server's owner detach it first.</td><td>Restore the code, or have the owner detach the server before you run it publicly.</td></tr>
 <tr><td>This place's creator hasn't turned on private servers.</td><td>The world's creator has to allow private servers.</td></tr>
 </tbody></table></div>

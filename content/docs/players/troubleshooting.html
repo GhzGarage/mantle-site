@@ -20,7 +20,7 @@
 <tr><td>Epic sign-in was cancelled or could not be completed (…). Try again when you're ready.</td><td>Press "TRY SIGN-IN AGAIN" and finish signing in in Epic's window.</td></tr>
 <tr><td>Epic sign-in is unavailable. Please try again. / Epic signed in, but Mantle could not verify the session. Please try again.</td><td>Try again in a moment. If it keeps happening, check your connection.</td></tr>
 <tr><td>Epic Online Services could not start. Check the Mantle installation and try again. / Mantle's online services could not start. Check the Mantle installation and try again.</td><td>Use Steam's or the Epic Games Launcher's option to verify (check) the game files, then start Mantle again.</td></tr>
-<tr><td>Signed in from another location.</td><td>Your account signed in on another PC. Close Mantle there if you want to play here.</td></tr>
+<tr><td>You signed in to Mantle somewhere else, so this session ended.</td><td>Your account joined the same server from another PC. Close Mantle there if you want to play here.</td></tr>
 </tbody></table></div>
 <p>The full list of sign-in messages is in <a href="/docs/players/#sign-in">Signing in</a>.</p>
 
@@ -34,32 +34,36 @@
 <tr><td>Your server took too long to start. Try joining again.</td><td>Press "TRY AGAIN". A new server sometimes needs a second attempt.</td></tr>
 <tr><td>That world couldn't be loaded. Try joining again.</td><td>You're taken back to the home screen. Join the world again.</td></tr>
 <tr><td>Sessions are unavailable. / Something went wrong.</td><td>The problem is on our side. Wait a few minutes and try again. If it doesn't clear up, <a href="#get-help">let us know</a>.</td></tr>
-<tr><td>A join is already in progress.</td><td>Wait for the current join to finish, or press "CANCEL" first.</td></tr>
+<tr><td>You're already joining a world. Cancel that join first to go somewhere else.</td><td>Wait for the current join to finish, or press "CANCEL" first.</td></tr>
+<tr><td>That server is full. Try again in a moment, or pick another server.</td><td>Wait a moment and try again, or press "PLAY" to let Mantle pick a server for you.</td></tr>
+<tr><td>That server is no longer available.</td><td>The server closed. Join the world again.</td></tr>
 </tbody></table></div>
 <p>All the joining messages are listed in <a href="/docs/players/#joining">Joining a world</a>.</p>
 
 <h3 id="problem-community-servers">Can't join a community server</h3>
 <ul>
-<li><b>"Full":</b> the server has no room, so "JOIN" is turned off. Pick another server, or press "PLAY" for an official one.</li>
+<li><b>"FULL":</b> the server has no room, so "JOIN" is turned off. Pick another server, or press "PLAY" for an official one.</li>
 <li><b>"That server is no longer available. Refreshing the list…":</b> the server closed or couldn't take you. The list reloads, so pick another server. If this happens on every server, check that Mantle is up to date.</li>
-<li><b>"Older version" or "Not yet verified":</b> you can still join. These tags are just for your information.</li>
-<li><b>No "Servers" tab:</b> the world has no community servers right now. "PLAY" still works.</li>
+<li><b>"OLDER VERSION" or "NOT YET VERIFIED":</b> you can still join. These tags are just for your information.</li>
+<li><b>No "Servers" tab:</b> the world doesn't allow community or private servers. "PLAY" still works.</li>
+<li><b>"No community servers right now":</b> none are running for this world. "PLAY" still works.</li>
 </ul>
 <p>See <a href="/docs/players/#community-servers">Community servers</a> for more.</p>
 
 <h3 id="problem-voice">Voice chat isn't working</h3>
 <ul>
-<li><b>Voice is off by default.</b> Go to <b>Settings → Chat → Voice chat</b> and choose "Push to talk" or "Open mic". The change takes effect straight away, even in a world.</li>
+<li><b>Check your voice mode.</b> Go to <b>Settings → Chat → Voice chat</b>. If it's "Off", choose "Push to talk" or "Open mic". The change takes effect straight away, even in a world.</li>
+<li><b>Check the mutes.</b> In a world, <b>Settings → Chat</b> also has "Your microphone" and "Other players' voices". Make sure neither is set to "Muted".</li>
 <li><b>On "Push to talk",</b> you're only heard while you hold <kbd>V</kbd> (D-pad down on a gamepad). Choose "Open mic" to talk without holding a key.</li>
 <li><b>Voice only works in a world,</b> and only with players close to you. Beyond 25 m, you can't hear each other. See <a href="/docs/players/social/#voice">Voice chat</a>.</li>
 <li><b>Can't hear one person?</b> If you've blocked them, their voice is muted. Check <b>Settings → Safety</b>.</li>
-<li><b>Microphone:</b> Mantle doesn't have a microphone setting of its own. Check that your microphone works in Windows, is set as your default input, and isn't muted.</li>
+<li><b>Microphone:</b> Mantle doesn't let you choose a microphone; it uses your default one. Check that your microphone works in Windows, is set as your default input, and isn't muted.</li>
 </ul>
 
 <h3 id="problem-chat">Text chat isn't showing, or messages don't send</h3>
 <ul>
 <li><b>Chat doesn't open:</b> check <b>Settings → Chat → Text chat</b>. When it's off, chat never appears and <kbd>T</kbd> does nothing. Chat only works while you're in a world.</li>
-<li><b>"You are sending messages too quickly. Wait a moment and try again.":</b> you can send up to 30 messages a minute. Wait a little, then send again.</li>
+<li><b>"You are sending messages too quickly. Wait a moment and try again.":</b> wait a little, then send again.</li>
 <li><b>"That message was not sent because it breaks the chat rules.":</b> the chat filter stopped it. Reword it.</li>
 <li><b>"Messages can be up to 500 characters.":</b> shorten your message.</li>
 <li><b>"Chat can't reach Mantle right now. Retrying." or "That message didn't send. Try again.":</b> a connection problem. Wait a moment and try again.</li>
@@ -89,7 +93,12 @@
 
 <h2 id="get-help">Getting help</h2>
 <p>If something still isn't working, email <a href="mailto:contact@mantleplatform.com">contact@mantleplatform.com</a> or ask in the <a href="https://discord.gg/xj4s9kUe7x">Mantle Discord</a>.</p>
-<p>When you report a problem, tell us:</p>
+<p>Mantle can gather the details we need. Open <b>Settings → Safety</b> and scroll to "SUPPORT":</p>
+<ul>
+<li><b>Open log folder</b> opens the folder where Mantle writes a log each time it runs. Mantle.log is the newest; attach it to your message.</li>
+<li><b>Copy diagnostics</b> copies your Mantle version, your platform and store, and, in a world, which world and server you're on. Paste it into your message. Neither the log nor the diagnostics holds your password or sign-in.</li>
+</ul>
+<p>When you report a problem, also tell us:</p>
 <ul>
 <li>what you were doing when it happened</li>
 <li>the world you were in or trying to join</li>

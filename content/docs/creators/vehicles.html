@@ -16,7 +16,7 @@
 
 <h2 id="prepare">Converting a car</h2>
 <ol class="steps">
-<li><b>Select the body</b><p>Select the car's skeletal mesh in the Content Browser, then choose <b>Tools → Mantle → Convert vehicle</b>. With nothing selected, it says "Select the vehicle's skeletal mesh in the Content Browser first: its body, with a bone at each wheel centre named like Wheel_FL, Wheel_FR, Wheel_BL and Wheel_BR."</p></li>
+<li><b>Select the car</b><p>Select the car's skeletal mesh in the Content Browser, or select the car placed in the level (a car Blueprint, so the meshes attached to its body come along as its <a href="#parts">parts</a>), then choose <b>Tools → Mantle → Convert vehicle</b>. With nothing selected, it says "Select the vehicle's skeletal mesh in the Content Browser first: its body, with a bone at each wheel centre named like Wheel_FL, Wheel_FR, Wheel_BL and Wheel_BR. Or select a vehicle placed in the level (a car Blueprint): the meshes attached to its body come along as its parts."</p></li>
 <li><b>Read the notes</b><p>When it works, you'll see "[Mesh]: made [Mesh]_Vehicle (not saved yet). Place a Mantle Vehicle Spawn and set its Vehicle to it.", with notes on what it found: each wheel ("Wheel_FL steers; measured radius 34 cm, width 22 cm."), which material sections it painted, and how many suspension rules it found. Each wheel is measured from the geometry weighted to its bone alone. If it can't be measured, set the wheel's <b>Tire Mesh</b>, or its <b>Radius</b> and <b>Width</b>, in the vehicle asset.</p></li>
 <li><b>Tune it</b><p>Open <code>[Mesh]_Vehicle</code> and adjust it (see <a href="#conversion">What you get</a>), then save it. Converting again keeps your tuning, your wheel settings, your paint sections and your suspension rules.</p></li>
 <li><b>Place it</b><p>Drag a <b>Mantle Vehicle Spawn</b> into the level and set its <b>Vehicle</b> to the asset. A place can have 32.</p></li>
@@ -50,9 +50,9 @@
 <p>If your source car's skeletal mesh has a physics asset (and Tuning has no collision boxes or centre-of-mass override of your own set already), converting it reads the chassis's shape from that physics asset instead of leaving the default single box:</p>
 <ul>
 <li><b>Collision:</b> each body not on a wheel's bone (or under one) becomes an axis-aligned box in Tuning's collision boxes; a turned or round shape becomes the box around it, and more than 8 shapes merge into fewer boxes. If they don't fit Mantle's ranges, it falls back to today's single box, with a note.</li>
-<li><b>Centre of mass:</b> the volume-weighted centre of those same shapes, plus any centre-of-mass override you've set on your source's vehicle movement component (Chaos Vehicles' <b>Center Of Mass Override</b>), if it has one.</li>
+<li><b>Centre of mass:</b> the volume-weighted centre of those same shapes or, if your source's vehicle movement component has a centre-of-mass override set (Chaos Vehicles' <b>Center Of Mass Override</b>), that override instead.</li>
 </ul>
-<p>Values you've already set in Tuning are always kept; this only fills them in when they're empty. The converter's notes say what it found ("Collision: N box(es) from [PhysicsAsset]'s chassis", "Centre of mass: … from the physics asset's chassis").</p>
+<p>Values you've already set in Tuning are always kept; this only fills them in when they're empty. The converter's notes say what it found ("Collision: N box(es) from [PhysicsAsset]'s chassis …", "Centre of mass: … from the physics asset's chassis." or "… from the vehicle movement component's override.").</p>
 
 <h2 id="differences">What's different</h2>
 <ul>
