@@ -99,7 +99,7 @@ mantle-server run</pre></div>
 <p>Mantle only accepts the two newest server builds, and players can only join a server running the same build as their game. <code>mantle-server run</code> keeps up by itself:</p>
 <ul>
 <li>It checks for a new build when it starts and then about once an hour. It downloads the build in the background and installs it next to the current one in <code>builds/</code>, keeping the previous build.</li>
-<li>Every build is signed by Mantle. <code>mantle-server</code> checks the signature, the download's size and checksum, and every file in it. An unsigned or altered build is refused and nothing changes (exit code 13).</li>
+<li>Every build is signed by Mantle, and <code>mantle-server</code> checks it before installing. A build that fails the check is refused and nothing changes (exit code 13).</li>
 <li>It switches to the new build as <code>autoUpdate</code> says. With the default, <code>"restart-when-empty"</code>, it waits until nobody is playing. Players are never cut off for an update.</li>
 <li>It updates <code>mantle-server</code> itself too, keeping the old copy as <code>mantle-server.old</code>.</li>
 <li>If a new build fails to start twice in a row, <code>mantle-server</code> goes back to the previous one and holds the new one back.</li>
@@ -144,6 +144,6 @@ mantle-server run</pre></div>
 <ul>
 <li><b>Saved data stays separate:</b> each community server has its own saved data, so it can never touch a creator's official data.</li>
 <li><b>Operators can't</b> see players' network addresses.</li>
-<li><b>Revoked keys:</b> 30 days after a server's key is revoked, its name is deleted, and its saved data goes once no play history names it.</li>
+<li><b>Revoked keys:</b> 30 days after a server's key is revoked, its name is deleted, and its saved data is deleted later.</li>
 <li>Mantle's safety tools, including reporting and blocking, work on community servers the same way as on official ones.</li>
 </ul>

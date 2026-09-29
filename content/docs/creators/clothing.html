@@ -67,7 +67,7 @@
 <tr><td>Material slots (sections)</td><td>4</td></tr>
 <tr><td>Textures</td><td>At most 4 different textures, each up to 2048 x 2048, and about 24 MB of graphics memory in total</td></tr>
 </tbody></table></div>
-<p>Like clothing, hair is only worn by avatars that take clothing. In game, hair is drawn masked: a separate opacity texture is packed into the base colour's alpha, or the base colour's own alpha is used. Translucent hair gets "its material is translucent; Mantle draws hair masked (the alpha dithered, then smoothed over frames), so soft edges look a little harder."</p>
+<p>Like clothing, hair is only worn by avatars that take clothing. In game, hair is drawn masked, using its opacity texture or the base colour's own alpha. Translucent hair gets "its material is translucent; Mantle draws hair masked (the alpha dithered, then smoothed over frames), so soft edges look a little harder."</p>
 
 <h2 id="accessories">Accessories <span class="status wip">In progress</span></h2>
 <p>An accessory is a rigid Static Mesh that attaches to one socket on the avatar's skeleton. It doesn't bend. A player can wear one accessory per socket, so 8 at most.</p>

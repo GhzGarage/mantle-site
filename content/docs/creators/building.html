@@ -22,7 +22,7 @@
 <tr><td>Mantle Effect</td><td>One of five built-in particle effects and its look</td><td><span class="status wip">Next release</span> see <a href="#effects">Particle effects</a></td></tr>
 <tr><td>Mantle Crowd Spawner</td><td>Ambient people walking lanes you draw</td><td><span class="status wip">Next release</span> see <a href="#crowds">Crowds</a></td></tr>
 <tr><td>Mantle Vehicle Spawn</td><td>A car players can drive, made with <b>Convert vehicle</b></td><td><span class="status wip">Next release</span> see <a href="/docs/creators/vehicles/">Vehicles</a></td></tr>
-<tr><td>Mantle Scatter Volume</td><td>A seeded field of instanced meshes, generated on each player's own machine</td><td><span class="status wip">Next release</span> see <a href="#scatter">Scatter fields</a></td></tr>
+<tr><td>Mantle Scatter Volume</td><td>A seeded field of instanced meshes, the same for every player</td><td><span class="status wip">Next release</span> see <a href="#scatter">Scatter fields</a></td></tr>
 <tr><td>Physics Constraint Actor</td><td>A joint (weld, hinge or rope) between two physics objects, or one and the world</td><td><span class="status wip">Next release</span> see <a href="#joints">Joints</a></td></tr>
 </tbody></table></div>
 <p>Actor names and tags are kept, and actors set to Movable stay dynamic. There's no visibility setting, so hidden actors show up in the published world.</p>
@@ -107,7 +107,7 @@
 </ul>
 
 <h3 id="instances">Foliage and instanced meshes <span class="status wip">Next release</span></h3>
-<p>Painted foliage, Instanced Static Mesh components and generated PCG output publish as instanced meshes: at most 100,000 instances in a place, split into groups of 4,096 for you. Mirrored or zero-scale instances, PCG set to <b>Generate At Runtime</b> or not generated yet, spline meshes and unsaved dynamic meshes are errors. Per-instance custom data is dropped with a warning.</p>
+<p>Painted foliage, Instanced Static Mesh components and generated PCG output publish as instanced meshes: at most 100,000 instances in a place. Mirrored or zero-scale instances, PCG set to <b>Generate At Runtime</b> or not generated yet, spline meshes and unsaved dynamic meshes are errors. Per-instance custom data is dropped with a warning.</p>
 
 <h3 id="physics">Physics objects <span class="status wip">Next release</span></h3>
 <p>Tick <b>Simulate Physics</b> on a Static Mesh Actor to make it a physics object: the server simulates it and every player sees it move. Its mass (0.1 to 100,000 kg), damping and gravity are kept. Give it the tag <code>MantleAnchored</code> to start it pinned in place until a script lets it go. It simulates on the mesh's simple collision, or a box the size of the mesh when it has none, with a warning. Scripts can push it and listen for hits (script API 1.15).</p>
@@ -115,7 +115,7 @@
 <p>Players push a physics object gently as they walk into it: a light object slides rather than flying off, and standing on one doesn't spin it or pop you off. A physics object heavy enough that a player's push can't slide it can be climbed or vaulted like static geometry; a lighter one can't, so a light crate that would tip or slide away is jumped over, not onto. To make something climbable, make it heavier, anchor it, or use static (non-physics) geometry instead.</p>
 
 <h3 id="effects">Particle effects <span class="status wip">Next release</span></h3>
-<p>Place a <b>Mantle Effect</b> (Place Actors → All Classes) and pick one of five built-in effects: Smoke, Fire, Sparks, Dust or Glow. You can change its colour, particle size (1 to 1,000 cm), rate (up to 200 a second), speed (up to 5,000 cm/s) and lifetime (0.05 to 10 s), and whether it plays on load and loops. Particles leave along the actor's up direction. You can't upload your own particle systems. The effect systems ship with the same release; until a build carries them, effects draw nothing.</p>
+<p>Place a <b>Mantle Effect</b> (Place Actors → All Classes) and pick one of five built-in effects: Smoke, Fire, Sparks, Dust or Glow. You can change its colour, particle size (1 to 1,000 cm), rate (up to 200 a second), speed (up to 5,000 cm/s) and lifetime (0.05 to 10 s), and whether it plays on load and loops. Particles leave along the actor's up direction. You can't upload your own particle systems. Players see effects once the next game release is out.</p>
 
 <h3 id="crowds">Crowds <span class="status wip">Next release</span></h3>
 <p>A <b>Mantle Crowd Spawner</b> fills lanes you draw with ambient people who walk them. Each spawner has 1 to 100 people, 1 to 16 lanes of 2 to 64 points, up to 16 looks, and up to 16 points of interest that people step off their lane to visit. A place can have 8 spawners and 200 people in all. Scripts can thin, pause or reseed a crowd (script API 1.16).</p>
@@ -123,7 +123,7 @@
 <h3 id="scatter">Scatter fields <span class="status wip">Next release</span></h3>
 <p>Place a <b>Mantle Scatter Volume</b> (Place Actors, search "Mantle Scatter") to fill a box with a field of instanced meshes, such as rocks or grass clumps, without painting foliage by hand. Set <b>Half Extent</b> (the box's size, in cm; Z 0 is a flat layer) and <b>Density</b> (instances per square metre of the box's footprint), add 1 to 16 <b>Meshes</b> (each with a <b>Weight</b> and optional material overrides), pick a scale range and an <b>Alignment</b> (Upright turns instances about their vertical axis only, Tilted also leans them up to <b>Max Tilt</b>, Tumbled turns them any way), and set a <b>Seed</b>. The level shows the field as you edit it, and moving the volume moves the field without reshuffling it; changing the seed does.</p>
 <ul>
-<li>The field is generated on each player's own machine from the seed and settings, so it looks the same for everyone without being sent as a huge list of instances, and it costs the server nothing.</li>
+<li>The seed and settings decide the field, so it looks the same for everyone, and even a large field doesn't slow the server down.</li>
 <li>Instances are visual only: no collision, and nothing for navigation. Walking through a scatter field never blocks you.</li>
 <li>At most 200,000 instances from one Scatter volume, and 200,000 in a place in all. "Check this place" names a volume with no meshes, or set to make more instances than the cap allows.</li>
 </ul>
@@ -135,7 +135,7 @@
 <tr><td>Hinge</td><td>Linear X, Y and Z Locked, and exactly one of Twist, Swing 1 or Swing 2 set to Free or Limited (its Angular Rotation Offset biases the limit), the other two Locked. The starting angle must be inside the limit.</td></tr>
 <tr><td>Rope</td><td>Linear X, Y and Z all Limited (Linear Limit Size is the rope's length), and every angle Free.</td></tr>
 </tbody></table></div>
-<p>Anything else, such as a motor or drive, a partially locked linear axis, two free angles, or an end that isn't set to simulate, is left out of the place, and "Check this place" names it with the fix. <b>Linear</b> and <b>Angular Break Threshold</b> become the joint's break force, so a hard enough hit snaps a weld or hinge, or lets a rope tear free; leave them at 0 for a joint that never breaks. A place can have 200 joints; "Check this place" warns above 100. Joints exist on the server: clients see the two objects move as the joint holds them, and scripts can create, listen to and remove joints too (see the <a href="/docs/scripting/">scripting guide</a>).</p>
+<p>Anything else, such as a motor or drive, a partially locked linear axis, two free angles, or an end that isn't set to simulate, is left out of the place, and "Check this place" names it with the fix. <b>Linear</b> and <b>Angular Break Threshold</b> become the joint's break force, so a hard enough hit snaps a weld or hinge, or lets a rope tear free; leave them at 0 for a joint that never breaks. A place can have 200 joints; "Check this place" warns above 100. Every player sees the two objects move as the joint holds them, and scripts can create, listen to and remove joints too (see the <a href="/docs/scripting/">scripting guide</a>).</p>
 
 <h2 id="assets">Assets</h2>
 <h3 id="library">Built-in library <span class="status live">Live</span></h3>

@@ -7,7 +7,7 @@
       <li><code>.rcss</code> files hold the styles. RCSS reads like CSS, with flexbox, transitions, animations and transforms, and a few differences listed under <a href="#uidoc-styling">Styling</a>.</li>
     </ul>
     <p>They go in a <code>UI/</code> folder next to your level's <code>Scripts/</code> folder. A <b>client script</b> opens a document with <code>UI:OpenDocument</code>, gives it values to show with <code>SetData</code>, and hears the player's clicks through its <code>Event</code> signal. Documents contain no code of their own: all the logic stays in your scripts.</p>
-    <p>UI documents publish the same way scripts do. Publish uploads them with your scripts, Mantle screens them, and they go live with the revision. Nothing is cooked or packaged, so publishing a changed document takes seconds.</p>
+    <p>UI documents publish the same way scripts do. Publish uploads them with your scripts, Mantle screens them, and they go live with the revision, so publishing a changed document takes seconds.</p>
     <p>Documents are drawn through the game's own UI. This page is the reference for the RML elements and RCSS properties Mantle supports.</p>
 
     <h3 id="uidoc-when">UI documents or UI nodes?</h3>
@@ -91,7 +91,7 @@ welcome.event.connect(on_event)
         </div>
         <p>With no mode given, the document opens as a <b>modal</b>: the player's character stops taking input, the cursor appears, the Play button has focus, and Esc or the gamepad's B button closes the panel too.</p>
       </li>
-      <li><b>Check, publish and join</b><p>Run <b>Check All</b> in the Scripts panel for your script and <a href="#validation">Check this place</a> for the document, then publish with <b>Mantle → Publish</b> and join in the Mantle client. Check this place loads every document the way players' games do, so a broken link or a typo in the markup shows up in the editor (see <a href="#uidoc-limits">Limits and checks</a>).</p><p>In development builds you can skip publishing: a server or client started with <code>-MantlePlace=&lt;path&gt;/place.json</code> reads the <code>UI/</code> folder beside that file. It reads the folder once, when the world loads, so restart the client after you edit a document. Script hot reload doesn't re-read UI files.</p></li>
+      <li><b>Check, publish and join</b><p>Run <b>Check All</b> in the Scripts panel for your script and <a href="#validation">Check this place</a> for the document, then publish with <b>Mantle → Publish</b> and join in the Mantle client. Check this place loads every document the way players' games do, so a broken link or a typo in the markup shows up in the editor (see <a href="#uidoc-limits">Limits and checks</a>).</p></li>
     </ol>
 
     <h2 id="uidoc-files">Files and folders</h2>
@@ -129,7 +129,7 @@ welcome.event.connect(on_event)
       <tr><td><code>doc.Event(name, args)</code></td><td>Signal. The document called <code>emit(name, ...)</code>. <code>args</code> is a list of the other values it passed (see <a href="#uidoc-events">Events</a>).</td></tr>
       <tr><td><code>doc.Closed(reason)</code></td><td>Signal. The document closed by itself: the player pressed Back, or it failed to load or went over a limit (see <a href="#uidoc-closed">Closed reasons</a>).</td></tr>
     </tbody></table></div>
-    <p>A document belongs to the script that opened it. Only that script can change or close it, and it closes when that script stops, including on a hot reload. When the place unloads, documents close along with your scripts.</p>
+    <p>A document belongs to the script that opened it. Only that script can change or close it, and it closes when that script stops. When the place unloads, documents close along with your scripts.</p>
 
     <h2 id="uidoc-modes">Modes and input</h2>
     <div class="table-wrap"><table><thead><tr><th>Mode</th><th>What the player gets</th><th>Good for</th></tr></thead><tbody>
@@ -355,7 +355,7 @@ end)
       <li><b>Cursors:</b> <code>cursor: pointer</code> shows a hand and <code>default</code> the normal arrow. Other cursor names aren't supported.</li>
       <li><b>Scroll areas</b> (<code>overflow: auto</code> or <code>scroll</code>) scroll with the mouse wheel, but no scrollbar is drawn until you style one (the <code>scrollbarvertical</code>, <code>slidertrack</code> and <code>sliderbar</code> elements).</li>
     </ul>
-    <div class="callout warn"><strong>What still doesn't draw</strong><p>Mantle draws documents through the game's own UI renderer, which doesn't yet support layer effects: <code>filter</code>, <code>backdrop-filter</code> (so no blur-behind) and <code>mask-image</code>. A document that uses one of these still loads, and the element still draws, just without that effect. <a href="#validation">Check this place</a> and <b>Publish</b> warn about each one, and the client log adds one line the first time a document that uses them loads. <code>overflow: hidden</code> still clips to the element's rectangle, even when it has rounded corners.</p></div>
+    <div class="callout warn"><strong>What still doesn't draw</strong><p>Mantle doesn't draw layer effects in documents yet: <code>filter</code>, <code>backdrop-filter</code> (so no blur-behind) and <code>mask-image</code>. A document that uses one of these still loads, and the element still draws, just without that effect. <a href="#validation">Check this place</a> and <b>Publish</b> warn about each one, and the client log adds one line the first time a document that uses them loads. <code>overflow: hidden</code> still clips to the element's rectangle, even when it has rounded corners.</p></div>
 
     <h3 id="uidoc-base">The base stylesheet</h3>
     <p>Every document gets Mantle's base stylesheet underneath its own styles, so plain markup looks right straight away. Your own rules win over it.</p>
@@ -387,7 +387,7 @@ end)
       <tr><td>A path your script chooses</td><td><code>&lt;img data-attr-src="s.icon"/&gt;</code>, with <code>s.icon</code> a string such as <code>"icons/sword.png"</code></td></tr>
     </tbody></table></div>
     <p><code>image-color</code> tints an <code>&lt;img&gt;</code>. A <code>drag: clone</code> copy (see the <a href="#uidoc-example">inventory example</a> below) keeps its image while it follows the cursor.</p>
-    <p>Publish uploads each image the same way as a material's texture: the same cook and the same moderation, no separate route. The published place lists it as one of its assets and downloads it along with everything else, so a document's images are there as soon as the place is.</p>
+    <p>Publish uploads each image with the rest of your place, and it's screened the same way as a material's texture. Players' games download it along with everything else, so a document's images are there as soon as the place is.</p>
     <div class="table-wrap"><table><thead><tr><th>Limit</th><th></th></tr></thead><tbody>
       <tr><td>Images per place</td><td class="num">64</td></tr>
       <tr><td>Size of one image</td><td class="num">2 MB</td></tr>
@@ -468,7 +468,6 @@ end)
       <li><b>Don't update faster than players can read.</b> A counter that changes 20 times a second rebuilds its text 20 times a second.</li>
       <li><b>Close what isn't showing.</b> Open a document when the player needs it and close it afterwards, rather than keeping a screenful of hidden panels open.</li>
     </ul>
-    <p>In development builds, the console command <code>Mantle.Rml.LogFrameCost 1</code> logs every document's update and draw cost, element count and the game's frame time every 5 seconds.</p>
 
     <h2 id="uidoc-example">Worked example: a drag-and-drop inventory grid</h2>
     <p>A grid of slots the player drags items between, with the picked-up item's icon following the cursor. One document, one stylesheet, one client script.</p>
@@ -556,7 +555,7 @@ end)
       <tr><td>Listening for Escape to close the page</td><td>Built in for modal documents: Back closes it and fires <code>Closed("back")</code>.</td></tr>
       <tr><td>Gamepad support written by hand</td><td>Built in: focus, D-pad and stick movement, A to click, B for Back. Give custom controls <code>tab-index: auto; nav: auto</code>.</td></tr>
       <tr><td>Several pages or frames</td><td>Several documents, up to 16 per script, each with its own mode.</td></tr>
-      <tr><td>An image asset</td><td>A PNG or JPEG file in your place's <code>UI/</code> folder, referenced by a relative path (see <a href="#uidoc-images">Images</a>). No URLs and no CDN: documents can't reach the network.</td></tr>
+      <tr><td>An image asset</td><td>A PNG or JPEG file in your place's <code>UI/</code> folder, referenced by a relative path (see <a href="#uidoc-images">Images</a>). No URLs: documents can't reach the network.</td></tr>
       <tr><td>Web fonts</td><td>Not available. Use the built-in fonts.</td></tr>
       <tr><td>CSS animations and transitions</td><td>The same idea, with Mantle's easing names (<code>cubic-in-out</code> and so on).</td></tr>
       <tr><td>Canvas, video, WebGL</td><td>Not available.</td></tr>
@@ -566,7 +565,7 @@ end)
 
     <h2 id="uidoc-problems">Common problems</h2>
     <div class="table-wrap"><table><thead><tr><th>Problem</th><th>Fix</th></tr></thead><tbody>
-      <tr><td><code>OpenDocument</code> says the path isn't one of the place's UI files</td><td>Paths start with <code>UI/</code> and are case-sensitive. The error suggests the right spelling when only the case is wrong. In a development build, restart the client after adding a file.</td></tr>
+      <tr><td><code>OpenDocument</code> says the path isn't one of the place's UI files</td><td>Paths start with <code>UI/</code> and are case-sensitive. The error suggests the right spelling when only the case is wrong. A file you add only reaches players once you publish again.</td></tr>
       <tr><td>The document shows but ignores the mouse and gamepad</td><td>It's a <code>"hud"</code>, it has nothing focusable (give a control <code>tab-index: auto</code>), or another UI still has the cursor.</td></tr>
       <tr><td>The D-pad doesn't move between my controls</td><td>Add <code>nav: auto</code> to them. Buttons and inputs have it already.</td></tr>
       <tr><td><code>{{value}}</code> shows nothing</td><td>Check the key's spelling and case in <code>SetData</code>, and that the <code>&lt;body&gt;</code> has no <code>data-model</code> attribute.</td></tr>

@@ -5,11 +5,6 @@ return {
 	SafeSpawn = Vector3.new(0, 0, 120),
 	CoinRespawnSeconds = 5,
 	RoundSeconds = 60,
-	HighScoreMode = "disabled", -- "earn" then "verify" in separate authenticated sessions.
-	HighScoreProofOnly = false, -- Must be true for either isolated persistence mode.
-	HighScoreEarnedTarget = 1, -- Earn proof: actual pickups to this score (integer 1..5, above baseline).
-	HighScoreKey = "creator-guide.best.v1",
-	ExpectedPreviousBest = 0, -- Operator supplies the observed previous value, never a made-up identity.
 }
 </pre></div><h3 id="r-killbrick">A kill brick that returns the player to safety</h3><p>This builds a hazard that sends players back to safety when they touch it: tag the hazard actor in your level <code>guide_code_killbrick</code>. The script teleports the player to their saved checkpoint, or to the configured safe spawn if they haven't reached a checkpoint yet.</p><div class="code"><span class="tag">Scripts/Server/GuideKillBricks.luau</span><pre id="ex-canonical-guidekillbricks" data-example-kind="source" data-language="luau">local Config = require(&quot;Shared/Modules/Config/GuideConfig&quot;)
 World:OnTagged(&quot;guide_code_killbrick&quot;, function(brick)
@@ -18,7 +13,6 @@ World:OnTagged(&quot;guide_code_killbrick&quot;, function(brick)
 		player:Teleport(spawn)
 	end)
 end)
-State:Set(&quot;guide.ready.killbrick&quot;, true)
 </pre></div><h3 id="r-coins">Coins that bob, score and respawn</h3><p>This builds coins that bob up and down and give a point when collected: tag each coin actor in your level <code>guide_code_coin</code>. The server bobs the coin 40 cm up and down with a tween. When a player touches it, the server hides it, awards one point and shows it again after five seconds. Checking <code>Visible</code> first stops two touches at the same moment from scoring the same pickup twice. Keep these long-lived coins separate from templates you clone and throw away. The tween uses <code>Sine</code> easing with <code>InOut</code>, so the coin slows down gently at the top and bottom of each bob.</p><div class="code"><span class="tag">Scripts/Server/Modules/Recipes/ScoreRules.luau</span><pre id="ex-canonical-scorerules" data-example-kind="source" data-language="luau">local Rules = {}
 function Rules.key(player)
 	return `guide.score:{player.UserId}`
@@ -48,7 +42,6 @@ World:OnTagged(&quot;guide_code_coin&quot;, function(coin)
 		coin.Visible = true
 	end)
 end)
-State:Set(&quot;guide.ready.coin&quot;, true)
 </pre></div><details><summary>Standalone coin versions in all four languages</summary><p>These are self-contained versions of the coin recipe, one for each language. Use one of them instead of the main coin recipe, not as well as it. They save the score under <code>score:&lt;UserId&gt;</code>, which is separate from the main recipes' score.</p><div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Coins.luau</span><pre id="ex-coins-luau" data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_coin&quot;, function(coin)
 	local home = coin.Position
 	task.spawn(function()
@@ -126,8 +119,6 @@ World.on_tagged(&quot;guide_code_coin&quot;, setup)
 </pre></div></div></details><h3 id="r-door">A door that opens when someone walks up</h3><p>This builds a door that slides open when a player comes close: tag the door actor in your level <code>guide_code_door</code>. Every 0.2 seconds, the script checks whether any player is within 450 cm of the door's saved closed position. If so, the door tweens 390 cm downward over 0.6 seconds. It closes again once everyone has left. The trigger area stays at the door's original position and doesn't move with the door.</p><div class="code"><span class="tag">Scripts/Server/GuideDoor.luau</span><pre id="ex-canonical-guidedoor" data-example-kind="source" data-language="luau">local door = World:FindByTag(&quot;guide_code_door&quot;)[1]
 local closed = door.Position
 local isOpen = false
-State:Set(&quot;guide.door.closed&quot;, closed)
-State:Set(&quot;guide.ready.door&quot;, true)
 while true do
 	local near = false
 	for _, player in Players:GetPlayers() do
@@ -145,7 +136,6 @@ end
 </pre></div><h3 id="r-hud">Round timer on every client HUD</h3><p>This builds a round timer that shows the current round and time left on every player's screen. You don't need to tag anything in the level: just add both scripts. The server keeps track of the round and the time left. The JavaScript client creates its UI nodes first and then observes State, so players who join late still get the current values. The round-start announcement is a toast, which appears briefly and then goes away.</p><div class="code"><span class="tag">Scripts/Server/GuideRounds.luau</span><pre id="ex-canonical-guiderounds" data-example-kind="source" data-language="luau">local Config = require("Shared/Modules/Config/GuideConfig")
 local announce = Net:Remote("GuideAnnounce")
 local round = 0
-State:Set("guide.ready.rounds", true)
 while true do
 	round += 1
 	State:Set("guide.round", round)
@@ -165,18 +155,11 @@ roundLabel.setSemantics(&quot;label&quot;, &quot;Current round&quot;, &quot;The 
 timeLabel.setSemantics(&quot;label&quot;, &quot;Time remaining&quot;, &quot;Seconds left in this round&quot;, 0);
 State.observe(&quot;guide.round&quot;, (round) =&gt; {
 	roundLabel.setText(`Round ${round ?? 0}`);
-	Events.get(&quot;GuideHudModel&quot;).fire(&quot;round&quot;, roundLabel.text);
 });
 State.observe(&quot;guide.timeLeft&quot;, (seconds) =&gt; {
 	timeLabel.setText(`Time left: ${seconds ?? 0}s`);
-	Events.get(&quot;GuideHudModel&quot;).fire(&quot;time&quot;, timeLabel.text);
 });
 Net.remote(&quot;GuideAnnounce&quot;).onClientEvent.connect((message) =&gt; UI.toast(message, 3));
-// A local query lets headless acceptance inspect actual widget properties; it does not claim rendering.
-Events.get(&quot;GuideHudQuery&quot;).connect(() =&gt; {
-	Events.get(&quot;GuideHudModel&quot;).fire(&quot;round&quot;, roundLabel.text);
-	Events.get(&quot;GuideHudModel&quot;).fire(&quot;time&quot;, timeLabel.text);
-});
 </pre></div><h3 id="r-button">A button players ask the server to press</h3><p>This builds a button that squashes down and springs back when a player presses it: tag the button actor in your level <code>guide_code_button</code>. When the local player touches the button, the client asks the server to press it. The server checks the message and where the sending player really is, and turns away new presses while the button is still busy. It plays both scale tweens, then tells the player the press worked. The client's message never picks which player pressed, and never adds a press by itself.</p><div class="code"><span class="tag">Scripts/Client/GuideButtonPrompt.luau</span><pre id="ex-canonical-guidebuttonprompt" data-example-kind="source" data-language="luau">local button = World:FindByTag(&quot;guide_code_button&quot;)[1]
 button.Touched:Connect(function(player)
 	if player == Players.LocalPlayer then
@@ -208,7 +191,6 @@ Net:Remote(&quot;GuidePressButton&quot;).OnServerEvent:Connect(function(player, 
 	result:FireClient(player, &quot;pressed&quot;)
 end)
 State:Set(&quot;guide.button.presses&quot;, 0)
-State:Set(&quot;guide.ready.button&quot;, true)
 </pre></div><h3 id="r-spawn">Cloning and destroying things</h3><p>This shows how to copy and remove objects from a script: place a separate template actor tagged <code>guide_code_template</code>, and another actor tagged <code>guide_code_retired</code>. The script hides the template and makes one visible clone that stays. It then makes a second clone and destroys it, and destroys the retired actor you placed in the level. Players who join later see the clone that stayed and none of the destroyed objects. Clones copy their template's tags, so don't put pickup tags on a template unless you want every clone to be picked up by that recipe too.</p><div class="code"><span class="tag">Scripts/Server/GuideClones.luau</span><pre id="ex-canonical-guideclones" data-example-kind="source" data-language="luau">local template = World:FindByTag(&quot;guide_code_template&quot;)[1]
 template.Visible = false
 local survivor = template:Clone()
@@ -220,9 +202,6 @@ doomed:AddTag(&quot;guide_code_destroyed&quot;)
 doomed:Destroy()
 local retired = World:FindByTag(&quot;guide_code_retired&quot;)[1]
 retired:Destroy()
-State:Set(&quot;guide.clone.name&quot;, survivor.Name)
-State:Set(&quot;guide.clone.position&quot;, survivor.Position)
-State:Set(&quot;guide.ready.clones&quot;, true)
 </pre></div><h3 id="r-cross">TypeScript checkpoints and Luau respawns</h3><p>This builds checkpoints in TypeScript that work with the Luau kill brick: tag each checkpoint pad in your level <code>guide_code_checkpoint</code>. The TypeScript script imports its nested Rules module. When a player touches a pad, it saves a respawn position (a Vector3) in State. <a href="#r-killbrick">GuideKillBricks.luau</a>, shown above, reads that position the next time the player touches a hazard. Don't add a second kill brick handler.</p><div class="code"><span class="tag">Scripts/Server/Modules/Rules/CheckpointRules.ts</span><pre id="ex-canonical-checkpointrules" data-example-kind="source" data-language="typescript">export function key(userId: string): string {
 	return `guide.respawn:${userId}`;
 }
@@ -235,12 +214,11 @@ World.onTagged(&quot;guide_code_checkpoint&quot;, (pad: Entity) =&gt; {
 		State.set(key(player.userId), destination(pad));
 	});
 });
-State.set(&quot;guide.ready.checkpoint&quot;, true);
 </pre></div><h3 id="r-highscore">Saving data across sessions</h3>
 <p>Use <code>DataStore</code> <span class="side s">Server</span> to save boolean, number or string values so they&rsquo;re still there in later sessions (tables too, from API 1.13: see <a href="#r-datastore-tables">saved tables</a>). You can save them for the whole place (<code>Get</code>/<code>Set</code>) or for each player (<code>GetForPlayer</code>/<code>SetForPlayer</code>). There&rsquo;s nothing to set up in the level.</p>
 <div class="callout warn"><strong>A missing value doesn&rsquo;t mean zero</strong><p>When <code>DataStore:GetForPlayer</code> returns nil, you can&rsquo;t tell whether this is the player&rsquo;s first visit, their data hasn&rsquo;t finished loading, or the load failed. Scripts can&rsquo;t yet get a signal when data has loaded, or confirmation that a write was saved. Don&rsquo;t turn nil into zero and write it back, or you could overwrite a larger saved value such as a best score.</p></div>
 <h3 id="r-datastore-tables">Saved tables, removing and listing keys</h3>
-<p>From API 1.13, <code>DataStore:Set</code> and <code>SetForPlayer</code> also take a table of booleans, numbers, strings and tables, nested up to 4 levels deep and at most 64 KiB, so one key can hold a player's whole profile. Lists come back as lists and objects as objects, but an object's key order isn't kept. Vector3, entities and functions can't be saved. <code>RemoveKey</code> deletes a key, and <code>ListKeys</code> pages through keys that start with a prefix, 100 at a time. Like <code>Get</code>, <code>ListKeys</code> reads this server's cache, so it doesn't see what another server of the place wrote a moment ago.</p>
+<p>From API 1.13, <code>DataStore:Set</code> and <code>SetForPlayer</code> also take a table of booleans, numbers, strings and tables, nested up to 4 levels deep and at most 64 KiB, so one key can hold a player's whole profile. Lists come back as lists and objects as objects, but an object's key order isn't kept. Vector3, entities and functions can't be saved. <code>RemoveKey</code> deletes a key, and <code>ListKeys</code> pages through keys that start with a prefix, 100 at a time. Like <code>Get</code>, <code>ListKeys</code> can lag behind other servers: it may not see what another server of the place wrote a moment ago.</p>
 <div class="code"><span class="tag">Scripts/Server/GuideProfile.luau</span><pre id="ex-guide-profile" data-example-kind="source" data-language="luau">Players:OnPlayer(function(player)
 	DataStore:SetForPlayer(player, &quot;guide.profile&quot;, { coins = 120, owned = { &quot;sword&quot;, &quot;shield&quot; } })
 end)
@@ -265,7 +243,7 @@ local function onRoundWon(player)
 	wins:IncrementAsync(player.UserId, 1)
 end</pre></div>
 <p>Use <code>ascending = true</code> in the options table for "lowest is best" (race times), and <code>Leaderboard:Clear()</code> to hide the panel. Keys that aren't a UserId show as written (team names). Server scripts only.</p>
-<p><b>Your own leaderboard UI.</b> This keeps a wins leaderboard for your place and shows the top 10 on every player's screen with your own widgets, for when you want more than the built-in panel. It needs API 1.13. An ordered store keeps one whole number per key and reads them back sorted, across every server of the place. Key it by <code>player.UserId</code> exactly, so each player has one row: that's also how Mantle removes a player's rows when they delete their account, and includes them in their data export. Every ordered-store call returns a Signal that fires once with a result table: <code>ok</code>, <code>error</code> when it failed, and the answer (<code>value</code>, or <code>entries</code> and <code>nextCursor</code> for a page). Call <code>:Wait()</code> on it straight away, or connect with <code>:Once</code>. <code>IncrementAsync</code> is one step on the backend, so two servers adding a win at the same moment never lose one.</p>
+<p><b>Your own leaderboard UI.</b> This keeps a wins leaderboard for your place and shows the top 10 on every player's screen with your own widgets, for when you want more than the built-in panel. It needs API 1.13. An ordered store keeps one whole number per key and reads them back sorted, across every server of the place. Key it by <code>player.UserId</code> exactly, so each player has one row: that's also how Mantle removes a player's rows when they delete their account, and includes them in their data export. Every ordered-store call returns a Signal that fires once with a result table: <code>ok</code>, <code>error</code> when it failed, and the answer (<code>value</code>, or <code>entries</code> and <code>nextCursor</code> for a page). Call <code>:Wait()</code> on it straight away, or connect with <code>:Once</code>. <code>IncrementAsync</code> adds in a single step, so two servers adding a win at the same moment never lose one.</p>
 <p>Fire the <code>GuideRoundWon</code> event with the winning player from whichever script decides a round, for example <code>Events:Get(&quot;GuideRoundWon&quot;):Fire(player)</code>. The store only holds ids, so the server fills in names for players who are in this session.</p>
 <div class="code"><span class="tag">Scripts/Server/GuideLeaderboard.luau</span><pre id="ex-guide-leaderboard" data-example-kind="source" data-language="luau">local wins = DataStore:GetOrderedDataStore(&quot;wins&quot;)
 
@@ -338,11 +316,10 @@ local hinge = Constraints:FromEntity(door)
 hinge.Broken:Connect(function()
 	State:Set(&quot;guide.hingedoor.broken&quot;, true)
 end)
-State:Set(&quot;guide.ready.hingedoor&quot;, true)
 </pre></div>
 <p>A door already built as a Physics Constraint Actor in the level publishes as a Constraint automatically, so <code>Constraints:FromEntity</code> finds its joint; a script only needs <code>Constraints:Create</code> for a door it builds itself at runtime. A place holds at most 200 joints, its own included, and pulling a joint harder than <code>BreakForce</code> newtons breaks it for good.</p>
 <h3 id="r-local-look">A haunted room with its own look, for one player</h3>
-<p>This dims and desaturates the picture for one player only, without touching what anyone else sees: tag the trigger volume in your level <code>guide_code_hauntedroom</code>. It needs API 1.29. A client script applies the look a server script sends it over a Remote, so nothing needs to replicate.</p>
+<p>This dims and desaturates the picture for one player only, without touching what anyone else sees: tag the trigger volume in your level <code>guide_code_hauntedroom</code>. It needs API 1.29. A client script applies the look a server script sends it over a Remote, so only the player in the room sees it.</p>
 <div class="code"><span class="tag">Scripts/Server/GuideHauntedRoom.luau</span><pre data-example-kind="source" data-language="luau">local look = Net:Remote(&quot;GuideLook&quot;)
 World:OnTagged(&quot;guide_code_hauntedroom&quot;, function(zone)
 	zone.Touched:Connect(function(player)
@@ -352,7 +329,6 @@ World:OnTagged(&quot;guide_code_hauntedroom&quot;, function(zone)
 		look:FireClient(player, false)
 	end)
 end)
-State:Set(&quot;guide.ready.hauntedroom&quot;, true)
 </pre></div>
 <div class="code"><span class="tag">Scripts/Client/GuideLook.luau</span><pre data-example-kind="source" data-language="luau">local look = Net:Remote(&quot;GuideLook&quot;)
 look.OnClientEvent:Connect(function(t)
