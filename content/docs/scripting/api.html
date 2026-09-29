@@ -74,9 +74,9 @@
       <tr><td class="wrap"><code>require: "…" is a server module; client scripts can only require Shared/ and Client/ modules.</code></td><td>Move code both sides need into <code>Shared/</code>.</td></tr>
     </tbody></table></div>
     <div class="table-wrap"><table><thead><tr><th>Limit</th><th>Value</th></tr></thead><tbody>
-      <tr><td>Rolling CPU per script</td><td class="num">8 ms per second; one long run between yields can also be stopped</td></tr>
+      <tr><td>CPU per script</td><td class="num">A share of each second; one long run between yields can also be stopped</td></tr>
       <tr><td>Instructions between yields (Luau)</td><td class="num">100,000 before the script must yield</td></tr>
-      <tr><td>Memory per script / per language</td><td class="num">16 MiB / 128 MiB</td></tr>
+      <tr><td>Memory per script</td><td class="num">Limited per script and per language; a script over its limit is stopped</td></tr>
       <tr><td>Values sent through a Remote</td><td class="num">64 KiB, nested up to 16 levels deep; network limits also apply</td></tr>
       <tr><td>Remote name length</td><td class="num">128 characters</td></tr>
       <tr><td>One State item / all State</td><td class="num">2 KiB per item; 2,048 keys and 4 MiB in total</td></tr>

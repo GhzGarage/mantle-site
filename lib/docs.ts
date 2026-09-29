@@ -108,7 +108,7 @@ export const docsNav: DocSection[] = [
       {
         title: "Runtime",
         pages: [
-          { slug: ["platform"], title: "Servers and sessions", description: "What happens when you press Play, how many players a world can hold, how servers performed in testing and the specs to host one." },
+          { slug: ["platform"], title: "Servers and sessions", description: "What happens when you press Play, how many players a world can hold, and the specs to host one." },
           { slug: ["platform", "community-servers"], title: "Community-hosted servers", description: "Setting up and running your own server, what players see, and how everyone stays safe." },
         ],
       },

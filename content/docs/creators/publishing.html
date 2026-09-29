@@ -11,7 +11,6 @@
 <li><b>Publish</b><p>The first time you publish a level, this creates a new world with the level's name. Later publishes update that same world. Mantle saves your draft and, for Publish, makes it live as a new, numbered revision.</p></li>
 </ol>
 <p>When it works, you'll see "Saved to Mantle. Nobody can see it until you publish." or "Published revision N. Anyone can join it now." If it stops, the tab says why and what to do. <b>Cancel</b> stops at any point without publishing anything, and <b>Publish again</b> carries on from where it stopped: everything already uploaded stays on Mantle.</p>
-<p>For automation, the <code>Mantle.Publish</code> console command runs the same Publish on the open level and waits until it finishes (30 minutes at most by default, or set <code>-TimeoutMinutes=N</code>).</p>
 
 <h3 id="agent-tools">Using an AI agent <span class="status wip">In progress</span></h3>
 <p>The Mantle plugin includes tools that Unreal's own Model Context Protocol (MCP) server can offer to an AI agent, such as Claude Code, so you can ask it to check or publish your place. It uses Epic's experimental <b>Model Context Protocol</b> and <b>Toolset Registry</b> plugins, which are off by default. Mantle doesn't turn them on for you, and without them the Mantle plugin works exactly as before.</p>

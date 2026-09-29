@@ -84,7 +84,7 @@ def wait_for_join():
     yield token                   # waits for the signal
     player = token.result[0]      # what it fired with</pre></div>
     </div>
-    <div class="callout warn"><strong>Long loops must wait</strong><p>Each script gets a CPU budget of 8 ms per second and a memory budget of 16 MiB. If a script goes over its CPU or memory budget, or hits a host limit, Mantle stops that script, along with its tasks and connections. Split long work into chunks with waits in between.</p><p>In Python, an operation that would take a script over 16 MiB is refused, and the script is stopped.</p></div>
+    <div class="callout warn"><strong>Long loops must wait</strong><p>Each script has a limited share of CPU time and memory. If a script goes over its CPU or memory budget, or hits a host limit, Mantle stops that script, along with its tasks and connections. Split long work into chunks with waits in between.</p><p>In Python, an operation that would take a script over its memory budget is refused, and the script is stopped.</p></div>
     <h2 id="values">Values</h2>
     <p>Pass ordinary values of your language: numbers, strings, booleans, lists, tables/objects/dicts, <code>Vector3</code>, entities and players. They go into State, attributes and remotes as they are, and come back the same way. Functions can't be stored or sent.</p>
     <div class="v has-ts">
