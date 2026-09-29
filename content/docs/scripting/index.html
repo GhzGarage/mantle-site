@@ -33,7 +33,7 @@ Players.on_player(on_join)
         <p><code>Players:OnPlayer</code> (JavaScript/TypeScript <code>Players.onPlayer</code>, Python <code>Players.on_player</code>) runs your function for every player already in the session, and again for each player who joins later. So the welcome still works if your script starts after someone is already in. The name it prints is the real player's name.</p>
         <p>If you only want players who join after you connect, use the <code>PlayerAdded</code> signal instead.</p>
       </li>
-      <li><b>Check and publish</b><p>Run <b>Check All</b> in the Scripts panel, then publish with <b>Mantle → Publish</b>. Publishing creates a revision. When players join a session, it uses the published revision.</p></li>
+      <li><b>Check and publish</b><p>Run <b>Check All</b> in the Scripts panel (the <b>Mantle Scripts</b> button on the editor toolbar opens it), then publish with <b>Tools → Mantle → Publish</b>. Publishing creates a revision. When players join a session, it uses the published revision.</p></li>
       <li><b>Join in a separate client</b><p>Start or request a session for your published place, then join it with the Mantle client. Anything a server script prints goes to the server log. Anything a client script prints goes to that client's log. Script messages appear under <code>LogMantleScript</code> and name the file they came from.</p><p>Scripts don't run when you press the editor's Play (PIE) button. To test them, publish and join the session with the Mantle client.</p></li>
       <li><b>Edit, recheck and republish</b><p>Save your changes and publish a new revision. The next session uses it.</p></li>
     </ol>

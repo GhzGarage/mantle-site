@@ -32,7 +32,7 @@
 <tr><td>Steam could not confirm your account. Check that Steam is online and try again.</td><td>Steam is offline or couldn't verify you</td></tr>
 <tr><td>Epic sign-in was cancelled or could not be completed (…)</td><td>The Epic window was closed or failed</td></tr>
 <tr><td>Signed in securely with [Steam / Epic].</td><td>You're in</td></tr>
-<tr><td>Signed in from another location.</td><td>You signed in on another PC, so you've been signed out here</td></tr>
+<tr><td>You signed in to Mantle somewhere else, so this session ended.</td><td>Your account joined the same server from another PC, so you were taken out of the world here</td></tr>
 </tbody></table></div>
 <p>If you use Epic, Mantle asks to see your basic profile, friends list, online status and country. Your display name is the name you use on Steam or Epic, so you change it there, not in Mantle. See <a href="/docs/players/safety/#account">Your account</a> for what's stored.</p>
 
@@ -40,7 +40,7 @@
 <p>The bar across the top of the screen has:</p>
 <ul>
 <li>"DISCOVER" and "AVATAR"</li>
-<li>a "Search worlds and creators" box</li>
+<li>a "Search worlds and creators" box (on a gamepad, press Y to jump to it)</li>
 <li>your friends (click to open the Steam or Epic overlay)</li>
 <li>your profile and the settings gear</li>
 </ul>
@@ -53,29 +53,54 @@
 <p>Search checks world names, descriptions and creators. You can sort results by "Best match", "Most played" or "Newest". The sort applies to every result, not just the ones on screen.</p>
 <p>Search results and "See all" on "New and rising" load more worlds as you scroll. A world that's already on screen isn't shown twice.</p>
 <div class="table-wrap"><table><thead><tr><th>Message</th><th>What it means</th></tr></thead><tbody>
-<tr><td>No worlds matched "…". Try a world's name or a creator.</td><td>Nothing matched your search</td></tr>
+<tr><td>No worlds matched “…”. Try a world's name or a creator.</td><td>Nothing matched your search</td></tr>
 <tr><td>Worlds couldn't load / Discover couldn't reach Mantle… (with TRY AGAIN)</td><td>A connection problem</td></tr>
 <tr><td>Nothing published yet</td><td>There are no worlds to show</td></tr>
 </tbody></table></div>
 <h3 id="world-page">World and creator pages</h3>
-<p>A world's "About" tab shows its creator, "Players per server: up to N", its version and "More from [creator]". Press "PLAY" to join.</p>
+<p>A world's "About" tab shows its creator, "Players per server: up to N", its version ("Revision N") and "More from [creator]". Press "PLAY" to join.</p>
 <p>Click a creator's name to see their page and all their worlds.</p>
 
 <h3 id="community-servers">Community servers <span class="status live">Live</span></h3>
-<p>Some worlds also have servers run by players. A world's page has a "Servers" tab next to "About" that lists them; if none are running, it says so. "PLAY" always puts you on an official server. To play on a community server, pick it from this list.</p>
+<p>Some worlds also have servers run by players. If a world allows them, its page has a "Servers" tab next to "About" that lists them. "PLAY" always puts you on an official server. To play on a community server, pick it from this list.</p>
 <ul>
 <li>Each server shows its name, "hosted by" and the host's name, how long it's been up, its region and how full it is.</li>
-<li>The status is "Verified", "Not yet verified", "Full" or "Older version". You can join any server that isn't full.</li>
+<li>The status is "VERIFIED", "NOT YET VERIFIED", "FULL" or "OLDER VERSION". You can join any server that isn't full.</li>
 <li>Press "JOIN" on a server's row. The first time, Mantle explains that community servers are run by other players, not by Mantle. Press "CONTINUE" to join.</li>
 <li>Each row has a "Report" link.</li>
-<li>If there are none, you'll see "No community servers right now". "PLAY" still works.</li>
+<li>If there are none, you'll see "No community servers right now" and "Play still works: it starts an official server for you and anyone who joins."</li>
 <li>If the server has gone by the time you join, you'll see "That server is no longer available. Refreshing the list…"</li>
 </ul>
+
+<h3 id="private-servers">Private servers <span class="status live">Live</span></h3>
+<p>A private server is a server for one world that only its members can join. You'll find "PRIVATE SERVERS" at the top of the world's "Servers" tab, above any community servers. You can make one for your own worlds, and for other worlds whose creator allows it.</p>
+<ol class="steps">
+<li><b>Create it</b><p>Give it a name if you like ("Name it (optional)", up to 48 characters) and press "Create private server". You're its owner.</p></li>
+<li><b>Invite friends</b><p>Press "Invite friends" to get an invite code. It's shown once, so press "Copy" and send it to your friends in Steam or Epic chat. A code works for 7 days.</p></li>
+<li><b>Redeem a code</b><p>Your friend opens the world's page, goes to "Servers", types the code into "Enter an invite code" and presses "Redeem". They're now a member and can join whenever they like. A code redeemed on another world's page still works: they'll find the server on that world's "Servers" tab.</p></li>
+<li><b>Join</b><p>Press "Join" on the server's row. If it isn't running, Mantle starts it for you.</p></li>
+</ol>
+<ul>
+<li>Each row shows whether you're the "Owner" or a "Member", how many members it has, and "Nobody playing" or how many are playing. A server that can't be joined shows "Unavailable" or "Suspended".</li>
+<li><b>Owners</b> press "Manage" to rename the server, make invite codes, see and remove members, or delete the server. Deleting it disconnects anyone playing and stops its codes working, and can't be undone.</li>
+<li><b>Members</b> press "Members" to see who else is in it, or "Leave server" to leave. You'll need a new invite code to get back in.</li>
+<li>You can own up to 10 private servers, each with up to 200 members. Only one of your private servers can run at a time.</li>
+<li>Private servers that Mantle runs come with a monthly amount of free play time for their owner. When it's used up, nobody can start that owner's servers until it resets, and joining says when.</li>
+<li>An owner can also run a private server on their own PC. See <a href="/docs/platform/community-servers/#private">Private community servers</a>.</li>
+</ul>
+<div class="table-wrap"><table><thead><tr><th>If you see…</th><th>What it means</th></tr></thead><tbody>
+<tr><td>That invite code isn't valid. Check it and try again. / That invite code has expired. Ask for a new one. / That invite code has already been used. Ask for a new one.</td><td>Ask the owner for a new code</td></tr>
+<tr><td>That private server has no room for more members.</td><td>It already has 200 members</td></tr>
+<tr><td>That private server is full. Try again in a moment.</td><td>Every player slot is taken right now</td></tr>
+<tr><td>This private server's owner already has another private server running. Only one can run at a time.</td><td>Try again once the owner's other server has closed</td></tr>
+<tr><td>This private server's owner has used this month's 10 hours of free private-server time. It resets on [date] (UTC).</td><td>The owner's free time has run out until that date</td></tr>
+<tr><td>That private server is gone, or you're no longer a member.</td><td>It was deleted, or you were removed</td></tr>
+</tbody></table></div>
 
 <h2 id="joining">Joining a world <span class="status live">Live</span></h2>
 <ol class="steps">
 <li><b>Press Play</b><p>Mantle looks for a server for that world.</p></li>
-<li><b>Find or start a server</b><p>If a server has room, you join it, even if a game is already under way. If not, Mantle starts a new server near you. You'll see "Your server is starting." while it does.</p></li>
+<li><b>Find or start a server</b><p>If a server has room, you join it, even if a game is already under way. If not, Mantle starts a new server near you. The screen stays on "Finding a server" while it starts.</p></li>
 <li><b>Load in</b><p>Mantle loads the world and connects you to the server.</p></li>
 </ol>
 <p>While you join, the screen shows "JOINING" and the steps "Finding a server / Reading the world / Building the world / Connecting". You'll also see "CANCEL", "BACK" and "TRY AGAIN".</p>
@@ -83,15 +108,17 @@
 <div class="table-wrap"><table><thead><tr><th>If you see…</th></tr></thead><tbody>
 <tr><td>Your server took too long to start. Try joining again.</td></tr>
 <tr><td>Sessions are unavailable.</td></tr>
-<tr><td>That server is not available to join right now.</td></tr>
+<tr><td>That server is no longer available.</td></tr>
+<tr><td>That server is full. Try again in a moment, or pick another server.</td></tr>
+<tr><td>That server is running an older version of Mantle. Try another server.</td></tr>
 <tr><td>That place link is not valid.</td></tr>
-<tr><td>A join is already in progress.</td></tr>
+<tr><td>You're already joining a world. Cancel that join first to go somewhere else.</td></tr>
 <tr><td>That place could not be read. It may need a newer version of Mantle.</td></tr>
 <tr><td>Could not reach Mantle. Check your internet connection and try again.</td></tr>
 <tr><td>Couldn't join [world]. Check your connection and try again.</td></tr>
 <tr><td>Something went wrong.</td></tr>
-<tr><td>This client no longer holds its session seat; rejoin the place.</td></tr>
 </tbody></table></div>
 <p>If the world can't be loaded after you've connected, Mantle takes you back to the home screen and shows "That world couldn't be loaded. Try joining again." (or "That world couldn't be loaded:" followed by the reason).</p>
+<p>If you're disconnected while playing, you're taken back to the home screen with the reason, for example "The connection to the server was lost." or "You were removed from this world." A world can add its own reason when it removes someone.</p>
 
 <p>Something not working? Email <a href="mailto:contact@mantleplatform.com">contact@mantleplatform.com</a>, ask in the <a href="https://discord.gg/xj4s9kUe7x">Mantle Discord</a>, or see <a href="/docs/players/troubleshooting/#get-help">Troubleshooting and help</a>.</p>

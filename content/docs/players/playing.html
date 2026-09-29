@@ -8,14 +8,14 @@
 <tr><td>Move</td><td><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></td><td>Left stick</td></tr>
 <tr><td>Look</td><td>Mouse</td><td>Right stick</td></tr>
 <tr><td>Jump / vault / mantle</td><td><kbd>Space</kbd></td><td>A</td></tr>
-<tr><td>Sprint</td><td><kbd>Left Shift</kbd> (hold)</td><td>Left-stick click (stays on)</td></tr>
-<tr><td>Walk (toggle)</td><td><kbd>Left Ctrl</kbd></td><td>None</td></tr>
+<tr><td>Sprint</td><td><kbd>Left Shift</kbd> (hold)</td><td>Left-stick click with the stick pushed all the way (stays on until you ease off)</td></tr>
+<tr><td>Walk (toggle)</td><td><kbd>Left Ctrl</kbd></td><td>Push the left stick part of the way</td></tr>
 <tr><td>Crouch / slide</td><td><kbd>C</kbd> (hold)</td><td>Left bumper</td></tr>
 <tr><td>Camera mode</td><td>Mouse wheel</td><td>Right-stick click</td></tr>
 <tr><td>Use tool</td><td>Left mouse</td><td>Right trigger</td></tr>
 <tr><td>Aim</td><td>Right mouse</td><td>Left trigger</td></tr>
-<tr><td>Reload</td><td><kbd>R</kbd></td><td>X (when armed)</td></tr>
-<tr><td>Interact / pick up / sit</td><td><kbd>E</kbd></td><td>B unarmed, X armed</td></tr>
+<tr><td>Reload</td><td><kbd>R</kbd></td><td>X (when armed and your weapon can reload)</td></tr>
+<tr><td>Interact / pick up / sit</td><td><kbd>E</kbd></td><td>B or X unarmed; X armed, when there's nothing to reload</td></tr>
 <tr><td>Drop tool</td><td><kbd>G</kbd></td><td>B (when armed)</td></tr>
 <tr><td>Hotbar slots 1–10</td><td><kbd>1</kbd>–<kbd>9</kbd>, <kbd>0</kbd></td><td>D-pad left/right (cycle)</td></tr>
 <tr><td>Melee (armed)</td><td><kbd>B</kbd></td><td>Right bumper</td></tr>
@@ -34,8 +34,12 @@
 <ul>
 <li><b>Slide:</b> crouch while sprinting.</li>
 <li><b>Climbing over things:</b> jump at an obstacle and you'll vault, hurdle, mantle or climb it automatically. You vault, hurdle or mantle obstacles up to 125 cm tall, and climb ledges up to 275 cm.</li>
-<li><b>Camera:</b> choose first person, over-the-shoulder or third person. When you aim, the view zooms in. In first person, the camera sits at your avatar's eyes and you don't see your own face.</li>
+<li><b>Loose objects:</b> you can push objects that move freely, like crates. You can't vault or climb over one light enough to slide away under you; jumping at it just jumps.</li>
+<li><b>Camera:</b> choose first person, over-the-shoulder or third person. When you aim, the view zooms in. In first person, the camera sits at your avatar's eyes and you don't see your own face. Some worlds fix the camera to one mode, so switching does nothing there.</li>
 </ul>
+
+<h2 id="environment">Day, night and weather <span class="status live">Live</span></h2>
+<p>Everyone on a server shares the same time of day. A full day lasts 30 real minutes unless the world changes it, with a moon and stars at night. The weather changes on its own between clear, partly cloudy, overcast, rain and storms with lightning, unless the world holds it on one. Rain stops falling on you when you're under cover.</p>
 
 <h2 id="avatar">Avatar <span class="status wip">In progress</span></h2>
 <p>Press "AVATAR" in the top bar to open the Avatar screen. Mantle's menu inside a world doesn't have it, but a world's creator can add a button that opens it. Your character shows on the left, and the right side has three tabs: "Catalog", "Owned" and "Outfits".</p>
@@ -44,7 +48,8 @@
 <li><b>Catalog filters:</b> "Fits my avatar" is on by default, so you only see items your current avatar can wear. "By Mantle" shows only Mantle's own items. Press "More by [creator]" on an item to see just that creator's items. The filter then shows as "By [creator]", and pressing it clears it.</li>
 <li><b>Owned:</b> everything you've got, sorted by "Recently added" or "Name". Owned also has a "Body" section with "Skin tone", "Eye colour" and "Height" (95% to 105%, "Shorter" to "Taller"). Some avatars have their own skin and eyes, so there are no colours to pick.</li>
 <li><b>Outfits:</b> "Save current look" saves what you're wearing as an outfit (up to 50). Each outfit has "Update to this look", "Rename" and "Delete". An outfit name can be 1 to 40 characters.</li>
-<li><b>Buttons:</b> "Try on", "Revert", "Get and wear" (or "Wear" if you own it), "Take off" and "Report this item". Frame the preview with "Full", "Head", "Body" or "Feet".</li>
+<li><b>Buttons:</b> "Try on", "Revert", "Get and wear" (or "Wear" if you own it), "Take off" and "Report this item". Frame the preview with "Full", "Head", "Body", "Legs" or "Feet".</li>
+<li><b>Removing an item:</b> press "Remove" on something you own, then confirm with "Remove [item]?". It comes off your avatar and leaves your inventory, but stays in the catalog so you can get it again any time.</li>
 <li><b>Saving:</b> changes show on the preview straight away, with "Undo" and "Redo". Press "Save" to keep them. Until then you'll see "Unsaved changes". Your saved look follows you into every world, including your avatar, clothing, hair, accessories, skin tone, eye colour and height.</li>
 <li><b>Limits:</b> one item per slot, up to 8 accessories and up to 8 emotes.</li>
 <li><b>Set aside:</b> some avatars can't wear clothing. If you switch to one, clothing and hair that don't fit are marked "SET ASIDE". They're still yours and go back on when you switch to an avatar they fit.</li>
@@ -66,16 +71,16 @@
 <ul>
 <li><b>Picking up:</b> walk to a pickup and press <kbd>E</kbd> ("Pick up [tool]"). By default, a pickup comes back after 10 s.</li>
 <li><b>Backpack:</b> 10 hotbar slots and room for up to 32 tools. Press the slot of the tool you're holding to put it away and go back to Fists.</li>
-<li><b>Dropping:</b> press <kbd>G</kbd> to drop your tool in front of you. It becomes a new pickup, with its ammo refilled.</li>
+<li><b>Dropping:</b> press <kbd>G</kbd> to drop your tool in front of you. It becomes a pickup that keeps the ammo it had left. You can't drop your fists.</li>
 <li><b>Dying:</b> tools you got from pickups can drop when you die, if that pickup allows it.</li>
-<li><b>On screen:</b> health (100 max), an ammo counter, "RELOADING", and the hotbar with counts and cooldowns.</li>
+<li><b>On screen:</b> health (100 unless the world changes it), an ammo counter, "RELOADING", and the hotbar with counts and cooldowns.</li>
 </ul>
 <div class="table-wrap"><table><thead><tr><th>Tool</th><th>Behaviour</th></tr></thead><tbody>
 <tr><td>Fists</td><td>20 damage, 150 cm reach. You hold these whenever you're not holding anything else.</td></tr>
 <tr><td>Rifle</td><td>Fully automatic (hold to fire), 12 damage, 30-round magazine + 60 spare, 1.7 s reload</td></tr>
 <tr><td>Pistol</td><td>One shot per click, 18 damage, 12-round magazine + 48 spare, 1.25 s reload</td></tr>
 <tr><td>Shotgun</td><td>9 pellets × 12 damage, 8 rounds + 16 spare, 2.4 s reload</td></tr>
-<tr><td>Grenade</td><td>105 damage, 450 cm blast radius, explodes after 2 s. Quick throw (<kbd>H</kbd>) has a 5 s cooldown.</td></tr>
+<tr><td>Grenade</td><td>Holds 3. 105 damage, 450 cm blast radius, explodes after 2 s. Quick throw (<kbd>H</kbd>) has a 5 s cooldown.</td></tr>
 <tr><td>Healthpack</td><td>Heals 50</td></tr>
 </tbody></table></div>
 <p>Aiming makes your shots more accurate, and crouching makes them even more accurate. Jumping makes them less accurate.</p>
@@ -89,33 +94,54 @@
 <li><b>Steer:</b> <kbd>A</kbd>/<kbd>D</kbd> / left stick</li>
 <li><b>Get out:</b> <kbd>F</kbd> / Y</li>
 <li><b>Change paint colour:</b> <kbd>C</kbd> / X cycles through six colours.</li>
-<li><b>Camera:</b> first person, close chase or far chase. It moves back behind the car shortly after you stop looking around.</li>
+<li><b>Camera:</b> the mouse wheel or right-stick click switches between first person, close chase and far chase. The camera moves back behind the car shortly after you stop looking around.</li>
 <li>The screen shows your speed in KM/H and the current gear.</li>
 <li><b>Parked cars stay put:</b> walking or sprinting into an empty one won't push it out of the way.</li>
 </ul>
 
 <h2 id="leaderboard">Leaderboards <span class="status live">Live</span></h2>
-<p>Some worlds keep a leaderboard. Press <kbd>Tab</kbd> (on a gamepad, open the menu and choose "Leaderboard") to see the top 10, each row with a rank, the player's picture and name, and their score; your own row stands out. It updates every 30 seconds or so while you're watching it. Not every world has one — if it doesn't, nothing happens.</p>
+<p>Some worlds keep a leaderboard. Press <kbd>Tab</kbd> (on a gamepad, open the menu and choose "Leaderboard") to see the top 10, each row with a rank, the player's picture and name, and their score; your own row stands out. It updates every 30 seconds or so while you're watching it. Press <kbd>Tab</kbd> again, or choose "Hide leaderboard" in the menu, to close it. Not every world has one — if it doesn't, <kbd>Tab</kbd> opens nothing and the menu has no "Leaderboard" button.</p>
+<p>Worlds can use <kbd>Tab</kbd> for their own actions too. In a world that does, pressing it can open the leaderboard and do the world's action at the same time.</p>
 
 <h2 id="messages">World messages <span class="status live">Live</span></h2>
 <p>Some worlds show their own messages on screen: a short line stacked in the corner, or a pop-up across the top of the screen for a few seconds. These come from the world's own scripts, not from Mantle.</p>
 
+<h2 id="world-screens">World screens and menus <span class="status live">Live</span></h2>
+<p>Worlds can also open their own screens, such as a shop, an inventory, a menu or a dialogue. Some take over while they're open: your character stops moving and looking around, and your cursor appears. Others stay on screen while you keep playing.</p>
+<ul>
+<li><b>Mouse:</b> click the screen's buttons and fields.</li>
+<li><b>Keyboard:</b> <kbd>Tab</kbd> or the arrow keys move between controls, and <kbd>Enter</kbd> or <kbd>Space</kbd> presses the one that's highlighted.</li>
+<li><b>Gamepad:</b> the D-pad or left stick moves between controls, and A presses one.</li>
+<li><b>Closing:</b> <kbd>Esc</kbd> or B goes back. On a screen that has taken over, that usually closes it, unless the world uses it for its own "back" step.</li>
+<li><b>Screens you play alongside:</b> the mouse works on them straight away. On a gamepad, press View to move around one, and View or B to go back to playing. While one is on screen, View doesn't open text chat.</li>
+<li><b>Screen readers</b> can read the parts of these screens that the world's creator has labelled.</li>
+</ul>
+
 <h2 id="settings">Menu and settings <span class="status live">Live</span></h2>
 <p><kbd>Esc</kbd> opens the settings menu on top of the world. <b>The game doesn't pause.</b> While the menu is open, your cursor appears and your character won't respond to controls.</p>
 <ul>
-<li>The menu has "Leave world" and "Quit game".</li>
+<li>The menu has "Leave world" and "Quit game", plus "Leaderboard" in worlds that keep one.</li>
 <li>Each tab is marked "Follows you" (saved to your account, so it applies wherever you play) or "On this PC" (saved on this computer only).</li>
 </ul>
 <div class="table-wrap"><table><thead><tr><th>Tab</th><th>Options</th></tr></thead><tbody>
 <tr><td>Graphics</td><td>Graphics quality (Low / Balanced / High / Epic / Custom), Auto-detect quality, 3D resolution scale (50–100%). Advanced: View distance, Shadows, Anti-aliasing, Textures, Effects, Post-processing, Reflections, Global illumination</td></tr>
 <tr><td>Display</td><td>Window mode (Fullscreen / Windowed fullscreen / Windowed), Resolution, VSync, Frame rate limit (30–240 or Unlimited), Background frame rate limit, Brightness (50–150%), Interface scale (85–125%), Performance stats (Off / FPS / Full)</td></tr>
 <tr><td>Audio</td><td>Master volume, Music</td></tr>
-<tr><td>Chat</td><td>Voice chat (Off / Push to talk / Open mic), Text chat</td></tr>
-<tr><td>Accessibility</td><td>Subtitles <span class="status live">Live</span>; Reduce motion and High contrast <span class="status wip">In progress</span> (these work in menus that world creators build, but not yet in Mantle's own menus)</td></tr>
-<tr><td>Account</td><td>Profile picture (PNG or JPEG, up to 2048 by 2048 and 8 MB). Creator tokens and Hosting, for creators who publish from Unreal Editor or run their own servers.</td></tr>
-<tr><td>Safety</td><td>Blocked players, with Unblock</td></tr>
+<tr><td>Chat</td><td>Voice chat (Off / Push to talk / Open mic), Text chat. While you're in voice in a world, also "Your microphone" and "Other players' voices" (On / Muted), which only last until you leave that world</td></tr>
+<tr><td>Accessibility</td><td>Subtitles <span class="status live">Live</span>; Reduce motion and High contrast <span class="status wip">In progress</span> (these work in some menus that world creators build, but not yet in Mantle's own menus or in every world screen)</td></tr>
+<tr><td>Account</td><td>Profile picture (PNG or JPEG, up to 2048 by 2048 and 8 MB). My Places (on the home screen only; see below). Creator tokens and Hosting, for creators who publish from Unreal Editor or run their own servers.</td></tr>
+<tr><td>Safety</td><td>Blocked players, with Unblock. Support: "Open log folder" and "Copy diagnostics" (see <a href="/docs/players/troubleshooting/#get-help">Getting help</a>)</td></tr>
 </tbody></table></div>
 <p>To make text bigger or smaller, use Interface scale.</p>
+
+<h3 id="my-places">My Places <span class="status live">Live</span></h3>
+<p>If you make worlds, open Settings from the home screen, go to Account and press "Manage places" to see every world you've published or saved as a draft, newest updated first. Each one shows "Published" or "Draft", when it was last updated, and three buttons:</p>
+<ul>
+<li><b>View place:</b> opens the world's page (published worlds only).</li>
+<li><b>Copy ID:</b> copies the world's ID.</li>
+<li><b>Delete:</b> asks you to confirm with "Delete place". The world disappears from Discover and from your places, every server running it closes and its players are disconnected. You can't undo this from Mantle.</li>
+</ul>
+<p>You edit and publish worlds from your Unreal project, not from here. See <a href="/docs/creators/publishing/">Publishing</a>.</p>
 <p><span class="status planned">Planned</span> A language setting is coming later.</p>
 
 <h2 id="sessions">Joining, leaving and respawning</h2>

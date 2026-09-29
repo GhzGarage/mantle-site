@@ -13,6 +13,7 @@
       <tr><td>task library, signals, Vector3</td><td>Same shape</td></tr>
       <tr><td>HumanoidDescription (reading what a player wears)</td><td><code>player.Avatar</code> and <code>player.Wearing</code>, read-only and server only</td></tr>
       <tr><td>AvatarEditorService prompts, playing an emote</td><td><code>Avatar:OpenCustomizer()</code>, <code>Avatar:PlayEmote(itemId)</code> (client only; equipped emotes only)</td></tr>
+      <tr><td>ScreenGui in StarterGui</td><td>A <a href="/docs/scripting/ui-documents/">UI document</a> in the <code>UI/</code> folder, opened from a client script with <code>UI:OpenDocument</code> (API 1.31), or nodes built with <code>UI:Create</code>. <code>UI:Toast</code> shows a quick message.</td></tr>
       <tr><td>ReplicatedStorage values for shared state</td><td><code>State</code> with <code>Observe</code></td></tr>
     </tbody></table></div>
 
@@ -25,6 +26,7 @@
       <tr><td><code>TriggerEvent</code> (local)</td><td><code>Events:Get(name):Fire(…)</code></td></tr>
       <tr><td><code>Citizen.Wait</code>, <code>CreateThread</code></td><td><code>task.wait</code>, <code>task.spawn</code></td></tr>
       <tr><td>GlobalState / state bags</td><td><code>State</code> (global), entity attributes (per object)</td></tr>
+      <tr><td>NUI pages (HTML, CSS and JavaScript)</td><td><a href="/docs/scripting/ui-documents/">UI documents</a>: markup and a stylesheet in the <code>UI/</code> folder. The page runs no code of its own; a client script fills it with <code>SetData</code> and hears its buttons through <code>Event</code> (see <a href="/docs/scripting/ui-documents/#uidoc-from-web">Coming from browser-based game UIs</a>).</td></tr>
       <tr><td>Lua + JS + C# resources sharing events</td><td>The same idea: Luau, TS/JS and Python share State, Events and Remotes</td></tr>
     </tbody></table></div>
 
@@ -34,6 +36,7 @@
       <tr><td>BeginPlay / Tick</td><td>Top-level code runs at start. For repeated work, loop with <code>task.wait</code> or use signals.</td></tr>
       <tr><td>OnActorBeginOverlap / OnComponentHit</td><td><code>Touched</code> / <code>TouchEnded</code> fire for player characters standing on, overlapping or within 4 cm of the entity. Contact between two entities, or from a projectile, doesn't fire them.</td></tr>
       <tr><td>Replicated properties, RPCs</td><td>Changes made on the server sync to every player automatically. For shared values use <code>State</code>; for messages use <code>Remote</code>.</td></tr>
+      <tr><td>UMG widgets</td><td><a href="/docs/scripting/ui-documents/">UI documents</a> opened from a client script, or nodes built with <code>UI:Create</code></td></tr>
       <tr><td>Timelines</td><td><code>Tween</code></td></tr>
       <tr><td>PIE with several clients</td><td>Scripts don't run in PIE. Publish, then join the session with the Mantle client, along with other players.</td></tr>
     </tbody></table></div>

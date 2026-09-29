@@ -115,7 +115,7 @@ export const docsNav: DocSection[] = [
       {
         title: "Operations",
         pages: [
-          { slug: ["platform", "releases"], title: "Updates", description: "How Mantle updates reach you and how servers update without interrupting play." },
+          { slug: ["platform", "releases"], title: "Updates", description: "What's new, how Mantle updates reach you and how servers update without interrupting play." },
           { slug: ["platform", "backend"], title: "Services and trust", description: "Your account, limits, what gets screened, who can see chat and voice, and how long data is kept." },
         ],
       },

@@ -9,7 +9,7 @@
 <tr><td>Clothing</td><td>A Skeletal Mesh skinned to the MetaHuman body skeleton</td><td><code>top</code>, <code>bottom</code>, <code>footwear</code></td><td><a href="/docs/creators/clothing/">Clothing, hair and accessories</a></td></tr>
 <tr><td>Accessory</td><td>A Static Mesh with one material, its pivot where it attaches</td><td><code>acc_hat</code>, <code>acc_face</code>, <code>acc_neck</code>, <code>acc_shoulder_l</code>, <code>acc_shoulder_r</code>, <code>acc_front</code>, <code>acc_back</code>, <code>acc_waist</code></td><td><a href="/docs/creators/clothing/">Clothing, hair and accessories</a></td></tr>
 <tr><td>Avatar</td><td>A body Skeletal Mesh on the MetaHuman skeleton (with its face if it has one) or the UE5 Mannequin skeleton</td><td><code>avatar</code></td><td><a href="/docs/creators/avatars-emotes/">Avatars and emotes</a></td></tr>
-<tr><td>Emote</td><td>An Anim Sequence on the UEFN mannequin skeleton, at most 10 seconds</td><td><code>emote</code></td><td><a href="/docs/creators/avatars-emotes/">Avatars and emotes</a></td></tr>
+<tr><td>Emote</td><td>An Anim Sequence on the UEFN mannequin skeleton, or on a MetaHuman body or the UE5 Mannequin (retargeted for you), at most 10 seconds</td><td><code>emote</code></td><td><a href="/docs/creators/avatars-emotes/">Avatars and emotes</a></td></tr>
 </tbody></table></div>
 <p>Everything in the catalogue is free. The panel has no price field, and paid items come later with the <a href="/docs/creators/hosting-data/#monetisation">marketplace</a>.</p>
 
@@ -29,14 +29,14 @@
 <div class="table-wrap"><table><thead><tr><th>Section</th><th>Shown for</th><th>What it does</th></tr></thead><tbody>
 <tr><td>What are you publishing?</td><td>Every kind</td><td>The kind (Hair, Clothing, Accessory, Avatar or Emote) and its slot.</td></tr>
 <tr><td>Sections</td><td>Clothing</td><td>"The mesh's sections this item takes. A one-piece outfit uploads once per slot, each time with that piece's sections ticked." Skin sections are greyed out: "the wearer's own body shows through; garments never carry skin". See <a href="/docs/creators/clothing/#outfits">One-piece outfits</a>.</td></tr>
-<tr><td>Asset</td><td>Every kind</td><td>The asset to publish. For a groom, a second drop-down picks which cards to use ("Cards: the LOD MetaHuman draws at Medium" by default). For a Skeletal Mesh as hair, a drop-down picks the section to lift ("Choose the section to lift (for example the eyelashes)"), and a section with "lash" in its name is picked for you.</td></tr>
+<tr><td>Asset</td><td>Every kind</td><td>The asset to publish. For a groom, a second drop-down picks which cards to use, listed as "Group N, LOD N: [mesh] (N textures)". It starts on the cards MetaHuman draws at Medium. For a Skeletal Mesh as hair, a drop-down picks the section to lift ("Choose the section to lift (for example the eyelashes)"), and a section with "lash" in its name is picked for you.</td></tr>
 <tr><td>Hair colour</td><td>Hair from a groom or a cards mesh</td><td>The hair's colour as <code>#RRGGBB</code>. Leave it empty to read the colour from the groom's material ("#RRGGBB; empty reads the groom's material").</td></tr>
 <tr><td>Authored on</td><td>Hair, Clothing</td><td>"The MetaHuman body this was made on. Found automatically when the project has one; it uploads as the item's body shape so the item fits every body."</td></tr>
 <tr><td>Face and sections</td><td>Avatar</td><td>The face mesh (optional), the <b>Jaw bone</b> ("Default: FACIAL_C_Jaw with a MetaHuman face, none otherwise") and a role for each material section: <code>skin</code>, <code>eyes</code> or <code>other</code>. Roles are filled in from MetaHuman's slot names.</td></tr>
 <tr><td>Publish as</td><td>Avatar</td><td>Leave it on "A new avatar item". The other choice isn't for creator accounts.</td></tr>
 <tr><td>Socket offsets</td><td>Avatar</td><td>Collapsed under "Move where accessories attach (optional)". One group per accessory socket, starting at the body's own socket. Tick Location, Rotation or Scale to replace that part.</td></tr>
 <tr><td>Attachment</td><td>Accessory</td><td>Tick "Offset it from the socket" to set a Location (cm), Rotation (degrees) and Scale for the accessory.</td></tr>
-<tr><td>Preview</td><td>Clothing, Avatar</td><td>See the item the way players will, without uploading anything. Clothing can be previewed on one of Mantle's base avatars, on the body it was made on, or on another avatar by its item id, in the reference pose or playing an animation. An avatar is posed the way the game poses it, driven by a UEFN mannequin skeletal mesh already in your project (such as <code>SKM_UEFN_Mannequin</code> from the Game Animation Sample; Mantle doesn't ship one with the plugin). It idles on that mannequin's own standing idle animation if your project has one, or a plain reference pose otherwise. Without a UEFN mannequin in the project, the preview holds a reference pose and the status line names what to add.</td></tr>
+<tr><td>Preview</td><td>Clothing, Avatar</td><td>See the item the way players will, without uploading anything. Clothing can be previewed on one of Mantle's base avatars, on the body it was made on, or on another avatar by its item id, in the reference pose or playing an animation. Previewing on a base avatar or a catalogue avatar needs you to be signed in: "Sign in to preview on catalog avatars, Mantle's base avatars included (or pick the body it was made on)." An avatar is posed the way the game poses it, playing a standing idle. This needs the IK Rig plugin turned on and a UEFN mannequin skeletal mesh in your project (such as <code>SKM_UEFN_Mannequin</code> from the Game Animation Sample; Mantle doesn't ship one with the plugin). Without them, the preview holds the reference pose and the status line names what to add.</td></tr>
 <tr><td>Listing</td><td>Every kind</td><td>Name and Description.</td></tr>
 </tbody></table></div>
 <p>Socket offsets and the accessory's attachment use the same ranges: location up to 50 cm from the socket on each axis, rotation from -180 to 180 degrees (pitch, yaw, roll) and scale from 0.5 to 2. The attachment boxes stop at those values. Socket offsets let you type past them, and the check then refuses the value instead of clamping it.</p>
@@ -50,7 +50,7 @@
 <p>If nothing can be rendered, the thumbnail is a plain dark square. <b>Files and details</b>, at the bottom of the panel, lists each file the item uploads with its size, and says how the thumbnail was made.</p>
 
 <h2 id="checks">What the panel checks</h2>
-<p>Each check result is a line starting "Problem:" (it must be fixed), "Note:" (worth knowing, but it doesn't stop an upload) or "Done:" (something the plugin handled for you, such as scaling a texture down or uploading a lower LOD). When nothing is listed, you'll see "Every check passed." The line above the list says "Fix the problems below, then choose Upload to Mantle." or "Ready: choose Upload to Mantle."</p>
+<p>Each check result is a line starting "Problem:" (it must be fixed), "Note:" (worth knowing, but it doesn't stop an upload) or "Done:" (something the plugin handled for you, such as uploading a lower LOD). When nothing is listed, you'll see "Every check passed." The line above the list says "Fix the problems below, then choose Upload to Mantle." or "Ready: choose Upload to Mantle."</p>
 <p>These checks apply to every kind. The kind pages list the rest (skeletons, triangle and texture budgets, sizes and so on).</p>
 <div class="table-wrap"><table><thead><tr><th>Check</th><th>Message</th></tr></thead><tbody>
 <tr><td>No name</td><td>Problem: the item needs a name. Players see it in the catalog.</td></tr>
@@ -58,16 +58,16 @@
 <tr><td>Description over 1,000 characters</td><td>Problem: the description is N characters, the limit is 1000.</td></tr>
 <tr><td>Slot doesn't fit the kind</td><td>Problem: "[slot]" is not a slot for [kind]. Choose a slot from the list.</td></tr>
 <tr><td>No asset picked</td><td>Problem: choose the asset to upload.</td></tr>
-<tr><td>A texture over 2048 on a side</td><td>Done: [texture] is [W]x[H]; it is uploaded at most 2048x2048.</td></tr>
 <tr><td>A file over 64 MiB</td><td>Problem: [file] is N MiB, uploads can be at most 64 MiB.</td></tr>
 <tr><td>A socket offset out of range (avatars)</td><td>Problem: the [socket] socket's location (x, y, z): offsets are at most 50 cm on each axis. Mantle refuses it rather than clamping it. (Rotation says "rotations are between -180 and 180 degrees", and scale says "scale is between 0.5 and 2".)</td></tr>
 </tbody></table></div>
+<p>Textures larger than the limit (2048 on a side, 1024 for an accessory) are scaled down without a message. <b>Files and details</b> shows the size each one uploads at.</p>
 
 <h2 id="after-upload">After you upload</h2>
 <p>The upload runs in the background with a progress bar, so you can keep working. The status line shows each stage:</p>
 <ol class="steps">
 <li><b>Checking which files Mantle already has...</b><p>Files your account has already uploaded are skipped, so nothing is sent twice.</p></li>
-<li><b>Uploading and processing files: N of M ready...</b><p>Mantle checks each file and screens it. In <b>Files and details</b>, each file shows "Uploading", "Being processed", "Being screened", "Waiting for a moderator", "Approved" or "Already on Mantle". A garment waits for the body it was made on to be approved first.</p></li>
+<li><b>Uploading and processing files: N of M ready...</b><p>Mantle checks each file and screens it. In <b>Files and details</b>, each file has a line such as "[file]: processing - Being screened". The first word is waiting, processing, ready or failed, and the rest says what's happening: "Waiting", "Uploading ([size])", "Being processed", "Being screened", "Waiting for a moderator", "Approved", "Already on Mantle" or "Retrying". A garment waits for the body it was made on to be approved first ("Waiting for [file] to be approved").</p></li>
 <li><b>Creating the item...</b><p>Once every file is approved, the plugin creates the item from them.</p></li>
 <li><b>Screening the item...</b><p>Mantle screens the item's thumbnail, name and description. If something is flagged, a moderator looks at it.</p></li>
 </ol>
@@ -105,11 +105,11 @@
 <li>"the accessory is N cm across, [slot] allows N cm" or "the accessory reaches N cm from its pivot, [slot] allows N cm"</li>
 <li>"the avatar stands N cm tall, the minimum is 151.1 cm" (or "the limit is 218.1 cm")</li>
 <li>"a hair item may use at most 4 textures", or "the item needs about N MB of GPU memory; the limit is 24.0 MB"</li>
-<li>"An item name is 1 to 64 characters." (names can't contain invisible formatting characters either)</li>
+<li>"An item name is 1 to 64 characters." or "A description is at most 1000 characters." (neither can contain invisible formatting characters)</li>
 </ul>
 
 <h2 id="editing">Changing an item <span class="status wip">In progress</span></h2>
-<p>Mantle can update a published item in place, but the Cosmetics panel doesn't offer it yet. If you change the asset, slot, name, description or any other setting and choose <b>Upload to Mantle</b>, the panel publishes a separate new item, and the old one stays in the catalogue.</p>
+<p>Mantle can update a published item in place, but the Cosmetics panel doesn't offer it yet. If you change the asset, slot, name, description or any other setting and choose <b>Upload to Mantle</b>, the panel publishes a separate new item, and the old one stays in the catalogue. If nothing changed, uploading the same asset to the same slot again doesn't make a copy: the panel says "This item was already published ([item]); following it" and follows the existing item.</p>
 <p>When editing arrives, an edited item is checked and screened again like a new one, and it leaves the catalogue until the new version passes. Each edit counts towards the hourly item limit.</p>
 
 <h2 id="delisting">Delisting an item <span class="status wip">In progress</span></h2>
@@ -125,13 +125,11 @@
 <h2 id="limits">Limits</h2>
 <div class="table-wrap"><table><thead><tr><th>Limit</th><th>Value</th></tr></thead><tbody>
 <tr><td>Items created or edited per account</td><td class="num">60 an hour</td></tr>
-<tr><td>Meshes and textures uploaded per account (accessory meshes, thumbnails and material textures, together with world uploads)</td><td class="num">5,000 an hour</td></tr>
-<tr><td>Other files uploaded per account (avatar bodies and faces, 3D clothing and hair meshes, the bodies they were made on, and emotes)</td><td class="num">300 an hour</td></tr>
 <tr><td>Everything uploaded per account</td><td class="num">2 GiB an hour</td></tr>
 <tr><td>One file</td><td class="num">64 MiB (textures 8 MiB)</td></tr>
-<tr><td>Texture size</td><td class="num">2048 x 2048 (larger ones are scaled down)</td></tr>
+<tr><td>Texture size</td><td class="num">2048 x 2048, accessories 1024 x 1024 (larger ones are scaled down)</td></tr>
 <tr><td>Thumbnail</td><td class="num">512 x 512, made by the panel</td></tr>
 <tr><td>Name</td><td class="num">1 to 64 characters</td></tr>
 <tr><td>Description</td><td class="num">Up to 1,000 characters</td></tr>
 </tbody></table></div>
-<p>Upload limits are shared with <a href="/docs/creators/publishing/">publishing worlds</a>. See also <a href="/docs/creators/hosting-data/">Hosting and data</a>.</p>
+<p>The number of files you can upload in an hour is limited too. If you reach a limit, the status line says how many minutes to wait. Upload limits are shared with <a href="/docs/creators/publishing/">publishing worlds</a>. See also <a href="/docs/creators/hosting-data/">Hosting and data</a>.</p>

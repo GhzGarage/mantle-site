@@ -133,7 +133,7 @@ while true do
 	end
 	task.wait(0.2)
 end
-</pre></div><h3 id="r-hud">Round timer on every client HUD</h3><p>This builds a round timer that shows the current round and time left on every player's screen. You don't need to tag anything in the level: just add both scripts. The server keeps track of the round and the time left. The JavaScript client creates its UI nodes first and then observes State, so players who join late still get the current values. The round-start announcement is a toast, which appears briefly and then goes away.</p><div class="code"><span class="tag">Scripts/Server/GuideRounds.luau</span><pre id="ex-canonical-guiderounds" data-example-kind="source" data-language="luau">local Config = require("Shared/Modules/Config/GuideConfig")
+</pre></div><h3 id="r-hud">Round timer on every client HUD</h3><p>This builds a round timer that shows the current round and time left on every player's screen. You don't need to tag anything in the level: just add both scripts. The server keeps track of the round and the time left. The JavaScript client creates its UI nodes first and then observes State, so players who join late still get the current values. The round-start announcement is a toast: it shows at the top centre of each player&rsquo;s screen for three seconds, then goes away.</p><div class="code"><span class="tag">Scripts/Server/GuideRounds.luau</span><pre id="ex-canonical-guiderounds" data-example-kind="source" data-language="luau">local Config = require("Shared/Modules/Config/GuideConfig")
 local announce = Net:Remote("GuideAnnounce")
 local round = 0
 while true do
@@ -306,7 +306,7 @@ while true do
 end
 </pre></div>
 <h3 id="r-door-hinge">A hinged door that swings open <span class="status wip">Next release</span></h3>
-<p>This builds a door on a hinge that a player can push open, rather than one that tweens by script: place a <b>Physics Constraint Actor</b> between the door's Static Mesh Actor (Simulate Physics on) and nothing (Constraint Actor 2 left empty, so it joins to the world), with Linear Locked and Swing 1 free within a limit. It needs API 1.30. Tag the door actor <code>guide_code_hingedoor</code>; the script listens for the hinge to break under a hard enough shove and reports it.</p>
+<p>This builds a door on a hinge that a player can push open, rather than one that tweens by script: place a <b>Physics Constraint Actor</b> between the door's Static Mesh Actor (Simulate Physics on) and nothing (Constraint Actor 2 left empty, so it joins to the world), with every Linear motion Locked, Swing 1 Motion set to Limited (how far the door swings) and Swing 2 and Twist Motion set to Locked. A joint that can turn about more than one axis is left out of the place, and <b>Check this place</b> says why. It needs API 1.30. Tag the door actor <code>guide_code_hingedoor</code>; the script listens for the hinge to break under a hard enough shove and reports it.</p>
 <div class="code"><span class="tag">Scripts/Server/GuideHingeDoor.luau</span><pre data-example-kind="source" data-language="luau">local door = World:FindByTag(&quot;guide_code_hingedoor&quot;)[1]
 local hinge = Constraints:FromEntity(door)
 	or Constraints:Create({
