@@ -1,46 +1,141 @@
-<div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
+<div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status wip">Next release</span> in the plugin; can be published once the next game release is out</span><span><span class="status planned">Planned</span> coming later</span></div>
 
-<p>Players get your world as you built it, using Mantle's built-in assets plus any meshes and materials from your project, so you can only publish the object types below.</p>
+<p>Players get your world as you built it, using Mantle's built-in assets plus any meshes, materials and sounds from your project, so you can only publish the object types below.</p>
 
 <h2 id="entities">What you can place</h2>
 <div class="table-wrap"><table><thead><tr><th>Unreal actor</th><th>What's kept</th><th>Status</th></tr></thead><tbody>
 <tr><td>Static Mesh Actor</td><td>Mesh, up to 16 material overrides, collision (none, blocking or overlap) and cast shadow</td><td><span class="status live">Live</span> library meshes and <a href="#custom-assets">meshes from your project</a></td></tr>
 <tr><td>An actor whose root is a plain Scene Component</td><td>Groups the actors attached to it</td><td><span class="status live">Live</span></td></tr>
+<tr><td>Blueprint actor (a prefab)</td><td>Its static meshes, point and spot lights, box and sphere collision, and sounds, each as a part named after its component, exactly where the editor shows it</td><td><span class="status live">Live</span> see <a href="#prefabs">Blueprint prefabs</a></td></tr>
 <tr><td>Player Start</td><td>Position and facing</td><td><span class="status live">Live</span></td></tr>
-<tr><td>Point Light</td><td>Intensity (0 to 100,000), colour, attenuation radius and cast shadow</td><td><span class="status live">Live</span></td></tr>
-<tr><td>Spot Light</td><td>Everything a Point Light keeps, plus inner and outer cone angles (0 to 90)</td><td><span class="status live">Live</span></td></tr>
+<tr><td>Point Light</td><td>Intensity (0 to 100,000), colour, attenuation radius and cast shadow</td><td><span class="status live">Live</span> temperature and source size are <span class="status wip">Next release</span></td></tr>
+<tr><td>Spot Light</td><td>Everything a Point Light keeps, plus inner and outer cone angles (0 to 90)</td><td><span class="status live">Live</span> temperature and source size are <span class="status wip">Next release</span></td></tr>
 <tr><td>Directional Light</td><td>Intensity (0 to 200), colour and cast shadow. The first one becomes the sky's sun.</td><td><span class="status live">Live</span></td></tr>
 <tr><td>Trigger Box / Trigger Sphere (any actor whose root is a Box or Sphere component)</td><td>Shape and size</td><td><span class="status live">Live</span> an area that detects overlaps; add behaviour with <a href="/docs/scripting/">scripts</a></td></tr>
-<tr><td>Ambient Sound</td><td>Sound, volume, attenuation radius and looping</td><td><span class="status wip">In progress</span> can't be used yet: Mantle has no built-in sounds and you can't upload your own yet</td></tr>
+<tr><td>Ambient Sound</td><td>Your own sound wave, volume, attenuation radius and looping</td><td><span class="status wip">In progress</span> publishes today; players hear it once the next game release is out. See <a href="#sounds">Sounds</a>.</td></tr>
+<tr><td>Rect Light</td><td>Intensity, colour, attenuation radius, source width and height, barn doors, temperature and cast shadow</td><td><span class="status wip">Next release</span></td></tr>
+<tr><td>Decal Actor</td><td>Size, sort order, fade distance and its material's base colour (and normal) texture</td><td><span class="status wip">Next release</span> see <a href="#decals">Decals</a></td></tr>
+<tr><td>Skeletal Mesh Actor</td><td>Mesh and one animation clip, played in step for every player</td><td><span class="status wip">Next release</span> see <a href="#skeletal">Animated meshes</a></td></tr>
+<tr><td>Landscape</td><td>Heights and up to 4 painted layers, as a terrain</td><td><span class="status wip">Next release</span> see <a href="#terrain">Terrain</a></td></tr>
+<tr><td>Foliage, instanced static meshes and generated PCG output</td><td>Every instance of each mesh</td><td><span class="status wip">Next release</span> see <a href="#instances">Foliage and instanced meshes</a></td></tr>
+<tr><td>Static Mesh Actor with <b>Simulate Physics</b></td><td>Mass, damping and gravity; the server simulates it for everyone</td><td><span class="status wip">Next release</span> see <a href="#physics">Physics objects</a></td></tr>
+<tr><td>Mantle Effect</td><td>One of five built-in particle effects and its look</td><td><span class="status wip">Next release</span> see <a href="#effects">Particle effects</a></td></tr>
+<tr><td>Mantle Crowd Spawner</td><td>Ambient people walking lanes you draw</td><td><span class="status wip">Next release</span> see <a href="#crowds">Crowds</a></td></tr>
+<tr><td>Mantle Vehicle Spawn</td><td>A car players can drive, made with <b>Convert vehicle</b></td><td><span class="status wip">Next release</span> see <a href="/docs/creators/vehicles/">Vehicles</a></td></tr>
+<tr><td>Mantle Scatter Volume</td><td>A seeded field of instanced meshes, the same for every player</td><td><span class="status wip">Next release</span> see <a href="#scatter">Scatter fields</a></td></tr>
+<tr><td>Physics Constraint Actor</td><td>A joint (weld, hinge or rope) between two physics objects, or one and the world</td><td><span class="status wip">Next release</span> see <a href="#joints">Joints</a></td></tr>
 </tbody></table></div>
 <p>Actor names and tags are kept, and actors set to Movable stay dynamic. There's no visibility setting, so hidden actors show up in the published world.</p>
+<div class="callout warn"><strong>Features marked Next release stop Publish</strong><p>"Check this place" and <b>Save to Mantle</b> accept them, but Publish stops with "This revision is not compatible with the supported release matrix." until the game release that reads them is out. The editor's Output Log names the feature, for example "This place uses Terrain, which the released game can't build yet. Publish it once a Mantle release reads Terrain, or remove it for now." A level that already has a landscape, foliage or a mesh with Simulate Physics ticked used to publish without them; now it can't be published until you remove them or that release is out.</p></div>
+<p>If something is standing on a Player Start when a player spawns, for example a parked car or a physics prop, the player is placed on the nearest clear spot with ground under it, up to 8 m away. If nothing within 8 m is clear, the player is placed on the start anyway. Keep your Player Starts clear of Vehicle Spawns and anything else that moves.</p>
 
 <h3 id="place-settings">Place settings</h3>
 <p>Choose <b>Tools → Mantle → Place settings</b> to select the level's <b>Mantle Place Settings</b> actor (it's added if the level doesn't have one), then change these in the Details panel. A level without one publishes the defaults.</p>
 <div class="table-wrap"><table><thead><tr><th>Setting</th><th>Default</th><th>In game</th></tr></thead><tbody>
 <tr><td><b>Max Players</b> (1–100)</td><td class="num">16</td><td><span class="status live">Live</span> players per server</td></tr>
 <tr><td><b>Respawn Mode</b></td><td>Nearest</td><td><span class="status live">Live</span> where a player comes back after dying: Nearest (the Player Start closest to where they died), Random (any Player Start) or First (always the first one)</td></tr>
+<tr><td><b>Gravity</b></td><td class="num">980</td><td><span class="status wip">In progress</span> in cm/s²; 0 is no gravity. It publishes today, and takes effect once the next game release is out.</td></tr>
 <tr><td><b>Allow Community Servers</b></td><td>Off</td><td><span class="status live">Live</span> lets other players host community servers for your world. See <a href="/docs/creators/hosting-data/#community-hosting">Community hosting</a>.</td></tr>
+<tr><td><b>Allow Private Servers</b></td><td>Off</td><td><span class="status live">Live</span> lets other players create private servers for your world. You can always create them for your own world.</td></tr>
 <tr><td><b>Maturity</b></td><td>Unrated</td><td><span class="status wip">In progress</span> Unrated, Everyone, Teen or Mature. Saved with your world, but nothing uses it yet.</td></tr>
 <tr><td><b>All Platforms</b> / <b>Platforms</b></td><td>All platforms</td><td><span class="status wip">In progress</span> turn All Platforms off to pick from PC, PlayStation, Xbox, Switch, iOS and Android (at least one). Saved with your world, but nothing restricts where it's offered yet.</td></tr>
-<tr><td>Gravity</td><td class="num">980</td><td><span class="status planned">Planned</span> not in the editor yet</td></tr>
-<tr><td>Ambient light</td><td>black</td><td><span class="status planned">Planned</span> not in the editor yet</td></tr>
-<tr><td>Streaming distance</td><td class="num">15000</td><td><span class="status planned">Planned</span> not in the editor yet</td></tr>
-<tr><td>Default language</td><td>None</td><td>Used by scripted UI for localisation</td></tr>
+<tr><td><b>Script Assets</b> (under Mantle → Scripts)</td><td>None</td><td><span class="status live">Live</span> meshes, materials and sound waves that nothing in the level uses but your scripts need. See <a href="#script-assets">Assets your scripts use</a>.</td></tr>
+<tr><td><b>Terrain Layers</b> (under Mantle → Terrain)</td><td>None</td><td><span class="status wip">Next release</span> the material for each of a landscape's paint layers. See <a href="#terrain">Terrain</a>.</td></tr>
+<tr><td><b>Environment</b> (under Mantle → Environment)</td><td>The game's own look</td><td><span class="status wip">Next release</span> the look every player starts in, with or without a script: Clock Time, Time Scale, Weather, Color Tint, Saturation, Bloom and Color Grading. See <a href="#default-look">The place's default look</a>.</td></tr>
 </tbody></table></div>
 
 <h2 id="export">What happens when you publish</h2>
 <ul>
-<li><b>Left out with a warning:</b> BSP brushes, engine volumes (such as Trigger Volume and Blocking Volume), placed pawns, landscape and foliage. Use static meshes instead, and use Trigger Box or Trigger Sphere actors for trigger areas.</li>
+<li><b>Left out with a warning:</b> BSP brushes, engine volumes (such as Trigger Volume and Blocking Volume), placed pawns and cameras ("Mantle runs every player's camera itself"). Use static meshes instead, and use Trigger Box or Trigger Sphere actors for trigger areas.</li>
 <li><b>Left out with a warning:</b> SkyAtmosphere, SkyLight, VolumetricCloud and ExponentialHeightFog ("Mantle provides the sky; this actor's settings are not published.").</li>
-<li><b>Converted and uploaded:</b> meshes and materials from your project. See <a href="#custom-assets">Your own assets</a>.</li>
-<li><b>Stops the publish with an error:</b> unsupported actors, post-process volumes, extra components, Ambient Sounds, names, tags or material overrides over the limits below, meshes over the mesh limits, and an empty level. See <a href="/docs/creators/#validation">What "Check this place" catches</a>.</li></ul>
+<li><b>Left out with a warning:</b> Blueprint logic, in actors and in the Level Blueprint: "Blueprint logic isn't published: the place gets this actor's components, not its behaviour." Use <a href="/docs/scripting/">scripts</a> for behaviour.</li>
+<li><b>Converted and uploaded:</b> meshes, materials and sounds from your project, and your Script Assets. See <a href="#custom-assets">Your own assets</a>.</li>
+<li><b>Stops the publish with an error:</b> unsupported actors, post-process volumes, extra components on an actor Mantle knows by class (such as a Static Mesh Actor with a light added), names, tags or material overrides over the limits below, meshes over the mesh limits, an empty level, and a World Partition level with cells the editor hasn't loaded (load the whole level first). See <a href="/docs/creators/#validation">What "Check this place" catches</a>.</li></ul>
 <div class="table-wrap"><table><thead><tr><th>Limit</th><th>Value</th></tr></thead><tbody>
 <tr><td>Place file size</td><td class="num">8 MiB</td></tr>
 <tr><td>Objects / nesting depth</td><td>No limit</td></tr>
 <tr><td>Name / tag length</td><td>80 / 40 characters</td></tr>
 <tr><td>Material overrides per mesh</td><td>Slots 0 to 15</td></tr>
+<tr><td>Sound, decoded, per place</td><td class="num">64 MiB</td></tr>
+<tr><td>Physics objects <span class="status wip">Next release</span></td><td class="num">500 per place; "Check this place" warns above 200</td></tr>
+<tr><td>Mantle Effects <span class="status wip">Next release</span></td><td class="num">64 per place</td></tr>
+<tr><td>Instanced meshes <span class="status wip">Next release</span></td><td class="num">100,000 instances per place</td></tr>
+<tr><td>Crowds <span class="status wip">Next release</span></td><td class="num">8 Crowd Spawners and 200 people per place</td></tr>
+<tr><td>Vehicle Spawns <span class="status wip">Next release</span></td><td class="num">32 per place</td></tr>
+<tr><td>Scatter instances <span class="status wip">Next release</span></td><td class="num">200,000 per Scatter volume and per place</td></tr>
+<tr><td>Joints <span class="status wip">Next release</span></td><td class="num">200 per place; "Check this place" warns above 100</td></tr>
 </tbody></table></div>
+
+<h3 id="prefabs">Blueprint prefabs <span class="status live">Live</span></h3>
+<p>You can place a Blueprint actor, such as a Fab prefab, as it is. Its static meshes (visible in game), point and spot lights, Box and Sphere collision, and audio components with a sound Mantle can publish each become a part of a group with the actor's name, transform and tags. Each part is named after its component, which is also the name scripts find it by.</p>
+<ul>
+<li>Other parts a player could see or touch, such as capsules, skeletal meshes, decals, directional lights and hidden meshes that still collide, are left out, and "Check this place" names them: "has components Mantle drops when publishing: …. The rest of the actor publishes."</li>
+<li>The Blueprint's graph logic isn't published, with a warning.</li>
+<li>A prefab stays still unless it has Blueprint logic or you set one of its components to Movable yourself.</li>
+<li>A Blueprint based on a class Mantle already knows, such as Static Mesh Actor, keeps that class's rules, so an extra light on it is still an error.</li>
+</ul>
+
+<h3 id="sounds">Sounds <span class="status wip">In progress</span></h3>
+<p>An Ambient Sound publishes with your own Sound Wave, imported from a WAV. It publishes today, but only the next game release plays it.</p>
+<ul>
+<li>Mono or stereo, 22,050 to 48,000 Hz, at most 60 seconds and 12 MiB. All the sounds a place uses can add up to 64 MiB once decoded.</li>
+<li>Sound Cues and MetaSounds can't be published: "is a Sound Cue, and Mantle publishes sound waves only (a cue is a graph players' clients don't run)". Edits made to the waveform inside Unreal aren't published either.</li>
+<li><span class="status wip">Next release</span> An Ambient Sound with <b>Auto Activate</b> turned off waits for a script to play it.</li>
+<li>Scripts can play any sound the place publishes, including sounds listed under <a href="#script-assets">Script Assets</a> (script API 1.12).</li>
+<li>Mantle has no built-in sounds.</li>
+</ul>
+
+<h3 id="script-assets">Assets your scripts use <span class="status live">Live</span></h3>
+<p>Everything placed in the level is published automatically. For a mesh, material or sound wave that only a script uses, add it to <b>Script Assets</b> under <b>Mantle → Scripts</b> in Place settings. It's checked and uploaded like placed content. The publish log has one line per asset, <code>Script asset /Game/Props/SM_Boulder.SM_Boulder = ast_u…</code>, and the read-only <b>Script Asset Ids</b> list shows the same ids until you close the editor. Use the id in your script. A texture, Sound Cue, MetaSound or deleted asset in the list is an error. The script members that use these ids arrive in script API 1.8 and 1.12 (see <a href="/docs/scripting/concepts/#script-assets">Core concepts</a>).</p>
+
+<h3 id="decals">Decals <span class="status wip">Next release</span></h3>
+<p>Give a Decal Actor a Material Instance of <code>M_MantleDecal</code>, or <code>M_MantleDecal_Normal</code> for a decal with a normal map. The base colour's alpha is the decal's shape. With your own decal material, only its base colour (and normal) texture is published, with a warning. A surface material is refused, and the message names <code>M_MantleDecal</code>. Sort Order runs from -1,000 to 1,000.</p>
+
+<h3 id="skeletal">Animated meshes <span class="status wip">Next release</span></h3>
+<p>A Skeletal Mesh Actor publishes with its own skeleton when its <b>Animation Mode</b> is <b>Use Animation Asset</b> with one animation. An Animation Blueprint is an error: "Set its Animation Mode to Use Animation Asset…". Every player sees the clip in step, and scripts can change it (script API 1.18).</p>
+<ul>
+<li>Mesh: at most 100,000 triangles, 8 material slots, 256 bones and 8 bone influences per vertex, one LOD, no collision.</li>
+<li>Clip: at most 60 seconds, 60 frames per second, 256 bones and 8 MiB. A clip only plays on a mesh with the same skeleton.</li>
+</ul>
+
+<h3 id="terrain">Terrain <span class="status wip">Next release</span></h3>
+<p>A Landscape publishes as a terrain. In Place settings, under <b>Mantle → Terrain → Terrain Layers</b>, map each paint layer to a material, with a tiling size in cm (400 by default).</p>
+<ul>
+<li>One landscape and at most 4 painted layers per place. Landscape holes are refused.</li>
+<li>A landscape more than 2,049 samples on a side is resampled, with a warning.</li>
+<li>Grass and landscape splines aren't published.</li>
+</ul>
+
+<h3 id="instances">Foliage and instanced meshes <span class="status wip">Next release</span></h3>
+<p>Painted foliage, Instanced Static Mesh components and generated PCG output publish as instanced meshes: at most 100,000 instances in a place. Mirrored or zero-scale instances, PCG set to <b>Generate At Runtime</b> or not generated yet, spline meshes and unsaved dynamic meshes are errors. Per-instance custom data is dropped with a warning.</p>
+
+<h3 id="physics">Physics objects <span class="status wip">Next release</span></h3>
+<p>Tick <b>Simulate Physics</b> on a Static Mesh Actor to make it a physics object: the server simulates it and every player sees it move. Its mass (0.1 to 100,000 kg), damping and gravity are kept. Give it the tag <code>MantleAnchored</code> to start it pinned in place until a script lets it go. It simulates on the mesh's simple collision, or a box the size of the mesh when it has none, with a warning. Scripts can push it and listen for hits (script API 1.15).</p>
+<p>Its surface comes from its <b>Phys Material Override</b>, else its mesh's simple-collision physical material. Mantle maps it to one of six presets: <code>default</code>, <code>rubber</code>, <code>ice</code>, <code>metal</code>, <code>wood</code> or <code>stone</code>, each with its own friction, bounciness and density. Mantle's own preset materials map exactly; anything else maps by name (rubber/bouncy, ice/icy/slippery, metal/steel/iron/aluminum, wood/wooden/timber/plank, stone/rock/concrete/brick/marble) or by how closely its friction and bounciness match a preset. If nothing matches, it publishes as <code>default</code> and "Check this place" names the actor and the material. Scripts can read and change it (script API 1.28).</p>
+<p>Players push a physics object gently as they walk into it: a light object slides rather than flying off, and standing on one doesn't spin it or pop you off. A physics object heavy enough that a player's push can't slide it can be climbed or vaulted like static geometry; a lighter one can't, so a light crate that would tip or slide away is jumped over, not onto. To make something climbable, make it heavier, anchor it, or use static (non-physics) geometry instead.</p>
+
+<h3 id="effects">Particle effects <span class="status wip">Next release</span></h3>
+<p>Place a <b>Mantle Effect</b> (Place Actors → All Classes) and pick one of five built-in effects: Smoke, Fire, Sparks, Dust or Glow. You can change its colour, particle size (1 to 1,000 cm), rate (up to 200 a second), speed (up to 5,000 cm/s) and lifetime (0.05 to 10 s), and whether it plays on load and loops. Particles leave along the actor's up direction. You can't upload your own particle systems. Players see effects once the next game release is out.</p>
+
+<h3 id="crowds">Crowds <span class="status wip">Next release</span></h3>
+<p>A <b>Mantle Crowd Spawner</b> fills lanes you draw with ambient people who walk them. Each spawner has 1 to 100 people, 1 to 16 lanes of 2 to 64 points, up to 16 looks, and up to 16 points of interest that people step off their lane to visit. A place can have 8 spawners and 200 people in all. Scripts can thin, pause or reseed a crowd (script API 1.16).</p>
+
+<h3 id="scatter">Scatter fields <span class="status wip">Next release</span></h3>
+<p>Place a <b>Mantle Scatter Volume</b> (Place Actors, search "Mantle Scatter") to fill a box with a field of instanced meshes, such as rocks or grass clumps, without painting foliage by hand. Set <b>Half Extent</b> (the box's size, in cm; Z 0 is a flat layer) and <b>Density</b> (instances per square metre of the box's footprint), add 1 to 16 <b>Meshes</b> (each with a <b>Weight</b> and optional material overrides), pick a scale range and an <b>Alignment</b> (Upright turns instances about their vertical axis only, Tilted also leans them up to <b>Max Tilt</b>, Tumbled turns them any way), and set a <b>Seed</b>. The level shows the field as you edit it, and moving the volume moves the field without reshuffling it; changing the seed does.</p>
+<ul>
+<li>The seed and settings decide the field, so it looks the same for everyone, and even a large field doesn't slow the server down.</li>
+<li>Instances are visual only: no collision, and nothing for navigation. Walking through a scatter field never blocks you.</li>
+<li>At most 200,000 instances from one Scatter volume, and 200,000 in a place in all. "Check this place" names a volume with no meshes, or set to make more instances than the cap allows.</li>
+</ul>
+
+<h3 id="joints">Joints <span class="status wip">Next release</span></h3>
+<p>Place an engine <b>Physics Constraint Actor</b> between two Static Mesh Actors that have <b>Simulate Physics</b> on (its first constrained actor is the moving one; leave the second empty to join it to the world instead of another object) to publish a joint. It becomes one of three kinds, depending on how you set it up:</p>
+<div class="table-wrap"><table><thead><tr><th>Kind</th><th>Set the Constraint Actor's Linear and Angular limits to</th></tr></thead><tbody>
+<tr><td>Weld</td><td>Linear X, Y and Z Locked, and Swing 1, Swing 2 and Twist Locked. The two move as one.</td></tr>
+<tr><td>Hinge</td><td>Linear X, Y and Z Locked, and exactly one of Twist, Swing 1 or Swing 2 set to Free or Limited (its Angular Rotation Offset biases the limit), the other two Locked. The starting angle must be inside the limit.</td></tr>
+<tr><td>Rope</td><td>Linear X, Y and Z all Limited (Linear Limit Size is the rope's length), and every angle Free.</td></tr>
+</tbody></table></div>
+<p>Anything else, such as a motor or drive, a partially locked linear axis, two free angles, or an end that isn't set to simulate, is left out of the place, and "Check this place" names it with the fix. <b>Linear</b> and <b>Angular Break Threshold</b> become the joint's break force, so a hard enough hit snaps a weld or hinge, or lets a rope tear free; leave them at 0 for a joint that never breaks. A place can have 200 joints; "Check this place" warns above 100. Every player sees the two objects move as the joint holds them, and scripts can create, listen to and remove joints too (see the <a href="/docs/scripting/">scripting guide</a>).</p>
 
 <h2 id="assets">Assets</h2>
 <h3 id="library">Built-in library <span class="status live">Live</span></h3>
@@ -52,23 +147,38 @@
 </ul>
 
 <h3 id="custom-assets">Your own assets <span class="status live">Live</span></h3>
-<p>You can use static meshes and materials from your own project, such as a Fab pack. You don't upload them yourself: when you publish, Mantle picks up every mesh and material the level uses that isn't in the library and gets it ready for the game. Later publishes are quicker, because files you've already uploaded aren't sent again. For the full walkthrough, every limit and message, and how to fix problems, see <a href="/docs/creators/custom-assets/">Custom meshes and materials</a>.</p>
+<p>You can use static meshes, materials and sounds from your own project, such as a Fab pack. You don't upload them yourself: when you publish, Mantle picks up every mesh, material and sound the level uses that isn't in the library and gets it ready for the game. Later publishes are quicker, because files you've already uploaded aren't sent again. For the full walkthrough, every limit and message, and how to fix problems, see <a href="/docs/creators/custom-assets/">Custom meshes and materials</a>.</p>
 <div class="table-wrap"><table><thead><tr><th>Kind</th><th>Rules</th></tr></thead><tbody>
-<tr><td>Mesh</td><td>Up to 500,000 triangles, 1,500,000 vertices and 8 material slots. Nanite meshes are sent as their fallback mesh, so raise Fallback Triangle Percent if it looks too coarse. A mesh whose material sections share vertices can't be converted.</td></tr>
-<tr><td>Material</td><td>Converted to work in the game. Opaque, masked and translucent materials work, one- or two-sided. Effects that can't be kept (such as animated materials, wind, refraction, subsurface scattering, parallax and vertex-colour blending) show as warnings in "Check this place". The material still publishes.</td></tr>
+<tr><td>Mesh</td><td>Up to 500,000 triangles, 1,500,000 vertices and 8 material slots, plus up to two lower-detail LODs and simple collision. Nanite meshes are sent as their fallback mesh, so raise Fallback Triangle Percent if it looks too coarse. A mesh whose material sections share vertices can't be converted.</td></tr>
+<tr><td>Material</td><td>Converted to work in the game. Opaque, masked and translucent materials work, one- or two-sided. Effects that can't be kept (such as animated materials, wind, refraction, subsurface scattering and parallax) show as warnings in "Check this place", and the material still publishes. Some settings wait for the next release: see <a href="/docs/creators/custom-assets/#materials">Materials</a>.</td></tr>
 <tr><td>Texture</td><td>Up to 2048 on a side. Larger textures are scaled down when you publish. Screened automatically.</td></tr>
-<tr><td>Sound</td><td>Not supported yet</td></tr>
+<tr><td>Sound</td><td>A Sound Wave from a WAV: mono or stereo, 22,050 to 48,000 Hz, up to 60 seconds. See <a href="#sounds">Sounds</a>.</td></tr>
 </tbody></table></div>
 <p>A world can't go live until every file it uses has been processed and approved. See <a href="/docs/creators/publishing/#publish-flow">How publishing works</a>.</p>
 
-<h3 id="custom-vehicles">Your own vehicles <span class="status planned">Planned</span></h3>
-<p>Uploading your own cars and other vehicles is coming later. See the <a href="/docs/creators/vehicles/">Vehicles</a> guide for how converting a car will work.</p>
+<h3 id="custom-vehicles">Your own vehicles <span class="status wip">Next release</span></h3>
+<p><b>Tools → Mantle → Convert vehicle</b> turns a car's skeletal mesh into a Mantle vehicle, and a <b>Mantle Vehicle Spawn</b> places it in your level. See the <a href="/docs/creators/vehicles/">Vehicles</a> guide.</p>
 
 <h2 id="environment">Sky and environment</h2>
 <ul>
 <li><span class="status live">Live</span> <b>Default sky:</b> Mantle adds an atmosphere, a real-time sky light, clouds and fog to your world. If your place has no Directional Light, Mantle also adds a sun (intensity 3.5).</li>
+<li><span class="status live">Live</span> <b>Day, night and weather:</b> every server shares a day that lasts 30 real minutes and starts at 9:00, with sunrise at 6:00, sunset at 18:00, and a moon with phases and stars at night. The weather changes on its own between clear, partly cloudy, overcast, rain and storms with lightning. The first Directional Light becomes the sun: its intensity, colour and compass direction are kept, but Mantle moves it through the day ("Mantle moves the sun; this light's pitch is not kept."). Scripts can read and change the time and weather (script API 1.4 and 1.11). Rain falls around the camera and stops under cover. Weather has no sound yet.</li>
 <li><span class="status live">Live</span> <b>Lights</b> are all Movable in the published world, and no lighting is baked.</li>
 <li><span class="status planned">Planned</span> <b>Custom sky</b>.</li>
 <li><span class="status planned">Planned</span> <b>Post-process</b>.</li>
-<li><span class="status planned">Planned</span> <b>Landscape, foliage and water</b> support.</li>
+<li><span class="status planned">Planned</span> <b>Water</b> support.</li>
 </ul>
+
+<h3 id="default-look">The place's default look <span class="status wip">Next release</span></h3>
+<p>Without touching a script, you can set the look every player starts in: choose <b>Tools → Mantle → Place settings</b> and open the <b>Mantle | Environment</b> category. Every field is optional, and a level that leaves them alone publishes none of this.</p>
+<div class="table-wrap"><table><thead><tr><th>Field</th><th>What it sets</th></tr></thead><tbody>
+<tr><td>Clock Time (behind its own tick box)</td><td>The hour the clock is at when the server starts (0 to 24). It runs on from there at Time Scale, so it isn't frozen at that hour.</td></tr>
+<tr><td>Time Scale</td><td>How fast the clock runs: 1 is the normal day, 0 stops it, 2 runs it twice as fast (0 to 60).</td></tr>
+<tr><td>Weather</td><td>Natural lets it change on its own; any other setting (Clear, Partly Cloudy, Overcast, Rain, Storm) holds it there until a script changes it.</td></tr>
+<tr><td>Color Tint</td><td>A colour multiplied over the whole picture. White (the default) leaves it unchanged.</td></tr>
+<tr><td>Saturation</td><td>0 is black and white, 1 (the default) unchanged, 2 doubled.</td></tr>
+<tr><td>Bloom (behind its own tick box)</td><td>How strongly bright things glow, 0 (no glow) to 4. Left unticked, the game's own bloom is used.</td></tr>
+<tr><td>Color Grading</td><td>A colour-grading look for the whole picture: Warm, Cool, Noir, Sepia, Vivid or Faded. None (the default) keeps the game's own look. Presets are a fixed list; you can't upload your own yet.</td></tr>
+<tr><td>Color Grading Intensity</td><td>How strongly Color Grading shows: 1 (the default) is the full look, 0 is none of it.</td></tr>
+</tbody></table></div>
+<p>A server script's changes to the environment still win over these: they're the starting point a script's writes build on, not a floor under them. See the <a href="/docs/scripting/">scripting guide</a>'s Environment section for the full script API.</p>

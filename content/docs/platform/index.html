@@ -23,23 +23,8 @@
 <li><span class="status wip">In progress</span> Tuning and larger-scale tests.</li>
 </ul>
 
-<h2 id="performance">Performance testing <span class="status live">Live</span></h2>
-<p>We load-test Mantle game servers with bot players joining over the internet, the same way real players do. Each bot walks, sprints, jumps and stands around at random. Based on that testing, here is what a server uses at each player count:</p>
-<div class="table-wrap"><table><thead><tr><th>Moving players</th><th>Server CPU (one core)</th><th>Server memory</th></tr></thead><tbody>
-<tr><td class="num">10</td><td class="num">5.7%</td><td class="num">482 MB</td></tr>
-<tr><td class="num">25</td><td class="num">12.4%</td><td class="num">537 MB</td></tr>
-<tr><td class="num">50</td><td class="num">23.6%</td><td class="num">613 MB</td></tr>
-<tr><td class="num">75</td><td class="num">35%</td><td class="num">690 MB</td></tr>
-<tr><td class="num">100</td><td class="num">46%</td><td class="num">770 MB</td></tr>
-</tbody></table></div>
-<ul>
-<li><b>Smooth at 50 players:</b> no slowdowns or errors throughout.</li>
-<li><b>Fast joins:</b> all 50 players joined in about 40 seconds.</li>
-<li><b>Room to grow:</b> a single CPU core ran 50 players using about a quarter of its capacity, and memory stayed flat for the whole test.</li>
-</ul>
-
-<h3 id="server-specs">Recommended server specs</h3>
-<p>If you plan to host a world yourself, these are the specs we recommend for the whole machine, including the operating system. They leave headroom for worlds with scripts, weapons and vehicles, which use more than the test above.</p>
+<h2 id="server-specs">Recommended server specs</h2>
+<p>If you plan to host a world yourself, these are the specs we recommend for the whole machine, including the operating system. They leave headroom for worlds with scripts, weapons and vehicles.</p>
 <div class="table-wrap"><table><thead><tr><th>Players</th><th>Linux CPU</th><th>Linux memory</th><th>Windows CPU</th><th>Windows memory</th><th>Upload speed</th></tr></thead><tbody>
 <tr><td class="num">Up to 10</td><td>1 core</td><td class="num">2 GB</td><td>2 cores</td><td class="num">4 GB</td><td class="num">5 Mbps</td></tr>
 <tr><td class="num">Up to 25</td><td>1 core</td><td class="num">2 GB</td><td>2 cores</td><td class="num">4 GB</td><td class="num">10 Mbps</td></tr>

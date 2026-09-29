@@ -19,7 +19,6 @@
 <li>Revoking a token in Settings stops it at once. If a token is revoked or expires, the editor signs you out and asks for a new one the next time you save or publish.</li>
 <li>If a pasted token isn't right, you'll see why, for example "That isn't a creator token: they start with mct1. Create one in the Mantle game under Settings > Account > Creator tokens."</li>
 </ul>
-<p>You'll find the Mantle server address in <b>Project Settings → Plugins → Mantle → Connection → Api Base Url</b>.</p>
 
 <h2 id="editor">The Mantle editor tools <span class="status live">Live</span></h2>
 <p>You'll find these commands under <b>Tools → Mantle</b>:</p>
@@ -41,18 +40,18 @@
 
 <h2 id="validation">What "Check this place" catches <span class="status live">Live</span></h2>
 <div class="table-wrap"><table><thead><tr><th>Level</th><th>Message</th></tr></thead><tbody>
-<tr><td>Error</td><td>"is a [type], which Mantle cannot publish." Remove or replace it. You can publish static meshes, groups, player starts, point, spot and directional lights, trigger volumes and ambient sounds.</td></tr>
+<tr><td>Error</td><td>"is a [type], which Mantle cannot publish." Remove or replace it. See <a href="/docs/creators/building/#entities">What you can place</a> for everything you can publish.</td></tr>
 <tr><td>Error</td><td>Post-process volumes: "Post-process settings are not published yet, so the volume would be dropped."</td></tr>
 <tr><td>Error</td><td>"has an extra [component] component ('…') that Mantle cannot publish."</td></tr>
 <tr><td>Error</td><td>"has no mesh assigned."</td></tr>
-<tr><td>Error</td><td>Ambient Sound actors: "has no sound assigned." or "uses sound '…'. Custom sounds can't be published yet (uploading your own sounds with your place is coming), so remove this AmbientSound for now."</td></tr>
+<tr><td>Error</td><td>Ambient Sound actors: "has no sound assigned.", or a sound Mantle can't publish, such as a Sound Cue, a MetaSound or a sound over 60 seconds. See <a href="/docs/creators/building/#sounds">Sounds</a>.</td></tr>
 <tr><td>Error</td><td>Size limits: "has a name N characters long; Mantle publishes names of at most 80.", "has tag '…', N characters long; Mantle publishes tags of at most 40." and "overrides material slot N; Mantle publishes overrides on slots 0 to 15 only."</td></tr>
 <tr><td>Error</td><td>Meshes from your project over the limits, for example "Mesh '…' has N triangles; a place mesh may have at most 500,000." Vertices (1,500,000) and material slots (8) are checked the same way. See <a href="/docs/creators/building/#custom-assets">Your own assets</a>.</td></tr>
-<tr><td>Error</td><td>"uses texture '…' at WxH, above the 2048 limit." (a library material override)</td></tr>
 <tr><td>Error</td><td>Mantle Place Settings: "limits the place to some platforms but selects none."</td></tr>
 <tr><td>Error</td><td>"This level is empty."</td></tr>
 <tr><td>Error</td><td>Script files with an unknown extension, or outside the <code>Server/</code>, <code>Client/</code> or <code>Shared/</code> folders (folder names must match exactly, including capitals). Also visual script compile errors and <code>require</code> errors.</td></tr>
-<tr><td>Warning</td><td>BSP brushes, volumes, placed pawns, landscape and foliage are named, for example "is BSP geometry, which Mantle does not publish." or "is a landscape, which Mantle cannot publish yet." The rest of the place still publishes without them.</td></tr>
+<tr><td>Warning</td><td>BSP brushes, volumes, placed pawns and cameras are named, for example "is BSP geometry, which Mantle does not publish." The rest of the place still publishes without them.</td></tr>
+<tr><td>Warning</td><td>Blueprint logic, and prefab components Mantle drops: "Blueprint logic isn't published: the place gets this actor's components, not its behaviour." See <a href="/docs/creators/building/#prefabs">Blueprint prefabs</a>.</td></tr>
 <tr><td>Warning</td><td>"Mantle provides the sky; this actor's settings are not published." (Sky Atmosphere, Sky Light, Volumetric Cloud, Exponential Height Fog)</td></tr>
 <tr><td>Warning</td><td>Materials from your project that lose an effect when they're converted, and textures above 2048 that are scaled down. See <a href="/docs/creators/building/#custom-assets">Your own assets</a>.</td></tr>
 <tr><td>Warning</td><td>"This place has no player start, so everyone will arrive, and respawn, at Mantle's default spawn point about 2 m above the world origin."</td></tr>
@@ -60,8 +59,9 @@
 </tbody></table></div>
 <div class="callout tip"><strong>Things that aren't published</strong>
 <ul>
-<li>BSP brushes, engine volumes (Trigger Volume, Blocking Volume and so on), placed pawns, landscape and foliage are left out of the published world. Use static meshes instead, and use Trigger Box or Trigger Sphere actors for trigger areas.</li>
-<li>Ambient Sound actors can't be used yet: Mantle has no built-in sounds, and you can't upload your own yet.</li>
+<li>BSP brushes, engine volumes (Trigger Volume, Blocking Volume and so on) and placed pawns are left out of the published world. Use static meshes instead, and use Trigger Box or Trigger Sphere actors for trigger areas.</li>
+<li>Landscape, foliage, skeletal meshes, Rect Lights, decals, physics objects, Scatter fields and joints are checked, but can't be published until the next game release. See <a href="/docs/creators/building/#entities">What you can place</a>.</li>
+<li>Ambient Sounds publish with your own sound waves, and players hear them once the next game release is out. Mantle has no built-in sounds.</li>
 <li>Actors set to Movable stay dynamic in the published world.</li>
 <li>Actor tags are kept, so your scripts can find things by tag.</li>
 </ul></div>

@@ -9,18 +9,18 @@
 <ul>
 <li><b>A machine that meets the <a href="/docs/platform/#server-specs">recommended specs</a></b> for the number of players you want.</li>
 <li><b>A server key</b> for your Mantle account. Create one in the Mantle app under <b>Settings &gt; Account &gt; Hosting</b>: type a server name (3 to 48 characters) and press <b>Create server</b>. Players see that name in the world's server list. The key is shown only once, so copy it somewhere safe. Anyone holding it can run a server as you. Each account can have 5 servers, and each server has one key.</li>
-<li><b>The Mantle server package</b>, which contains <code>mantle-server</code>, the game server and the server terms. Download it from <b>Download server build</b> in the same Hosting section. <b>Open</b> downloads it in your browser, and <b>Copy link</b> copies a link you can use on the machine that will run the server. Each link works for an hour.</li>
+<li><b>The Mantle server package</b>, which contains <code>mantle-server</code>, the game server and the server terms. Download it from <b>Download server build</b> in the same Hosting section. <b>Open</b> downloads it in your browser, and <b>Copy link</b> copies a link you can use on the machine that will run the server. Each link works for an hour. You only need to do this once: after that, <code>mantle-server</code> <a href="#updates">keeps itself and the game server up to date</a>.</li>
 <li><b>A public address</b> players can reach: your public IP address or a domain name that points to it.</li>
 <li><b>A UDP port</b> you can open. The default is 7777.</li>
 </ul>
 
 <ol class="steps">
 <li><b>Unpack the package</b><p>Extract it into its own folder and run every command below from inside that folder.</p></li>
-<li><b>Create your settings file</b><p>Run <code>mantle-server init</code>. It asks for the Mantle API URL, your server key, the world's place id (<code>plc_…</code>), a server name and your public address, then writes them to <code>server.json</code>. You can pass any of them as flags instead (see below). Read the server terms (<code>SERVER_TERMS.md</code>) and add <code>-accept-terms</code> to accept them. The server won't start until you do.</p></li>
+<li><b>Create your settings file</b><p>Run <code>mantle-server init</code>. It asks for the Mantle API URL, the world's place id (<code>plc_…</code>), a server name and your public address, and writes them to <code>server.json</code>. It also asks for your server key without showing it on screen, and saves it in a separate file, <code>server.key</code>, next to <code>server.json</code>. You can pass the settings as flags instead (see below). Read the server terms (<code>SERVER_TERMS.md</code>) and add <code>-accept-terms</code> to accept them. The server won't start until you do.</p></li>
 <li><b>Open the port</b><p>Allow the UDP port through your firewall. If the machine is behind a home router, forward the port on the router too. On a VPS, also open it in your provider's firewall or security group.</p></li>
 <li><b>Check your setup</b><p>Run <code>mantle-server check</code>. It checks your settings, confirms your server key works and makes sure the port is free on this machine. It also prints the firewall command for your system.</p></li>
 <li><b>Start the server</b><p>Run <code>mantle-server run</code>. It registers your server, downloads the world, starts the game server and lists it on the world's Servers tab. Leave it running for as long as you want to host.</p></li>
-<li><b>Stop the server</b><p>Press <kbd>Ctrl</kbd>+<kbd>C</kbd> to shut it down cleanly.</p></li>
+<li><b>Stop the server</b><p>Press <kbd>Ctrl</kbd>+<kbd>C</kbd>, or run <code>mantle-server stop</code> from another terminal, to shut it down cleanly.</p></li>
 </ol>
 
 <div class="code"><span class="tag">Example</span><pre>mantle-server init -name "Sunset Hills EU" -address 203.0.113.10 -port 7777 -max-players 32 -region EU -accept-terms
@@ -28,12 +28,23 @@ mantle-server check
 mantle-server run</pre></div>
 
 <div class="table-wrap"><table><thead><tr><th>Command</th><th>What it does</th></tr></thead><tbody>
-<tr><td><code>mantle-server init</code></td><td>Writes <code>server.json</code>. Flags: <code>-api-url</code>, <code>-key</code>, <code>-place</code>, <code>-name</code>, <code>-address</code>, <code>-port</code> (default 7777), <code>-max-players</code> (default 16), <code>-region</code>, <code>-server-dir</code>, <code>-log-dir</code>, <code>-accept-terms</code>, <code>-config</code> (where to write the file) and <code>-force</code> (overwrite an existing <code>server.json</code>). It asks for anything required that you leave out.</td></tr>
+<tr><td><code>mantle-server init</code></td><td>Writes <code>server.json</code>, and <code>server.key</code> if you enter a key. Flags: <code>-api-url</code>, <code>-place</code>, <code>-name</code>, <code>-address</code>, <code>-port</code> (default 7777), <code>-max-players</code> (default 16), <code>-region</code>, <code>-server-dir</code>, <code>-log-dir</code>, <code>-accept-terms</code>, <code>-config</code> (where to write the file) and <code>-force</code> (overwrite an existing <code>server.json</code>). It asks for anything required that you leave out.</td></tr>
+<tr><td><code>mantle-server key set</code></td><td>Stores a new server key in <code>server.key</code>, read from the keyboard or a pipe. (<code>init -key</code> still works, but it leaves the key in your shell history.)</td></tr>
 <tr><td><code>mantle-server check</code></td><td>Checks your settings, key and port, and prints firewall guidance.</td></tr>
 <tr><td><code>mantle-server run</code></td><td>Registers, starts the game server and keeps it running.</td></tr>
+<tr><td><code>mantle-server status</code></td><td>Shows what the running server is doing. <code>-json</code> prints it as JSON.</td></tr>
+<tr><td><code>mantle-server stop</code> / <code>restart</code></td><td>Stops the server, or closes the session and starts a new one. Add <code>-force</code> if players are on it.</td></tr>
+<tr><td><code>mantle-server drain</code></td><td>Hides the server from the Servers tab and turns away new players; the players on it keep playing, and it restarts once it's empty. <code>-stop</code> stops it instead, and <code>-cancel</code> undoes a drain.</td></tr>
+<tr><td><code>mantle-server logs</code></td><td>Prints recent log lines (100 by default, <code>-n</code> to change). <code>-f</code> keeps following them.</td></tr>
+<tr><td><code>mantle-server service install</code> / <code>uninstall</code> / <code>status</code></td><td>Runs <code>mantle-server run</code> as a systemd service on Linux or a Windows service, so it starts with the machine.</td></tr>
+<tr><td><code>mantle-server instance new &lt;name&gt;</code> / <code>instance list</code></td><td>Sets up another server on the same machine in <code>instances/&lt;name&gt;/</code>, with its own <code>server.json</code>, <code>server.key</code> and the next free port from 7777. Instances share downloaded server builds.</td></tr>
+<tr><td><code>mantle-server update</code></td><td>Downloads, checks and installs the current server build, and updates <code>mantle-server</code> itself. <code>-check</code> only looks.</td></tr>
+<tr><td><code>mantle-server rollback</code></td><td>Makes the previous server build current again, and holds back the one you left until you run <code>update</code>.</td></tr>
+<tr><td><code>mantle-server ui</code></td><td>Opens a local web page with the server's status and logs, and buttons to restart, drain and stop it (see below).</td></tr>
 <tr><td><code>mantle-server version</code></td><td>Prints the version of <code>mantle-server</code> and of the server package.</td></tr>
 </tbody></table></div>
-<p><code>check</code> and <code>run</code> also take <code>-config</code> if your settings file isn't <code>server.json</code> in the current folder.</p>
+<p>Most commands take <code>-config</code> if your settings file isn't <code>server.json</code> in the current folder. <code>status</code>, <code>stop</code>, <code>restart</code>, <code>drain</code> and <code>logs</code> talk to the running <code>mantle-server run</code>, and exit with code 10 if none is running there.</p>
+<p><code>mantle-server ui</code> only listens on this machine (127.0.0.1). It prints a sign-in link that works once, within 10 minutes; a sign-in lasts 12 hours. The page can't change <code>server.json</code> or install builds. To reach it from another computer, use an SSH tunnel.</p>
 
 <div class="table-wrap"><table><thead><tr><th>System</th><th>Firewall command</th></tr></thead><tbody>
 <tr><td>Windows</td><td><code>netsh advfirewall firewall add rule name="Mantle server" dir=in action=allow protocol=UDP localport=7777</code></td></tr>
@@ -42,37 +53,74 @@ mantle-server run</pre></div>
 </tbody></table></div>
 
 <h3 id="server-json">Server settings</h3>
-<p>You can edit <code>server.json</code> by hand at any time. Restart <code>mantle-server</code> afterwards.</p>
+<p>You can edit <code>server.json</code> by hand at any time. Restart <code>mantle-server</code> afterwards. Your server key isn't in this file: <code>mantle-server</code> reads it from the <code>MANTLE_SERVER_KEY</code> environment variable if that's set, then from a systemd credential, then from <code>server.key</code> next to <code>server.json</code>. An older <code>server.json</code> with a <code>serverKey</code> setting still works, with a warning; move the key with <code>mantle-server key set</code>.</p>
 <div class="table-wrap"><table><thead><tr><th>Setting</th><th>What it does</th><th>Default</th></tr></thead><tbody>
-<tr><td><code>apiUrl</code> / <code>serverKey</code> / <code>placeId</code></td><td>The Mantle API URL, your server key and the world to host</td><td>None (required)</td></tr>
+<tr><td><code>apiUrl</code> / <code>placeId</code></td><td>The Mantle API URL and the world to host</td><td>None (required)</td></tr>
 <tr><td><code>name</code></td><td>A name for this server in your settings. Players see the name you gave the server in Settings &gt; Account &gt; Hosting.</td><td>None (required)</td></tr>
 <tr><td><code>publicAddress</code></td><td>The address players connect to. It must match the address your server connects to Mantle from.</td><td>None (required)</td></tr>
 <tr><td><code>port</code></td><td>The UDP port players connect on</td><td>7777</td></tr>
 <tr><td><code>maxPlayers</code></td><td>How many players can join. It can't be higher than the world's own limit. If it's missing, the world's limit is used.</td><td>16 (set by <code>init</code>)</td></tr>
 <tr><td><code>region</code></td><td>A short label shown to players, such as EU or US East</td><td>None</td></tr>
+<tr><td><code>privateServerAttachCode</code></td><td>Runs this server for a private server instead of the public list (see <a href="#private">Private community servers</a>). Leave it out for a public server.</td><td>None (public)</td></tr>
 <tr><td><code>restart</code></td><td><code>"always"</code> restarts the game server if it stops. <code>"never"</code> stops instead, which helps when you're troubleshooting a crash.</td><td><code>"always"</code></td></tr>
+<tr><td><code>restartDelaySeconds</code></td><td>How long to wait before restarting a game server that stopped</td><td>5</td></tr>
+<tr><td><code>onRepublish</code></td><td>What to do when the creator publishes a new version of the world: <code>"restart-when-empty"</code>, <code>"drain"</code> (hide the server and restart once the players leave) or <code>"ignore"</code></td><td><code>"restart-when-empty"</code></td></tr>
+<tr><td><code>restartSchedule</code></td><td>A daily restart time, <code>"HH:MM"</code> in 24-hour time on this machine's clock. At that time the server drains, then restarts once it's empty.</td><td>None</td></tr>
+<tr><td><code>autoUpdate</code></td><td>When to switch to a new server build: <code>"restart-when-empty"</code>, <code>"drain"</code>, <code>"next-restart"</code> or <code>"off"</code></td><td><code>"restart-when-empty"</code></td></tr>
+<tr><td><code>readyTimeoutSeconds</code> / <code>heartbeatSeconds</code></td><td>How long the game server has to start, and how often <code>mantle-server</code> checks in with Mantle</td><td>180 / 30</td></tr>
+<tr><td><code>serverExtraArgs</code></td><td>Extra arguments added to the end of the game server's command line</td><td>None</td></tr>
 <tr><td><code>serverDir</code></td><td>The folder that holds the game server from the package</td><td><code>./MantleServer</code></td></tr>
 <tr><td><code>logDir</code> / <code>keepLogs</code></td><td>Where logs are saved, and how many old logs to keep</td><td><code>./logs</code> / 10</td></tr>
 <tr><td><code>acceptedTerms</code></td><td>Whether you've accepted the server terms</td><td><code>false</code></td></tr>
+<tr><td><code>buildsDir</code>, <code>serviceInstance</code>, <code>controlUsers</code></td><td>Written for you by <code>instance new</code> and <code>service install</code>. You don't need to set them.</td><td>None</td></tr>
 </tbody></table></div>
 
 <h3 id="while-running">While it's running</h3>
 <ul>
 <li><b>Automatic restarts:</b> if the game server crashes, <code>mantle-server</code> restarts it. After 10 crashes in 10 minutes it stops, so check the logs.</li>
 <li><b>Daily restart:</b> the game server has to restart within 24 hours of starting. Near the end of that time, <code>mantle-server</code> restarts it as soon as it's empty, or at the last minute if players are still on it.</li>
-<li><b>New versions of the world:</b> when the creator publishes a new version, your server keeps running the one it started with and players can still join it. It restarts onto the new version once it's empty.</li>
-<li><b>New server builds:</b> Mantle only accepts recent server packages. If yours is too old, <code>mantle-server</code> stops and logs "this package version is no longer accepted" with the current version. Download the new package from Settings &gt; Account &gt; Hosting, unpack it into a new folder, copy your <code>server.json</code> across and start it from there.</li>
-<li><b>Registration can be refused</b> if the key already has a running server, the world isn't published, you aren't allowed to host it, your server package is out of date, your public address doesn't match where the server is connecting from, or the key is registering too often.</li>
+<li><b>New versions of the world:</b> when the creator publishes a new version, your server keeps running the one it started with and players can still join it. It restarts onto the new version once it's empty, or as <code>onRepublish</code> says.</li>
+<li><b>Draining:</b> a draining server is hidden from the Servers tab and turns away new players, but the players on it keep playing. A drain lasts at most until the daily restart.</li>
+<li><b>New server builds:</b> see <a href="#updates">Server builds and updates</a>.</li>
+<li><b>Registration can be refused</b> if the key already has a running server, the world isn't published, you aren't allowed to host it, your server build is out of date and can't be updated, your public address doesn't match where the server is connecting from, the key is registering too often, or an attach code isn't accepted (exit code 14).</li>
 </ul>
 <p>These are the messages you can see while setting up or registering a server:</p>
 <div class="table-wrap"><table><thead><tr><th>Message</th><th>Where</th><th>What to do</th></tr></thead><tbody>
 <tr><td>This server key is registering too quickly.</td><td><code>mantle-server</code></td><td>Wait. It tries again on its own.</td></tr>
 <tr><td>This server key already has a running session.</td><td><code>mantle-server</code></td><td>Stop the other server using this key. If it just crashed, this clears within a couple of minutes.</td></tr>
-<tr><td>not allowed to host this place (not its owner, and it does not allow community servers)</td><td><code>mantle-server</code></td><td>Pick a world you own, or one that allows community servers.</td></tr>
-<tr><td>this package version is no longer accepted</td><td><code>mantle-server</code></td><td>Download the current package (the message names its version).</td></tr>
-<tr><td>publicAddress does not match the address the API saw</td><td><code>mantle-server</code></td><td>Set <code>publicAddress</code> to the address the message shows.</td></tr>
+<tr><td>This account may not host that place.</td><td><code>mantle-server</code></td><td>Pick a world you own, or one that allows community servers.</td></tr>
+<tr><td>That server build is no longer accepted.</td><td><code>mantle-server</code></td><td>With <code>autoUpdate</code> on, <code>mantle-server</code> installs the current build and restarts by itself. If it can't, run <code>mantle-server update</code>, or download the current package by hand.</td></tr>
+<tr><td>The advertised address does not match where this request came from.</td><td><code>mantle-server</code></td><td>Set <code>publicAddress</code> to the address your server connects to Mantle from.</td></tr>
 <tr><td>You already have the maximum number of servers for your account.</td><td>Hosting settings</td><td>Revoke a server you no longer use.</td></tr>
 <tr><td>A server name must be between 3 and 48 characters.</td><td>Hosting settings</td><td>Choose another name.</td></tr>
+</tbody></table></div>
+
+<h3 id="updates">Server builds and updates</h3>
+<p>Mantle only accepts the two newest server builds, and players can only join a server running the same build as their game. <code>mantle-server run</code> keeps up by itself:</p>
+<ul>
+<li>It checks for a new build when it starts and then about once an hour. It downloads the build in the background and installs it next to the current one in <code>builds/</code>, keeping the previous build.</li>
+<li>Every build is signed by Mantle, and <code>mantle-server</code> checks it before installing. A build that fails the check is refused and nothing changes (exit code 13).</li>
+<li>It switches to the new build as <code>autoUpdate</code> says. With the default, <code>"restart-when-empty"</code>, it waits until nobody is playing. Players are never cut off for an update.</li>
+<li>It updates <code>mantle-server</code> itself too, keeping the old copy as <code>mantle-server.old</code>.</li>
+<li>If a new build fails to start twice in a row, <code>mantle-server</code> goes back to the previous one and holds the new one back.</li>
+</ul>
+<p>A <code>mantle-server</code> from before signed builds can't update itself, and says it was built without a server build signing key. Download the current package from Settings &gt; Account &gt; Hosting once, and it updates itself from then on. With <code>autoUpdate</code> set to <code>"off"</code>, run <code>mantle-server update</code> yourself.</p>
+
+<h3 id="private">Private community servers <span class="status live">Live</span></h3>
+<p>A community server can run a private server instead of appearing on the public list. Only the private server's members can see and join it.</p>
+<ol class="steps">
+<li><b>Get an attach code</b><p>The private server's owner opens the world's page, goes to <b>Servers</b>, then <b>Manage</b> on the private server, and chooses <b>Attach a community server</b>. Mantle shows an attach code (16 letters and digits, shown as <code>XXXX-XXXX-XXXX-XXXX</code>) once. It must be used within an hour, and it attaches one server.</p></li>
+<li><b>Add it to server.json</b><p>Set <code>privateServerAttachCode</code> to the code and restart <code>mantle-server</code>. The server key must belong to the private server's owner. The server keeps using the code on every restart.</p></li>
+<li><b>Detach when you're done</b><p>The owner can press <b>Detach</b> on the private server. That stops the server and cancels the code. A key attached to a private server can't register as a public server until it's detached, or until you put the code back in <code>server.json</code>.</p></li>
+</ol>
+<p>A world's scripts can tell they're running on a private server, and who owns it, the same way whether it's hosted by Mantle or attached from a community server (see <a href="/docs/scripting/api/">Server.PrivateServerId</a> in the scripting reference).</p>
+<div class="table-wrap"><table><thead><tr><th>Message</th><th>What to do</th></tr></thead><tbody>
+<tr><td>privateServerAttachCode is not a valid attach code. Ask the private server's owner for a new one.</td><td>Check the code, or get a new one.</td></tr>
+<tr><td>privateServerAttachCode expired before this server used it. Ask the private server's owner for a new one.</td><td>Codes last an hour. Get a new one.</td></tr>
+<tr><td>privateServerAttachCode was already used by another server. Each code attaches one server.</td><td>Get a new code for this server.</td></tr>
+<tr><td>This server key belongs to another account than the private server's owner.</td><td>Use a server key from the private server owner's account.</td></tr>
+<tr><td>This server is attached to a private server. Put its privateServerAttachCode back in server.json, or have the private server's owner detach it first.</td><td>Restore the code, or have the owner detach the server before you run it publicly.</td></tr>
+<tr><td>This place's creator hasn't turned on private servers.</td><td>The world's creator has to allow private servers.</td></tr>
 </tbody></table></div>
 
 <h2 id="players">What players see <span class="status live">Live</span></h2>
@@ -96,5 +144,6 @@ mantle-server run</pre></div>
 <ul>
 <li><b>Saved data stays separate:</b> each community server has its own saved data, so it can never touch a creator's official data.</li>
 <li><b>Operators can't</b> see players' network addresses.</li>
+<li><b>Revoked keys:</b> 30 days after a server's key is revoked, its name is deleted, and its saved data is deleted later.</li>
 <li>Mantle's safety tools, including reporting and blocking, work on community servers the same way as on official ones.</li>
 </ul>

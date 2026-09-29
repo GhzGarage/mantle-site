@@ -1,4 +1,4 @@
-<div class="callout tip"><strong>Scripting is in preview</strong><p>Luau, TypeScript, JavaScript, Python and visual scripts all work in development builds, and hosted sessions are rolling out. Details on these pages may change before general release.</p></div>
+<div class="callout tip"><strong>Scripting is in preview</strong><p>Luau, TypeScript, JavaScript, Python and visual scripts run in published places, in the Mantle client and on its servers. The current script API is 1.31, and the newest game release runs it. A feature that needs something a released game can't build yet is marked <span class="status wip">Next release</span> (see <a href="#versions">API versions</a>). Details on these pages may change before general release.</p></div>
     <h2 id="quick">Five-minute start</h2>
     <ol class="steps">
       <li><b>Find your level's folder</b><p>Your level lives somewhere under <code>Content/</code>, for example <code>Content/MyPlace/MyPlace.umap</code>. Its scripts go in a folder called <code>Scripts</code> right next to it: <code>Content/MyPlace/Scripts/</code>.</p></li>
@@ -30,12 +30,12 @@ def on_join(player):
 Players.on_player(on_join)
 </pre></div>
         </div>
-        <p><code>Players:OnPlayer</code> (JavaScript/TypeScript <code>Players.onPlayer</code>, Python <code>Players.on_player</code>) runs your function for every player already in the session, and again for each player who joins later. So the welcome still works if your script starts after someone is already in, including in standalone development. The name it prints is the real player's name.</p>
+        <p><code>Players:OnPlayer</code> (JavaScript/TypeScript <code>Players.onPlayer</code>, Python <code>Players.on_player</code>) runs your function for every player already in the session, and again for each player who joins later. So the welcome still works if your script starts after someone is already in. The name it prints is the real player's name.</p>
         <p>If you only want players who join after you connect, use the <code>PlayerAdded</code> signal instead.</p>
       </li>
       <li><b>Check and publish</b><p>Run <b>Check All</b> in the Scripts panel, then publish with <b>Mantle → Publish</b>. Publishing creates a revision. When players join a session, it uses the published revision.</p></li>
-      <li><b>Join in a separate client</b><p>Start or request a session for your published place, then join it with the Mantle client. Anything a server script prints goes to the server log. Anything a client script prints goes to that client's log. Script messages appear under <code>LogMantleScript</code> and name the file they came from.</p><p>Scripts don't run when you press the editor's Play (PIE) button. Test in a separate Mantle server and client, or in a published session.</p></li>
-      <li><b>Edit, recheck and republish</b><p>Save your changes and publish a new revision. The next session uses it.</p><p>In development builds, you can skip publishing while you work. Start a server or client with <code>-MantlePlace=&lt;path&gt;/place.json</code> and it runs the <code>Scripts/</code> folder beside that file. It also picks up your changes while it's running (hot reload). An edited script is swapped in place. Adding or removing files, or editing a module, restarts all scripts. Published sessions never hot-reload.</p></li>
+      <li><b>Join in a separate client</b><p>Start or request a session for your published place, then join it with the Mantle client. Anything a server script prints goes to the server log. Anything a client script prints goes to that client's log. Script messages appear under <code>LogMantleScript</code> and name the file they came from.</p><p>Scripts don't run when you press the editor's Play (PIE) button. To test them, publish and join the session with the Mantle client.</p></li>
+      <li><b>Edit, recheck and republish</b><p>Save your changes and publish a new revision. The next session uses it.</p></li>
     </ol>
     <h2 id="rules">The three rules</h2>
     <div class="table-wrap"><table>
@@ -66,6 +66,10 @@ Players.on_player(on_join)
       Hud.luau
       Welcome.js
     Shared/            libraries both sides can require
-      Config.luau</pre></div>
+      Config.luau
+  UI/                  UI documents that client scripts open
+    shop.rml
+    shop.rcss</pre></div>
+    <p>A <code>UI/</code> folder beside <code>Scripts/</code> holds <a href="/docs/scripting/ui-documents/">UI documents</a>: screens written as markup and stylesheets that client scripts open with <code>UI:OpenDocument</code> (API 1.31).</p>
 
 <p class="footer-note">Last updated September 2026.</p>

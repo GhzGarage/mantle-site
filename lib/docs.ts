@@ -21,20 +21,21 @@ export const docsNav: DocSection[] = [
         title: "Basics",
         pages: [
           { slug: ["scripting"], title: "Get started", description: "Scripts are plain files beside your level. The folder decides where a script runs, tags connect it to things in the world, and the file extension picks the language." },
-          { slug: ["scripting", "concepts"], title: "Core concepts", description: "How scripts run on the server and on players' machines, and how tags, events, timers, values and modules fit together." },
+          { slug: ["scripting", "concepts"], title: "Core concepts", description: "How scripts run on the server and on players' machines, how tags, events, timers, values and modules fit together, and the lights, sounds, effects, physics, NPCs and other services." },
           { slug: ["scripting", "visual-scripting"], title: "Visual scripting", description: "Build gameplay by connecting nodes in a graph instead of writing code." },
+          { slug: ["scripting", "ui-documents"], title: "UI documents", description: "Build shops, menus and HUDs as markup and stylesheets in a UI folder, and drive them from client scripts: modes, data binding, events, styling, limits and performance." },
         ],
       },
       {
         title: "Reference",
         pages: [
-          { slug: ["scripting", "api"], title: "API reference", description: "Every service at a glance, tween easing, common errors, script limits and setting up your editor." },
+          { slug: ["scripting", "api"], title: "API reference", description: "Every service and member with its side and API version, API versions and releases, common errors, script limits and setting up your editor." },
         ],
       },
       {
         title: "Guides",
         pages: [
-          { slug: ["scripting", "recipes"], title: "Recipes", description: "Ready-to-use scripts for kill bricks, coins, doors, round timers, buttons, cloning and saving progress." },
+          { slug: ["scripting", "recipes"], title: "Recipes", description: "Ready-to-use scripts for kill bricks, coins, doors (tweened or hinged with a joint), round timers, buttons, cloning, saving progress, leaderboards, per-player looks and lamps that turn on at night." },
           { slug: ["scripting", "migrating"], title: "Coming from other engines", description: "How Roblox, FiveM and Unreal concepts map to Mantle." },
         ],
       },
@@ -50,24 +51,24 @@ export const docsNav: DocSection[] = [
         pages: [
           { slug: ["creators", "quick-start"], title: "Quick start: your first world", description: "From installing the Mantle plugin to a published world your friends can join, step by step." },
           { slug: ["creators"], title: "Editor setup and tools", description: "What you need, signing in, the Mantle editor tools, checking your place and testing it." },
-          { slug: ["creators", "building"], title: "Building a place", description: "What you can put in a place, place settings, what gets published, your own meshes and materials, and the sky." },
+          { slug: ["creators", "building"], title: "Building a place", description: "What you can put in a place, Blueprint prefabs, sounds, place settings, what gets published, features coming in the next release, your own assets, and the sky." },
         ],
       },
       {
         title: "Ship",
         pages: [
-          { slug: ["creators", "publishing"], title: "Publishing and managing worlds", description: "How publishing works, what can stop it, going back to an earlier version, and helping players find your world." },
+          { slug: ["creators", "publishing"], title: "Publishing and managing worlds", description: "How publishing works, what can stop it, using an AI agent, going back to an earlier version, and helping players find your world." },
           { slug: ["creators", "hosting-data"], title: "Hosting, data and monetisation", description: "Official and community hosting, upload limits, saving player data, your creator page, stats, avatar items and plans for earning." },
         ],
       },
       {
         title: "Guides",
         pages: [
-          { slug: ["creators", "custom-assets"], title: "Custom meshes and materials", description: "Use meshes, materials and textures from your own project or a Fab pack in a world: publishing them, what players see, the limits, and fixing common problems." },
+          { slug: ["creators", "custom-assets"], title: "Custom meshes and materials", description: "Use meshes, materials, textures and sounds from your own project or a Fab pack in a world: publishing them, what players see, the limits, crediting them, and fixing common problems." },
           { slug: ["creators", "avatar-items"], title: "Making avatar items", description: "The Cosmetics panel from start to finish: what you can make, checking and uploading an item, screening, and what happens after." },
-          { slug: ["creators", "clothing"], title: "Clothing, hair and accessories", description: "Build 3D clothing, 2D clothing, hair and accessories in Unreal that pass Mantle's checks and fit every avatar: skeletons, slots, sockets, budgets and the messages you'll see." },
+          { slug: ["creators", "clothing"], title: "Clothing, hair and accessories", description: "Build 3D clothing, one-piece outfits, hair and accessories in Unreal that pass Mantle's checks and fit every avatar: skeletons, slots, sections, sockets, budgets and the messages you'll see." },
           { slug: ["creators", "avatars-emotes"], title: "Avatars and emotes", description: "Make whole avatars on a supported skeleton, and emotes players can play from the emote wheel." },
-          { slug: ["creators", "vehicles"], title: "Vehicles", description: "How the vehicle converter will bring a Chaos Vehicles car into Mantle: getting it ready, what you get and what's different." },
+          { slug: ["creators", "vehicles"], title: "Vehicles", description: "Convert a car's skeletal mesh into a Mantle vehicle with paint, liveries and suspension, and place it with a Vehicle Spawn. Publishes with the next release." },
         ],
       },
     ],
@@ -107,7 +108,7 @@ export const docsNav: DocSection[] = [
       {
         title: "Runtime",
         pages: [
-          { slug: ["platform"], title: "Servers and sessions", description: "What happens when you press Play, how many players a world can hold, how servers performed in testing and the specs to host one." },
+          { slug: ["platform"], title: "Servers and sessions", description: "What happens when you press Play, how many players a world can hold, and the specs to host one." },
           { slug: ["platform", "community-servers"], title: "Community-hosted servers", description: "Setting up and running your own server, what players see, and how everyone stays safe." },
         ],
       },

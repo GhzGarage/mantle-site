@@ -19,7 +19,7 @@
 <li>Extra bones that carry no weight, such as cloth or helper bones some exports add, are left out for you.</li>
 <li>The skeleton's root bone (<code>root</code>) must be included, and the bones must form one hierarchy.</li>
 <li>Bone names match whatever their case, so <code>Root</code> counts as <code>root</code>. Two bones whose names differ only in case are refused, because Unreal treats them as one bone.</li>
-<li>Up to 8 bone influences per vertex.</li>
+<li>Up to 8 bone influences per vertex. Extra influences on the body and face are dropped for you, lightest first, with a "Done:" line (a "Note:" if a dropped weight was over 0.1).</li>
 <li>The mesh must be bound in its reference pose. Morph targets aren't uploaded.</li>
 </ul>
 
@@ -36,8 +36,8 @@
 </ol>
 
 <h3 id="metahuman-clothing">MetaHumans that wear clothing</h3>
-<p>3D clothing, hair, eyebrows, eyelashes, facial hair and 2D clothing fit an avatar only if its body is exported the right way: export the MetaHuman with <b>UE Optimized</b> at <b>Medium</b> or <b>High</b> quality, without clothing. The plugin finds the right LOD and uploads it, and <b>Check only</b> shows "Done: Garment-compatible: LOD N has Mantle's reference topology, so it takes 3D clothing."</p>
-<p>A MetaHuman body without that LOD still uploads, with "Note: not garment-compatible: export the MetaHuman with UE Optimized at Medium or High quality, without clothing. It still uploads: it wears accessories and emotes, not 3D clothing." A UE5 Mannequin avatar never wears clothing.</p>
+<p>3D clothing, hair, eyebrows, eyelashes and facial hair fit an avatar only if its body is exported the right way: export the MetaHuman with <b>UE Optimized</b> at <b>Medium</b>, <b>High</b> or <b>Cinematic</b> quality, without clothing. For a Cinematic MetaHuman from Fab, the body is <code>SKM_&lt;Name&gt;_Body</code> under <code>CharacterAssemblies/&lt;Name&gt;/Body</code>. The plugin finds the right LOD and uploads it, and <b>Check only</b> shows "Done: Garment-compatible: LOD N has Mantle's reference topology, so it takes 3D clothing."</p>
+<p>A MetaHuman body without that LOD still uploads, with "Note: not garment-compatible: export the MetaHuman with UE Optimized at Medium, High or Cinematic quality, without clothing. It still uploads: it wears accessories and emotes, not 3D clothing." A UE5 Mannequin avatar never wears clothing.</p>
 <p>Players on an avatar that can't wear clothing keep their clothing and hair: those items are marked "SET ASIDE" on the Avatar screen and go back on when they switch to an avatar that fits them. Accessories and emotes work on every avatar.</p>
 
 <h3 id="face">The face</h3>
@@ -99,9 +99,10 @@
 <tr><td>Problem: not skinned to a supported skeleton: bone "[bone]" is not on the metahuman skeleton. An avatar is skinned to the MetaHuman body skeleton or the UE5 Mannequin skeleton (SK_Mannequin).</td><td>A weighted bone isn't on either skeleton. Retarget or re-skin the mesh onto one of them.</td></tr>
 <tr><td>Problem: not skinned to a supported skeleton: bone "[bone]" has parent "[parent]", the metahuman skeleton has "[parent]". …</td><td>The hierarchy differs from the skeleton's. Put the bone back under the parent the message names.</td></tr>
 <tr><td>Problem: not skinned to a supported skeleton: the skin has no "root" bone; the metahuman skeleton's root must be included. …</td><td>Keep the <code>root</code> bone in the mesh's skeleton.</td></tr>
-<tr><td>Problem: [N] triangles, the limit is 20000. Use a lower LOD of the mesh, or reduce it (Skeletal Mesh editor > LOD Settings, or Modeling > Simplify).</td><td>Add or pick a lighter LOD. The plugin uses the first LOD under the limit.</td></tr>
+<tr><td>Problem: [N] triangles, the limit is 20000. followed by "It has no lower LOD. Add one in the Skeletal Mesh editor…" or "None of its N LODs is within the limit. Reduce its last LOD…"</td><td>Add or reduce a LOD as the message says. The plugin uses the first LOD under the limit.</td></tr>
 <tr><td>Problem: [N] material sections, the limit is 8. Merge materials so the mesh uses fewer material slots.</td><td>Merge materials.</td></tr>
-<tr><td>Problem: a vertex has [N] influences, the limit is 8. Set the mesh's Max Bone Influences (LOD settings) to 8 or fewer and reimport.</td><td>As the message says.</td></tr>
+<tr><td>Done: the body: [N] vertices had more than 8 influences; the lightest were dropped and the rest renormalised (largest weight dropped: [W]). (The same for "the face:".)</td><td>Nothing. Above 0.1 it's a Note: to choose the weights yourself, set the mesh's Max Bone Influences (LOD settings) to 8 and reimport.</td></tr>
+<tr><td>Problem: section "[name]" spans [N] UV tiles (UDIM 1001, …); Mantle maps one 0..1 texture per section.</td><td>Bake the tiles into one texture with the UVs laid out in 0..1, then reimport the mesh and the texture.</td></tr>
 <tr><td>Problem: the body's lowest point is at z = [N] cm; the feet must stand on the origin (within 10 cm). Move the mesh so its feet are at the origin and reimport.</td><td>As the message says.</td></tr>
 <tr><td>Problem: the avatar is [N] cm tall, the limit is 218.1 cm.</td><td>Scale the body down.</td></tr>
 <tr><td>Problem: the avatar is [N] cm tall, the minimum is 151.1 cm.</td><td>A UE5 Mannequin body is too short. Scale it up.</td></tr>
@@ -123,20 +124,20 @@
 </ul>
 
 <h2 id="emotes">Emotes <span class="status wip">In progress</span></h2>
-<p>An emote is an Anim Sequence on the UEFN mannequin skeleton (<code>SK_UEFN_Mannequin</code>). Mantle plays it on whichever avatar the player wears, so one emote works on MetaHuman and UE5 Mannequin avatars alike.</p>
+<p>An emote is an Anim Sequence. Mantle plays it on whichever avatar the player wears, so one emote works on MetaHuman and UE5 Mannequin avatars alike. Animate it on the UEFN mannequin skeleton (<code>SK_UEFN_Mannequin</code>), or on a MetaHuman body or the UE5 Mannequin (<code>SK_Mannequin</code>): Mantle identifies which one you used from its bones and, for the latter two, retargets it onto the UEFN mannequin automatically when you upload. There's nothing to set: pick your Anim Sequence under Asset and upload it as usual.</p>
 
 <h3 id="emote-steps">Publishing an emote</h3>
 <ol class="steps">
-<li><b>Make the animation on the UEFN mannequin</b><p>Animate on <code>SK_UEFN_Mannequin</code>, or retarget an existing animation onto it (right-click it and choose <b>Retarget Animations</b>) and use the retargeted copy.</p></li>
+<li><b>Make the animation</b><p>Animate on <code>SK_UEFN_Mannequin</code>, a MetaHuman body, or the UE5 Mannequin (<code>SK_Mannequin</code>), or retarget an existing animation onto one of them (right-click it and choose <b>Retarget Animations</b>) and use the retargeted copy.</p></li>
 <li><b>Keep it in place</b><p>Keep the <code>root</code> bone within 50 cm of where it starts, and animate <code>pelvis</code>. See <a href="#emote-rules">Emote rules</a>.</p></li>
 <li><b>Mark a loop if you want one</b><p>Add an Anim Notify named <code>loop_start</code> where the loop should begin. See <a href="#looping">Looping</a>.</p></li>
 <li><b>Pick Emote</b><p>In the <b>Mantle Cosmetics</b> tab, pick <b>Emote</b> under "What are you publishing?". The slot is <code>emote</code>. Under "Asset", choose the Anim Sequence.</p></li>
-<li><b>Name, check and upload</b><p>Choose <b>Check only</b>, fix any "Problem" lines, then <b>Upload to Mantle</b>.</p></li>
+<li><b>Name, check and upload</b><p>Choose <b>Check only</b>, fix any "Problem" lines, then <b>Upload to Mantle</b>. If your clip is on a MetaHuman or UE5 Mannequin skeleton, Check shows a note saying it will be retargeted from that skeleton onto the UEFN mannequin.</p></li>
 </ol>
 
 <h3 id="emote-rules">Emote rules</h3>
 <div class="table-wrap"><table><thead><tr><th>Rule</th><th>Value</th></tr></thead><tbody>
-<tr><td>Skeleton</td><td>UEFN mannequin. Every animated bone must be one of its bones (names match whatever their case).</td></tr>
+<tr><td>Skeleton</td><td>The UEFN mannequin, a MetaHuman body or the UE5 Mannequin (<code>SK_Mannequin</code>). Every animated bone must be one of that skeleton's bones (names match whatever their case). A MetaHuman or UE5 Mannequin clip is retargeted onto the UEFN mannequin automatically; this needs a UEFN mannequin skeletal mesh (such as <code>SKM_UEFN_Mannequin</code> from the Game Animation Sample) somewhere in your project, or the upload stops asking you to add one.</td></tr>
 <tr><td>Length</td><td>Up to 10 seconds</td></tr>
 <tr><td>Frame rate</td><td>Any</td></tr>
 <tr><td>Required track</td><td><code>pelvis</code></td></tr>
@@ -158,7 +159,8 @@
 
 <h3 id="emote-messages">Emote messages</h3>
 <div class="table-wrap"><table><thead><tr><th>Message</th><th>How to fix it</th></tr></thead><tbody>
-<tr><td>Problem: track "[bone]" is not a bone of the uefn skeleton. Emotes play on the UEFN mannequin. Retarget the animation onto SK_UEFN_Mannequin (right-click it > Retarget Animations) and upload the retargeted copy.</td><td>As the message says.</td></tr>
+<tr><td>Problem: track "[bone]" is not a bone of the uefn skeleton. Emotes play on the UEFN mannequin. Retarget the animation onto SK_UEFN_Mannequin (right-click it > Retarget Animations) and upload the retargeted copy.</td><td>The clip isn't on the UEFN mannequin, a MetaHuman body or the UE5 Mannequin. As the message says, or re-export it on one of those three.</td></tr>
+<tr><td>[project has no UEFN mannequin]: [clip] is on the [metahuman/ue5mannequin] skeleton and emotes play on the UEFN mannequin, but this project has no UEFN mannequin to retarget it onto. Add SKM_UEFN_Mannequin (from the Game Animation Sample, or UEFN's mannequin) to the project and upload again.</td><td>Add a UEFN mannequin skeletal mesh to your project, then upload again.</td></tr>
 <tr><td>Problem: the clip is [N] s long, the limit is 10 s. Trim the animation (Animation editor > Remove frames) and try again.</td><td>As the message says.</td></tr>
 <tr><td>Problem: the clip has no "pelvis" track.</td><td>Key the <code>pelvis</code> bone.</td></tr>
 <tr><td>Problem: the root moves [N] cm, the limit is 50 cm. Emotes play in place: remove the root motion (or keep it within the limit).</td><td>As the message says.</td></tr>
