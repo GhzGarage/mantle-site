@@ -21,7 +21,7 @@ export const docsNav: DocSection[] = [
         title: "Basics",
         pages: [
           { slug: ["scripting"], title: "Get started", description: "Scripts are plain files beside your level. The folder decides where a script runs, tags connect it to things in the world, and the file extension picks the language." },
-          { slug: ["scripting", "concepts"], title: "Core concepts", description: "How scripts run on the server and on players' machines, how tags, events, timers, values and modules fit together, and the lights, sounds, effects, physics, NPCs and other services coming in the next release." },
+          { slug: ["scripting", "concepts"], title: "Core concepts", description: "How scripts run on the server and on players' machines, how tags, events, timers, values and modules fit together, and the lights, sounds, effects, physics, NPCs and other services." },
           { slug: ["scripting", "visual-scripting"], title: "Visual scripting", description: "Build gameplay by connecting nodes in a graph instead of writing code." },
           { slug: ["scripting", "ui-documents"], title: "UI documents", description: "Build shops, menus and HUDs as markup and stylesheets in a UI folder, and drive them from client scripts: modes, data binding, events, styling, limits and performance." },
         ],

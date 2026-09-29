@@ -170,8 +170,8 @@ State.observe(&quot;guide.example.timeLeft&quot;, lambda s: label.set_text(f&quo
     </ul>
     <p>The <a href="/docs/scripting/recipes/#r-cross">checkpoint recipe</a> pairs <code>Server/GuideCheckpoint.ts</code> with <code>Server/GuideKillBricks.luau</code>: TypeScript writes a checkpoint vector into State; Luau reads it when the player touches a kill brick. Neither language imports the other's module.</p>
 
-    <h2 id="next-release">Coming in the next release <span class="status wip">Next release</span></h2>
-    <p>The sections below cover services added in script API 1.4 to 1.30. They're in the Mantle plugin now, so Check All and the type files know them, but publishing refuses a place whose scripts use them until the game release that carries them is out (see <a href="#versions">API versions</a>). Each section names the version it needs. The examples are in Luau; the other languages use the same members with their own spelling. Every member is listed in the <a href="#reference">full reference</a>.</p>
+    <h2 id="services">More services</h2>
+    <p>The sections below cover services added in script API 1.4 to 1.31. The newest game release carries all of them, and Check All and the type files know them. Each section names the version it needs. A section marked <span class="status wip">Next release</span> is about something a place can't contain yet, so a place that uses it is held back at publish (see <a href="#versions">API versions</a>). The examples are in Luau; the other languages use the same members with their own spelling. Every member is listed in the <a href="#reference">full reference</a>.</p>
 
     <h3 id="script-assets">Assets your scripts use</h3>
     <p>A script can only spawn a mesh, show a material or play a sound that was published with the place. Anything placed in the level is published automatically. For an asset nothing in the level uses, such as a projectile a script spawns or a sound it plays on an event, add it to <b>Script Assets</b>:</p>
@@ -202,7 +202,7 @@ task.wait(3)
 crate:Tween({ Color = "#FFFFFF" }, 1)   -- fade the tint away
 crate.Transparency = 0.5</pre></div></div>
 
-    <h3 id="physics">Physics objects (API 1.15)</h3>
+    <h3 id="physics">Physics objects (API 1.15) <span class="status wip">Next release</span></h3>
     <p>A static mesh with <b>Simulate Physics</b> turned on in the editor is published as a physics object: the server simulates it and every player sees it move. On the server, <code>ApplyImpulse</code> and <code>ApplyAngularImpulse</code> push and spin it, <code>Velocity</code> reads or replaces its speed in cm/s, <code>Anchored = true</code> pins it in place and <code>false</code> lets it fall, and <code>Mass</code> reads its mass in kg. <code>Collided(other)</code> fires on the server when it starts touching something: another entity, a player's character, or nil. Every other entity is always anchored, and physics objects can't be cloned yet. A place can hold 500 physics objects.</p>
     <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Crate.luau</span><pre data-example-kind="snippet">local crate = World:FindFirst("PhysicsCrate")
 crate.Collided:Connect(function(other)
@@ -216,7 +216,7 @@ wheel.Anchored = false
 wheel.PhysicsMaterial = "ice"          -- API 1.28: slides instead of gripping
 wheel.AngularVelocity = Vector3.new(0, 0, 180)  -- API 1.25: half a turn a second about world Z</pre></div></div>
 
-    <h3 id="joints">Joints: welds, hinges and ropes (API 1.30)</h3>
+    <h3 id="joints">Joints: welds, hinges and ropes (API 1.30) <span class="status wip">Next release</span></h3>
     <p>A <b>Physics Constraint Actor</b> between two physics objects (or one and the world) publishes as a <code>Constraint</code>: a weld (no movement between them), a hinge (one turns about an axis, within limits) or a rope (the anchors stay within a length of each other). <code>Constraints:Create(params)</code> <span class="side s">Server</span> makes one at runtime and returns it; <code>Constraints:FromEntity(entity)</code> finds the joint a place's own Constraint made. Pull a joint harder than its <code>BreakForce</code> (newtons) and it breaks for good: <code>Broken</code> fires once, on the server. The two joined entities stop colliding with each other, and a place holds at most 200 joints, its own included. Nothing of the joint replicates: clients just see the entities move.</p>
     <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Door.luau</span><pre data-example-kind="snippet">local door = World:FindFirst("Door")
 local hinge = Constraints:Create({
@@ -273,7 +273,7 @@ bell.Touched:Connect(function(player)
 	Sounds:Play(BELL_SOUND, { AttachTo = bell, Radius = 3000, Pitch = 0.9 })
 end)</pre></div></div>
 
-    <h3 id="effects">Particle effects (API 1.19)</h3>
+    <h3 id="effects">Particle effects (API 1.19) <span class="status wip">Next release</span></h3>
     <p>Mantle has five built-in particle effects: <code>Smoke</code>, <code>Fire</code>, <code>Sparks</code>, <code>Dust</code> and <code>Glow</code>. You can't upload your own particle systems. <code>Effects:Play(archetype, position, params?)</code> shows one for <code>Duration</code> seconds (1 by default, at most 10), and <code>params</code> can change its <code>Color</code>, <code>Size</code>, <code>Rate</code>, <code>Speed</code>, <code>Lifetime</code> and <code>Rotation</code>. From a server script every player sees it, but a player who joins later doesn't; from a client script only that player does. A <b>Mantle Effect</b> placed in the level is an <code>Entity</code> with <code>PlayEffect</code>, <code>StopEffect</code>, <code>SetEffectColor</code> and <code>SetEffectRate</code>, and those changes do reach late joiners. The five effect systems ship with the same release; until a build carries them, effects draw nothing.</p>
     <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Explosion.luau</span><pre data-example-kind="snippet">local function explode(position)
 	Effects:Play("Fire", position, { Size = 120, Rate = 150, Duration = 0.4 })
@@ -335,14 +335,14 @@ guard.MoveCompleted:Connect(function(success)
 end)
 guard:MoveTo(target)</pre></div></div>
 
-    <h3 id="animated-meshes">Animated meshes (API 1.18)</h3>
+    <h3 id="animated-meshes">Animated meshes (API 1.18) <span class="status wip">Next release</span></h3>
     <p>A Skeletal Mesh Actor set to <b>Use Animation Asset</b> publishes as an animated mesh that plays its clip in step on every screen (see <a href="/docs/creators/building/">Building a place</a>). <code>PlayClip(clipAssetId?, params?)</code> plays one of the place's animation clips on it, or restarts the one it plays now when you leave the id out. <code>params</code> takes <code>Loop</code> (true by default; false holds the last frame), <code>PlayRate</code> (0 to 10) and <code>StartOffset</code> in seconds. <code>StopClip()</code> returns it to its resting pose, and <code>ClipTime</code> reads how far into the clip it is. From the server every player sees it, late joiners included; from a client only that player does. The clip must be made for the mesh's own skeleton.</p>
     <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Windmill.luau</span><pre data-example-kind="snippet">local windmill = World:FindFirst("Windmill")
 windmill:PlayClip(nil, { PlayRate = 3 })   -- spin three times as fast
 task.wait(10)
 windmill:StopClip()</pre></div></div>
 
-    <h3 id="crowds">Crowds (API 1.16)</h3>
+    <h3 id="crowds">Crowds (API 1.16) <span class="status wip">Next release</span></h3>
     <p>A <b>Mantle Crowd Spawner</b> placed in the level fills its lanes with ambient walkers. <code>Crowds:Get(spawner)</code> <span class="side s">Server</span> returns its <code>Crowd</code>: set <code>Density</code> (0 to 1 of the count you authored), <code>Enabled</code>, <code>Paused</code> or, from API 1.21, <code>Seed</code>, and every player sees it. From API 1.24, <code>Crowds.PointReached(spawner, point, npc)</code> <span class="side c">Client</span> fires when one of the crowd's people arrives at one of the spawner's points of interest. Crowd Spawners themselves can't be published until the next release either.</p>
     <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Rush.luau</span><pre data-example-kind="snippet">local crowd = Crowds:Get(World:FindFirst("MarketCrowd"))
 crowd.Density = if Environment.IsNight then 0.2 else 1</pre></div></div>

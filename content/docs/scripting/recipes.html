@@ -239,7 +239,7 @@ State.set(&quot;guide.ready.checkpoint&quot;, true);
 </pre></div><h3 id="r-highscore">Saving data across sessions</h3>
 <p>Use <code>DataStore</code> <span class="side s">Server</span> to save boolean, number or string values so they&rsquo;re still there in later sessions (tables too, from API 1.13: see <a href="#r-datastore-tables">saved tables</a>). You can save them for the whole place (<code>Get</code>/<code>Set</code>) or for each player (<code>GetForPlayer</code>/<code>SetForPlayer</code>). There&rsquo;s nothing to set up in the level.</p>
 <div class="callout warn"><strong>A missing value doesn&rsquo;t mean zero</strong><p>When <code>DataStore:GetForPlayer</code> returns nil, you can&rsquo;t tell whether this is the player&rsquo;s first visit, their data hasn&rsquo;t finished loading, or the load failed. Scripts can&rsquo;t yet get a signal when data has loaded, or confirmation that a write was saved. Don&rsquo;t turn nil into zero and write it back, or you could overwrite a larger saved value such as a best score.</p></div>
-<h3 id="r-datastore-tables">Saved tables, removing and listing keys <span class="status wip">Next release</span></h3>
+<h3 id="r-datastore-tables">Saved tables, removing and listing keys</h3>
 <p>From API 1.13, <code>DataStore:Set</code> and <code>SetForPlayer</code> also take a table of booleans, numbers, strings and tables, nested up to 4 levels deep and at most 64 KiB, so one key can hold a player's whole profile. Lists come back as lists and objects as objects, but an object's key order isn't kept. Vector3, entities and functions can't be saved. <code>RemoveKey</code> deletes a key, and <code>ListKeys</code> pages through keys that start with a prefix, 100 at a time. Like <code>Get</code>, <code>ListKeys</code> reads this server's cache, so it doesn't see what another server of the place wrote a moment ago.</p>
 <div class="code"><span class="tag">Scripts/Server/GuideProfile.luau</span><pre id="ex-guide-profile" data-example-kind="source" data-language="luau">Players:OnPlayer(function(player)
 	DataStore:SetForPlayer(player, &quot;guide.profile&quot;, { coins = 120, owned = { &quot;sword&quot;, &quot;shield&quot; } })
@@ -256,7 +256,7 @@ repeat
 	cursor = page.nextCursor
 until cursor == nil
 </pre></div>
-<h3 id="r-leaderboard">A leaderboard across every server <span class="status wip">Next release</span></h3>
+<h3 id="r-leaderboard">A leaderboard across every server</h3>
 <p><b>The easy way (API 1.26).</b> Fill an ordered store keyed by <code>player.UserId</code>, then show it with the built-in panel players open with Tab:</p>
 <div class="code"><span class="tag">Scripts/Server/GuideWins.luau</span><pre data-example-kind="snippet">local wins = DataStore:GetOrderedDataStore("wins")
 Leaderboard:Configure("wins", { title = "Most wins", valueLabel = "Wins" })
@@ -314,7 +314,7 @@ State:Observe(&quot;guide.leaderboard&quot;, function(rows)
 end)
 </pre></div>
 <p>For the next 10, pass <code>result.nextCursor</code> back: <code>wins:GetSortedAsync(false, 10, cursor)</code>. <code>GetSortedAsync(true, ...)</code> reads lowest first, and ties are ordered by key. A place can fill 32 ordered stores of up to 50,000 keys each.</p>
-<h3 id="r-night-lamps">Lamps that turn on at night <span class="status wip">Next release</span></h3>
+<h3 id="r-night-lamps">Lamps that turn on at night</h3>
 <p>This switches every lamp in the level on at dusk and off at dawn, and spawns one extra lamp from the script. It needs API 1.7. Tag each point or spot light in your level <code>guide_code_lamp</code>. The server sets <code>LightEnabled</code>, so every player sees the same lamps, including players who join later.</p>
 <div class="code"><span class="tag">Scripts/Server/GuideNightLamps.luau</span><pre id="ex-guide-night-lamps" data-example-kind="source" data-language="luau">local extra = Lights:Spawn(&quot;Point&quot;, Vector3.new(0, 0, 300), { Color = &quot;#FFD9A0&quot;, Intensity = 40 })
 extra:AddTag(&quot;guide_code_lamp&quot;)
@@ -341,7 +341,7 @@ end)
 State:Set(&quot;guide.ready.hingedoor&quot;, true)
 </pre></div>
 <p>A door already built as a Physics Constraint Actor in the level publishes as a Constraint automatically, so <code>Constraints:FromEntity</code> finds its joint; a script only needs <code>Constraints:Create</code> for a door it builds itself at runtime. A place holds at most 200 joints, its own included, and pulling a joint harder than <code>BreakForce</code> newtons breaks it for good.</p>
-<h3 id="r-local-look">A haunted room with its own look, for one player <span class="status wip">Next release</span></h3>
+<h3 id="r-local-look">A haunted room with its own look, for one player</h3>
 <p>This dims and desaturates the picture for one player only, without touching what anyone else sees: tag the trigger volume in your level <code>guide_code_hauntedroom</code>. It needs API 1.29. A client script applies the look a server script sends it over a Remote, so nothing needs to replicate.</p>
 <div class="code"><span class="tag">Scripts/Server/GuideHauntedRoom.luau</span><pre data-example-kind="source" data-language="luau">local look = Net:Remote(&quot;GuideLook&quot;)
 World:OnTagged(&quot;guide_code_hauntedroom&quot;, function(zone)

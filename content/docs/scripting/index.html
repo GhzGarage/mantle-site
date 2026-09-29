@@ -1,4 +1,4 @@
-<div class="callout tip"><strong>Scripting is in preview</strong><p>Luau, TypeScript, JavaScript, Python and visual scripts run in published places, in the Mantle client and on its servers. The current script API is 1.30; the newest game release runs 1.3, so features added after that are marked <span class="status wip">Next release</span> and can be published once that release is out (see <a href="#versions">API versions</a>). Details on these pages may change before general release.</p></div>
+<div class="callout tip"><strong>Scripting is in preview</strong><p>Luau, TypeScript, JavaScript, Python and visual scripts run in published places, in the Mantle client and on its servers. The current script API is 1.31, and the newest game release runs it. A feature that needs something a released game can't build yet is marked <span class="status wip">Next release</span> (see <a href="#versions">API versions</a>). Details on these pages may change before general release.</p></div>
     <h2 id="quick">Five-minute start</h2>
     <ol class="steps">
       <li><b>Find your level's folder</b><p>Your level lives somewhere under <code>Content/</code>, for example <code>Content/MyPlace/MyPlace.umap</code>. Its scripts go in a folder called <code>Scripts</code> right next to it: <code>Content/MyPlace/Scripts/</code>.</p></li>
@@ -70,6 +70,6 @@ Players.on_player(on_join)
   UI/                  UI documents that client scripts open
     shop.rml
     shop.rcss</pre></div>
-    <p>A <code>UI/</code> folder beside <code>Scripts/</code> holds <a href="/docs/scripting/ui-documents/">UI documents</a>: screens written as markup and stylesheets that client scripts open with <code>UI:OpenDocument</code> (<span class="status wip">Next release</span>).</p>
+    <p>A <code>UI/</code> folder beside <code>Scripts/</code> holds <a href="/docs/scripting/ui-documents/">UI documents</a>: screens written as markup and stylesheets that client scripts open with <code>UI:OpenDocument</code> (API 1.31).</p>
 
 <p class="footer-note">Last updated September 2026.</p>
