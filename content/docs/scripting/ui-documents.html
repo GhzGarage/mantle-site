@@ -105,13 +105,14 @@ welcome.event.connect(on_event)
     shop.rcss          its stylesheet
     hud/
       coins.rml        folders inside UI/ are fine
-    common.rcss        a stylesheet several documents link</pre></div>
+    common.rcss        a stylesheet several documents link
+    icons/
+      sword.png        an image; see Images below</pre></div>
     <ul>
-      <li>Only <code>.rml</code> and <code>.rcss</code> files are published from <code>UI/</code>. Extensions must be lower case.</li>
+      <li>Only <code>.rml</code>, <code>.rcss</code>, <code>.png</code> and <code>.jpg</code> files are published from <code>UI/</code>. Extensions must be lower case; <code>.jpeg</code> is refused. Other image types (SVG, GIF, WebP and the rest) in <code>UI/</code> aren't published, and Check warns about them.</li>
       <li>File and folder names can use only letters, digits, <code>_</code>, <code>.</code> and <code>-</code>. A path, starting at <code>UI/</code>, can be up to 200 characters. Two paths that differ only in capital letters aren't allowed.</li>
-      <li>Each file can be up to 256 KiB, and a place can have up to 64 UI files.</li>
+      <li>Each <code>.rml</code> or <code>.rcss</code> file can be up to 256 KiB, and a place can have up to 64 of them. Images have their own count and size limit; see <a href="#uidoc-images">Images</a>.</li>
       <li>A <code>.rml</code> or <code>.rcss</code> file inside <code>Scripts/</code> is an error. Check tells you to move it to <code>UI/</code>.</li>
-      <li>Image files in <code>UI/</code> aren't published. Check warns about them. See <a href="#uidoc-images">Images</a>.</li>
     </ul>
     <p>You open a document by its path from the level folder, exactly as spelled: <code>UI:OpenDocument("UI/hud/coins.rml")</code>. Paths are case-sensitive. If only the case is wrong, the error tells you the right spelling. You can only open <code>.rml</code> files; stylesheets are linked from documents.</p>
     <p>Inside a document, links are relative to the document's own folder: <code>&lt;link type="text/rcss" href="shop.rcss"/&gt;</code> next to it, <code>href="../common.rcss"</code> one folder up, or <code>href="/UI/common.rcss"</code> from the top. A document can link any <code>.rcss</code> file and any RmlUi template (an <code>.rml</code> file) in your place's <code>UI/</code> folder, and nothing else: web addresses, drive paths and anything above <code>UI/</code> are refused. A document can also hold styles inline in a <code>&lt;style&gt;</code> element in its <code>&lt;head&gt;</code>.</p>
@@ -347,13 +348,14 @@ end)
       <li><b>No browser defaults.</b> RmlUi starts every element as <code>display: inline</code> with no margins. Mantle's <a href="#uidoc-base">base stylesheet</a> fills in the common cases; anything it doesn't cover (<code>h4</code>, <code>ol</code>, table elements) needs your own rules.</li>
       <li><b>No CSS grid.</b> Use flexbox (<code>flex-wrap: wrap</code> gives you grids of tiles) or tables.</li>
       <li><b>Borders are always solid</b> and the shorthand takes a width and a colour: <code>border: 1dp #444443</code>. There's no <code>solid</code>/<code>dashed</code> keyword.</li>
-      <li><b>Backgrounds are a colour.</b> <code>background-color</code> works; for images use <code>&lt;img&gt;</code>. For a simple two-colour gradient use a decorator: <code>decorator: horizontal-gradient(#EB6036 #FFAE28)</code> or <code>vertical-gradient(...)</code>.</li>
+      <li><b>Backgrounds are a colour, a gradient or an image.</b> <code>background-color</code> works. A two-colour blend is a decorator: <code>decorator: horizontal-gradient(#EB6036 #FFAE28)</code> or <code>vertical-gradient(...)</code>; for more stops, an angle or a radial or conic sweep, <code>linear-gradient(...)</code>, <code>radial-gradient(...)</code> and <code>conic-gradient(...)</code> draw too (and their <code>repeating-</code> forms), up to 16 colour stops. For a picture, use <code>&lt;img&gt;</code> or <code>decorator: image(...)</code> with a file from your place's <code>UI/</code> folder (see <a href="#uidoc-images">Images</a>).</li>
+      <li><b><code>box-shadow</code> draws</b>, outer and inset, with blur, spread and rounded corners. A shadow with no offset and no spread is a glow that shows through the element's own background, as CSS specifies.</li>
       <li><b>Text shadows and outlines</b> are font effects: <code>font-effect: shadow(2dp 2dp #000000AA)</code> or <code>font-effect: outline(1dp #000000)</code>.</li>
       <li><b>Colours</b> can be names, <code>#RGB</code>, <code>#RRGGBB</code>, <code>#RRGGBBAA</code> (with alpha), <code>rgb()</code>, <code>rgba()</code>, <code>hsl()</code> and <code>hsla()</code>.</li>
       <li><b>Cursors:</b> <code>cursor: pointer</code> shows a hand and <code>default</code> the normal arrow. Other cursor names aren't supported.</li>
       <li><b>Scroll areas</b> (<code>overflow: auto</code> or <code>scroll</code>) scroll with the mouse wheel, but RmlUi draws no scrollbar until you style one (its <code>scrollbarvertical</code>, <code>slidertrack</code> and <code>sliderbar</code> elements).</li>
     </ul>
-    <div class="callout warn"><strong>What doesn't draw</strong><p>Mantle draws documents through the game's own UI renderer, which doesn't support RmlUi's shader, filter and layer effects. These load without an error but have no effect: <code>box-shadow</code>, <code>filter</code> and <code>backdrop-filter</code> (so no blur), <code>mask-image</code>, and the <code>linear-gradient</code>, <code>radial-gradient</code> and <code>conic-gradient</code> decorators (and their <code>repeating-</code> forms). <code>overflow: hidden</code> clips to the element's rectangle, even when it has rounded corners. Check doesn't warn about any of these, so if something looks plain in the game, check this list.</p></div>
+    <div class="callout warn"><strong>What still doesn't draw</strong><p>Mantle draws documents through the game's own UI renderer, which doesn't yet support RmlUi's layer effects: <code>filter</code>, <code>backdrop-filter</code> (so no blur-behind) and <code>mask-image</code>. A document that uses one of these still loads, and the element still draws, just without that effect. <a href="#validation">Check this place</a> and <b>Publish</b> warn about each one, and the client log adds one line the first time a document that uses them loads. <code>overflow: hidden</code> still clips to the element's rectangle, even when it has rounded corners.</p></div>
 
     <h3 id="uidoc-base">The base stylesheet</h3>
     <p>Every document gets Mantle's base stylesheet underneath its own styles, so plain markup looks right straight away. Your own rules win over it.</p>
@@ -375,10 +377,25 @@ end)
       <li><code>"Noto Naskh Arabic UI"</code>: Arabic. For joined, right-to-left Arabic, put <code>lang="ar"</code> on the element and give it <code>font-family: "Noto Naskh Arabic UI"</code>. Arabic in a Roboto element still draws, but as separate, unjoined letters.</li>
     </ul>
     <p>There's no italic face, so <code>font-style: italic</code> draws upright text. Text in scripts these fonts don't cover, such as Chinese, Japanese or Korean, doesn't draw.</p>
+    <p>Mixed-direction text lays out correctly: an Arabic or Hebrew phrase inside an English sentence, or an English word inside one of those, is split, shaped and ordered by the Unicode bidi algorithm rather than drawn strictly left to right, so it reads the way it would in any other app. This is automatic, nothing to opt into. Caret placement and text selection inside an <code>&lt;input&gt;</code> or <code>&lt;textarea&gt;</code> holding mixed-direction text are a known gap.</p>
 
     <h3 id="uidoc-images">Images</h3>
-    <p>A document can't load image files: nothing in <code>UI/</code> but <code>.rml</code> and <code>.rcss</code> is published, and documents can't reach the web. Instead, <code>&lt;img src="mantle-asset:<i>id</i>"/&gt;</code> shows one of your place's uploaded textures by its asset id. The texture must be one the place already loads as a colour texture, such as the base colour texture of a material used in the level. Script Assets doesn't accept textures, so an image used only by a document can't be published on its own. <code>image-color</code> tints an image, and <code>data-attr-src</code> lets your script choose it.</p>
-    <p>Check can't see place textures, so it doesn't check <code>mantle-asset:</code> images. In the game, a texture that isn't loaded draws nothing and the client log names it.</p>
+    <p>Put PNG or JPEG files anywhere under your place's <code>UI/</code> folder, such as <code>UI/icons/sword.png</code>, and reference them by a path relative to the file that uses them, the same way a stylesheet links another file:</p>
+    <div class="table-wrap"><table><thead><tr><th>Reference</th><th>Example</th></tr></thead><tbody>
+      <tr><td>An <code>&lt;img&gt;</code> element</td><td><code>&lt;img src="icons/sword.png"/&gt;</code></td></tr>
+      <tr><td>A background image decorator</td><td><code>decorator: image(icons/sword.png)</code></td></tr>
+      <tr><td>A path your script chooses</td><td><code>&lt;img data-attr-src="s.icon"/&gt;</code>, with <code>s.icon</code> a string such as <code>"icons/sword.png"</code></td></tr>
+    </tbody></table></div>
+    <p><code>image-color</code> tints an <code>&lt;img&gt;</code>. A <code>drag: clone</code> copy (see the <a href="#uidoc-example">inventory example</a> below) keeps its image while it follows the cursor.</p>
+    <p>Publish uploads each image the same way as a material's texture: the same cook and the same moderation, no separate route. The published place lists it as one of its assets and downloads it along with everything else, so a document's images are there as soon as the place is.</p>
+    <div class="table-wrap"><table><thead><tr><th>Limit</th><th></th></tr></thead><tbody>
+      <tr><td>Images per place</td><td class="num">64</td></tr>
+      <tr><td>Size of one image</td><td class="num">2 MB</td></tr>
+      <tr><td>Content</td><td>Must decode as a real PNG or JPEG, whatever the extension says</td></tr>
+      <tr><td>Extension</td><td>Lower-case <code>.png</code> or <code>.jpg</code> only; <code>.jpeg</code> is refused</td></tr>
+      <tr><td>Names</td><td>Letters, digits, <code>_</code>, <code>.</code> and <code>-</code>, the same as a document's; two paths that differ only in case aren't allowed, including against a document or stylesheet</td></tr>
+    </tbody></table></div>
+    <p><a href="#validation">Check this place</a> and <b>Publish</b> warn when a document or stylesheet names an image that isn't under <code>UI/</code>, exists only under a different case, or doesn't exist at all; a reference like that still won't draw in the game, and the client log names it. <code>UI:OpenDocument</code> on an image's path fails: open the <code>.rml</code> file that shows it instead.</p>
 
     <h2 id="uidoc-animation">Animations and transitions</h2>
     <p>Transitions and <code>@keyframes</code> animations work as in CSS, with RmlUi's own names for the easing curves: <code>linear</code>, <code>sine</code>, <code>quadratic</code>, <code>cubic</code>, <code>quartic</code>, <code>quintic</code>, <code>exponential</code>, <code>circular</code>, <code>back</code>, <code>elastic</code> and <code>bounce</code>, each with <code>-in</code>, <code>-out</code> or <code>-in-out</code>. CSS names such as <code>ease-in-out</code> and <code>cubic-bezier()</code> don't exist.</p>
@@ -414,17 +431,21 @@ end)
     <h2 id="uidoc-limits">Limits and checks</h2>
     <p><a href="#validation">Check this place</a> and <b>Publish</b> load every document in <code>UI/</code> the way players' games do, laid out on a 1920 × 1080 screen with no data set. Anything players' games would refuse or close is an error, and Publish won't go ahead until it's fixed. (The Scripts panel's Check All checks scripts only.)</p>
     <div class="table-wrap"><table><thead><tr><th>Checked when you publish</th><th>Limit</th></tr></thead><tbody>
-      <tr><td>UI files per place</td><td class="num">64</td></tr>
-      <tr><td>Size of one UI file</td><td class="num">256 KiB</td></tr>
+      <tr><td>Documents and stylesheets per place</td><td class="num">64</td></tr>
+      <tr><td>Size of one document or stylesheet</td><td class="num">256 KiB</td></tr>
+      <tr><td>Images per place</td><td class="num">64</td></tr>
+      <tr><td>Size of one image</td><td class="num">2 MB</td></tr>
       <tr><td>Length of a UI file's path</td><td class="num">200 characters</td></tr>
-      <tr><td>Names</td><td>Letters, digits, <code>_</code>, <code>.</code> and <code>-</code>; lower-case <code>.rml</code>/<code>.rcss</code>; no <code>..</code>; no two paths that differ only in case</td></tr>
+      <tr><td>Names</td><td>Letters, digits, <code>_</code>, <code>.</code> and <code>-</code>; lower-case <code>.rml</code>/<code>.rcss</code>/<code>.png</code>/<code>.jpg</code> (<code>.jpeg</code> refused); no <code>..</code>; no two paths that differ only in case</td></tr>
+      <tr><td>An image's content</td><td>Must decode as a real PNG or JPEG, whatever the extension says</td></tr>
       <tr><td>Refused anywhere in a file, even in a comment</td><td><code>&lt;script</code>, <code>@font-face</code>, and a <code>data-rml</code> attribute</td></tr>
       <tr><td>Element nesting, counting templates and <code>data-for</code> views</td><td class="num">16 levels</td></tr>
       <tr><td>Elements once loaded</td><td class="num">4,096</td></tr>
       <tr><td>Load and layout time</td><td>An error over 500 ms, a warning over 50 ms</td></tr>
       <tr><td>Any RmlUi error or warning while loading, such as a linked stylesheet that isn't in <code>UI/</code> or a property it doesn't know</td><td>An error</td></tr>
       <tr><td>A <code>&lt;body&gt;</code> with its own <code>data-model</code></td><td>A warning</td></tr>
-      <tr><td>Image files in <code>UI/</code></td><td>A warning; they aren't published</td></tr>
+      <tr><td>A document or stylesheet uses <code>filter</code>, <code>backdrop-filter</code> or <code>mask-image</code></td><td>A warning; see <a href="#uidoc-styling">What still doesn't draw</a></td></tr>
+      <tr><td>An image reference that's missing, wrong case, or outside <code>UI/</code></td><td>A warning; it won't draw</td></tr>
     </tbody></table></div>
     <p>Players' games check again when a document opens, and again after every <code>SetData</code>, because data can add elements that Check never saw (a <code>data-for</code> over a long list, say):</p>
     <div class="table-wrap"><table><thead><tr><th>In the game</th><th>Limit</th><th>What happens</th></tr></thead><tbody>
@@ -443,11 +464,83 @@ end)
     <ul>
       <li><b>Keep element counts modest.</b> Show the 20 visible rows of a long list, not all 2,000.</li>
       <li><b>Animate <code>transform</code> and <code>opacity</code>.</b> Animating sizes, margins or positions re-lays out the document every frame. A few animated health bars are fine; hundreds of them at once are not.</li>
+      <!-- TODO(opacity): add specific guidance on animating opacity vs. other properties once the geometry-rebuild fix lands and clears its pass bar. -->
       <li><b>Split fast-changing values into their own keys.</b> <code>SetData</code> only redraws what uses that key, so a timer in <code>SetData("time", t)</code> is cheap, while resending a large table ten times a second copies and redraws all of it.</li>
       <li><b>Don't update faster than players can read.</b> A counter that changes 20 times a second rebuilds its text 20 times a second.</li>
       <li><b>Close what isn't showing.</b> Open a document when the player needs it and close it afterwards, rather than keeping a screenful of hidden panels open.</li>
     </ul>
     <p>In development builds, the console command <code>Mantle.Rml.LogFrameCost 1</code> logs every document's update and draw cost, element count and the game's frame time every 5 seconds.</p>
+
+    <h2 id="uidoc-example">Worked example: a drag-and-drop inventory grid</h2>
+    <p>A grid of slots the player drags items between, with the picked-up item's icon following the cursor. One document, one stylesheet, one client script.</p>
+<div class="code"><span class="tag">UI/inventory.rml</span><pre data-example-kind="source">&lt;rml&gt;
+&lt;head&gt;
+	&lt;title&gt;Backpack&lt;/title&gt;
+	&lt;link type="text/rcss" href="inventory.rcss"/&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;div class="panel"&gt;
+		&lt;h2 mantle-role="heading"&gt;Backpack&lt;/h2&gt;
+		&lt;div class="grid"&gt;
+			&lt;button class="slot" data-for="s, i : slots"
+				data-class-empty="s.empty"
+				data-event-dragdrop="emit('drop', i)"
+				data-attr-mantle-label="s.empty ? 'Empty slot' : s.name + ', ' + s.count"&gt;
+				&lt;div class="item" data-if="!s.empty" data-event-dragstart="emit('pick', i)"&gt;
+					&lt;img class="icon" data-attr-src="s.icon"/&gt;
+					&lt;div class="count" data-if="s.count &gt; 1"&gt;{{s.count}}&lt;/div&gt;
+				&lt;/div&gt;
+			&lt;/button&gt;
+		&lt;/div&gt;
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/rml&gt;</pre></div>
+<div class="code"><span class="tag">UI/inventory.rcss</span><pre data-example-kind="source">.panel { position: absolute; left: 50%; top: 50%; width: 460dp; margin-left: -230dp; margin-top: -230dp;
+	padding: 18dp 20dp; background-color: #191919F0; border: 1dp #444443; border-radius: 14dp; }
+.grid { display: flex; flex-wrap: wrap; width: 420dp; margin-top: 12dp; }
+.slot { width: 88dp; height: 88dp; margin: 6dp; padding: 0dp; border-radius: 10dp; background-color: #272726; border: 2dp #444443; }
+.slot:hover { border-color: #A19E98; }
+.item { position: relative; width: 84dp; height: 84dp; drag: clone; }
+.icon { position: absolute; left: 10dp; top: 10dp; width: 64dp; height: 64dp; }
+.count { position: absolute; right: 6dp; bottom: 2dp; font-weight: bold; color: #FFFFFF; }</pre></div>
+<div class="code"><span class="tag">Scripts/Client/Inventory.luau</span><pre id="ex-uidoc-inventory-luau" data-example-kind="source" data-language="luau">local SLOTS = 12
+local slots = { -- index -&gt; { id, count }; a gap is an empty slot
+	{ id = &quot;sword&quot;, count = 1 },
+	nil,
+	{ id = &quot;potion&quot;, count = 3 },
+}
+local ITEMS = {
+	sword = { name = &quot;Ember Sword&quot;, icon = &quot;icons/sword.png&quot; },
+	potion = { name = &quot;Health Potion&quot;, icon = &quot;icons/potion.png&quot; },
+}
+
+local doc = UI:OpenDocument(&quot;UI/inventory.rml&quot;, &quot;modal&quot;)
+local dragFrom = -1
+
+local function refresh()
+	local view = table.create(SLOTS)
+	for i = 1, SLOTS do
+		local slot = slots[i]
+		view[i] = slot
+			and { empty = false, name = ITEMS[slot.id].name, icon = ITEMS[slot.id].icon, count = slot.count }
+			or { empty = true, name = &quot;&quot;, icon = &quot;&quot;, count = 0 }
+	end
+	doc:SetData(&quot;slots&quot;, view)
+end
+refresh()
+
+doc.Event:Connect(function(name, args)
+	local i = args[1] -- the 0-based slot index data-for gave the element
+	if name == &quot;pick&quot; then
+		dragFrom = i
+	elseif name == &quot;drop&quot; and dragFrom &gt;= 0 then
+		slots[dragFrom + 1], slots[i + 1] = slots[i + 1], slots[dragFrom + 1]
+		dragFrom = -1
+		refresh()
+	end
+end)
+</pre></div>
+    <p>The icons (<code>UI/icons/sword.png</code>, <code>UI/icons/potion.png</code>) sit next to the document and are chosen per slot with <code>data-attr-src</code>, so adding an item is just a new entry in <code>ITEMS</code> and a new file under <code>UI/icons/</code>. RCSS's <code>drag: clone</code> is what makes the picked-up item's clone follow the cursor while it's dragged; the clone keeps its icon, and <code>dragstart</code>/<code>dragdrop</code> on the source and target slots are how the script hears where it started and landed. A fuller version can add stacking, a click-and-place path for gamepad players, and a <code>Closed</code> handler that reopens the panel; the document and script keep the same shape.</p>
 
     <h2 id="uidoc-from-web">Coming from browser-based game UIs</h2>
     <p>If you've built game UI as web pages running inside a game, most of what you know carries over. The big change is that <b>there's no JavaScript in the page</b>: the document is markup, styles and data bindings, and your client script plays the part of the page's code.</p>
@@ -464,7 +557,8 @@ end)
       <tr><td>Listening for Escape to close the page</td><td>Built in for modal documents: Back closes it and fires <code>Closed("back")</code>.</td></tr>
       <tr><td>Gamepad support written by hand</td><td>Built in: focus, D-pad and stick movement, A to click, B for Back. Give custom controls <code>tab-index: auto; nav: auto</code>.</td></tr>
       <tr><td>Several pages or frames</td><td>Several documents, up to 16 per script, each with its own mode.</td></tr>
-      <tr><td>Images from a URL or a CDN, web fonts</td><td>Not available. Documents can't reach the network or files outside <code>UI/</code>. Use place textures (<code>mantle-asset:</code>) and the built-in fonts.</td></tr>
+      <tr><td>An image asset</td><td>A PNG or JPEG file in your place's <code>UI/</code> folder, referenced by a relative path (see <a href="#uidoc-images">Images</a>). No URLs and no CDN: documents can't reach the network.</td></tr>
+      <tr><td>Web fonts</td><td>Not available. Use the built-in fonts.</td></tr>
       <tr><td>CSS animations and transitions</td><td>The same idea, with RmlUi's easing names (<code>cubic-in-out</code> and so on).</td></tr>
       <tr><td>Canvas, video, WebGL</td><td>Not available.</td></tr>
       <tr><td>Storing things in the page (local storage)</td><td>A document keeps nothing once closed. Keep state in your script, and save progress on the server.</td></tr>
@@ -478,7 +572,8 @@ end)
       <tr><td>The D-pad doesn't move between my controls</td><td>Add <code>nav: auto</code> to them. Buttons and inputs have it already.</td></tr>
       <tr><td><code>{{value}}</code> shows nothing</td><td>Check the key's spelling and case in <code>SetData</code>, and that the <code>&lt;body&gt;</code> has no <code>data-model</code> attribute.</td></tr>
       <tr><td>Everything sits on one line</td><td>The element isn't one the base stylesheet makes a block. Give it <code>display: block</code> or <code>display: flex</code>.</td></tr>
-      <tr><td>A shadow, blur or gradient doesn't appear</td><td>See <a href="#uidoc-styling">What doesn't draw</a>.</td></tr>
+      <tr><td>A blur, backdrop blur or mask doesn't appear</td><td>See <a href="#uidoc-styling">What still doesn't draw</a>: <code>filter</code>, <code>backdrop-filter</code> and <code>mask-image</code> don't draw yet. Gradients and <code>box-shadow</code> do.</td></tr>
+      <tr><td>An image doesn't appear</td><td>Check the path is relative to the file that uses it, under <code>UI/</code>, lower-case <code>.png</code>/<code>.jpg</code>, and spelled with the same case Check reported. The client log names a reference that can't be resolved.</td></tr>
       <tr><td>The document closes by itself</td><td>Connect to <code>Closed</code> and print the reason, then see <a href="#uidoc-closed">Closed reasons</a>.</td></tr>
     </tbody></table></div>
 
