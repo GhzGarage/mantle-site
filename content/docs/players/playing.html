@@ -22,6 +22,10 @@
 <tr><td>Emote wheel (hold, unarmed)</td><td><kbd>B</kbd></td><td>Right bumper</td></tr>
 <tr><td>Throw grenade</td><td><kbd>H</kbd></td><td>D-pad up</td></tr>
 <tr><td>Enter / exit vehicle</td><td><kbd>F</kbd></td><td>Y</td></tr>
+<tr><td>Break into a locked car (hold at the door)</td><td><kbd>F</kbd> (hold)</td><td>Y (hold)</td></tr>
+<tr><td>In a car: horn</td><td><kbd>E</kbd></td><td>Left-stick click</td></tr>
+<tr><td>In a car: move to the other front seat</td><td><kbd>Q</kbd></td><td>D-pad right</td></tr>
+<tr><td>In a car: lock / unlock (driver's seat)</td><td><kbd>L</kbd></td><td>D-pad left</td></tr>
 <tr><td>Leaderboard</td><td><kbd>Tab</kbd></td><td>Menu, then "Leaderboard"</td></tr>
 <tr><td>Text chat</td><td><kbd>T</kbd></td><td>View</td></tr>
 <tr><td>Push to talk</td><td><kbd>V</kbd></td><td>D-pad down</td></tr>
@@ -86,13 +90,19 @@
 <p>Aiming makes your shots more accurate, and crouching makes them even more accurate. Jumping makes them less accurate.</p>
 
 <h2 id="vehicles">Vehicles <span class="status live">Live</span></h2>
-<p>Vehicles also only appear in worlds where the creator has added them. Walk within 4.5 m of an empty car and press <kbd>F</kbd> / Y ("Drive"). For now, only the driver can ride.</p>
+<p>Vehicles also only appear in worlds where the creator has added them. Walk within 4.5 m of an empty car and press <kbd>F</kbd> / Y ("Drive"). <span class="status wip">Next release</span> The character walks round to the door and climbs in; press <kbd>F</kbd> / Y at the front passenger seat of a car with a driver to ride along. A passenger can use a pistol or throw grenades from the seat, but the driver can't fire.</p>
 <ul>
 <li><b>Accelerate:</b> <kbd>W</kbd> / right trigger</li>
 <li><b>Brake:</b> <kbd>S</kbd> / left trigger (hold it when stopped to reverse)</li>
 <li><b>Handbrake:</b> <kbd>Space</kbd> / A</li>
 <li><b>Steer:</b> <kbd>A</kbd>/<kbd>D</kbd> / left stick</li>
-<li><b>Get out:</b> <kbd>F</kbd> / Y</li>
+<li><b>Get out:</b> <kbd>F</kbd> / Y. Above walking pace you dive out instead, and roll clear.</li>
+<li><b>Horn:</b> <kbd>E</kbd> / left-stick click, if the car has one.</li>
+<li><b>Move to the other front seat:</b> <kbd>Q</kbd> / D-pad right, when it's free.</li>
+<li><b>Lock or unlock the car:</b> <kbd>L</kbd> / D-pad left, from the driver's seat only. A locked car opens only for the last player who drove it. Anyone else's tap rattles the door; <b>holding</b> <kbd>F</kbd> / Y at the door for at least 0.4 seconds breaks in (the window breaks and the car unlocks), and the car then needs hotwiring from the driver's seat before it starts.</li>
+<li><b>Carjacking:</b> pressing <kbd>F</kbd> / Y at an occupied seat pulls that player out and takes the seat, unless the world has turned carjacking off.</li>
+<li><b>The trunk:</b> on foot, at the back of a car that has one, <kbd>E</kbd> / B opens or shuts it.</li>
+<li><b>Crashes hurt:</b> a hard enough crash injures everyone inside, and a very hard one is lethal. Someone who dies in a seat slumps there until the body is cleared away a little later, which frees the seat.</li>
 <li><b>Change paint colour:</b> <kbd>C</kbd> / X cycles through six colours.</li>
 <li><b>Camera:</b> the mouse wheel or right-stick click switches between first person, close chase and far chase. The camera moves back behind the car shortly after you stop looking around.</li>
 <li>The screen shows your speed in KM/H and the current gear.</li>
