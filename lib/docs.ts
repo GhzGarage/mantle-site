@@ -69,6 +69,7 @@ export const docsNav: DocSection[] = [
           { slug: ["creators", "clothing"], title: "Clothing, hair and accessories", description: "Build 3D clothing, one-piece outfits, hair and accessories in Unreal that pass Mantle's checks and fit every avatar: skeletons, slots, sections, sockets, budgets and the messages you'll see." },
           { slug: ["creators", "avatars-emotes"], title: "Avatars and emotes", description: "Make whole avatars on a supported skeleton, and emotes players can play from the emote wheel." },
           { slug: ["creators", "vehicles"], title: "Vehicles", description: "Convert a car's skeletal mesh into a Mantle vehicle with paint, liveries and suspension, and place it with a Vehicle Spawn. Publishes with the next release." },
+          { slug: ["creators", "script-packages"], title: "Script packages and Script Points", description: "Publish scripts from a Packages folder for other creators, use theirs from the library, anchor them in the level with Script Points, and set parameters and package settings." },
         ],
       },
     ],
@@ -82,7 +83,7 @@ export const docsNav: DocSection[] = [
         title: "Basics",
         pages: [
           { slug: ["players"], title: "Getting started", description: "Installing Mantle, signing in, finding worlds, community servers and joining a world." },
-          { slug: ["players", "playing"], title: "Playing", description: "Controls, moving around, your avatar and emotes, tools, vehicles, settings and what to expect in a world." },
+          { slug: ["players", "playing"], title: "Playing", description: "Controls, moving around, your avatar and emotes, the ASSETS tab, tools, vehicles, settings and what to expect in a world." },
         ],
       },
       {
@@ -116,7 +117,7 @@ export const docsNav: DocSection[] = [
         title: "Operations",
         pages: [
           { slug: ["platform", "releases"], title: "Updates", description: "What's new, how Mantle updates reach you and how servers update without interrupting play." },
-          { slug: ["platform", "backend"], title: "Services and trust", description: "Your account, limits, what gets screened, who can see chat and voice, and how long data is kept." },
+          { slug: ["platform", "backend"], title: "Services and trust", description: "Your account, limits, what gets screened, library items and script packages, who can see chat and voice, and how long data is kept." },
         ],
       },
     ],

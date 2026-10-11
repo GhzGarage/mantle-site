@@ -130,6 +130,7 @@ print(Config.ROUND_SECONDS)
       <li>A module is loaded once and reused. In Luau and Python it's shared by the scripts on a side; in JS/TS each script gets its own copy.</li>
       <li>Python uses <code>require(...)</code> rather than <code>import</code> for your own files: it returns the module object, so <code>Config.ROUND_SECONDS</code> works as usual. Python's own built-in modules (like <code>math</code>) still use <code>import</code>.</li>
       <li>Client scripts can't load server code; it never leaves the server. Server scripts can't load client code.</li>
+      <li>A <a href="/docs/creators/script-packages/">script package</a> your place stores has its own modules: reach its <code>Shared/</code> modules with <code>require("@Name/Module")</code>. See <a href="#packages">Script packages</a>.</li>
       <li>Luau and Python can only load files in their own language; JavaScript and TypeScript can import each other. Give modules unique names across languages, since an extensionless path can match a file in another language. To share between languages, use State, Events or a Remote (see <a href="#languages">Mixing languages</a>).</li>
     </ul>
     <h2 id="network">Talking over the network</h2>
@@ -171,7 +172,7 @@ State.observe(&quot;guide.example.timeLeft&quot;, lambda s: label.set_text(f&quo
     <p>The <a href="/docs/scripting/recipes/#r-cross">checkpoint recipe</a> pairs <code>Server/GuideCheckpoint.ts</code> with <code>Server/GuideKillBricks.luau</code>: TypeScript writes a checkpoint vector into State; Luau reads it when the player touches a kill brick. Neither language imports the other's module.</p>
 
     <h2 id="services">More services</h2>
-    <p>The sections below cover services added in script API 1.4 to 1.31. The newest game release carries all of them, and Check All and the type files know them. Each section names the version it needs. A section marked <span class="status wip">Next release</span> is about something a place can't contain yet, so a place that uses it is held back at publish (see <a href="#versions">API versions</a>). The examples are in Luau; the other languages use the same members with their own spelling. Every member is listed in the <a href="#reference">full reference</a>.</p>
+    <p>The sections below cover services added in script API 1.4 to 1.36. The newest game release carries all of them, and Check All and the type files know them. Each section names the version it needs. A section marked <span class="status wip">Next release</span> is about something a place can't contain yet, so a place that uses it is held back at publish (see <a href="#versions">API versions</a>). The examples are in Luau; the other languages use the same members with their own spelling. Every member is listed in the <a href="#reference">full reference</a>.</p>
 
     <h3 id="script-assets">Assets your scripts use</h3>
     <p>A script can only spawn a mesh, show a material or play a sound that was published with the place. Anything placed in the level is published automatically. For an asset nothing in the level uses, such as a projectile a script spawns or a sound it plays on an event, add it to <b>Script Assets</b>:</p>
@@ -363,3 +364,25 @@ shop.Event:Connect(function(name, args)
 		Net:Remote("Buy"):FireServer(args[1])   -- the server checks and charges
 	end
 end)</pre></div></div>
+
+    <h3 id="packages">Script packages and Script Points (API 1.35)</h3>
+    <p>A <a href="/docs/creators/script-packages/">script package</a> is a set of scripts a place stores from the library, or keeps in a <code>Packages/&lt;Name&gt;/</code> folder beside <code>Scripts/</code> while you build it. Its <code>Server/</code> and <code>Client/</code> scripts start like the place's own, once on each side, and its <code>Shared/</code> and <code>Modules</code> folders only hold modules. Its scripts have the same abilities and limits as any other script on their side.</p>
+    <ul>
+      <li><b><code>Script.Package</code></b> is the name the place's storage gives the package this script belongs to, such as <code>"Hazards"</code>, or <code>""</code> in one of the place's own scripts.</li>
+      <li><b><code>Script.Points</code></b> lists the enabled <a href="/docs/creators/script-packages/#script-points">Script Points</a> placed for this package. Each is an <code>Entity</code> at the point's position and rotation, tagged with the package's storage name. Its parameters are attributes: <code>point:GetAttribute("Radius")</code>. Numbers and true/false arrive converted, as the package's <code>package.json</code> declares them, and a parameter a point leaves out takes the package's default. A place script gets an empty list.</li>
+      <li><b><code>Script.Settings</code></b> (API 1.36) holds the package-wide settings the place chose, by name, typed the same way, with the package's defaults filling anything left unset: <code>Script.Settings.RoundLength</code>. A place script gets an empty table.</li>
+      <li><b><code>Storage:Get(name)</code></b> (API 1.34) also answers a stored package's library item id.</li>
+    </ul>
+    <p>A package's scripts run once per side however many points there are, so loop over the points rather than expecting one script per point:</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Packages/Hazards/Client/Markers.luau</span><pre data-example-kind="snippet">for _, point in Script.Points do
+	print(`{Script.Package} zone, radius {point:GetAttribute("Radius")}`)
+end</pre></div></div>
+    <p><b>Requiring across the boundary:</b></p>
+    <ul>
+      <li>From a place script, <code>require("@Hazards/Config")</code> reaches <code>Packages/Hazards/Shared/Config</code>. Only a package's <code>Shared/</code> modules are reachable this way, and a place script can't name a path inside <code>Packages/</code> directly.</li>
+      <li>Inside a package, a bare name such as <code>require("Config")</code> resolves within the package: its <code>Shared/</code> first, then its own side's folder. Relative paths can't leave the package.</li>
+      <li>A package can't require the place's own scripts, or another package's. Packages and place scripts talk through <a href="#languages">Events, State and Remotes</a>, like scripts in different languages do.</li>
+      <li>The same rules apply to <code>import</code> in JavaScript and TypeScript and to <code>require</code> in Python.</li>
+    </ul>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Rounds.luau</span><pre data-example-kind="snippet">local HazardConfig = require("@Hazards/Config")   -- the stored package's Shared/Config
+Events:Get("RoundStarted"):Fire()                  -- a package script can connect to this</pre></div></div>

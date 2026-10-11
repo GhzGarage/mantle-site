@@ -1,0 +1,171 @@
+<div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
+
+<div class="callout tip"><strong>Scripts you can share</strong><p>A <b>script package</b> is a folder of scripts that you publish once and any creator can add to their own place, without opening or copying the code. A <b>Script Point</b> is a marker you drop in the level to tell a package where to act, with settings of its own. For example, a hazard package runs one script, and each Script Point marks one danger zone with its own size and damage.</p></div>
+
+<h2 id="overview">How it works <span class="status live">Live</span></h2>
+<ul>
+<li><b>Make it:</b> put a folder in <code>Packages/</code>, next to your level's <code>Scripts/</code> folder. It holds a small <code>package.json</code> and the same <code>Server/</code>, <code>Client/</code> and <code>Shared/</code> folders you already use for scripts.</li>
+<li><b>Try it:</b> <b>Test Locally</b> runs the level's packages along with its own scripts, so you can prove a package before you publish it.</li>
+<li><b>Publish it:</b> when your place goes live, each package is published to the Mantle library too, as public or private, the same choice you make for vehicles and weapons.</li>
+<li><b>Use someone else's:</b> get a public package from the <a href="/docs/players/playing/#assets">ASSETS tab</a> in Mantle or from <b>Tools → Mantle → Library...</b> in Unreal, add it to your place's storage, and it runs in your place.</li>
+<li><b>Anchor it:</b> drop <b>Script Points</b> where the package should act, and set each point's parameters in the Details panel.</li>
+</ul>
+<p>A package's scripts run <b>once per side</b> (once on the server, once on each player's machine), not once per Script Point. The scripts loop over their points with <a href="/docs/scripting/concepts/#packages"><code>Script.Points</code></a>. A stored package with no Script Points still runs, which suits things that apply to the whole place, such as a double jump.</p>
+
+<h2 id="make">Making a package</h2>
+<p>Each folder inside <code>Packages/</code> is one package. The folder's name is the name your place stores the package under, the name Script Points pick and the name other scripts use to reach it.</p>
+<div class="code"><span class="tag">A level with one package</span><pre data-example-kind="snippet">Content/MyPlace/
+  MyPlace.umap
+  Scripts/               the place's own scripts
+    Server/
+      Rounds.luau
+  Packages/
+    Hazards/             one package, stored as "Hazards"
+      package.json       its name, description, parameters and settings
+      Server/            runs on the server, once
+        Main.luau
+      Client/            runs on each player's machine, once
+        Warning.luau
+      Shared/            modules both sides (and the place) can require
+        Config.luau</pre></div>
+<ul>
+<li><b>The folder name</b> is a letter followed by up to 63 letters, digits or <code>_</code>, with no spaces, for example <code>Hazards</code> or <code>Kill_Bricks</code>. Don't name a package <code>Shared</code>, <code>Server</code> or <code>Client</code>: <code>require("@Shared/...")</code> would then reach the package instead of your own Shared folder.</li>
+<li><b>Files</b> follow the same rules as <a href="/docs/scripting/#rules">your Scripts folder</a>: <code>Server/</code>, <code>Client/</code> and <code>Shared/</code> spelled exactly, any folders inside them, and <code>.luau</code>/<code>.lua</code>, <code>.ts</code>, <code>.js</code> or <code>.py</code> files. <code>Shared/</code> and any <code>Modules</code> folder only hold modules, which run when something requires them.</li>
+<li><b>TypeScript</b> is compiled when you publish, and the package is published as the resulting JavaScript.</li>
+<li><b>Visual scripts:</b> a graph saved inside a package runs and publishes as the Luau saved beside it, with a warning to remind you. Save the graph after every change so its Luau is up to date.</li>
+<li>A package holds 1 to 64 scripts. Paths must be unique even ignoring capital letters, and each is at most 200 characters.</li>
+</ul>
+
+<h3 id="manifest">package.json</h3>
+<p>The manifest names the package and lists what a Script Point can set.</p>
+<div class="code"><span class="tag">Packages/Hazards/package.json</span><pre data-example-kind="snippet">{
+  "name": "Hazard Zones",
+  "description": "Players inside a zone take damage every half second. Put a Script Point in the middle of each zone.",
+  "parameters": [
+    { "name": "Radius", "type": "number", "default": 300, "help": "How far the zone reaches, in centimetres." },
+    { "name": "Damage", "type": "number", "default": 10, "help": "Damage each half second." },
+    { "name": "Warning", "type": "string", "default": "Danger!", "help": "Shown to a player who walks in." }
+  ]
+}</pre></div>
+<div class="table-wrap"><table><thead><tr><th>Key</th><th>Rules</th></tr></thead><tbody>
+<tr><td><code>name</code></td><td>Required. 1 to 64 characters on one line. This is what other creators see in the library.</td></tr>
+<tr><td><code>description</code></td><td>Optional. Up to 1,000 characters.</td></tr>
+<tr><td><code>parameters</code></td><td>Optional. Up to 16 values that each <b>Script Point</b> sets for itself (see below).</td></tr>
+<tr><td><code>settings</code></td><td>Optional. Up to 16 values set once for the <b>whole package</b> in each place that stores it. See <a href="#settings">Package settings</a> (script API 1.36).</td></tr>
+</tbody></table></div>
+<p>Each parameter is <code>{"name", "type", "default", "help"}</code>:</p>
+<ul>
+<li><b>name:</b> a letter followed by up to 31 letters, digits or <code>_</code>. Each name appears only once.</li>
+<li><b>type:</b> <code>"string"</code>, <code>"number"</code> or <code>"boolean"</code>. From script API 1.36 also <code>"choice"</code>, with the extra keys described under <a href="#settings">Package settings</a>.</li>
+<li><b>default:</b> written as its type: <code>100</code> for a number, <code>true</code> or <code>false</code> for a boolean, text in quotes for a string. A number or boolean parameter <b>must</b> have a default, so a point that leaves it out still has a value. At most 256 characters, with no space at the start or end.</li>
+<li><b>help:</b> optional, up to 200 characters on one line. It shows beside the parameter in a Script Point's Details panel.</li>
+</ul>
+<p>Other keys in <code>package.json</code> are ignored.</p>
+
+<h3 id="example">A package's script</h3>
+<p>This server script runs once and checks every zone. Each Script Point is an entity at the point's position, and its parameters are read with <code>GetAttribute</code>, already turned into numbers and true/false as the manifest declares them.</p>
+<div class="code"><span class="tag">Packages/Hazards/Shared/Config.luau</span><pre data-example-kind="snippet">return { DamageScale = 1 }</pre></div>
+<div class="code"><span class="tag">Packages/Hazards/Server/Main.luau</span><pre data-example-kind="snippet">local Config = require("Config")   -- this package's Shared/Config.luau
+
+while true do
+	for _, player in Players:GetPlayers() do
+		for _, zone in Script.Points do
+			if (player.Position - zone.Position).Magnitude &lt; zone:GetAttribute("Radius") then
+				player:TakeDamage(zone:GetAttribute("Damage") * Config.DamageScale)
+			end
+		end
+	end
+	task.wait(0.5)
+end</pre></div>
+<p>Inside a package, a bare name like <code>require("Config")</code> looks in the package itself first. A package can't reach the place's own scripts, and the place's scripts reach a package's modules with <code>require("@Hazards/Config")</code>. They talk to each other through Events, State and Remotes. See <a href="/docs/scripting/concepts/#packages">Script packages in scripts</a>.</p>
+
+<h2 id="test">Testing a package</h2>
+<p><b>Test Locally</b> runs every package in the level's <code>Packages/</code> folder exactly as a stored one would, along with its Script Points, even before the package has been published or stored. In Test Locally, a Script Point's parameters reach your scripts as text; once the place is published they arrive as the type the manifest declares.</p>
+
+<h2 id="publish">Publishing a package <span class="status live">Live</span></h2>
+<p>You don't publish a package on its own. When you <a href="/docs/creators/publishing/">publish</a> your place:</p>
+<ol class="steps">
+<li><b>Upload</b><p>Every file in each package uploads with the place's own scripts and is screened the same way. Files you've uploaded before aren't sent again.</p></li>
+<li><b>Choose who can use it</b><p>The <b>Mantle Publish</b> tab asks "Vehicles, weapons and script packages in this place: who can use them". <b>Public</b> lists the package in the library for every creator and needs the rights declaration ticked. <b>Private</b> means only you can use it.</p></li>
+<li><b>It becomes a library item</b><p>The first publish creates the package's library item. A later publish adds a new <b>version</b> only if a file or <code>package.json</code> changed; otherwise the place keeps the version it has.</p></li>
+<li><b>Your place stores it</b><p>Each package is added to <b>Mantle Place Settings → Storage</b> under its folder's name, pinned to that version: "N published script package(s) are now stored in Place Settings &gt; Storage".</p></li>
+</ol>
+<ul>
+<li><b>Save to Mantle</b> doesn't publish packages. A draft leaves out the Script Points of packages that aren't stored yet, and says so: "Script packages become library items when you publish; until then the draft leaves out N Script Point(s) that use them (…)".</li>
+<li>If Mantle is still screening a package's scripts, nothing goes live: "Mantle is still screening the scripts of package '…', so nothing went live yet. Choose Publish again in a minute; nothing is uploaded twice."</li>
+<li>A package can have up to 256 versions. After that: "The package '…' already has as many versions in your library as Mantle allows, so nothing went live. Copy it to a package folder with a new name (a new name makes a new library item), then publish again."</li>
+<li>Packages share the place's storage with vehicles and weapons: 32 entries in all. "This place would store N library items with its script packages, and a place stores at most 32. Remove some from Place Settings &gt; Storage, or combine packages."</li>
+</ul>
+
+<h2 id="use">Using another creator's package <span class="status live">Live</span></h2>
+<ol class="steps">
+<li><b>Look before you get it</b><p>In Mantle's <a href="/docs/players/playing/#assets">ASSETS tab</a>, a package's details list its files and let you read every one before you get it. What you read is exactly what runs.</p></li>
+<li><b>Get it</b><p>Press <b>Get</b> in the ASSETS tab, or in Unreal open <b>Tools → Mantle → Library...</b>, choose <b>Scripts</b> and <b>All</b>, and press <b>Get</b>. Everything is free for now.</p></li>
+<li><b>Add it to storage</b><p>In the Library panel, choose <b>Mine</b> and press <b>Add to storage</b> on the package. It's stored under a name made from the package's name (spaces become <code>_</code>, so "Kill Bricks" becomes <code>Kill_Bricks</code>, with a number added if that name is taken), pinned at its latest version. You can rename the entry in Place Settings → Storage.</p></li>
+<li><b>Place Script Points, if it uses them</b><p>See <a href="#script-points">Script Points</a>. A package that needs none just runs once the place is published.</p></li>
+</ol>
+<ul>
+<li><b>Your place never changes by itself.</b> It runs the version it pinned until you choose <b>Update to vN</b> in the Library panel or <b>Update to latest</b> on the storage row. Publishing never changes a pin.</li>
+<li>To stop using a package, press <b>Remove</b> on its row in the Library panel's storage list.</li>
+<li>If Mantle takes a package down, it stops running in every place that stores it.</li>
+<li>A package runs with exactly the abilities a place script has on its side, nothing more, and its scripts have the same limits as any other script.</li>
+</ul>
+
+<h2 id="script-points">Script Points <span class="status live">Live</span></h2>
+<p>Choose <b>Tools → Mantle → Add Script Point</b>. The point appears in front of you in the viewport, with the package's name floating above it in the editor (players never see a Script Point). In its Details panel:</p>
+<div class="table-wrap"><table><thead><tr><th>Field</th><th>What it does</th></tr></thead><tbody>
+<tr><td>Storage Item</td><td>A dropdown of the place's script packages: stored packages first, then packages in the level's <code>Packages/</code> folder that aren't stored yet ("(in Packages/, stored when you publish)"). If there are none: "This place has no script package. Add one with Tools &gt; Mantle &gt; Library (Scripts), or make one in a Packages folder beside the level's Scripts folder."</td></tr>
+<tr><td>Parameters</td><td>One row for each parameter the package declares, shown as "Name (type)" with its help text and its default as a hint. Tick <b>Default</b> to leave a parameter out of this point, so the package's default applies.</td></tr>
+<tr><td>Enabled</td><td>Untick to keep the point in the level without the package's scripts seeing it.</td></tr>
+</tbody></table></div>
+<p>The point's position and rotation are what the scripts see. A place can have up to 64 Script Points, each setting up to 16 parameters, and each value can be up to 256 characters.</p>
+
+<h2 id="settings">Package settings <span class="status live">Live</span></h2>
+<p>From script API 1.36, a package can also declare <b>settings</b>: values set once for the whole package in each place that stores it, such as a round length or a difficulty. Parameters belong to one Script Point; settings belong to the package.</p>
+<div class="code"><span class="tag">Packages/Hazards/package.json (part)</span><pre data-example-kind="snippet">"settings": [
+  { "name": "RoundLength", "type": "number", "default": 120, "min": 30, "max": 600, "help": "Seconds before the zones reset." },
+  { "name": "Difficulty", "type": "choice", "options": ["Easy", "Normal", "Hard"], "default": "Normal" },
+  { "name": "ShowWarnings", "type": "boolean", "default": true },
+  { "name": "TeamName", "type": "string", "required": true, "help": "The team the zones belong to." }
+]</pre></div>
+<div class="table-wrap"><table><thead><tr><th>Key</th><th>Rules</th></tr></thead><tbody>
+<tr><td><code>name</code>, <code>help</code></td><td>As for parameters.</td></tr>
+<tr><td><code>type</code></td><td><code>"string"</code>, <code>"number"</code>, <code>"boolean"</code> or <code>"choice"</code>.</td></tr>
+<tr><td><code>default</code></td><td>Written as its type; for a choice, one of its options.</td></tr>
+<tr><td><code>required</code></td><td><code>true</code> means a place must give it a value if there's no default.</td></tr>
+<tr><td><code>min</code>, <code>max</code></td><td>Numbers only: the lowest and highest value allowed.</td></tr>
+<tr><td><code>options</code></td><td>Choices only: 2 to 32 entries to pick from.</td></tr>
+</tbody></table></div>
+<p>A package declares up to 16 settings. Script Point parameters can use the same <code>choice</code>, <code>min</code>, <code>max</code> and <code>required</code> keys.</p>
+<p>To set a stored package's settings, select <b>Mantle Place Settings</b> and open its <b>Storage</b> list. The package's row shows one control per setting: a dropdown for a choice, a slider for a number with a <code>min</code> and <code>max</code>, a checkbox for a boolean, and a text box otherwise. The values publish with the place and stay with the version it pins. Scripts read them as <a href="/docs/scripting/api/#ref-script"><code>Script.Settings</code></a>.</p>
+
+<h2 id="checks">What "Check this place" catches</h2>
+<p><b>Check this place</b>, Test Locally and Publish all check packages and Script Points, and say what to do in plain words.</p>
+<div class="table-wrap"><table><thead><tr><th>Message</th><th>What to do</th></tr></thead><tbody>
+<tr><td>Packages/… has no package.json.</td><td>Add one, as in <a href="#manifest">package.json</a>.</td></tr>
+<tr><td>Packages/… is not a usable package name: a package's folder name is the name a place stores it under.</td><td>"Rename the folder to a letter followed by up to 63 letters, digits or '_' (no spaces), for example KillBricks."</td></tr>
+<tr><td>package.json's number parameter '…' has no default. Give it one, like "default": 0, so a Script Point that leaves it out still has a value.</td><td>As the message says. Other <code>package.json</code> problems are named the same way, such as a parameter name or type Mantle doesn't accept.</td></tr>
+<tr><td>Packages/…/… is not inside the package's Server/, Client/ or Shared/ folder (case-exact).</td><td>"Move it into Server, Client or Shared, spelled exactly so."</td></tr>
+<tr><td>Packages/… is not inside a package folder, so nothing runs it.</td><td>A loose file directly in <code>Packages/</code>: move it into a package's folder, or delete it.</td></tr>
+<tr><td>Packages/… has no scripts. / Packages/… has N scripts; a package holds at most 64.</td><td>Add a script, or combine or split them.</td></tr>
+<tr><td>Packages/… has the same name as the … '…' in Mantle Place Settings &gt; Storage.</td><td>"Rename the package folder or the storage entry: publishing stores the package under its folder's name."</td></tr>
+<tr><td>[point] names the script package '…', which neither Mantle Place Settings &gt; Storage nor the level's Packages/ folder has.</td><td>"Add the package with Tools &gt; Mantle &gt; Library (Add to storage), or pick one in the point's Storage Item."</td></tr>
+<tr><td>[point] names storage '…', which is a vehicle, not a script package.</td><td>"Pick a script package in the point's Storage Item."</td></tr>
+<tr><td>[point] names no script package; set Storage Item to the Name of a script package in Mantle Place Settings &gt; Storage</td><td>As the message says.</td></tr>
+<tr><td>[point] is Script Point 65; a place has at most 64.</td><td>"Remove some Script Points: a package's scripts can loop over fewer anchors."</td></tr>
+<tr><td>[point] has 17 parameters; remove some so it has at most 16 / gives parameter '…' a value longer than 256 characters; shorten it</td><td>Change it in the point's Details panel.</td></tr>
+<tr><td>Warning: [point] sets the parameter '…', which the package '…' does not declare (its scripts can still read it).</td><td>"Check the spelling against the parameters the point's Details panel lists."</td></tr>
+<tr><td>Warning: … requires "@Hazards/…": that works only in a place that stores the package under the name Hazards.</td><td>Inside a package, require its own modules by their bare name, like <code>require("Config")</code>.</td></tr>
+<tr><td>Settings (script API 1.36): an unknown setting, a value of the wrong type, outside its <code>min</code>/<code>max</code> or not one of its options, or a required setting with no value and no default, for example "KillBricks needs RoundLength".</td><td>Set it on the package's row in Place Settings → Storage.</td></tr>
+</tbody></table></div>
+
+<h2 id="limits">Limits</h2>
+<div class="table-wrap"><table><thead><tr><th>Limit</th><th>Value</th></tr></thead><tbody>
+<tr><td>Scripts per package</td><td class="num">1 to 64, each path up to 200 characters, each file up to 1 MiB</td></tr>
+<tr><td>Package name / description / parameter help</td><td class="num">64 / 1,000 / 200 characters</td></tr>
+<tr><td>Parameters / settings per package</td><td class="num">16 / 16</td></tr>
+<tr><td>Script Points per place</td><td class="num">64</td></tr>
+<tr><td>Parameter values a point sets</td><td class="num">16, each up to 256 characters</td></tr>
+<tr><td>Storage entries per place (packages, vehicles and weapons together)</td><td class="num">32</td></tr>
+<tr><td>Versions per package</td><td class="num">256</td></tr>
+</tbody></table></div>
