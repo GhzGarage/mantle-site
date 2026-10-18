@@ -50,6 +50,7 @@ export const docsNav: DocSection[] = [
         title: "Build",
         pages: [
           { slug: ["creators", "quick-start"], title: "Quick start: your first world", description: "From installing the Mantle plugin to a published world your friends can join, step by step." },
+          { slug: ["creators", "plugin"], title: "The Mantle Core plugin", description: "What the Unreal plugin does, what you need, installing it from Fab, its Experimental Toolset Registry dependency, the authoring workflow and Test Locally." },
           { slug: ["creators"], title: "Editor setup and tools", description: "What you need, signing in, the Mantle editor tools, checking your place and testing it." },
           { slug: ["creators", "building"], title: "Building a place", description: "What you can put in a place, Blueprint prefabs, sounds, place settings, what gets published, features coming in the next release, your own assets, and the sky." },
         ],

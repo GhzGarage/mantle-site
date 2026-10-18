@@ -1,0 +1,78 @@
+<div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
+
+<p><b>Mantle Core</b> is the Unreal Engine plugin you use to make things for Mantle. It adds Mantle's tools to the editor: build a place in an ordinary Unreal level, check it, test it in the Mantle game on your own PC, and upload it. It also turns your avatars, clothing, emotes and vehicles into Mantle items. This page covers installing the plugin and finding your way around it. Each section links to the page with the full details.</p>
+
+<h2 id="what-it-does">What the plugin does</h2>
+<ul>
+<li><b>Builds places.</b> Start a new place, edit its settings and drop in Mantle actors such as spawn points, weapon spawns and vehicle spawns. See <a href="/docs/creators/building/">Building a place</a>.</li>
+<li><b>Checks your work.</b> "Check this place" lists anything Mantle can't publish and why, and "Check what players receive" shows what players will get. Scripts and UI documents are checked for mistakes too. See <a href="/docs/creators/#validation">What "Check this place" catches</a>.</li>
+<li><b>Converts with Epic's own tools.</b> Avatars, clothing, hair, emotes and avatar items are prepared with Epic's plugins that ship with the engine, such as MetaHuman Creator, IK Rig, Groom and glTF Exporter. Your meshes and materials are converted for players when you publish. See <a href="/docs/creators/custom-assets/">Custom meshes and materials</a>.</li>
+<li><b>Tests your place.</b> <b>Test Locally</b> runs the level you have open in the Mantle game on your PC. See <a href="#test-locally">Testing with Test Locally</a>.</li>
+<li><b>Uploads and publishes.</b> Save a private draft, or publish a new revision that players can join. See <a href="/docs/creators/publishing/">Publishing and managing worlds</a>.</li>
+<li><b>Helps you script.</b> A Scripts panel, visual Script Graphs and type definitions for your code editor. See <a href="/docs/scripting/">Scripting</a>.</li>
+</ul>
+
+<h2 id="requirements">Requirements</h2>
+<div class="table-wrap"><table><thead><tr><th>You need</th><th>Details</th></tr></thead><tbody>
+<tr><td>Unreal Engine 5.8</td><td>From the Epic Games Launcher. The plugin is made for 5.8 only.</td></tr>
+<tr><td>Windows (64-bit)</td><td>The only supported platform. The plugin works in the Unreal Editor; you don't package games with it.</td></tr>
+<tr><td>The Mantle game</td><td>Installed from Steam or the Epic Games Store on the same PC, for <a href="#test-locally">Test Locally</a>, and to make the <a href="/docs/creators/#sign-in">creator token</a> you publish with.</td></tr>
+<tr><td>A Mantle account</td><td>To save and publish. Starting the Mantle game signs you in. See <a href="/docs/players/#sign-in">Signing in</a>.</td></tr>
+</tbody></table></div>
+<p>The plugin uses these Epic plugins, which come with the engine. They're turned on for you when you enable Mantle Core, and only in the editor:</p>
+<ul>
+<li>glTF Exporter, IK Rig, Geometry Script, Groom, MetaHuman SDK, MetaHuman Core Tech and Chaos Cloth Asset Editor Core.</li>
+<li><b>MetaHuman Creator</b> and <b>Chaos Outfit Asset</b>, which Epic marks as Beta.</li>
+</ul>
+
+<h2 id="install">Installing and turning it on</h2>
+<p><span class="status planned">Planned</span> Mantle Core will be free on Fab. Until then it's in early access (version 0.1.0, beta).</p>
+<ol class="steps">
+<li><b>Add it to your engine</b><p>On Fab, add Mantle Core to your library, then install it to Unreal Engine 5.8 from the Epic Games Launcher (<b>Fab Library</b> → <b>Install to Engine</b>). Fab plugins install into the engine, not into one project, under <code>Engine/Plugins/Fab</code>, so every 5.8 project can use it.</p></li>
+<li><b>Turn it on in your project</b><p>Open your project, choose <b>Edit → Plugins</b>, search for <b>Mantle Core</b> (in the "Mantle" category), tick it and restart the editor. Any blank or existing 5.8 project works.</p></li>
+<li><b>Check it's working</b><p>The Play toolbar now has a <b>Test Locally</b> button and a <b>Mantle</b> dropdown, and <b>Tools</b> has a <b>Mantle</b> section. Settings are under <b>Project Settings → Plugins → Mantle</b>.</p></li>
+</ol>
+<p>Then follow the <a href="/docs/creators/quick-start/">Quick start</a> to sign in and publish your first world.</p>
+
+<h3 id="agent-dependency">Experimental dependency: Toolset Registry</h3>
+<p>Mantle Core lists Epic's <b>Toolset Registry</b> plugin as an optional dependency. Epic marks Toolset Registry as Experimental. It's off by default, Mantle Core doesn't turn it on, and without it the plugin works exactly the same.</p>
+<p>Toolset Registry is only used for the <a href="/docs/creators/publishing/#agent-tools">AI agent tools</a>. When you turn on Toolset Registry and Epic's Unreal MCP plugin (also Experimental), Mantle registers a set of tools that Unreal's Model Context Protocol server offers to an AI agent, so the agent can check, preview or publish your place when you ask it to. If Epic discontinues Toolset Registry, only these agent tools are affected.</p>
+
+<h2 id="workflow">Working with the plugin</h2>
+<h3 id="menus">Where the tools are</h3>
+<ul>
+<li><b>Tools → Mantle</b>, and the <b>Mantle</b> dropdown next to Play, hold the same commands: Test Locally, Stop Preview, Start a new place, Place settings, Check this place, Check what players receive, Save to Mantle, Publish, the vehicle, weapon, Cosmetics and Library tools, and signing in. See <a href="/docs/creators/#editor">The Mantle editor tools</a>.</li>
+<li>The <b>Mantle Scripts</b> panel and <b>Mantle Script Graph</b> assets. See <a href="/docs/scripting/api/#editor">Editor setup</a>.</li>
+<li><b>Project Settings → Plugins → Mantle</b>: which world each level publishes to, and the Mantle client Test Locally uses.</li>
+</ul>
+
+<h3 id="flow">From level to live world</h3>
+<ol class="steps">
+<li><b>Build</b><p>Start a new place and build it from meshes, lights and Mantle actors. Your own meshes, materials and Fab packs work too. See <a href="/docs/creators/building/">Building a place</a> and <a href="/docs/creators/custom-assets/">Custom meshes and materials</a>.</p></li>
+<li><b>Convert</b><p>Turn cars into Mantle vehicles, and avatars, clothing, hair and emotes into avatar items, with Epic's plugins. See <a href="/docs/creators/vehicles/">Vehicles</a>, <a href="/docs/creators/avatars-emotes/">Avatars and emotes</a> and <a href="/docs/creators/clothing/">Clothing, hair and accessories</a>.</p></li>
+<li><b>Check</b><p>Run "Check this place" and fix what it lists. See <a href="/docs/creators/#validation">What "Check this place" catches</a>.</p></li>
+<li><b>Test</b><p>Press <b>Test Locally</b> and play your place in the Mantle game. See <a href="#test-locally">Testing with Test Locally</a>.</p></li>
+<li><b>Upload</b><p><b>Save to Mantle</b> uploads a private draft, and <b>Publish</b> makes it live. Upload avatar items with the <a href="/docs/creators/avatar-items/">Cosmetics panel</a>. See <a href="/docs/creators/publishing/#publish-flow">How publishing works</a>.</p></li>
+</ol>
+
+<h2 id="test-locally">Testing with Test Locally <span class="status live">Live</span></h2>
+<p><b>Test Locally</b> exports the level you have open and runs it in the Mantle game on your PC, with your scripts and UI. Nothing is uploaded or published, and you don't need to sign in. Press it again after a change to replace the running test.</p>
+<ul>
+<li><b>Mantle Preview</b> opens beside the editor. It says what Test Locally is doing, which Mantle client it found, whether the place's geometry, scripts and spawn are ready, and every message the game reports, including script errors. <b>Copy messages</b> copies them all.</li>
+<li>The test runs offline. Anything that tries to reach Mantle's online services is blocked, and the panel counts it.</li>
+<li>What your scripts save is kept between runs, separately for each level. <b>Reset local data</b> clears it so the next run starts fresh.</li>
+<li><b>Stop</b> or <b>Stop Preview</b> closes the test. It only closes the copy of Mantle the editor started, never one you started yourself, and the test also closes with the editor.</li>
+<li>Test Locally looks for the Mantle you installed from Steam or the Epic Games Store. If it can't find it, choose <b>Choose client...</b> in the panel, or set <b>Preview Client Executable</b> under <b>Project Settings → Plugins → Mantle</b> to <code>Mantle-Win64-Shipping.exe</code> in the install's <code>Mantle\Binaries\Win64</code> folder.</li>
+<li>If your Mantle is too old for Test Locally, you'll see "This Mantle client is too old for Test Locally; update it". Update Mantle from its store and try again.</li>
+</ul>
+<div class="callout tip"><strong>Scripts run only in Test Locally</strong>
+<p><b>Play in Editor</b> (PIE) and Simulate don't run Mantle places or scripts. Use Test Locally to try your place and its scripts, and publish when it's ready. To check what will publish without running anything, use "Check what players receive".</p></div>
+
+<h2 id="updates">Updates</h2>
+<ul>
+<li>When a new version of Mantle Core is out, the Epic Games Launcher offers it as an update to the installed plugin.</li>
+<li>A new plugin version can add things the released Mantle game can't read yet. If your place uses one, Publish says so, and Save to Mantle still works. See <a href="/docs/creators/publishing/#publish-blocked">What stops a publish</a>.</li>
+</ul>
+
+<h2 id="get-help">Get help</h2>
+<p>Stuck, or found something that doesn't work? Email <a href="mailto:contact@mantleplatform.com">contact@mantleplatform.com</a> or ask in the <a href="https://discord.gg/xj4s9kUe7x">Mantle Discord</a>.</p>
