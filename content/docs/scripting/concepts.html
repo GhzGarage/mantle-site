@@ -9,11 +9,11 @@
         <li>Firing remotes to one player or all of them.</li></ul></div>
       <div class="pane"><h4><span class="side c">Client</span> changes are local</h4><ul>
         <li>Setting a property of an entity (the object your script uses to work with an actor in the world) on a client changes only that player's view, as on Roblox. When the server next changes it, the server's value wins.</li>
-        <li>HUD text and toasts. <code>UI:Toast(text, seconds?)</code> shows a message at the top centre of the screen for 1 to 10 seconds (3 by default), replacing the one before it. <code>UI:SetText(slot, text)</code> keeps a named line at the top left: the same slot replaces its line, empty text clears it, and up to 8 lines show at once. Both are one line of plain text, up to 120 characters. For anything bigger, build <a href="/docs/scripting/ui-documents/">UI documents</a> or UI nodes.</li>
+        <li>HUD text and toasts. <code>UI:Toast(text, seconds?)</code> shows a message at the top centre of the screen for 1 to 10 seconds (3 by default), replacing the one before it. <code>UI:SetText(slot, text)</code> keeps a named line at the top left: the same slot replaces its line, empty text clears it, and up to 8 lines show at once. Both are plain text with no line breaks, and anything past 120 characters is cut off. A ninth line is refused until you clear one. For anything bigger, build <a href="/docs/scripting/ui-documents/">UI documents</a> or UI nodes.</li>
         <li><code>Players.LocalPlayer</code> is always set in a client script: client scripts start once the local player exists.</li>
         <li>Asking the server for things with <code>Remote:FireServer</code>.</li></ul></div>
     </div>
-    <p>In a session, server scripts run on the server and client scripts run on each player's machine as they join. Test multiplayer behaviour by publishing and joining with the Mantle client, and include a player who joins late. Scripts don't run in the editor's Play (PIE) mode.</p>
+    <p>In a session, server scripts run on the server and client scripts run on each player's machine as they join. Test multiplayer behaviour by publishing and joining with the Mantle client, and include a player who joins late. Scripts don't run in the editor's Play (PIE) mode: to try them on your own PC first, use <b>Tools → Mantle → Test Locally</b> (see <a href="/docs/creators/plugin/#test-locally">Testing with Test Locally</a>).</p>
     <h2 id="tags">Tags connect scripts to things</h2>
     <p>Give actors a tag in the editor, then write one script for every actor with that tag. These examples use the tag <code>guide_code_killbrick</code>. The script covers every tagged actor already placed and any added later, clones included. You never need to attach a script to an actor.</p>
     <div class="v has-ts">
@@ -85,9 +85,10 @@ def wait_for_join():
     yield token                   # waits for the signal
     player = token.result[0]      # what it fired with</pre></div>
     </div>
-    <div class="callout warn"><strong>Long loops must wait</strong><p>Each script has a limited share of CPU time and memory. If a script goes over its CPU or memory budget, or hits a host limit, Mantle stops that script, along with its tasks and connections. Split long work into chunks with waits in between.</p><p>In Python, an operation that would take a script over its memory budget is refused, and the script is stopped.</p></div>
+    <div class="callout warn"><strong>Long loops must wait</strong><p>Each script has a limited share of CPU time and memory: 8 milliseconds of CPU time in any second, and 16 MiB of memory. If a script goes over either budget, or hits a host limit, Mantle stops that script, along with its tasks and connections. Split long work into chunks with waits in between.</p><p>A single run that goes too long without waiting is cut short too. In Luau you see "script exhausted its instruction budget (100000 instructions since it last yielded). Break long loops up with task.wait()."</p><p>In Python, an operation that would take a script over its memory budget is refused, and the script is stopped.</p></div>
+    <p>Each script can also have up to 64 timers waiting at once (<code>task.wait</code>, <code>task.delay</code> and <code>setTimeout</code> count) and up to 256 signal connections.</p>
     <h2 id="values">Values</h2>
-    <p>Pass ordinary values of your language: numbers, strings, booleans, lists, tables/objects/dicts, <code>Vector3</code>, entities and players. They go into State, attributes and remotes as they are, and come back the same way. Functions can't be stored or sent.</p>
+    <p>Pass ordinary values of your language: numbers, strings, booleans, lists, tables/objects/dicts, <code>Vector3</code>, entities and players. They go into State, attributes and remotes as they are, and come back the same way. Functions can't be stored or sent: <code>State:Set</code> stops with "State can't hold functions", and a value nested more than 16 levels deep stops with "State values can't be nested more than 16 levels".</p>
     <div class="v has-ts">
       <div class="code" data-v="luau"><pre data-example-kind="snippet">State:Set("round", { number = 3, leader = "ana", spawn = Vector3.new(0, 0, 200) })
 local round = State:Get("round")
@@ -123,10 +124,11 @@ print(Config.ROUND_SECONDS)
     </div>
     <p>Each labelled block is a separate file. Type <code>Shared/Modules/Examples/Config</code> exactly as shown: paths must match capital letters exactly, on Windows as well as Linux.</p><ul>
       <li>A <code>Modules</code> folder nested inside another folder still only holds modules.</li>
-      <li>If the capitalisation is wrong, or you require an entry script (a script that runs on its own rather than a module), you get a clear error. A path outside Scripts isn't found.</li>
-      <li>Luau and Python modules must finish loading without waiting.</li>
-      <li>Circular requires (modules that require each other in a loop) are an error.</li>
-      <li>Dynamic <code>import()</code> is blocked in JavaScript and TypeScript.</li>
+      <li>If the capitalisation is wrong, or you require an entry script (a script that runs on its own rather than a module), you get a clear error. A path outside Scripts isn't found. You can leave off the file extension.</li>
+      <li>A path starting with <code>./</code> or <code>../</code> is relative to the file that asks for it. Any other path starts from <code>Scripts/</code>, and is also tried under <code>Shared/</code> and under the asking script's own side.</li>
+      <li>Luau and Python modules must finish loading without waiting. In Luau, a module that calls <code>task.wait</code> while loading gives "require: &lt;path&gt; waited while loading; modules must finish loading without task.wait".</li>
+      <li>In Luau and Python, circular requires (modules that require each other in a loop) are an error: "require: &lt;path&gt; requires itself (directly or through another module)".</li>
+      <li>Dynamic <code>import()</code> is blocked in JavaScript and TypeScript: "dynamic import() is not available to Mantle scripts; use a static import instead".</li>
       <li>A module is loaded once and reused. In Luau and Python it's shared by the scripts on a side; in JS/TS each script gets its own copy.</li>
       <li>Python uses <code>require(...)</code> rather than <code>import</code> for your own files: it returns the module object, so <code>Config.ROUND_SECONDS</code> works as usual. Python's own built-in modules (like <code>math</code>) still use <code>import</code>.</li>
       <li>Client scripts can't load server code; it never leaves the server. Server scripts can't load client code.</li>
@@ -172,7 +174,7 @@ State.observe(&quot;guide.example.timeLeft&quot;, lambda s: label.set_text(f&quo
     <p>The <a href="/docs/scripting/recipes/#r-cross">checkpoint recipe</a> pairs <code>Server/GuideCheckpoint.ts</code> with <code>Server/GuideKillBricks.luau</code>: TypeScript writes a checkpoint vector into State; Luau reads it when the player touches a kill brick. Neither language imports the other's module.</p>
 
     <h2 id="services">More services</h2>
-    <p>The sections below cover services added in script API 1.4 to 1.36. The newest game release carries all of them, and Check All and the type files know them. Each section names the version it needs. A section marked <span class="status wip">Next release</span> is about something a place can't contain yet, so a place that uses it is held back at publish (see <a href="#versions">API versions</a>). The examples are in Luau; the other languages use the same members with their own spelling. Every member is listed in the <a href="#reference">full reference</a>.</p>
+    <p>The sections below cover services added in script API 1.4 to 1.37. The newest game release carries all of them, and Check All and the type files know them. Each section names the version it needs. When a new plugin version adds members, they're marked <span class="status wip">Next release</span> until a game release carries them (see <a href="/docs/scripting/api/#versions">API versions</a>). The examples are in Luau; the other languages use the same members with their own spelling. Every member is listed in the <a href="/docs/scripting/api/#reference">full reference</a>.</p>
 
     <h3 id="script-assets">Assets your scripts use</h3>
     <p>A script can only spawn a mesh, show a material or play a sound that was published with the place. Anything placed in the level is published automatically. For an asset nothing in the level uses, such as a projectile a script spawns or a sound it plays on an event, add it to <b>Script Assets</b>:</p>
@@ -180,7 +182,7 @@ State.observe(&quot;guide.example.timeLeft&quot;, lambda s: label.set_text(f&quo
       <li>Choose <b>Tools → Mantle → Place settings</b>. This selects the level's Mantle Place Settings actor, and adds one if the level has none.</li>
       <li>In the Details panel, under <b>Mantle → Scripts</b>, add entries to <b>Script Assets</b> and pick each asset. It takes static meshes, materials and sound waves.</li>
       <li>Publish. Script Assets are checked and uploaded exactly like placed content, with the same limits.</li>
-      <li>Find each asset's id in the publish log, one line per asset: <code>Script asset /Game/Props/SM_Boulder.SM_Boulder = ast_u…</code>. The same ids show in the read-only <b>Script Asset Ids</b> list until you close the editor. Use that id in your script.</li>
+      <li>Find each asset's id in the publish log, one line per asset: <code>Script asset /Game/Props/SM_Boulder.SM_Boulder = ast_u…</code>. The same ids show in the read-only <b>Script Asset Ids</b> list until you reopen the level or close the editor. Use that id in your script. <b>Test Locally</b> gives each asset a different id, shown only in the Mantle Preview panel and in the editor log as <code>MANTLE_PREVIEW_EXPORT script asset &lt;path&gt; = &lt;id&gt;</code>, so a script that spells an id out needs the published id after you publish.</li>
     </ol>
     <p>A mesh brings its slot materials with it. An asset that's also placed in the level, or listed twice, is published once. Check this place names anything the list can't publish, such as a texture, a Sound Cue or MetaSound, or a deleted asset, and Publish refuses the same entries.</p>
 
@@ -203,7 +205,7 @@ task.wait(3)
 crate:Tween({ Color = "#FFFFFF" }, 1)   -- fade the tint away
 crate.Transparency = 0.5</pre></div></div>
 
-    <h3 id="physics">Physics objects (API 1.15) <span class="status wip">Next release</span></h3>
+    <h3 id="physics">Physics objects (API 1.15)</h3>
     <p>A static mesh with <b>Simulate Physics</b> turned on in the editor is published as a physics object: the server simulates it and every player sees it move. A player who joins later sees each one where the server has it, so a prop that has come to rest, or hangs from a rope, stays put for them too. On the server, <code>ApplyImpulse</code> and <code>ApplyAngularImpulse</code> push and spin it, <code>Velocity</code> reads or replaces its speed in cm/s, <code>Anchored = true</code> pins it in place and <code>false</code> lets it fall, and <code>Mass</code> reads its mass in kg. <code>Collided(other)</code> fires on the server when it starts touching something: another entity, a player's character, or nil. Every other entity is always anchored, and physics objects can't be cloned yet. A place can hold 500 physics objects.</p>
     <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Crate.luau</span><pre data-example-kind="snippet">local crate = World:FindFirst("PhysicsCrate")
 crate.Collided:Connect(function(other)
@@ -217,7 +219,7 @@ wheel.Anchored = false
 wheel.PhysicsMaterial = "ice"          -- API 1.28: slides instead of gripping
 wheel.AngularVelocity = Vector3.new(0, 0, 180)  -- API 1.25: half a turn a second about world Z</pre></div></div>
 
-    <h3 id="joints">Joints: welds, hinges and ropes (API 1.30) <span class="status wip">Next release</span></h3>
+    <h3 id="joints">Joints: welds, hinges and ropes (API 1.30)</h3>
     <p>A <b>Physics Constraint Actor</b> between two physics objects (or one and the world) publishes as a <code>Constraint</code>: a weld (no movement between them), a hinge (one turns about an axis, within limits) or a rope (the anchors stay within a length of each other). <code>Constraints:Create(params)</code> <span class="side s">Server</span> makes one at runtime and returns it; <code>Constraints:FromEntity(entity)</code> finds the joint a place's own Constraint made. Pull a joint harder than its <code>BreakForce</code> (newtons) and it breaks for good: <code>Broken</code> fires once, on the server. The two joined entities stop colliding with each other, and a place holds at most 200 joints, its own included. Joints exist only on the server: players just see the entities move.</p>
     <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Door.luau</span><pre data-example-kind="snippet">local door = World:FindFirst("Door")
 local hinge = Constraints:Create({
@@ -227,7 +229,7 @@ local hinge = Constraints:Create({
 hinge.Broken:Connect(function() print("the door came off") end)</pre></div></div>
 
     <h3 id="raycast">Raycasts and area queries (API 1.6)</h3>
-    <p><code>World:Raycast(origin, direction, params?)</code> returns the first thing a ray hits as a table of <code>Entity</code>, <code>Player</code> (set when it hit a character), <code>Position</code>, <code>Normal</code> and <code>Distance</code>, or nil. <code>Spherecast</code> and <code>Blockcast</code> sweep a ball or box the same way, and <code>GetEntitiesInRadius</code> and <code>GetEntitiesInBox</code> list everything inside a shape, nearest first. <code>params</code> takes <code>MaxDistance</code>, <code>Include</code>, <code>Exclude</code>, <code>Tag</code> and <code>IgnorePlayers</code>. Queries run on the machine that asks, work on both sides, and reach at most 1 km.</p>
+    <p><code>World:Raycast(origin, direction, params?)</code> returns the first thing a ray hits as a table of <code>Entity</code>, <code>Player</code> (set when it hit a character), <code>Position</code>, <code>Normal</code> and <code>Distance</code>, or nil. <code>Spherecast</code> and <code>Blockcast</code> sweep a ball or box the same way, and <code>GetEntitiesInRadius</code> and <code>GetEntitiesInBox</code> list everything inside a shape, nearest first. <code>params</code> takes <code>MaxDistance</code>, <code>Include</code>, <code>Exclude</code>, <code>Tag</code> and <code>IgnorePlayers</code>. Queries run on the machine that asks, work on both sides, and reach at most 1 km. A ball can have a radius of up to 50 m and a box can be up to 100 m on a side. A list holds at most 256 entities, and a script can make 256 queries a frame.</p>
     <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Laser.luau</span><pre data-example-kind="snippet">local laser = World:FindFirst("Laser")
 while true do
 	local hit = World:Raycast(laser.Position, Vector3.new(1, 0, 0), { MaxDistance = 3000, Exclude = { laser } })
@@ -266,7 +268,7 @@ Input:BindAction("overview", { "Q" }, function(phase)
 end)</pre></div></div>
 
     <h3 id="sounds">Sounds and music (API 1.12)</h3>
-    <p><code>Sounds:Play(sound, params?)</code> plays one of the place's uploaded sounds: a sound emitter's <code>SoundId</code>, or a sound's asset id. Give it a <code>Position</code> or <code>AttachTo</code> entity to place it in the world, where it fades out at <code>Radius</code> (4,000 cm by default); without either it plays flat, like an interface sound. From a server script every player hears it, or only <code>params.Player</code>; from a client script only that player does. It returns a <code>SoundHandle</code> with <code>Stop</code>, <code>SetVolume</code> and <code>IsPlaying</code>. Each player has one music track: <code>Sounds:PlayMusic</code> crossfades to a new one and <code>StopMusic</code> ends it. A placed sound emitter is an <code>Entity</code> with <code>PlaySound</code>, <code>StopSound</code> and <code>SoundVolume</code>.</p>
+    <p><code>Sounds:Play(sound, params?)</code> plays one of the place's uploaded sounds: a sound emitter's <code>SoundId</code>, or a sound's asset id. Give it a <code>Position</code> or <code>AttachTo</code> entity to place it in the world, where it fades out at <code>Radius</code> (4,000 cm by default); without either it plays flat, like an interface sound. From a server script every player hears it, or only <code>params.Player</code>; from a client script only that player does. It returns a <code>SoundHandle</code> with <code>Stop</code>, <code>SetVolume</code> and <code>IsPlaying</code>. Each player has one music track: <code>Sounds:PlayMusic</code> crossfades to a new one and <code>StopMusic</code> ends it. A placed sound emitter is an <code>Entity</code> with <code>PlaySound</code>, <code>StopSound</code> and <code>SoundVolume</code>. A script can start 10 sounds a frame, and a server script 20 a second (bursts of 40); going past either stops the script. A player's machine plays up to 32 script sounds at once.</p>
     <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Bell.luau</span><pre data-example-kind="snippet">local bell = World:FindFirst("Bell")
 local BELL_SOUND = "ast_u…"   -- a sound listed under Script Assets
 
@@ -275,7 +277,7 @@ bell.Touched:Connect(function(player)
 end)</pre></div></div>
 
     <h3 id="effects">Particle effects (API 1.19)</h3>
-    <p>Mantle has five built-in particle effects: <code>Smoke</code>, <code>Fire</code>, <code>Sparks</code>, <code>Dust</code> and <code>Glow</code>. You can't upload your own particle systems. <code>Effects:Play(archetype, position, params?)</code> shows one for <code>Duration</code> seconds (1 by default, at most 10), and <code>params</code> can change its <code>Color</code>, <code>Size</code>, <code>Rate</code>, <code>Speed</code>, <code>Lifetime</code> and <code>Rotation</code>. From a server script every player sees it, but a player who joins later doesn't; from a client script only that player does. A script can play at most 10 effects a frame, and a server script at most 10 a second (bursts of 20); going past either stops the script. <span class="status wip">Next release</span> A <b>Mantle Effect</b> placed in the level is an <code>Entity</code> with <code>PlayEffect</code>, <code>StopEffect</code>, <code>SetEffectColor</code> and <code>SetEffectRate</code>, and those changes do reach late joiners. A place with a placed Mantle Effect is held back at publish until the release that can build it.</p>
+    <p>Mantle has five built-in particle effects: <code>Smoke</code>, <code>Fire</code>, <code>Sparks</code>, <code>Dust</code> and <code>Glow</code>. You can't upload your own particle systems. <code>Effects:Play(archetype, position, params?)</code> shows one for <code>Duration</code> seconds (1 by default, at most 10), and <code>params</code> can change its <code>Color</code>, <code>Size</code>, <code>Rate</code>, <code>Speed</code>, <code>Lifetime</code> and <code>Rotation</code>. From a server script every player sees it, but a player who joins later doesn't; from a client script only that player does. A script can play at most 10 effects a frame, and a server script at most 10 a second (bursts of 20); going past either stops the script. A <b>Mantle Effect</b> placed in the level is an <code>Entity</code> with <code>PlayEffect</code>, <code>StopEffect</code>, <code>SetEffectColor</code> and <code>SetEffectRate</code>, and those changes do reach late joiners.</p>
     <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Explosion.luau</span><pre data-example-kind="snippet">local function explode(position)
 	Effects:Play("Fire", position, { Size = 120, Rate = 150, Duration = 0.4 })
 	Effects:Play("Smoke", position, { Duration = 2 })
@@ -305,7 +307,7 @@ task.wait(5)
 Environment:ClearLocalLook()</pre></div></div>
 
     <h3 id="leaderboard">Leaderboard (API 1.26)</h3>
-    <p>Mantle has one built-in leaderboard panel. A server script picks the board with <code>Leaderboard:Configure(store, options?)</code> <span class="side s">Server</span>, where <code>store</code> is the name of an ordered store from <code>DataStore:GetOrderedDataStore</code>. Players press <b>Tab</b> (or, on a gamepad, the settings drawer's Leaderboard row) to see its top 10, each row with the player's picture, name and value; <code>options.title</code> and <code>options.valueLabel</code> head the panel and its value column, and <code>options.ascending</code> shows lowest first. The panel re-reads the store every 30 seconds while anyone is playing. <code>Leaderboard:Clear()</code> <span class="side s">Server</span> takes the panel down. One board shows at a time; call <code>Configure</code> again to switch.</p>
+    <p>Mantle has one built-in leaderboard panel. A server script picks the board with <code>Leaderboard:Configure(store, options?)</code> <span class="side s">Server</span>, where <code>store</code> is the name of an ordered store from <code>DataStore:GetOrderedDataStore</code>. Players press <b>Tab</b> (or, on a gamepad, the settings drawer's Leaderboard row) to see its top 10, each row with the player's picture, name and value; <code>options.title</code> (up to 32 characters) and <code>options.valueLabel</code> (up to 16) head the panel and its value column, and <code>options.ascending</code> shows lowest first. The panel re-reads the store every 30 seconds while anyone is playing. <code>Leaderboard:Clear()</code> <span class="side s">Server</span> takes the panel down. One board shows at a time; call <code>Configure</code> again to switch.</p>
     <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Wins.luau</span><pre data-example-kind="snippet">local wins = DataStore:GetOrderedDataStore("wins")
 Leaderboard:Configure("wins", { title = "Most wins", valueLabel = "Wins" })
 
@@ -324,9 +326,10 @@ end</pre></div></div>
 end)</pre></div></div>
 
     <h3 id="npcs">NPCs (API 1.17)</h3>
-    <p><code>NPCs:Spawn(position, look?, yaw?)</code> <span class="side s">Server</span> adds a character that the server walks and animates, and every player sees. <code>look</code> picks the base body (<code>Body = "male"</code> or <code>"female"</code>, <code>SkinTone</code>, <code>EyeColor</code>, <code>Height</code>). <code>MoveTo(position)</code> walks it around walls and obstacles, and <code>MoveCompleted(success)</code> fires when the walk ends. <code>PlayClip</code> plays <code>"walk"</code>, <code>"idle"</code>, <code>"turn_left"</code> or <code>"turn_right"</code>. From API 1.23 NPCs have <code>Health</code>, take weapon damage and <code>TakeDamage</code>, fire <code>Died</code>, and can play the place's own animation clips with <code>PlayAssetClip</code>. A place holds at most 50 NPCs at once, and spawning past that is an error. <code>NPCs:FromEntity</code> turns a raycast hit back into its NPC. To play one of the place's own clips on an NPC, use <code>PlayAssetClip</code> rather than passing the clip's id to <code>PlayClip</code>, so the place records the API version it needs.</p>
+    <p><code>NPCs:Spawn(position, look?, yaw?)</code> <span class="side s">Server</span> adds a character that the server walks and animates, and every player sees. <code>look</code> takes <code>AvatarItemId</code> (the item id of a published avatar body, such as the one <code>Player.Avatar</code> reads; without it the NPC has no body to draw), <code>SkinTone</code> and <code>EyeColor</code> (avatar palette ids such as <code>"tone_05"</code>) and <code>Height</code> (a percent from 95 to 105). Any other key is an error. <code>MoveTo(position)</code> walks it around walls and obstacles, and <code>MoveCompleted(success)</code> fires when the walk ends. <code>PlayClip</code> plays <code>"walk"</code>, <code>"idle"</code>, <code>"turn_left"</code> or <code>"turn_right"</code>. From API 1.23 NPCs have <code>Health</code>, take weapon damage and <code>TakeDamage</code>, fire <code>Died</code>, and can play the place's own animation clips with <code>PlayAssetClip</code>. A place holds at most 50 NPCs at once, and spawning past that is an error. <code>NPCs:FromEntity</code> turns a raycast hit back into its NPC. To play one of the place's own clips on an NPC, use <code>PlayAssetClip</code> rather than passing the clip's id to <code>PlayClip</code>, so the place records the API version it needs. From API 1.37 an NPC can drive: <code>DriveTo(vehicle, position, options?)</code> puts it in the driver's seat of a car within 4.5 m and drives it straight at the point (there are no roads to follow, and it doesn't steer round walls), <code>DriveAlong(vehicle, points, options?)</code> drives through up to 64 points, and <code>DriveFinished(result)</code> fires with <code>"arrived"</code>, <code>"stuck"</code> or <code>"cancelled"</code>. <code>StopDriving()</code> brakes the car to a stop, and <code>ExitVehicle()</code> gets the NPC out once the car is slower than a walk. <code>options</code> takes <code>MaxSpeed</code> (cm/s, 1,400 by default) and <code>ArriveRadius</code> (cm, 600 by default).</p>
     <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Guard.luau</span><pre data-example-kind="snippet">local a, b = Vector3.new(0, 0, 0), Vector3.new(2000, 0, 0)
-local guard = NPCs:Spawn(a, { Body = "female" })
+local AVATAR = "itm_u…"   -- the item id of a published avatar body
+local guard = NPCs:Spawn(a, { AvatarItemId = AVATAR, Height = 100 })
 
 local target = b
 guard.MoveCompleted:Connect(function(success)
@@ -336,24 +339,41 @@ guard.MoveCompleted:Connect(function(success)
 end)
 guard:MoveTo(target)</pre></div></div>
 
-    <h3 id="animated-meshes">Animated meshes (API 1.18) <span class="status wip">Next release</span></h3>
+    <h3 id="animated-meshes">Animated meshes (API 1.18)</h3>
     <p>A Skeletal Mesh Actor set to <b>Use Animation Asset</b> publishes as an animated mesh that plays its clip in step on every screen (see <a href="/docs/creators/building/">Building a place</a>). <code>PlayClip(clipAssetId?, params?)</code> plays one of the place's animation clips on it, or restarts the one it plays now when you leave the id out. <code>params</code> takes <code>Loop</code> (true by default; false holds the last frame), <code>PlayRate</code> (0 to 10) and <code>StartOffset</code> in seconds. <code>StopClip()</code> returns it to its resting pose, and <code>ClipTime</code> reads how far into the clip it is. From the server every player sees it, late joiners included; from a client only that player does. The clip must be made for the mesh's own skeleton.</p>
     <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Windmill.luau</span><pre data-example-kind="snippet">local windmill = World:FindFirst("Windmill")
 windmill:PlayClip(nil, { PlayRate = 3 })   -- spin three times as fast
 task.wait(10)
 windmill:StopClip()</pre></div></div>
 
-    <h3 id="crowds">Crowds (API 1.16) <span class="status wip">Next release</span></h3>
-    <p>A <b>Mantle Crowd Spawner</b> placed in the level fills its lanes with ambient walkers. <code>Crowds:Get(spawner)</code> <span class="side s">Server</span> returns its <code>Crowd</code>: set <code>Density</code> (0 to 1 of the count you authored), <code>Enabled</code>, <code>Paused</code> or, from API 1.21, <code>Seed</code>, and every player sees it. From API 1.24, <code>Crowds.PointReached(spawner, point, npc)</code> <span class="side c">Client</span> fires when one of the crowd's people arrives at one of the spawner's points of interest. Crowd Spawners themselves can't be published until the next release either.</p>
+    <h3 id="crowds">Crowds (API 1.16)</h3>
+    <p>A <b>Mantle Crowd Spawner</b> placed in the level fills its lanes with ambient walkers. <code>Crowds:Get(spawner)</code> <span class="side s">Server</span> returns its <code>Crowd</code>: set <code>Density</code> (0 to 1 of the count you authored), <code>Enabled</code>, <code>Paused</code> or, from API 1.21, <code>Seed</code>, and every player sees it. From API 1.24, <code>Crowds.PointReached(spawner, point, npc)</code> <span class="side c">Client</span> fires when one of the crowd's people arrives at one of the spawner's points of interest.</p>
     <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Rush.luau</span><pre data-example-kind="snippet">local crowd = Crowds:Get(World:FindFirst("MarketCrowd"))
 crowd.Density = if Environment.IsNight then 0.2 else 1</pre></div></div>
 
     <h3 id="vehicles-api">Vehicles</h3>
-    <p><code>Vehicles:Spawn("offroad" | "sports", position)</code> <span class="side s">Server</span> (API 1.1) works today and returns the car as an <code>Entity</code>. <code>Seat</code>, <code>Eject</code>, <code>GetSpeed</code> and <code>SetPaintColor</code> work with it. A car nobody is driving holds its brakes, so players running into it don't send it rolling. <span class="status wip">Next release</span> <code>Spawn</code> also takes the id of a creator vehicle the place lists, and <code>Vehicles:SetLivery(vehicle, index)</code> (API 1.20) puts on one of that vehicle's liveries, or takes it off with -1.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Taxi.luau</span><pre data-example-kind="snippet">Players:OnPlayer(function(player)
-	local car = Vehicles:Spawn("sports", Vector3.new(0, 400, 50))
+    <p><code>Vehicles:Spawn(item, position)</code> <span class="side s">Server</span> (API 1.1) spawns a vehicle your place stores and returns the car as an <code>Entity</code>. Since API 1.34, <code>item</code> must be the library item id that <code>Storage:Get(name)</code> returns for an entry in the place's storage (add one with <b>Tools → Mantle → Library...</b>). Any other value, such as an asset id or the name of a built-in car, is an error. <code>Seat</code>, <code>Eject</code>, <code>GetSpeed</code> and <code>SetPaintColor</code> work with it, and from API 1.32 so do <code>Lock</code>, <code>Unlock</code> and <code>IsLocked</code>. <code>Vehicles:SetLivery(vehicle, index)</code> (API 1.20) puts on one of that vehicle's liveries, or takes it off with -1. A car nobody is driving holds its brakes, so players running into it don't send it rolling.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Taxi.luau</span><pre data-example-kind="snippet">local TAXI = Storage:Get("Taxi")   -- the name in the place's storage
+
+Players:OnPlayer(function(player)
+	local car = Vehicles:Spawn(TAXI, Vector3.new(0, 400, 50))
 	Vehicles:SetPaintColor(car, "#F4C20D")
 end)</pre></div></div>
+
+    <h3 id="backpack">Tools in the Backpack (API 1.5)</h3>
+    <p><code>Backpack:GrantBuiltIn(player, tool)</code> <span class="side s">Server</span> gives a player one of the built-in Tools: <code>"grenade"</code>, <code>"healthpack"</code> or <code>"spawnpad"</code>. It returns the new Tool's id, or nil when the player has no character right now, already has that Tool or has a full Backpack. From API 1.34, <code>Backpack:Grant(player, item)</code> gives a weapon your place stores, with the item id from <code>Storage:Get</code>. <code>GetTools</code>, <code>Remove</code>, <code>Clear</code>, <code>EquipSlot</code> and <code>SetWeaponColor</code> work with what a player holds.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Supplies.luau</span><pre data-example-kind="snippet">World:OnTagged("supplies", function(crate)
+	crate.Touched:Connect(function(player)
+		Backpack:GrantBuiltIn(player, "healthpack")
+	end)
+end)</pre></div></div>
+
+    <h3 id="datastore">Saving data</h3>
+    <p><code>DataStore</code> <span class="side s">Server</span> keeps values between sessions. <code>Set</code> and <code>Get</code> save a value for the whole place, and <code>SetForPlayer</code> and <code>GetForPlayer</code> save one for a single player. A value is a boolean, a number, a string or a table of those, nested up to 4 levels deep and up to 64 KB once encoded. A write changes what <code>Get</code> returns at once and reaches the backend a moment later. <code>Get</code> returns nil for a key that was never set. See <a href="/docs/scripting/recipes/#r-highscore">Saving data across sessions</a> and <a href="/docs/scripting/api/#errors">Errors and limits</a>.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Wins.luau</span><pre data-example-kind="snippet">local function recordWin(player)
+	local wins = DataStore:GetForPlayer(player, "wins") or 0
+	DataStore:SetForPlayer(player, "wins", wins + 1)
+end</pre></div></div>
 
     <h3 id="ui-docs-service">UI documents (API 1.31)</h3>
     <p><code>UI:OpenDocument(path, mode?)</code> <span class="side c">Client</span> opens one of the place's UI documents, a screen written as markup and a stylesheet in the <code>UI/</code> folder beside <code>Scripts/</code>, and returns a <code>UiDocument</code>. It opens as a <code>"modal"</code> (the default: gameplay input stops and Back closes it), an <code>"overlay"</code> (play goes on and the mouse works on its controls) or a <code>"hud"</code> (drawn only). Fill it with <code>SetData</code>, hear its buttons through <code>Event</code>, and close it with <code>Close</code>. See <a href="/docs/scripting/ui-documents/">UI documents</a> for the whole guide.</p>

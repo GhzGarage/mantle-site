@@ -305,7 +305,7 @@ while true do
 	task.wait(5)
 end
 </pre></div>
-<h3 id="r-door-hinge">A hinged door that swings open <span class="status wip">Next release</span></h3>
+<h3 id="r-door-hinge">A hinged door that swings open</h3>
 <p>This builds a door on a hinge that a player can push open, rather than one that tweens by script: place a <b>Physics Constraint Actor</b> between the door's Static Mesh Actor (Simulate Physics on) and nothing (Constraint Actor 2 left empty, so it joins to the world), with every Linear motion Locked, Swing 1 Motion set to Limited (how far the door swings) and Swing 2 and Twist Motion set to Locked. A joint that can turn about more than one axis is left out of the place, and <b>Check this place</b> says why. It needs API 1.30. Tag the door actor <code>guide_code_hingedoor</code>; the script listens for the hinge to break under a hard enough shove and reports it.</p>
 <div class="code"><span class="tag">Scripts/Server/GuideHingeDoor.luau</span><pre data-example-kind="source" data-language="luau">local door = World:FindByTag(&quot;guide_code_hingedoor&quot;)[1]
 local hinge = Constraints:FromEntity(door)

@@ -91,7 +91,7 @@ welcome.event.connect(on_event)
         </div>
         <p>With no mode given, the document opens as a <b>modal</b>: the player's character stops taking input, the cursor appears, the Play button has focus, and Esc or the gamepad's B button closes the panel too.</p>
       </li>
-      <li><b>Check, publish and join</b><p>Run <b>Check All</b> in the Scripts panel for your script and <a href="#validation">Check this place</a> for the document, then publish with <b>Mantle → Publish</b> and join in the Mantle client. Check this place loads every document the way players' games do, so a broken link or a typo in the markup shows up in the editor (see <a href="#uidoc-limits">Limits and checks</a>).</p></li>
+      <li><b>Check, publish and join</b><p>Run <b>Check All</b> in the Scripts panel for your script and <a href="#validation">Check this place</a> for the document, then publish with <b>Mantle → Publish</b> and join in the Mantle client. Check this place scans your documents for what players' games refuse, such as a file that's too big or a <code>&lt;script&gt;</code> tag (see <a href="#uidoc-limits">Limits and checks</a>). It doesn't open them, so use <b>Test Locally</b> to see a document draw and to catch a typo in the markup (see <a href="/docs/creators/plugin/#test-locally">Testing with Test Locally</a>).</p></li>
     </ol>
 
     <h2 id="uidoc-files">Files and folders</h2>
@@ -161,7 +161,7 @@ welcome.event.connect(on_event)
     <p>Your script owns the data; the document shows it. Call <code>SetData(key, value)</code> with a number, string, boolean, <code>Vector3</code>, list or table (object in JavaScript, dict in Python), and every part of the document that uses that key redraws by itself. Nothing else is touched, so setting one value is cheap.</p>
     <div class="table-wrap"><table><thead><tr><th>In the document</th><th>What it does</th><th>Example</th></tr></thead><tbody>
       <tr><td><code>{{ expression }}</code></td><td>Shows a value in text.</td><td><code>{{coins}} coins</code>, <code>{{stats.kills}}</code>, <code>{{items.size}} items</code></td></tr>
-      <tr><td><code>data-for</code></td><td>Repeats the element once for each item of a list. Add a second name for the position, counted from 0.</td><td><code>data-for="item : items"</code>, <code>data-for="item, i : items"</code></td></tr>
+      <tr><td><code>data-for</code></td><td>Repeats the element once for each item of a list. Add a second name for the position, counted from 0. Without names, each item is <code>it</code> and its position is <code>it_index</code>.</td><td><code>data-for="item : items"</code>, <code>data-for="item, i : items"</code></td></tr>
       <tr><td><code>data-if</code></td><td>Shows the element only while the expression is true. Otherwise it's hidden and takes up no room.</td><td><code>data-if="coins &gt;= 100"</code></td></tr>
       <tr><td><code>data-visible</code></td><td>Like <code>data-if</code>, but a hidden element keeps its space.</td><td><code>data-visible="!loading"</code></td></tr>
       <tr><td><code>data-class-<i>name</i></code></td><td>Adds the class <i>name</i> while the expression is true.</td><td><code>data-class-owned="item.owned"</code></td></tr>
@@ -174,7 +174,7 @@ welcome.event.connect(on_event)
     <p>Expressions can use arithmetic, comparisons, <code>&amp;&amp;</code>, <code>||</code>, <code>!</code>, the <code>a ? b : c</code> choice, and <code>+</code> to join text. After a <code>|</code> you can apply <code>format(digits)</code>, <code>round</code>, <code>to_upper</code> or <code>to_lower</code>: <code>{{ speed | format(1) }} m/s</code>. Whole numbers show without decimals. A <code>Vector3</code>'s parts are <code>.x</code>, <code>.y</code> and <code>.z</code>, in lower case.</p>
     <p>A key the script hasn't set yet shows as empty, so a document can open before its data arrives. Some rules for keys and values:</p>
     <ul>
-      <li>A key starts with a letter and uses only letters, digits and <code>_</code>, up to 64 characters. Keys are case-sensitive. <code>it</code>, <code>it_index</code>, <code>ev</code>, <code>true</code>, <code>false</code>, <code>size</code> and <code>literal</code> are taken.</li>
+      <li>A key starts with a letter and uses only letters, digits and <code>_</code>, up to 64 characters. Keys are case-sensitive. <code>it</code>, <code>it_index</code>, <code>ev</code>, <code>true</code>, <code>false</code>, <code>size</code> and <code>literal</code> are taken, in any case.</li>
       <li>A document holds up to 256 keys.</li>
       <li>A value can be up to 64 KiB once encoded and nested up to 16 levels. It can't hold functions, entities or players (send the fields you need, such as <code>player.Name</code>), or NaN or infinity. A value that breaks these rules is an error in your script.</li>
       <li>Use lists for anything you repeat with <code>data-for</code>. A table with named keys repeats its values in an order you can't count on.</li>
@@ -267,7 +267,7 @@ shop.event.connect(on_event)</pre></div>
     <div class="table-wrap"><table><thead><tr><th><code>reason</code></th><th>Why it closed</th></tr></thead><tbody>
       <tr><td><code>"back"</code></td><td>The player pressed Back (Esc, or B on a gamepad) on a modal document.</td></tr>
       <tr><td><code>"load failed"</code></td><td>The document couldn't be loaded, for example because of broken markup. The client log says why.</td></tr>
-      <tr><td><code>"element budget"</code></td><td>It had more than 4,096 elements, when it loaded or after a <code>SetData</code>.</td></tr>
+      <tr><td><code>"element budget"</code></td><td>It had more than 4,096 elements or nested more than 16 levels deep, when it loaded or after a <code>SetData</code>.</td></tr>
       <tr><td><code>"layout time"</code></td><td>Loading it, or laying it out again after a <code>SetData</code>, took longer than 500 ms.</td></tr>
     </tbody></table></div>
     <p><code>Closed</code> doesn't fire for your own <code>Close</code>, or when your script stops. <code>IsOpen</code> is already false when your handler runs.</p>
@@ -390,7 +390,7 @@ end)
     <p>Publish uploads each image with the rest of your place, and it's screened the same way as a material's texture. Players' games download it along with everything else, so a document's images are there as soon as the place is.</p>
     <div class="table-wrap"><table><thead><tr><th>Limit</th><th></th></tr></thead><tbody>
       <tr><td>Images per place</td><td class="num">64</td></tr>
-      <tr><td>Size of one image</td><td class="num">2 MB</td></tr>
+      <tr><td>Size of one image</td><td class="num">2 MiB</td></tr>
       <tr><td>Content</td><td>Must decode as a real PNG or JPEG, whatever the extension says</td></tr>
       <tr><td>Extension</td><td>Lower-case <code>.png</code> or <code>.jpg</code> only; <code>.jpeg</code> is refused</td></tr>
       <tr><td>Names</td><td>Letters, digits, <code>_</code>, <code>.</code> and <code>-</code>, the same as a document's; two paths that differ only in case aren't allowed, including against a document or stylesheet</td></tr>
@@ -413,11 +413,9 @@ end)
 	to   { opacity: 1; }
 }</pre></div>
     <p>Animate <code>transform</code> and <code>opacity</code> whenever you can. They move and fade what's already laid out. Animating <code>width</code>, <code>height</code>, margins or <code>top</code>/<code>left</code> lays the document out again every frame (see <a href="#uidoc-performance">Performance</a>).</p>
-    <p>Respect players who asked for less motion: send <code>UI.ReducedMotion</code> to the document and turn animations off with a class.</p>
-<div class="code"><span class="tag">Document and stylesheet</span><pre data-example-kind="snippet">&lt;body data-class-calm="calm"&gt; ... &lt;/body&gt;
-
-.calm .pulse { animation: none; }</pre></div>
-    <div class="v"><div class="code"><span class="tag">Client script</span><pre data-example-kind="snippet">hud:SetData(&quot;calm&quot;, UI.ReducedMotion)</pre></div></div>
+    <p>Mantle respects the player's Reduce motion setting for you. While it's on, new animations don't start, so the element keeps its own style, and turning the setting on stops an animation that's running (an endless one too). A running transition jumps straight to its end and fires its end event, and scrolling is instant. Mantle also puts two classes on the <code>&lt;body&gt;</code> by itself: <code>reduce-motion</code> while Reduce motion is on, and <code>high-contrast</code> while High contrast is on. Use them in your styles, with no <code>SetData</code> needed:</p>
+<div class="code"><span class="tag">UI/hud.rcss</span><pre data-example-kind="snippet">.high-contrast .panel { background-color: #000000; border: 2dp #FFFFFF; }
+.reduce-motion .pulse { opacity: 1; }</pre></div>
 
     <h2 id="uidoc-accessibility">Accessibility</h2>
     <p>Screen readers only see the elements you label. Three attributes describe an element:</p>
@@ -426,31 +424,29 @@ end)
       <tr><td><code>mantle-hint</code></td><td>Read after the label: "Buy Ember Cape. 120 coins".</td></tr>
       <tr><td><code>mantle-role</code></td><td><code>button</code>, <code>toggle</code>, <code>text</code>, <code>image</code> or <code>heading</code>, in lower case. Without it, a focusable element is a button and anything else is text. A heading is read as text. A <code>toggle</code> reads as checked while the element has the <code>checked</code> attribute.</td></tr>
     </tbody></table></div>
-    <p>The screen reader follows focus as the player moves with the keyboard or gamepad, and activating a labelled button or toggle from the screen reader clicks it. Use <code>data-attr-mantle-label</code> and <code>data-attr-mantle-hint</code> for labels that change, as in the shop above. Also consider <code>UI.TextScale</code>, <code>UI.HighContrast</code> and <code>UI.ReducedMotion</code>: send them with <code>SetData</code> and adapt with <code>data-class-*</code> or <code>data-style-*</code>.</p>
+    <p>The screen reader follows focus as the player moves with the keyboard or gamepad, and activating a labelled button or toggle from the screen reader clicks it. Use <code>data-attr-mantle-label</code> and <code>data-attr-mantle-hint</code> for labels that change, as in the shop above. Also consider <code>UI.TextScale</code> (0.85 to 1.5), <code>UI.HighContrast</code> and <code>UI.ReducedMotion</code>: send them with <code>SetData</code> and adapt with <code>data-class-*</code> or <code>data-style-*</code>. High contrast and Reduce motion also reach the document as the classes described under <a href="#uidoc-animation">Animations and transitions</a>.</p>
 
     <h2 id="uidoc-limits">Limits and checks</h2>
-    <p><a href="#validation">Check this place</a> and <b>Publish</b> load every document in <code>UI/</code> the way players' games do, laid out on a 1920 × 1080 screen with no data set. Anything players' games would refuse or close is an error, and Publish won't go ahead until it's fixed. (The Scripts panel's Check All checks scripts only.)</p>
+    <p><a href="#validation">Check this place</a> and <b>Publish</b> scan every file in <code>UI/</code> for what players' games would refuse. Anything refused is an error, and Publish won't go ahead until it's fixed. They don't open the documents, so the limits in the second table only show up in the game: use <b>Test Locally</b> to see them (see <a href="/docs/creators/plugin/#test-locally">Testing with Test Locally</a>). (The Scripts panel's Check All checks scripts only.)</p>
     <div class="table-wrap"><table><thead><tr><th>Checked when you publish</th><th>Limit</th></tr></thead><tbody>
       <tr><td>Documents and stylesheets per place</td><td class="num">64</td></tr>
       <tr><td>Size of one document or stylesheet</td><td class="num">256 KiB</td></tr>
       <tr><td>Images per place</td><td class="num">64</td></tr>
-      <tr><td>Size of one image</td><td class="num">2 MB</td></tr>
+      <tr><td>Size of one image</td><td class="num">2 MiB</td></tr>
       <tr><td>Length of a UI file's path</td><td class="num">200 characters</td></tr>
       <tr><td>Names</td><td>Letters, digits, <code>_</code>, <code>.</code> and <code>-</code>; lower-case <code>.rml</code>/<code>.rcss</code>/<code>.png</code>/<code>.jpg</code> (<code>.jpeg</code> refused); no <code>..</code>; no two paths that differ only in case</td></tr>
       <tr><td>An image's content</td><td>Must decode as a real PNG or JPEG, whatever the extension says</td></tr>
       <tr><td>Refused anywhere in a file, even in a comment</td><td><code>&lt;script</code>, <code>@font-face</code>, and a <code>data-rml</code> attribute</td></tr>
-      <tr><td>Element nesting, counting templates and <code>data-for</code> views</td><td class="num">16 levels</td></tr>
-      <tr><td>Elements once loaded</td><td class="num">4,096</td></tr>
-      <tr><td>Load and layout time</td><td>An error over 500 ms, a warning over 50 ms</td></tr>
-      <tr><td>Any error or warning while loading, such as a linked stylesheet that isn't in <code>UI/</code> or a property it doesn't know</td><td>An error</td></tr>
+      <tr><td>Element nesting in a <code>.rml</code> file, counted from its tags</td><td class="num">16 levels</td></tr>
       <tr><td>A <code>&lt;body&gt;</code> with its own <code>data-model</code></td><td>A warning</td></tr>
       <tr><td>A document or stylesheet uses <code>filter</code>, <code>backdrop-filter</code> or <code>mask-image</code></td><td>A warning; see <a href="#uidoc-styling">What still doesn't draw</a></td></tr>
       <tr><td>An image reference that's missing, wrong case, or outside <code>UI/</code></td><td>A warning; it won't draw</td></tr>
     </tbody></table></div>
-    <p>Players' games check again when a document opens, and again after every <code>SetData</code>, because data can add elements that Check never saw (a <code>data-for</code> over a long list, say):</p>
+    <p>Players' games check when a document opens, and again after every <code>SetData</code>, because data can add elements that Check never saw (a <code>data-for</code> over a long list, say). The game counts nesting after it expands templates and <code>data-for</code> views, so a document can pass Check and still close with <code>"element budget"</code>:</p>
     <div class="table-wrap"><table><thead><tr><th>In the game</th><th>Limit</th><th>What happens</th></tr></thead><tbody>
       <tr><td>Open documents per script</td><td class="num">16</td><td><code>OpenDocument</code> is an error</td></tr>
       <tr><td>Elements</td><td class="num">4,096</td><td>Closes with <code>"element budget"</code></td></tr>
+      <tr><td>Element nesting, once loaded</td><td class="num">16 levels</td><td>Closes with <code>"element budget"</code></td></tr>
       <tr><td>Load, or layout after a <code>SetData</code></td><td class="num">500 ms</td><td>Closes with <code>"layout time"</code>; over 50 ms logs a warning</td></tr>
       <tr><td>Keys per document</td><td class="num">256</td><td><code>SetData</code> is an error</td></tr>
       <tr><td>One <code>SetData</code> value</td><td>64 KiB encoded, 16 levels deep</td><td><code>SetData</code> is an error</td></tr>
