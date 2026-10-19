@@ -371,7 +371,7 @@ end)</pre></div></div>
 
     <h3 id="datastore">Saving data</h3>
     <p><code>DataStore</code> <span class="side s">Server</span> keeps values between sessions. <code>Set</code> and <code>Get</code> save a value for the whole place, and <code>SetForPlayer</code> and <code>GetForPlayer</code> save one for a single player. A value is a boolean, a number, a string or a table of those, nested up to 4 levels deep and up to 64 KB once encoded. A place or a player can hold 1,024 keys, a key is up to 128 characters (letters, digits and <code>. _ : -</code>), and a server can make 300 requests a minute. A write changes what <code>Get</code> returns at once and reaches the backend a moment later. <code>Get</code> returns nil for a key that was never set. See <a href="/docs/scripting/recipes/#r-highscore">Saving data across sessions</a> and <a href="/docs/scripting/api/#errors">Errors and limits</a>.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Wins.luau</span><pre data-example-kind="snippet">local function recordWin(player)
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/RecordWin.luau</span><pre data-example-kind="snippet">local function recordWin(player)
 	local wins = DataStore:GetForPlayer(player, "wins") or 0
 	DataStore:SetForPlayer(player, "wins", wins + 1)
 end</pre></div></div>
