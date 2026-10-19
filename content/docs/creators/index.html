@@ -4,7 +4,7 @@
 <ul>
 <li><span class="status live">Live</span> <b>Unreal Engine 5.8</b> from the Epic Games Launcher.</li>
 <li><span class="status live">Live</span> <b>Windows</b>, with Visual Studio 2022 for building the project.</li>
-<li><span class="status wip">In progress</span> <b>The Mantle plugin</b> is in early access (version 0.1.0, beta) and isn't publicly available yet. <span class="status planned">Planned</span> The plugin will be available on Fab.</li>
+<li><span class="status wip">In progress</span> <b>The Mantle plugin</b> is in early access (version 0.1.0, beta) and isn't publicly available yet. <span class="status planned">Planned</span> The plugin will be available on Fab. See <a href="/docs/creators/plugin/">The Mantle Core plugin</a> for installing it and what else it needs.</li>
 </ul>
 
 <h3 id="sign-in">Signing in to publish <span class="status live">Live</span></h3>
@@ -21,8 +21,9 @@
 </ul>
 
 <h2 id="editor">The Mantle editor tools <span class="status live">Live</span></h2>
-<p>You'll find these commands under <b>Tools → Mantle</b>:</p>
+<p>You'll find these commands under <b>Tools → Mantle</b>, and in the <b>Mantle</b> dropdown next to Play:</p>
 <div class="table-wrap"><table><thead><tr><th>Command</th><th>What it does</th></tr></thead><tbody>
+<tr><td>Test Locally / Stop Preview</td><td>Runs the open level in the Mantle game on your PC, without uploading anything, or closes that test. It's also a button next to Play. See <a href="/docs/creators/plugin/#test-locally">Testing with Test Locally</a>.</td></tr>
 <tr><td>Start a new place</td><td>Adds a baseplate, a spawn point and a sun to the open level, then shows: "Build from here, then use 'Check what players receive' to check your work."</td></tr>
 <tr><td>Place settings</td><td>Selects the level's <b>Mantle Place Settings</b> actor, adding one if the level has none, so you can edit it in the Details panel. See <a href="/docs/creators/building/#place-settings">Place settings</a>.</td></tr>
 <tr><td>Check this place</td><td>Checks your place and lists up to 12 problems ("...and N more."). When everything passes, you'll see "No problems found. This place is ready to publish."</td></tr>
@@ -74,8 +75,8 @@
 
 <h2 id="testing">Testing a world</h2>
 <ul>
-<li><b>Play in Editor (PIE)</b> doesn't run Mantle worlds or scripts. To check your build, use "Check what players receive". To test gameplay, publish your world and join it with the Mantle client.</li>
-<li><span class="status planned">Planned</span> A one-click "Play in Mantle".</li>
+<li><span class="status live">Live</span> <b>Test Locally</b> runs your level, with its scripts, in the Mantle game on your PC. Nothing is uploaded. See <a href="/docs/creators/plugin/#test-locally">Testing with Test Locally</a>.</li>
+<li><b>Play in Editor (PIE)</b> doesn't run Mantle worlds or scripts. To check your build without running it, use "Check what players receive".</li>
 </ul>
 
 <p>Need help? Email <a href="mailto:contact@mantleplatform.com">contact@mantleplatform.com</a> or ask in the <a href="https://discord.gg/xj4s9kUe7x">Mantle Discord</a>. See <a href="/docs/creators/quick-start/#get-help">Get help</a>.</p>
