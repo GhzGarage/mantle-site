@@ -8,7 +8,7 @@
 <h3 id="before-you-start">Before you start</h3>
 <ul>
 <li><b>A machine that meets the <a href="/docs/platform/#server-specs">recommended specs</a></b> for the number of players you want.</li>
-<li><b>A server key</b> for your Mantle account. Create one in the Mantle app under <b>Settings &gt; Account &gt; Hosting</b>: type a server name (3 to 48 characters) and press <b>Create server</b>. Players see that name in the world's server list. The key is shown only once, so copy it somewhere safe. Anyone holding it can run a server as you. Each account can have 5 servers, and each server has one key.</li>
+<li><b>A server key</b> for your Mantle account. Create one in the Mantle app under <b>Settings → Account → Hosting</b>: type a server name (3 to 48 characters) and press <b>Create server</b>. Players see that name in the world's server list. The key is shown only once, so copy it somewhere safe. Anyone holding it can run a server as you. Each account can have 5 servers, and each server has one key.</li>
 <li><b>The Mantle server package</b>, which contains <code>mantle-server</code>, the game server and the server terms. Download it from <b>Download server build</b> in the same Hosting section. <b>Open</b> downloads it in your browser, and <b>Copy link</b> copies a link you can use on the machine that will run the server. Each link works for an hour. You only need to do this once: after that, <code>mantle-server</code> <a href="#updates">keeps itself and the game server up to date</a>.</li>
 <li><b>A public address</b> players can reach: your public IP address or a domain name that points to it.</li>
 <li><b>A UDP port</b> you can open. The default is 7777.</li>
@@ -56,7 +56,7 @@ mantle-server run</pre></div>
 <p>You can edit <code>server.json</code> by hand at any time. Restart <code>mantle-server</code> afterwards. Your server key isn't in this file: <code>mantle-server</code> reads it from the <code>MANTLE_SERVER_KEY</code> environment variable if that's set, then from a systemd credential, then from <code>server.key</code> next to <code>server.json</code>. An older <code>server.json</code> with a <code>serverKey</code> setting still works, with a warning; move the key with <code>mantle-server key set</code>.</p>
 <div class="table-wrap"><table><thead><tr><th>Setting</th><th>What it does</th><th>Default</th></tr></thead><tbody>
 <tr><td><code>apiUrl</code> / <code>placeId</code></td><td>The Mantle API URL and the world to host</td><td>None (required)</td></tr>
-<tr><td><code>name</code></td><td>A name for this server in your settings. Players see the name you gave the server in Settings &gt; Account &gt; Hosting.</td><td>None (required)</td></tr>
+<tr><td><code>name</code></td><td>A name for this server in your settings. Players see the name you gave the server in <b>Settings → Account → Hosting</b>.</td><td>None (required)</td></tr>
 <tr><td><code>publicAddress</code></td><td>The address players connect to. It must match the address your server connects to Mantle from.</td><td>None (required)</td></tr>
 <tr><td><code>port</code></td><td>The UDP port players connect on</td><td>7777 (set by <code>init</code>)</td></tr>
 <tr><td><code>maxPlayers</code></td><td>How many players can join. It can't be higher than the world's own limit. If it's missing, the world's limit is used.</td><td>16 (set by <code>init</code>)</td></tr>
@@ -104,7 +104,7 @@ mantle-server run</pre></div>
 <li>It updates <code>mantle-server</code> itself too, keeping the old copy next to it with <code>.old</code> added (<code>mantle-server.exe.old</code> on Windows). The new copy runs from the next time <code>mantle-server</code> starts.</li>
 <li>If a new build fails to start twice in a row, <code>mantle-server</code> goes back to the previous one and holds the new one back until a newer build comes out or you run <code>mantle-server update</code>.</li>
 </ul>
-<p>A <code>mantle-server</code> from before signed builds can't update itself, and says it was built without a server build signing key. Download the current package from Settings &gt; Account &gt; Hosting once, and it updates itself from then on. With <code>autoUpdate</code> set to <code>"off"</code>, run <code>mantle-server update</code> yourself.</p>
+<p>A <code>mantle-server</code> from before signed builds can't update itself, and says it was built without a server build signing key. Download the current package from <b>Settings → Account → Hosting</b> once, and it updates itself from then on. With <code>autoUpdate</code> set to <code>"off"</code>, run <code>mantle-server update</code> yourself.</p>
 
 <h3 id="private">Private community servers <span class="status live">Live</span></h3>
 <p>A community server can run a private server instead of appearing on the public list. Only the private server's members can see and join it.</p>
@@ -137,7 +137,7 @@ mantle-server run</pre></div>
 
 <h2 id="controls">Controls</h2>
 <ul>
-<li><span class="status live">Live</span> <b>Hosting settings:</b> Settings &gt; Account &gt; Hosting lists your servers with their status (Online, Starting or Offline) and player count. Create a server there to get its key, or press <b>Revoke</b> to cancel a key. Revoking shuts down a server running with it straight away, and can't be undone.</li>
+<li><span class="status live">Live</span> <b>Hosting settings:</b> <b>Settings → Account → Hosting</b> lists your servers with their status (Online, Starting or Offline) and player count. Create a server there to get its key, or press <b>Revoke</b> to cancel a key. Revoking shuts down a server running with it straight away, and can't be undone.</li>
 <li><span class="status live">Live</span> <b>Creator opt-in:</b> by default, only a world's owner can host it. Turn on <b>Allow Community Servers</b> on the world's Mantle Place Settings actor in the editor, then publish to let other players host it. If you turn it off later, servers already running keep going, but new ones can't start.</li>
 <li><span class="status live">Live</span> <b>Moderators</b> can shut down any community server, and can see which server and owner are behind a reported session.</li>
 </ul>
@@ -146,6 +146,6 @@ mantle-server run</pre></div>
 <ul>
 <li><b>Saved data stays separate:</b> each community server has its own saved data, so it can never touch a creator's official data.</li>
 <li><b>Operators can't</b> see players' network addresses.</li>
-<li><b>Revoked keys:</b> 30 days after a server's key is revoked, its name is deleted, and its saved data is deleted later.</li>
+<li><b>Revoked keys:</b> 30 days after a server's key is revoked, its name and its saved data are deleted.</li>
 <li>Mantle's safety tools, including reporting and blocking, work on community servers the same way as on official ones.</li>
 </ul>
