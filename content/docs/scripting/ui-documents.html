@@ -180,7 +180,7 @@ welcome.event.connect(on_event)
       <li>Use lists for anything you repeat with <code>data-for</code>. A table with named keys repeats its values in an order you can't count on.</li>
       <li>The document gets a copy. Changing your table afterwards changes nothing on screen until you call <code>SetData</code> again.</li>
     </ul>
-    <p>Mantle connects the document to your script's data automatically. Leave out the <code>data-model</code> attribute: a <code>&lt;body&gt;</code> that names a different data model gets no script data, and Check warns about it.</p>
+    <p>Mantle connects the document to your script's data automatically. Leave out the <code>data-model</code> attribute (<code>data-model="data"</code> is fine too): a <code>&lt;body&gt;</code> that names any other data model gets no script data, and Check warns about it.</p>
 <div class="code"><span class="tag">UI/quests.rml (body only)</span><pre data-example-kind="snippet">&lt;body&gt;
 	&lt;div class="quests"&gt;
 		&lt;h2&gt;Quests ({{quests.size}})&lt;/h2&gt;
@@ -351,7 +351,7 @@ end)
       <li><b>Backgrounds are a colour, a gradient or an image.</b> <code>background-color</code> works. A two-colour blend is a decorator: <code>decorator: horizontal-gradient(#EB6036 #FFAE28)</code> or <code>vertical-gradient(...)</code>; for more stops, an angle or a radial or conic sweep, <code>linear-gradient(...)</code>, <code>radial-gradient(...)</code> and <code>conic-gradient(...)</code> draw too (and their <code>repeating-</code> forms), up to 16 colour stops. For a picture, use <code>&lt;img&gt;</code> or <code>decorator: image(...)</code> with a file from your place's <code>UI/</code> folder (see <a href="#uidoc-images">Images</a>).</li>
       <li><b><code>box-shadow</code> draws</b>, outer and inset, with blur, spread and rounded corners. As in CSS, an outer shadow draws only outside the element's border and an inset one only inside it, so a shadow with no offset and no spread is a glow around the element. An element draws the first 16 shadows in its list.</li>
       <li><b>Text shadows and outlines</b> are font effects: <code>font-effect: shadow(2dp 2dp #000000AA)</code> or <code>font-effect: outline(1dp #000000)</code>.</li>
-      <li><b>Colours</b> can be names, <code>#RGB</code>, <code>#RRGGBB</code>, <code>#RRGGBBAA</code> (with alpha), <code>rgb()</code>, <code>rgba()</code>, <code>hsl()</code> and <code>hsla()</code>.</li>
+      <li><b>Colours</b> can be <code>#RGB</code>, <code>#RGBA</code>, <code>#RRGGBB</code>, <code>#RRGGBBAA</code> (with alpha), <code>rgb()</code>, <code>rgba()</code>, <code>hsl()</code>, <code>hsla()</code>, <code>lab()</code>, <code>lch()</code>, <code>oklab()</code> or <code>oklch()</code>. Names work only for <code>transparent</code> and the 16 basic ones: <code>black</code>, <code>silver</code>, <code>gray</code> (or <code>grey</code>), <code>white</code>, <code>maroon</code>, <code>red</code>, <code>orange</code>, <code>purple</code>, <code>fuchsia</code>, <code>green</code>, <code>lime</code>, <code>olive</code>, <code>yellow</code>, <code>navy</code>, <code>blue</code>, <code>teal</code> and <code>aqua</code>. A name like <code>tomato</code> isn't recognised, so use its hex code.</li>
       <li><b>Cursors:</b> <code>cursor: pointer</code> shows a hand and <code>default</code> the normal arrow. Other cursor names aren't supported.</li>
       <li><b>Scroll areas</b> (<code>overflow: auto</code> or <code>scroll</code>) scroll with the mouse wheel, but no scrollbar is drawn until you style one (the <code>scrollbarvertical</code>, <code>slidertrack</code> and <code>sliderbar</code> elements).</li>
     </ul>
@@ -564,11 +564,11 @@ end)
       <tr><td><code>OpenDocument</code> says the path isn't one of the place's UI files</td><td>Paths start with <code>UI/</code> and are case-sensitive. The error suggests the right spelling when only the case is wrong. A file you add only reaches players once you publish again.</td></tr>
       <tr><td>The document shows but ignores the mouse and gamepad</td><td>It's a <code>"hud"</code>, it has nothing focusable (give a control <code>tab-index: auto</code>), or another UI still has the cursor.</td></tr>
       <tr><td>The D-pad doesn't move between my controls</td><td>Add <code>nav: auto</code> to them. Buttons and inputs have it already.</td></tr>
-      <tr><td><code>{{value}}</code> shows nothing</td><td>Check the key's spelling and case in <code>SetData</code>, and that the <code>&lt;body&gt;</code> has no <code>data-model</code> attribute.</td></tr>
+      <tr><td><code>{{value}}</code> shows nothing</td><td>Check the key's spelling and case in <code>SetData</code>, and that the <code>&lt;body&gt;</code> doesn't name another <code>data-model</code> (leave the attribute out).</td></tr>
       <tr><td>Everything sits on one line</td><td>The element isn't one the base stylesheet makes a block. Give it <code>display: block</code> or <code>display: flex</code>.</td></tr>
       <tr><td>A blur, backdrop blur or mask doesn't appear</td><td>See <a href="#uidoc-styling">What still doesn't draw</a>: <code>filter</code>, <code>backdrop-filter</code> and <code>mask-image</code> don't draw yet. Gradients and <code>box-shadow</code> do.</td></tr>
       <tr><td>An image doesn't appear</td><td>Check the path is relative to the file that uses it, under <code>UI/</code>, lower-case <code>.png</code>/<code>.jpg</code>, and spelled with the same case Check reported. The client log names a reference that can't be resolved.</td></tr>
       <tr><td>The document closes by itself</td><td>Connect to <code>Closed</code> and print the reason, then see <a href="#uidoc-closed">Closed reasons</a>.</td></tr>
     </tbody></table></div>
 
-<p class="footer-note">Last updated September 2026.</p>
+<p class="footer-note">Last updated October 2026.</p>
