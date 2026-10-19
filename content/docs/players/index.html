@@ -39,7 +39,7 @@
 <h2 id="discover">Finding worlds <span class="status live">Live</span></h2>
 <p>The bar across the top of the screen has:</p>
 <ul>
-<li>"DISCOVER" and "AVATAR"</li>
+<li>"DISCOVER", "AVATAR" and "ASSETS" (see <a href="/docs/players/playing/#avatar">Avatar</a> and <a href="/docs/players/playing/#assets">Assets</a>)</li>
 <li>a "Search worlds and creators" box (on a gamepad, press Y to jump to it)</li>
 <li>your friends (click to open the Steam or Epic overlay)</li>
 <li>your profile and the settings gear</li>
@@ -65,8 +65,9 @@
 <p>Some worlds also have servers run by players. If a world allows them, its page has a "Servers" tab next to "About" that lists them. "PLAY" always puts you on an official server. To play on a community server, pick it from this list.</p>
 <ul>
 <li>Each server shows its name, "hosted by" and the host's name, how long it's been up, its region and how full it is.</li>
+<li>The list has the columns "SERVER", "REGION", "PLAYERS" and "STATUS", and a note above it: "Community servers are run by players. Play puts you on an official server; to play on one of these, join it here."</li>
 <li>The status is "VERIFIED", "NOT YET VERIFIED", "FULL" or "OLDER VERSION". You can join any server that isn't full.</li>
-<li>Press "JOIN" on a server's row. The first time, Mantle explains that community servers are run by other players, not by Mantle. Press "CONTINUE" to join.</li>
+<li>Press "JOIN" on a server's row. The first time, Mantle explains that community servers are run by other players, not by Mantle. The notice says: "Community servers are run by other players, not by Mantle. Mantle's safety tools still work here, but the server owner controls the experience." Press "CONTINUE" to join, or "CANCEL" to go back.</li>
 <li>Each row has a "Report" link.</li>
 <li>If there are none, you'll see "No community servers right now" and "Play still works: it starts an official server for you and anyone who joins."</li>
 <li>If the server has gone by the time you join, you'll see "That server is no longer available. Refreshing the list…"</li>
@@ -75,7 +76,7 @@
 <h3 id="private-servers">Private servers <span class="status live">Live</span></h3>
 <p>A private server is a server for one world that only its members can join. You'll find "PRIVATE SERVERS" at the top of the world's "Servers" tab, above any community servers. You can make one for your own worlds, and for other worlds whose creator allows it.</p>
 <ol class="steps">
-<li><b>Create it</b><p>Give it a name if you like ("Name it (optional)", up to 48 characters) and press "Create private server". You're its owner.</p></li>
+<li><b>Create it</b><p>Give it a name if you like ("Name it (optional)", 1 to 48 characters) and press "Create private server". You're its owner.</p></li>
 <li><b>Invite friends</b><p>Press "Invite friends" to get an invite code. It's shown once, so press "Copy" and send it to your friends in Steam or Epic chat. A code works for 7 days.</p></li>
 <li><b>Redeem a code</b><p>Your friend opens the world's page, goes to "Servers", types the code into "Enter an invite code" and presses "Redeem". They're now a member and can join whenever they like. A code redeemed on another world's page still works: they'll find the server on that world's "Servers" tab.</p></li>
 <li><b>Join</b><p>Press "Join" on the server's row. If it isn't running, Mantle starts it for you.</p></li>
@@ -84,7 +85,7 @@
 <li>Each row shows whether you're the "Owner" or a "Member", how many members it has, and "Nobody playing" or how many are playing. A server that can't be joined shows "Unavailable" or "Suspended".</li>
 <li><b>Owners</b> press "Manage" to rename the server, make invite codes, see and remove members, or delete the server. Deleting it disconnects anyone playing and stops its codes working, and can't be undone.</li>
 <li><b>Members</b> press "Members" to see who else is in it, or "Leave server" to leave. You'll need a new invite code to get back in.</li>
-<li>You can own up to 10 private servers, each with up to 200 members. Only one of your private servers can run at a time.</li>
+<li>A private server can have up to 25 invite codes at a time. You can own up to 10 private servers, each with up to 200 members. Only one of your private servers can run at a time.</li>
 <li>Private servers that Mantle runs come with a monthly amount of free play time for their owner. When it's used up, nobody can start that owner's servers until it resets, and joining says when.</li>
 <li>An owner can also run a private server on their own PC. See <a href="/docs/platform/community-servers/#private">Private community servers</a>.</li>
 </ul>
@@ -95,6 +96,12 @@
 <tr><td>This private server's owner already has another private server running. Only one can run at a time.</td><td>Try again once the owner's other server has closed</td></tr>
 <tr><td>This private server's owner has used this month's 10 hours of free private-server time. It resets on [date] (UTC).</td><td>The owner's free time has run out until that date</td></tr>
 <tr><td>That private server is gone, or you're no longer a member.</td><td>It was deleted, or you were removed</td></tr>
+<tr><td>This world's creator hasn't turned on private servers.</td><td>The world doesn't allow them</td></tr>
+<tr><td>Private servers aren't available right now. Try again later. / Community servers aren't available right now. Try again later.</td><td>A problem on our side</td></tr>
+<tr><td>You have as many private servers as you can own. Delete one to make another.</td><td>You own 10 already</td></tr>
+<tr><td>This private server has as many invites as it can hold. Wait for one to expire.</td><td>It already has 25 live invite codes</td></tr>
+<tr><td>The owner can't leave their own private server. Delete it instead.</td><td>Owners delete a server rather than leave it</td></tr>
+<tr><td>Private servers are at capacity for today. Try again after midnight UTC.</td><td>Try again tomorrow</td></tr>
 </tbody></table></div>
 
 <h2 id="joining">Joining a world <span class="status live">Live</span></h2>
@@ -117,8 +124,10 @@
 <tr><td>Could not reach Mantle. Check your internet connection and try again.</td></tr>
 <tr><td>Couldn't join [world]. Check your connection and try again.</td></tr>
 <tr><td>Something went wrong.</td></tr>
+<tr><td>Couldn't join that world. Check your connection and try again.</td></tr>
+<tr><td>Join cancelled.</td></tr>
 </tbody></table></div>
 <p>If the world can't be loaded after you've connected, Mantle takes you back to the home screen and shows "That world couldn't be loaded. Try joining again." (or "That world couldn't be loaded:" followed by the reason).</p>
-<p>If you're disconnected while playing, you're taken back to the home screen with the reason, for example "The connection to the server was lost." or "You were removed from this world." A world can add its own reason when it removes someone.</p>
+<p>If you're disconnected while playing, you're taken back to the home screen with the reason, for example "The connection to the server was lost.", "The server closed the connection." or "You were removed from this world." A world can add its own reason when it removes someone.</p>
 
 <p>Something not working? Email <a href="mailto:contact@mantleplatform.com">contact@mantleplatform.com</a>, ask in the <a href="https://discord.gg/xj4s9kUe7x">Mantle Discord</a>, or see <a href="/docs/players/troubleshooting/#get-help">Troubleshooting and help</a>.</p>
