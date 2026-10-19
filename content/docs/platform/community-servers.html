@@ -44,7 +44,7 @@ mantle-server run</pre></div>
 <tr><td><code>mantle-server version</code></td><td>Prints the version of <code>mantle-server</code> and of the server package.</td></tr>
 </tbody></table></div>
 <p>Most commands take <code>-config</code> if your settings file isn't <code>server.json</code> in the current folder. <code>status</code>, <code>stop</code>, <code>restart</code>, <code>drain</code> and <code>logs</code> talk to the running <code>mantle-server run</code>, and exit with code 10 if none is running there. They exit with code 12 if the request is refused or fails, for example because players are on the server and you left out <code>-force</code> on <code>stop</code> or <code>restart</code>.</p>
-<p><code>mantle-server run</code> and <code>check</code> exit with these codes:</p>
+<p><code>mantle-server run</code> and <code>check</code> exit with these codes. <code>update</code> and <code>rollback</code> exit with code 13 when they fail for any reason, such as a build that fails the signature check.</p>
 <div class="table-wrap"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody>
 <tr><td class="num">1</td><td><code>server.json</code> or the server key is wrong, or you haven't accepted the terms</td></tr>
 <tr><td class="num">2</td><td>The server package is incomplete or has been changed</td></tr>
@@ -53,10 +53,9 @@ mantle-server run</pre></div>
 <tr><td class="num">5</td><td><code>publicAddress</code> doesn't match where the server connects from</td></tr>
 <tr><td class="num">6</td><td>The game server crashed too many times</td></tr>
 <tr><td class="num">7</td><td><code>check</code> found a problem</td></tr>
-<tr><td class="num">8</td><td>The game server stopped and <code>restart</code> is <code>"never"</code></td></tr>
+<tr><td class="num">8</td><td>The game server stopped and <code>restart</code> is <code>"never"</code>. If the game server gave its own exit code above 0, <code>mantle-server</code> exits with that code instead, so you only see 8 when it gave none, for example when it was killed.</td></tr>
 <tr><td class="num">9</td><td>Registering failed and <code>restart</code> is <code>"never"</code></td></tr>
 <tr><td class="num">11</td><td>Another <code>mantle-server</code> is already running in this folder</td></tr>
-<tr><td class="num">13</td><td>A server build failed the signature check</td></tr>
 <tr><td class="num">14</td><td>The attach code was refused, or the private server was detached</td></tr>
 </tbody></table></div>
 <p><code>mantle-server ui</code> only listens on this machine (127.0.0.1 or ::1). It prints a sign-in link that works once, within 10 minutes; a sign-in lasts 12 hours. The page can't change <code>server.json</code> or install builds. To reach it from another computer, pick a port with <code>-port</code> and use an SSH tunnel.</p>
@@ -82,7 +81,7 @@ mantle-server run</pre></div>
 <tr><td><code>onRepublish</code></td><td>What to do when the creator publishes a new version of the world: <code>"restart-when-empty"</code>, <code>"drain"</code> (hide the server and restart once the players leave) or <code>"ignore"</code></td><td><code>"restart-when-empty"</code></td></tr>
 <tr><td><code>restartSchedule</code></td><td>A daily restart time, <code>"HH:MM"</code> in 24-hour time on this machine's clock. At that time the server drains, then restarts once it's empty.</td><td>None</td></tr>
 <tr><td><code>autoUpdate</code></td><td>When to switch to a new server build: <code>"restart-when-empty"</code>, <code>"drain"</code>, <code>"next-restart"</code> or <code>"off"</code></td><td><code>"restart-when-empty"</code></td></tr>
-<tr><td><code>serverCommandOverride</code></td><td>Replaces the whole command that starts the game server. <code>{port}</code>, <code>{place}</code> and <code>{abslog}</code> in it are filled in for you. Mantle uses it to run the game from the editor, so you shouldn't need it. While it's set, <code>serverExtraArgs</code> is ignored.</td><td>None</td></tr>
+<tr><td><code>serverCommandOverride</code></td><td>Replaces the whole command that starts the game server. <code>{port}</code>, <code>{place}</code> and <code>{abslog}</code> in it are filled in for you. It's a testing hook for Mantle's own builds, so don't set it. It drops the place and log arguments unless the command includes <code>{place}</code> and <code>{abslog}</code>. While it's set, <code>serverExtraArgs</code> is ignored.</td><td>None</td></tr>
 <tr><td><code>readyTimeoutSeconds</code></td><td>How long the game server has to start before it counts as a crash</td><td>180</td></tr>
 <tr><td><code>serverExtraArgs</code></td><td>Extra arguments added to the end of the game server's command line</td><td>None</td></tr>
 <tr><td><code>serverDir</code></td><td>The folder that holds the game server from the package</td><td><code>./MantleServer</code></td></tr>
