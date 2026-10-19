@@ -176,7 +176,7 @@
 <h2 id="environment">Sky and environment</h2>
 <ul>
 <li><span class="status live">Live</span> <b>Default sky:</b> Mantle adds an atmosphere, a real-time sky light, clouds and fog to your world. If your place has no Directional Light, Mantle also adds a sun (intensity 3.5).</li>
-<li><span class="status live">Live</span> <b>Day, night and weather:</b> every server shares a day that lasts 30 real minutes and starts at 9:00, with sunrise at 6:00, sunset at 18:00, and a moon with phases and stars at night. The weather changes on its own between clear, partly cloudy, overcast, rain and storms with lightning. The first Directional Light becomes the sun: its intensity, colour and compass direction are kept, but Mantle moves it through the day ("Mantle moves the sun; this light's pitch is not kept."). Scripts can read and change the time and weather (script API 1.4 and 1.11). Rain falls around the camera and stops under cover. Weather has no sound yet.</li>
+<li><span class="status live">Live</span> <b>Day, night and weather:</b> every server shares a day that lasts 30 real minutes and starts at 9:00, with sunrise at 6:00, sunset at 18:00, and a moon with phases and stars at night. The weather changes on its own between clear (32%), partly cloudy (25%), cloudy (15%), overcast (10%), light rain (6%), rain (5%), foggy (5%) and storms with lightning (2%); after a storm comes rain, light rain or overcast. Light snow, snow, blizzard, dust calm and dust storm never come on their own: a place or a script has to ask for them. The first Directional Light becomes the sun: its intensity, colour and compass direction are kept, but Mantle moves it through the day ("Mantle moves the sun; this light's pitch is not kept."). Scripts can read and change the time and weather (script API 1.4 and 1.11). Rain, snow and dust fall around the camera and stop under cover. Rain, wind and thunder have sound, quieter indoors.</li>
 <li><span class="status live">Live</span> <b>Lights</b> are all Movable in the published world, and no lighting is baked.</li>
 <li><span class="status planned">Planned</span> <b>Custom sky</b>.</li>
 <li><span class="status planned">Planned</span> <b>Post-process</b>.</li>
@@ -188,7 +188,7 @@
 <div class="table-wrap"><table><thead><tr><th>Field</th><th>What it sets</th></tr></thead><tbody>
 <tr><td>Clock Time (behind its own tick box)</td><td>The hour the clock is at when the server starts (0 to 24). It runs on from there at Time Scale, so it isn't frozen at that hour.</td></tr>
 <tr><td>Time Scale</td><td>How fast the clock runs: 1 is the normal day, 0 stops it, 2 runs it twice as fast (0 to 60).</td></tr>
-<tr><td>Weather</td><td>Natural lets it change on its own; any other setting (Clear, Partly Cloudy, Overcast, Rain, Storm) holds it there until a script changes it.</td></tr>
+<tr><td>Weather</td><td>Natural lets it change on its own; any other setting (Clear, Partly Cloudy, Overcast, Rain, Storm, Cloudy, Foggy, Light Rain, Light Snow, Snow, Blizzard, Dust Calm, Dust Storm) holds it there until a script changes it.</td></tr>
 <tr><td>Color Tint</td><td>A colour multiplied over the whole picture. White (the default) leaves it unchanged.</td></tr>
 <tr><td>Saturation</td><td>0 is black and white, 1 (the default) unchanged, 2 doubled.</td></tr>
 <tr><td>Bloom (behind its own tick box)</td><td>How strongly bright things glow, 0 (no glow) to 4. Left unticked, the game's own bloom is used.</td></tr>
