@@ -9,7 +9,7 @@
 <tr><td>Clothing</td><td>A Skeletal Mesh skinned to the MetaHuman body skeleton, or a parametric Outfit</td><td><code>top</code>, <code>bottom</code>, <code>footwear</code>, <code>nails</code></td><td><a href="/docs/creators/clothing/">Clothing, hair and accessories</a></td></tr>
 <tr><td>Accessory</td><td>A Static Mesh with one material, its pivot where it attaches</td><td><code>acc_hat</code>, <code>acc_face</code>, <code>acc_neck</code>, <code>acc_shoulder_l</code>, <code>acc_shoulder_r</code>, <code>acc_front</code>, <code>acc_back</code>, <code>acc_waist</code></td><td><a href="/docs/creators/clothing/">Clothing, hair and accessories</a></td></tr>
 <tr><td>Avatar</td><td>A character you convert to a MetaHuman body and face</td><td><code>avatar</code></td><td><a href="/docs/creators/avatars-emotes/">Avatars and emotes</a></td></tr>
-<tr><td>Emote</td><td>An Anim Sequence on the UEFN mannequin, MetaHuman, UE5 Mannequin or UE4 Mannequin skeleton, at most 10 seconds</td><td><code>emote</code></td><td><a href="/docs/creators/avatars-emotes/">Avatars and emotes</a></td></tr>
+<tr><td>Emote</td><td>An Anim Sequence on the UEFN mannequin, MetaHuman, UE5 Mannequin or UE4 Mannequin skeleton, at most 10 seconds (retargeted for you)</td><td><code>emote</code></td><td><a href="/docs/creators/avatars-emotes/">Avatars and emotes</a></td></tr>
 <tr><td>Overlay</td><td>A square mask image (a scar or a tattoo)</td><td><code>scar_body</code>, <code>scar_face</code>, <code>tattoo_body</code>, <code>tattoo_face</code></td><td><a href="/docs/creators/avatars-emotes/#overlays">Scars and tattoos</a></td></tr>
 </tbody></table></div>
 <p>The kind starts on Clothing. Everything in the catalogue is free. The panel has no price field, and paid items come later with the <a href="/docs/creators/hosting-data/#monetisation">marketplace</a>.</p>
@@ -21,7 +21,7 @@
 <li><b>Pick the kind and slot</b><p>Under "What are you publishing?", pick the kind and then the slot. A line under them describes what that kind takes.</p></li>
 <li><b>Pick the asset</b><p>Under "Asset", choose it from your project. The picker only offers the right type of asset for the kind. For an avatar, use <b>Convert a character</b> instead: see <a href="/docs/creators/avatars-emotes/#avatar-steps">Publishing an avatar</a>.</p></li>
 <li><b>Fill in the kind's details</b><p>Some kinds show extra sections. See <a href="#panel">The panel's fields</a>.</p></li>
-<li><b>Name it</b><p>Under "Listing", give it a <b>Name</b> (players see it in the catalogue) and an optional <b>Description</b>.</p></li>
+<li><b>Name it</b><p>Under "Listing", give it a <b>Name</b> (players see it in the catalogue; if it's empty, it's filled in with the asset's name) and an optional <b>Description</b>.</p></li>
 <li><b>Choose who can use it</b><p>Under "Who can use it", leave it on Public and tick the rights box, or choose Private. See <a href="#visibility">Public and private items</a>.</p></li>
 <li><b>Check it</b><p><b>Check only</b> runs every check and the export without uploading anything. Fix anything listed as a "Problem".</p></li>
 <li><b>Upload it</b><p><b>Upload to Mantle</b> checks again, then exports, uploads and publishes. It won't start while any check fails. See <a href="#after-upload">After you upload</a>.</p></li>
@@ -31,7 +31,7 @@
 <div class="table-wrap"><table><thead><tr><th>Section</th><th>Shown for</th><th>What it does</th></tr></thead><tbody>
 <tr><td>What are you publishing?</td><td>Every kind</td><td>The kind (Hair, Clothing, Accessory, Avatar, Emote or Overlay) and its slot.</td></tr>
 <tr><td>Sections</td><td>Clothing</td><td>"The mesh's sections this item takes. A one-piece outfit uploads once per slot, each time with that piece's sections ticked." Skin sections are greyed out: "the wearer's own body shows through; garments never carry skin". See <a href="/docs/creators/clothing/#outfits">One-piece outfits</a>.</td></tr>
-<tr><td>Asset</td><td>Every kind</td><td>The asset to publish. For a groom, a second drop-down picks which cards to use, listed as "Group N, LOD N: [mesh] (N textures)". For a Skeletal Mesh as hair, a drop-down picks the section to lift. A groom also gets a <b>Generate cards from strands</b> button. See <a href="/docs/creators/clothing/#hair">Hair, eyebrows, eyelashes and facial hair</a>.</td></tr>
+<tr><td>Asset</td><td>Every kind</td><td>The asset to publish. For a groom, a second drop-down picks which cards to use, listed as "Group N, LOD N: [mesh] (N textures)". For a Skeletal Mesh as hair, a drop-down picks the section to lift, and a section with "lash" in its name is picked for you. A groom also gets a <b>Generate cards from strands</b> button. See <a href="/docs/creators/clothing/#hair">Hair, eyebrows, eyelashes and facial hair</a>.</td></tr>
 <tr><td>Parametric clothing</td><td>Clothing</td><td>Makes a parametric Outfit from a garment and adds the bodies it fits. See <a href="/docs/creators/clothing/#parametric">Parametric Outfits</a>.</td></tr>
 <tr><td>Clothing colors</td><td>Clothing</td><td>The areas of the item that players can recolour. See <a href="/docs/creators/clothing/#colours">Clothing colours</a>.</td></tr>
 <tr><td>Convert a character</td><td>Avatar, Clothing, Hair</td><td>Makes a character upload-ready and fills the panel with its parts. See <a href="/docs/creators/avatars-emotes/#convert">Converting a character</a>.</td></tr>
@@ -39,7 +39,7 @@
 <tr><td>Authored on</td><td>Clothing, Hair, Accessory</td><td>The MetaHuman body the item was made on. For clothing: "The MetaHuman body this was made on. Found automatically when the project has one; it uploads as the item's body shape for fitting to supported avatars." For hair it also takes the <b>Source MetaHuman face</b>. For an accessory it's only used for the preview: "Its body shape is not uploaded with a rigid accessory."</td></tr>
 <tr><td>Overlay images</td><td>Overlay</td><td>The mask and normal map files for a scar or tattoo, and the body and face to preview on.</td></tr>
 <tr><td>Animated on</td><td>Emote</td><td>The character the animation was made on (optional). A MetaHuman, UE5 Mannequin or UE4 Mannequin clip is retargeted from this body's proportions.</td></tr>
-<tr><td>Face and sections</td><td>Avatar</td><td>The face mesh, a role for each material section (<code>skin</code>, <code>eyes</code> or <code>other</code>; used on the as-is route only), and a <b>Publish as</b> drop-down. Leave <b>Publish as</b> on "A new avatar item": it has no other choice.</td></tr>
+<tr><td>Face and sections</td><td>Avatar</td><td>The face mesh, a role for each material section (<code>skin</code>, <code>eyes</code> or <code>other</code>; used on the as-is route only; they are filled in from MetaHuman's slot names), and a <b>Publish as</b> drop-down. Leave <b>Publish as</b> on "A new avatar item": it has no other choice.</td></tr>
 <tr><td>Socket offsets</td><td>Avatar</td><td>Collapsed under "Move where accessories and held tools attach (optional)". One group per accessory socket, plus the <code>hand_rSocket</code> that holds tools and guns (on <code>hand_r</code>, with no scale row). Tick Location, Rotation or Scale to replace that part.</td></tr>
 <tr><td>Attachment</td><td>Accessory</td><td>Tick "Offset it from the socket" to set a Location (cm), Rotation (degrees) and Scale for the accessory. <b>Align to avatar axes</b> lines it up with the chosen avatar.</td></tr>
 <tr><td>Listing</td><td>Every kind</td><td>Name and Description.</td></tr>
@@ -52,19 +52,20 @@
 <li><b>Avatar:</b> full body, head to toe, with its face.</li>
 <li><b>Clothing:</b> on the body it was made on, framed on the clothing, with only the sections the item takes.</li>
 <li><b>Accessory:</b> on its own, in a three-quarter view from above.</li>
-<li><b>Hair, emotes and overlays:</b> the asset's own Unreal thumbnail.</li>
+<li><b>Hair and emotes:</b> the asset's own Unreal thumbnail. For a groom, the editor's thumbnail is an empty frame, so it uses the first cards mesh.</li>
+<li><b>Overlay:</b> the mask, drawn light on dark.</li>
 </ul>
 <p>If nothing can be rendered, the thumbnail is a plain dark square. <b>Files and details</b>, at the bottom of the panel, lists each file the item uploads with its size, and says how the thumbnail was made.</p>
 
 <h3 id="preview">Previewing</h3>
 <p>Under <b>Preview</b>, choose <b>Preview</b> to see the item without uploading anything.</p>
 <ul>
-<li><b>Clothing and hair:</b> fitted by the same code players' games run. Pick one of Mantle's base avatars, the body you made it on or another avatar by its item id (<code>itm_u</code> followed by 32 hex digits). You can play an animation or hold the reference pose.</li>
+<li><b>Clothing and hair:</b> fitted by the same code players' games run. Pick the body you made it on or another avatar by its item id (<code>itm_u</code> followed by 32 hex digits). You can play an animation or hold the reference pose.</li>
 <li><b>Accessories:</b> shown on a local MetaHuman body you choose under <b>Authored on</b>, or on a catalogue avatar. Attachment edits update the preview and are saved for that mesh and slot.</li>
 <li><b>Avatars:</b> posed the way players' games pose them, copying the UEFN mannequin's standing idle. This needs the IK Rig plugin turned on and a UEFN mannequin skeletal mesh in your project (such as <code>SKM_UEFN_Mannequin</code> from the Game Animation Sample). Without them, the preview holds the reference pose and the status line names what to add.</li>
 <li><b>Overlays:</b> drawn on a converted MetaHuman body or face with the same skin material players' clients use.</li>
 </ul>
-<p>Previewing on a catalogue avatar needs you to be signed in: "Sign in to preview on avatars from the Mantle catalog."</p>
+<p>Previewing on a catalogue avatar needs you to be signed in. Clothing and hair say "Sign in to preview on avatars from the Mantle catalog." and accessories say "Sign in to preview accessories on catalog avatars." Mantle doesn't ship a UEFN mannequin with the plugin: you add one to your project for avatar previews.</p>
 
 <h2 id="visibility">Public and private items <span class="status wip">In progress</span></h2>
 <p>Under "Who can use it" you choose one of two options:</p>
@@ -83,23 +84,23 @@
 <tr><td>Description over 1,000 characters</td><td>Problem: the description is N characters, the limit is 1000.</td></tr>
 <tr><td>Slot doesn't fit the kind</td><td>Problem: "[slot]" is not a slot for [kind]. Choose a slot from the list.</td></tr>
 <tr><td>No asset picked</td><td>Problem: choose the asset to upload.</td></tr>
-<tr><td>Public without the rights box ticked</td><td>Problem: declare rights or choose Private: a public item needs the rights declaration</td></tr>
 <tr><td>A file over 64 MiB</td><td>Problem: [file] is N MiB, uploads can be at most 64 MiB.</td></tr>
 <tr><td>A material slot with no name, or two with the same name</td><td>Problem: material slot N has no name; sections are identified by material name. Name every material slot in the mesh editor.<br>Problem: two materials are named "[name]"; sections are identified by material name. Rename one of the material slots in the mesh editor.</td></tr>
 <tr><td>A section spread over several UV tiles</td><td>Problem: [section] spans N UV tiles (UDIM 1001, …); Mantle maps one 0..1 texture per section. Bake its tiles into one texture with its UVs laid out in 0..1, then reimport the mesh and the texture.</td></tr>
 <tr><td>A vertex with more than 8 bone influences</td><td>Done: N vertices had more than 8 influences; the lightest were dropped and the rest renormalised (largest weight dropped: [W]). If the largest dropped weight is over 0.1, it's a Note instead.</td></tr>
-<tr><td>Bones that aren't on the skeleton</td><td>Note: N bones were merged into their parent bones and won't move on their own: [bone] -> [parent]. Mantle animates only the bones of its skeleton, so what they moved now follows the parent bone. It still uploads.</td></tr>
+<tr><td>Bones that aren't on the skeleton</td><td>Note: N bones were merged into their parent bones and won't move on their own: [bone] -> [parent]. Mantle animates only the bones of its skeleton, so what they moved (a jaw, hair strands, cloth) now follows the parent bone. It still uploads.</td></tr>
 <tr><td>A socket offset out of range (avatars)</td><td>Problem: the [socket] socket's location (x, y, z): offsets are at most 50 cm on each axis. Mantle refuses it rather than clamping it. (Rotation says "rotations are between -180 and 180 degrees", and scale says "scale is between 0.5 and 2".)</td></tr>
 <tr><td>A socket that doesn't exist, or is set twice</td><td>Problem: "[socket]" is not an accessory or tool socket.<br>Problem: the [socket] socket is overridden twice.</td></tr>
 <tr><td>A tool socket moved off its bone or scaled</td><td>Problem: [socket] hangs from [bone], not [other bone].<br>Problem: hand_rSocket carries tools, so its scale stays 1.</td></tr>
 </tbody></table></div>
-<p>Textures larger than the limit (2048 on a side, 1024 for an accessory or an overlay) are scaled down. You'll see "Done: [texture] is WxH; it is uploaded at most WxH." If a texture's PNG is over 8 MiB, the plugin halves its size until it fits and says "Done: [texture] is over 8 MiB at WxH; it is uploaded at WxH." A normal map that is plain grey holds no detail, so it is left out. <b>Files and details</b> shows the size each one uploads at.</p>
+<p>Overlay images are never scaled down: one over 1024 x 1024 is a Problem: "[name] is [W] x [H]; overlay images are at most 1024 x 1024." </p>
+<p>Textures larger than the limit (2048 on a side, 1024 for an accessory) are scaled down. You'll see "Done: [texture] is WxH; it is uploaded at most WxH." If a texture's PNG is over 8 MiB, the plugin halves its size until it fits and says "Done: [texture] is over 8 MiB at WxH; it is uploaded at WxH." A normal map that is plain grey holds no detail, so it is left out. <b>Files and details</b> shows the size each one uploads at.</p>
 
 <h2 id="after-upload">After you upload</h2>
 <p>The upload runs in the background with a progress bar, so you can keep working. The status line shows each stage:</p>
 <ol class="steps">
 <li><b>Checking which files Mantle already has...</b><p>Files your account has already uploaded are skipped, so nothing is sent twice. The log says, for example, "Mantle already has 3 of 5 files; 2 to upload".</p></li>
-<li><b>Uploading and processing files: N of M ready...</b><p>Mantle checks each file and screens it. In <b>Files and details</b>, each file has a line such as "[file]: processing - Being screened". The first word is waiting, processing, ready or failed, and the rest says what's happening: "Waiting", "Uploading ([size])", "Being processed", "Being screened", "Waiting for a moderator", "Approved", "Already on Mantle" or "Retrying". A garment waits for the body it was made on to be approved first ("Waiting for its body shape"). When Mantle is busy with other uploads, you'll see "Mantle is busy with other uploads; waiting for a turn". That isn't a failure.</p></li>
+<li><b>Uploading and processing files: N of M ready...</b><p>Mantle checks each file and screens it. In <b>Files and details</b>, each file has a line such as "[file]: processing - Being screened". The first word is waiting, processing, ready or failed, and the rest says what's happening: "Waiting", "Uploading ([size])", "Being processed", "Being screened", "Waiting for a moderator", "Approved", "Already on Mantle" or "Retrying". A garment waits for the body it was made on to be approved first ("Waiting for its body shape", or "Waiting for [file] to be approved"). When Mantle is busy with other uploads, you'll see "Mantle is busy with other uploads; waiting for a turn". That isn't a failure.</p></li>
 <li><b>Creating the item...</b><p>Once every file is approved, the plugin creates the item from them.</p></li>
 <li><b>Screening the item...</b><p>Mantle screens the item's thumbnail, name and description. For a scar or tattoo it screens the mask and the normal map too. If something is flagged, a moderator looks at it. The meshes and textures were already screened when each file was uploaded.</p></li>
 </ol>
@@ -129,7 +130,7 @@
 <tr><td>File too large</td><td>[file] is too large for Mantle. Assets can be at most 64 MiB. (Textures: "Textures can be at most 8 MiB. Compress it or lower its resolution, then upload it again.")</td></tr>
 <tr><td>The same file used for two jobs</td><td>[file]: these exact bytes are already on Mantle as a [kind], and one upload is one kind. Make a copy of the source asset for this use.</td></tr>
 <tr><td>A moderator removed the file from your account</td><td>A moderator removed [file] from your account (usually after a licence complaint), so it cannot be uploaded or used again. Use different content.</td></tr>
-<tr><td>The item uses a file your account doesn't hold</td><td>[file] names a file your account holds no claim on (a moderator removed it, or it was never uploaded from this project). Upload the item again from your own files.</td></tr>
+<tr><td>The item uses a file your account doesn't hold</td><td>the item names a file your account holds no claim on (a moderator removed it, or it was never uploaded from this project). Upload the item again from your own files.</td></tr>
 <tr><td>Another account uploaded the content first</td><td>Mantle refused [item]. Another account uploaded this content first. Publish it privately, or contact support if it is yours.</td></tr>
 <tr><td>Public publishing is turned off</td><td>Mantle refused [item]. Public publishing is turned off for this account after repeated copyright strikes. You can still publish privately.</td></tr>
 <tr><td>Your creator token stopped working</td><td>Your creator token [has expired / was revoked or is not a valid creator token / …] (Mantle at [address]), so you have been signed out. Create a new one in Mantle's Settings > Account, then choose Publish again to paste it.</td></tr>
@@ -166,7 +167,7 @@
 <tr><td>Items created or edited per account</td><td class="num">60 an hour</td></tr>
 <tr><td>Everything uploaded per account</td><td class="num">2 GiB an hour</td></tr>
 <tr><td>One file</td><td class="num">64 MiB (textures 8 MiB)</td></tr>
-<tr><td>Texture size</td><td class="num">2048 x 2048, accessories and overlays 1024 x 1024 (larger ones are scaled down)</td></tr>
+<tr><td>Texture size</td><td class="num">2048 x 2048, accessories 1024 x 1024 (larger ones are scaled down). Overlay images: 1024 x 1024 at most, never scaled down</td></tr>
 <tr><td>Thumbnail</td><td class="num">512 x 512, made by the panel</td></tr>
 <tr><td>Name</td><td class="num">1 to 64 characters</td></tr>
 <tr><td>Description</td><td class="num">Up to 1,000 characters</td></tr>
