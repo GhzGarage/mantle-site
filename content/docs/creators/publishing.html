@@ -1,14 +1,14 @@
-<div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status wip">Next release</span> in the plugin; can be published once the next game release is out</span><span><span class="status planned">Planned</span> coming later</span></div>
+<div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
 
 <h2 id="publish-flow">How publishing works <span class="status live">Live</span></h2>
-<p><b>Tools → Mantle</b> has two commands: <b>Save to Mantle</b> ("Upload this level as a private draft. Nobody else can see it.") and <b>Publish</b>. Both ask you to <a href="/docs/creators/#sign-in">sign in</a> first if you haven't. Publish also asks "What changed in this version?" for optional revision notes (up to 2,000 characters), which are kept with the revision.</p>
+<p><b>Tools → Mantle</b> has two commands: <b>Save to Mantle</b> ("Upload this level as a private draft. Nobody else can see it.") and <b>Publish</b>. Both ask you to <a href="/docs/creators/#sign-in">sign in</a> first if you haven't. Publish also shows the picture your world will have in the catalogue (see the Thumbnail row in <a href="/docs/creators/building/#place-settings">Place settings</a>) and asks "What changed in this version?" for optional revision notes (up to 2,000 characters), which are kept with the revision.</p>
 <p>Both run in the background, so you can keep working. The <b>Mantle Publish</b> tab shows each step, with a progress bar, a "Needs your attention" list and a Details log:</p>
 <ol class="steps">
 <li><b>Check this place</b><p>Runs the same checks as "Check this place". If anything fails, you'll see "This place has N problem(s) to fix first."</p></li>
 <li><b>Prepare meshes and materials</b><p>Converts the meshes and materials from your project that the level uses. A level built only from library assets skips this.</p></li>
-<li><b>Upload to Mantle</b><p>Uploads the converted files, your <a href="/docs/creators/building/#script-assets">Script Assets</a>, every script in the level's <code>Scripts</code> folder and its <code>Packages</code> folder (see <a href="/docs/creators/script-packages/">Script packages</a>), and the documents, stylesheets and images in its <code>UI</code> folder (see <a href="/docs/scripting/ui-documents/">UI documents</a>). Files you've uploaded before aren't sent again.</p></li>
+<li><b>Upload to Mantle</b><p>Uploads the converted files, your <a href="/docs/creators/building/#script-assets">Script Assets</a>, every script in the level's <code>Scripts</code> folder and its <code>Packages</code> folder (see <a href="/docs/creators/script-packages/">Script packages</a>), and the documents, stylesheets and images in its <code>UI</code> folder (see <a href="/docs/scripting/ui-documents/">UI documents</a>), then the world's thumbnail. Files you've uploaded before aren't sent again.</p></li>
 <li><b>Mantle processes and screens them</b><p>Mantle processes the files and screens textures (including UI images), scripts and UI documents. Something that needs a moderator shows as "waiting for a Mantle moderator to look at it."</p></li>
-<li><b>Publish</b><p>The first time you publish a level, this creates a new world with the level's name. Later publishes update that same world. Mantle saves your draft and, for Publish, makes it live as a new, numbered revision.</p></li>
+<li><b>Publish</b><p>The first time you publish a level, this creates a new world with the level's name. Later publishes update that same world. Mantle saves your draft and, for Publish, makes it live as a new, numbered revision. If the place has vehicles, weapons or script packages of your own, the tab first asks "Vehicles, weapons and script packages in this place: who can use them": <b>Public: listed in the library for every creator</b> (tick "I own this content or its licence permits public redistribution on Mantle" to go live) or <b>Private: only you can use them</b>.</p></li>
 </ol>
 <p>When it works, you'll see "Saved to Mantle. Nobody can see it until you publish." or "Published revision N. Anyone can join it now." If it stops, the tab says why and what to do. <b>Cancel</b> stops at any point without publishing anything, and <b>Publish again</b> carries on from where it stopped: everything already uploaded stays on Mantle.</p>
 
@@ -29,10 +29,11 @@
 <tr><td><code>PreviewPlace</code></td><td>Shows the place as players receive it, like Tools → Mantle → Check what players receive.</td></tr>
 <tr><td><code>ExplainIssue(Query)</code></td><td>Every current issue whose message, actor or fix mentions the query, in full.</td></tr>
 <tr><td><code>ScriptApiRequirement</code></td><td>The script API version the place's scripts need.</td></tr>
-<tr><td><code>PublishPlace(Notes)</code></td><td>Publishes the level, exactly like Tools → Mantle → Publish, and makes it live for players. The agent is told to use it only when you've asked for that publish.</td></tr>
+<tr><td><code>PublishPlace(Notes)</code></td><td>Publishes the level, exactly like Tools → Mantle → Publish, and makes it live for players. The agent is told to use it only when you've asked for that publish. Vehicles in the level become private library items, because an agent can't make the rights declaration a public one needs.</td></tr>
 <tr><td><code>UploadStatus(AssetName)</code></td><td>Each file's upload state in the running or last publish.</td></tr>
 <tr><td><code>ListMyPlaces</code></td><td>Your places on Mantle.</td></tr>
 <tr><td><code>CheckCosmetic</code>, <code>UploadCosmetic</code></td><td>Check or upload an avatar item, like the <a href="/docs/creators/avatar-items/">Cosmetics panel</a>.</td></tr>
+<tr><td><code>ConvertCosmetic</code>, <code>MeasureHead</code></td><td>Convert a character so it can be uploaded (it writes new assets in a Converted folder and never changes yours), or measure an avatar's head for its hat socket. Nothing is uploaded.</td></tr>
 </tbody></table></div>
 
 <h3 id="publish-blocked">What stops a publish</h3>
@@ -41,7 +42,7 @@
 <tr><td>Place file breaks the place rules</td><td>That place file is not a valid Mantle place: [where] [what's wrong].</td></tr>
 <tr><td>Unreadable place file</td><td>That place file could not be read.</td></tr>
 <tr><td>Made with a newer version of Mantle</td><td>This place was made with a newer version of Mantle than the server understands.</td></tr>
-<tr><td>Uses something the released game can't read yet: anything marked <span class="status wip">Next release</span>, such as a landscape, foliage, a Rect Light, Decal, Skeletal Mesh, a mesh with Simulate Physics, a Mantle Effect, Crowd Spawner, Vehicle Spawn, Scatter Volume or joint. The editor's Output Log names it. <b>Save to Mantle</b> still works.</td><td>This revision is not compatible with the supported release matrix.</td></tr>
+<tr><td>Needs more than the released game has: scripts that use a script API newer than the newest released game's (1.37). The report says "This place needs script API N.M, newer than the newest released game build's 1.37. Update the Mantle plugin and re-publish, or wait for the next release."</td><td>This revision is not compatible with the supported release matrix.</td></tr>
 <tr><td>Files still being processed</td><td>Your changes are saved, but Mantle is still processing N file(s), so it has not gone live yet. Choose Publish again in a minute; nothing is uploaded twice.</td></tr>
 <tr><td>Files waiting for a moderator</td><td>Everything is uploaded, but Mantle's moderators have to look at N file(s) first, such as '…'. Nothing went live yet. Choose Publish again once they are approved; nothing is uploaded twice.</td></tr>
 <tr><td>Files rejected in review</td><td>Mantle's review rejected N file(s) this place uses, so nothing went live. The list below names them.</td></tr>
@@ -68,7 +69,7 @@
 <div class="table-wrap"><table><thead><tr><th>Detail</th><th>Rules</th><th>How it's set</th></tr></thead><tbody>
 <tr><td>Name</td><td>Up to 80 characters</td><td><span class="status live">Live</span> uses your level's name</td></tr>
 <tr><td>Description</td><td>Up to 4,000 characters</td><td><span class="status wip">In progress</span> coming to the editor</td></tr>
-<tr><td>Thumbnail</td><td>An uploaded image</td><td><span class="status wip">In progress</span> coming to the editor</td></tr>
+<tr><td>Thumbnail</td><td>An uploaded image</td><td><span class="status live">Live</span> taken for you at every publish, or from a view you choose in <a href="/docs/creators/building/#place-settings">Place settings</a></td></tr>
 <tr><td>Players per server</td><td>1–100, default 16</td><td><span class="status live">Live</span> Max Players in <a href="/docs/creators/building/#place-settings">Place settings</a></td></tr>
 <tr><td>Maturity and platforms</td><td>See <a href="/docs/creators/building/#place-settings">Place settings</a></td><td><span class="status wip">In progress</span> set in Place settings, not used yet</td></tr>
 <tr><td>Visibility, tags and genres</td><td>None</td><td><span class="status planned">Planned</span> for now, published worlds are public</td></tr>

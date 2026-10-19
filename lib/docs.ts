@@ -52,7 +52,7 @@ export const docsNav: DocSection[] = [
           { slug: ["creators", "quick-start"], title: "Quick start: your first world", description: "From installing the Mantle plugin to a published world your friends can join, step by step." },
           { slug: ["creators", "plugin"], title: "The Mantle Core plugin", description: "What the Unreal plugin does, what you need, installing it from Fab, its Experimental Toolset Registry dependency, the authoring workflow and Test Locally." },
           { slug: ["creators"], title: "Editor setup and tools", description: "What you need, signing in, the Mantle editor tools, checking your place and testing it." },
-          { slug: ["creators", "building"], title: "Building a place", description: "What you can put in a place, Blueprint prefabs, sounds, place settings, what gets published, features coming in the next release, your own assets, and the sky." },
+          { slug: ["creators", "building"], title: "Building a place", description: "What you can put in a place, Blueprint prefabs, sounds, place settings, what gets published, your own assets, and the sky." },
         ],
       },
       {
@@ -69,7 +69,7 @@ export const docsNav: DocSection[] = [
           { slug: ["creators", "avatar-items"], title: "Making avatar items", description: "The Cosmetics panel from start to finish: what you can make, checking and uploading an item, screening, and what happens after." },
           { slug: ["creators", "clothing"], title: "Clothing, hair and accessories", description: "Build 3D clothing, one-piece outfits, hair and accessories in Unreal that pass Mantle's checks and fit every avatar: skeletons, slots, sections, sockets, budgets and the messages you'll see." },
           { slug: ["creators", "avatars-emotes"], title: "Avatars and emotes", description: "Make whole avatars on a supported skeleton, and emotes players can play from the emote wheel." },
-          { slug: ["creators", "vehicles"], title: "Vehicles", description: "Convert a car's skeletal mesh into a Mantle vehicle with paint, liveries and suspension, and place it with a Vehicle Spawn. Publishes with the next release." },
+          { slug: ["creators", "vehicles"], title: "Vehicles", description: "Build a vehicle from a kind you pick, or convert a car model, then place it with a Vehicle Spawn." },
           { slug: ["creators", "script-packages"], title: "Script packages and Script Points", description: "Publish scripts from a Packages folder for other creators, use theirs from the library, anchor them in the level with Script Points, and set parameters and package settings." },
         ],
       },
