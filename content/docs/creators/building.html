@@ -111,7 +111,7 @@
 </ul>
 
 <h3 id="terrain">Terrain <span class="status live">Live</span></h3>
-<p>A Landscape publishes as a terrain. Each painted layer is drawn from the landscape's own material when Mantle can read it. To pick the look yourself, open Place settings and add an entry under <b>Mantle → Terrain → Terrain Layers</b>: the layer's name, the material to draw it with, and a tiling size in cm (400 by default). A layer Mantle can't read from the material, and that has no entry, is an error.</p>
+<p>A Landscape publishes as a terrain. Each painted layer is drawn from the landscape's own material when Mantle can read it. To pick the look yourself, open Place settings and add an entry under <b>Mantle → Terrain → Terrain Layers</b>: the layer's name, the material to draw it with, and a tiling size in cm (400 by default). It is an error only when Mantle can't read the landscape material at all and a layer has no entry ("has paint layer '…', which has no material to draw it with in Mantle."), or when no layer can be drawn ("has paint layers (…) that its landscape material does not use and Mantle Place Settings gives no entry, so players would see nothing on it."). A painted layer the material doesn't use is left out with a warning, and the landscape still publishes: "has painted layers its landscape material does not use (…), so they are not drawn and their paint is left out."</p>
 <ul>
 <li>One landscape per place, with up to 8 painted layers. If a landscape has more, Mantle keeps the most painted and folds the others into the nearest by colour, with a warning.</li>
 <li>Landscape holes are refused: "has holes painted in it (its visibility layer), which Mantle cannot publish yet." Erase them with the Visibility tool or cover them with meshes.</li>
@@ -121,7 +121,7 @@
 </ul>
 
 <h3 id="instances">Foliage and instanced meshes <span class="status live">Live</span></h3>
-<p>Painted foliage, Instanced Static Mesh components and generated PCG output publish as instanced meshes: at most 100,000 instances in a place. Spline meshes are baked into ordinary static meshes, merged by material, and have to fit the mesh limits. Mirrored or zero-scale instances, PCG set to <b>Generate At Runtime</b> or not generated yet, and unsaved dynamic meshes are errors. Per-instance custom data is dropped with a warning.</p>
+<p>Painted foliage, Instanced Static Mesh components and generated PCG output publish as instanced meshes: at most 100,000 instances in a place. Spline meshes are baked into ordinary static meshes, merged by material, and have to fit the mesh limits. Mirrored or zero-scale instances, PCG set to <b>Generate At Runtime</b> or not generated yet and unsaved dynamic meshes are errors. Per-instance custom data is dropped with a warning.</p>
 
 <h3 id="physics">Physics objects <span class="status live">Live</span></h3>
 <p>Tick <b>Simulate Physics</b> on a Static Mesh Actor to make it a physics object: the server simulates it and every player sees it move. Its mass (0.1 to 100,000 kg), damping and gravity are kept. Give it the tag <code>MantleAnchored</code> to start it pinned in place until a script lets it go. It simulates on the mesh's simple collision, or a box the size of the mesh when it has none, with a warning. Scripts can push it and listen for hits (script API 1.15).</p>
@@ -143,11 +143,11 @@
 <p>Place a <b>Mantle Effect</b> (Place Actors → All Classes) and pick one of five built-in effects: Smoke, Fire, Sparks, Dust or Glow. You can change its colour, particle size (1 to 1,000 cm), rate (up to 200 a second), speed (up to 5,000 cm/s) and lifetime (0.05 to 10 s). <b>Autoplay</b> starts it when a player joins; with it off, the effect waits for a script. <b>Loop</b> keeps it emitting; with it off, it emits for one second each time it starts. Particles leave along the actor's up direction. A place can have 64 effects.</p>
 <p>The <b>Sprites</b> effect is a general emitter you tune yourself, and the only one that takes your own image. Scripts can't pick it. It has:</p>
 <ul>
-<li><b>Look:</b> a texture (empty draws a soft round dot), <b>Blend</b> (Translucent or Additive), colour at the start and end of a particle's life, opacity at its peak (0 to 1) and at its end, and a fade-in (0 to 1 of its life).</li>
+<li><b>Look:</b> a texture (empty draws a soft round dot), <b>Blend</b> (Translucent or Additive), colour at the start and end of a particle's life, opacity at its peak (0 to 1) and at its end and a fade-in (0 to 1 of its life).</li>
 <li><b>Size and life:</b> a size range (0.1 to 1,000 cm), the size at the end as a multiple of the start (0 to 10) and a lifetime range (0.05 to 10 s).</li>
 <li><b>Movement:</b> a velocity range and an acceleration, each −5,000 to 5,000 cm/s (cm/s² for acceleration) on every axis. Gravity is negative Z.</li>
 <li><b>Where it starts:</b> Point, Box, Sphere or Cylinder, with its size, and up to 2,000 particles at once.</li>
-<li><b>Flipbook:</b> up to 16 frames in the texture. Random picks one per particle; Over Life plays them in order.</li>
+<li><b>Flipbook:</b> up to 16 columns and 16 rows of frames in the texture (256 frames). Random picks one per particle; Over Life plays them in order.</li>
 </ul>
 <p>You can't upload your own particle systems.</p>
 
@@ -187,7 +187,7 @@
 <li><b>Respawn Seconds:</b> how long after a player picks it up until a new one appears (0 to 600, 10 by default).</li>
 <li><b>Enabled:</b> untick it to keep the spawn in your place without a weapon. A script can still use it.</li>
 </ul>
-<p>A place can have 32 weapon spawns. "Check this place" names a spawn with no weapon, one that sets both, and a weapon whose files aren't in your <code>MantleWeapons</code> folder.</p>
+<p>A place can have 32 weapon spawns. "Check this place" names a spawn with no weapon, one that sets both and a weapon whose files aren't in your <code>MantleWeapons</code> folder.</p>
 
 <h2 id="assets">Assets</h2>
 <h3 id="library">Built-in library <span class="status live">Live</span></h3>
@@ -223,8 +223,8 @@
 <h3 id="level-look">Your level's own look <span class="status live">Live</span></h3>
 <p>Mantle supplies its own sky, but the editor reads some of the look from the actors in your level. "Check what players receive" lists what it kept and what it left out.</p>
 <ul>
-<li><b>The sun:</b> the first Directional Light keeps its intensity and colour (a temperature is folded into the colour). Its angle comes from the clock: if you set <b>Clock Time</b> or <b>Time Scale</b> in Place settings, they decide. If you didn't, and the light is at least 1° above the horizon, its angle becomes the place's clock, stopped at that hour with Time Scale 0, so the day and night cycle is off. Set Clock Time in Place settings to run the day from an hour you choose. A light at or below the horizon leaves the clock alone. Its heading (yaw) is kept.</li>
-<li><b>Weather:</b> a level with a sun, sky atmosphere, sky light or volumetric cloud of its own has one look, so the place holds its weather rather than letting it change on its own: Clear, Partly Cloudy or Overcast from the first cloud's coverage, or Clear when there are no clouds. Choose a <b>Weather</b> in Place settings for a different one, or Natural to let it change. <b>Start a new place</b> adds a sun, so a new place holds Clear until you choose.</li>
+<li><b>The sun:</b> the first Directional Light keeps its intensity and colour (a temperature is folded into the colour). Its angle comes from the clock: if you set <b>Clock Time</b> or <b>Time Scale</b> in Place settings, they decide. If you didn't, and the light is at least 1° above the horizon, its angle becomes the place's clock, stopped at that hour with Time Scale 0, so the day and night cycle is off. Set Clock Time in Place settings to run the day from an hour you choose. A light at or below the horizon leaves the clock alone. Its heading (yaw) is kept roughly: it is turned to fit the clock's sun.</li>
+<li><b>Weather:</b> a level with a sun, sky atmosphere, sky light or volumetric cloud of its own has one look, so the place holds its weather rather than letting it change on its own: Clear, Partly Cloudy or Overcast from the first cloud's coverage, or Clear when there are no clouds. Choose a <b>Weather</b> in Place settings for a different one. Natural writes no weather, so it doesn't bring the changing weather back: only a level without a sun or sky of its own gets weather that changes on its own. <b>Start a new place</b> adds a sun, so a new place holds Clear until you choose another.</li>
 <li><b>Post Process Volume:</b> its saturation, bloom, white balance (as a colour tint) and exposure are kept, from one volume (the enabled one with the highest priority). The rest of its settings aren't. Saturation and Bloom set in Place settings win over the volume's. A level with a sun, sky, fog or post-process volume also keeps its exposure, even without a volume.</li>
 <li><b>Exponential Height Fog:</b> the first fog's density, height falloff, inscattering colour, start distance and directional inscattering colour are kept, where they differ from Mantle's own fog. The fog sits at ground level, whatever its height in the level.</li>
 <li><b>Sky Atmosphere and Sky Light:</b> the place has no setting for them, so Mantle's own are used. Volumetric clouds publish only their coverage, as the weather.</li>
