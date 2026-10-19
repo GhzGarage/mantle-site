@@ -10,12 +10,12 @@
 <tr><td>Jump / vault / mantle</td><td><kbd>Space</kbd></td><td>A</td></tr>
 <tr><td>Sprint</td><td><kbd>Left Shift</kbd> (hold)</td><td>Left-stick click with the stick pushed all the way (stays on until you ease off)</td></tr>
 <tr><td>Walk (toggle)</td><td><kbd>Left Ctrl</kbd></td><td>Push the left stick part of the way</td></tr>
-<tr><td>Crouch / slide</td><td><kbd>C</kbd> (hold)</td><td>Left bumper</td></tr>
+<tr><td>Crouch / slide</td><td><kbd>C</kbd> (hold)</td><td>Left bumper (hold)</td></tr>
 <tr><td>Camera mode</td><td>Mouse wheel</td><td>Right-stick click</td></tr>
 <tr><td>Use tool</td><td>Left mouse</td><td>Right trigger</td></tr>
 <tr><td>Aim</td><td>Right mouse</td><td>Left trigger</td></tr>
-<tr><td>Reload</td><td><kbd>R</kbd></td><td>X (when armed and your weapon can reload)</td></tr>
-<tr><td>Interact / pick up / sit</td><td><kbd>E</kbd></td><td>B or X unarmed; X armed, when there's nothing to reload</td></tr>
+<tr><td>Reload</td><td><kbd>R</kbd></td><td>X (when armed, your weapon can reload and there's nothing nearby to use)</td></tr>
+<tr><td>Interact / pick up / sit</td><td><kbd>E</kbd></td><td>B or X unarmed; X armed, when there's something to use or nothing to reload</td></tr>
 <tr><td>Drop tool</td><td><kbd>G</kbd></td><td>B (when armed)</td></tr>
 <tr><td>Hotbar slots 1–10</td><td><kbd>1</kbd>–<kbd>9</kbd>, <kbd>0</kbd></td><td>D-pad left/right (cycle)</td></tr>
 <tr><td>Melee (armed)</td><td><kbd>B</kbd></td><td>Right bumper</td></tr>
@@ -26,7 +26,7 @@
 <tr><td>In a car: horn</td><td><kbd>E</kbd></td><td>Left-stick click</td></tr>
 <tr><td>In a car: move to the other front seat</td><td><kbd>Q</kbd></td><td>D-pad right</td></tr>
 <tr><td>In a car: lock / unlock (driver's seat)</td><td><kbd>L</kbd></td><td>D-pad left</td></tr>
-<tr><td>Leaderboard</td><td><kbd>Tab</kbd></td><td>Menu, then "Leaderboard"</td></tr>
+<tr><td>Leaderboard</td><td><kbd>Tab</kbd></td><td>Menu, then "LEADERBOARD"</td></tr>
 <tr><td>Text chat</td><td><kbd>T</kbd></td><td>View</td></tr>
 <tr><td>Push to talk</td><td><kbd>V</kbd></td><td>D-pad down</td></tr>
 <tr><td>Menu</td><td><kbd>Esc</kbd></td><td>Menu</td></tr>
@@ -45,40 +45,40 @@
 <h2 id="environment">Day, night and weather <span class="status live">Live</span></h2>
 <p>Everyone on a server shares the same time of day. A full day lasts 30 real minutes unless the world changes it, with a moon and stars at night. The weather changes on its own between clear, partly cloudy, cloudy, overcast, foggy, light rain, rain and storms with lightning, unless the world holds it on one. Rain stops falling on you when you're under cover. Snow, blizzards and dust only show up in worlds that choose them.</p>
 
-<h2 id="avatar">Avatar <span class="status wip">In progress</span></h2>
+<h2 id="avatar">Avatar <span class="status live">Live</span></h2>
 <p>Press "AVATAR" in the top bar to open the Avatar screen. Mantle's menu inside a world doesn't have it, but a world's creator can add a button that opens it. Your character shows on the left. In the middle is a strip of categories: "AVATAR", "BODY", "HAIR", "CLOTHING", "ACCESSORIES", "EMOTES" and "OUTFITS". The panel on the right shows what's in the one you pick. You can drag to turn your character and use the mouse wheel to zoom.</p>
 <ul>
-<li><b>Browsing:</b> use "All" or "Owned" at the top of the panel ("Wishlist" is marked "SOON"). Clothing and Accessories have sub-tabs for each slot (for example "Tops", "Shoes" or "Hats"). Hair has "Hairstyles", "Eyebrows", "Eyelashes" and "Facial hair". Use "Search" to look for an item by name or creator (up to 100 characters). More items load as you scroll. Everything you can see is free for now.</li>
+<li><b>Browsing:</b> use "All" or "Owned" at the top of the panel ("Wishlist" is marked "SOON"). Clothing and Accessories have sub-tabs for each slot (for example "Tops", "Shoes" or "Hats"). Hair has "Hairstyles", "Eyebrows", "Eyelashes" and "Facial hair". Use "Search" to look for an item by name, description or creator (up to 100 characters). More items load as you scroll. Everything you can see is free for now.</li>
 <li><b>Filters:</b> the "Sort" menu has "Newest" and "Oldest" in the catalog, and "Recently added" and "Name" under Owned. The "Creator" menu has "Any", "Mantle" and the creators you've seen so far. Press "More by [creator]" on an item to set it to that creator. Choose "Any" to clear it.</li>
-<li><b>Body:</b> "BODY" has the sub-tabs "Body", "Eyes", "Hair", "Skin", "Makeup", "Nails" and "Teeth". Some only show for avatars that support them. Skin tone, "Eye color" and the "Height" slider (95% to 105%) are here, along with "Weight", "Muscle", "Chest" and "Hips". Some avatars have their own look, so there's nothing to change: "This avatar keeps its own look. Choose another avatar to change its body."</li>
-<li><b>Outfits:</b> "Save current look" saves what you're wearing as an outfit (up to 50). Each outfit has "Update to this look", "Rename" and "Delete". An outfit name can be 1 to 40 characters.</li>
+<li><b>Body:</b> "BODY" has the sub-tabs "Body", "Eyes", "Hair", "Skin", "Makeup", "Nails" and "Teeth". Some only show for avatars that support them. Skin tone, "Eye color" ("Iris color" on avatars with detailed eyes) and the "Height" slider (95% to 105%) are here, along with "Weight", "Muscle", "Chest" and "Hips". Some avatars have their own look, so there's nothing to change: "This avatar keeps its own look. Choose another avatar to change its body."</li>
+<li><b>Outfits:</b> "Save current look" saves what you're wearing, emotes included, as an outfit (up to 50) with a name like "Look 1". Press an outfit to put it on, then press "Save" to keep it. Each outfit has "Update to this look", "Rename" and "Delete". An outfit name can be 1 to 40 characters.</li>
 <li><b>Buttons:</b> "Try on", "Cancel" (to stop trying something on), "Get &amp; wear" (or "Wear" if you own it), "Take off" and "Report this item". Items you're trying on show "TRYING ON" and aren't saved.</li>
-<li><b>Removing an item:</b> press "Remove" on something you own, then confirm with "Remove [item]?". It comes off your avatar and leaves your inventory, but stays in the catalog so you can get it again any time.</li>
+<li><b>Removing an item:</b> press "Remove" on something you own. A box titled "Remove [item]?" opens: press "REMOVE" in it to confirm. It comes off your avatar and leaves your inventory, but stays in the catalog so you can get it again any time.</li>
 <li><b>Saving:</b> changes show on the preview straight away, with "Undo" and "Redo". Press "Save" to keep them. Until then you'll see "Unsaved changes", and if you leave you're asked "Discard unsaved changes?" with "Keep editing" and "Discard". Your saved look follows you into every world, including your avatar, clothing, hair, accessories, skin tone, eye colour and height.</li>
 <li><b>Limits:</b> one item per slot, up to 8 accessories and up to 8 emotes.</li>
 <li><b>Set aside:</b> some avatars can't wear clothing. If you switch to one, clothing and hair that don't fit are marked "SET ASIDE". They're still yours and go back on when you switch to an avatar they fit.</li>
 <li><b>Items that are gone:</b> if something in your saved look is no longer available, it's taken off and the Avatar screen tells you once, with "Dismiss". For example: "Your saved avatar is no longer available, so its preview was cleared."</li>
-<li>When you talk on voice chat, your avatar's mouth moves with your voice.</li>
+<li>On avatars that have a jaw, the jaw moves while you talk on voice chat.</li>
 </ul>
 
-<h2 id="emotes">Emotes <span class="status wip">In progress</span></h2>
+<h2 id="emotes">Emotes <span class="status live">Live</span></h2>
 <p>Get emotes from the catalogue and wear them from the Avatar screen, up to 8 at a time. In a world:</p>
 <ol class="steps">
-<li><b>Hold <kbd>B</kbd> or right bumper</b><p>The emote wheel opens. It only opens when you're holding nothing (Fists), on foot, alive and not seated. The camera holds still while it's open.</p></li>
+<li><b>Hold <kbd>B</kbd> or right bumper</b><p>The emote wheel opens. It only opens when you're holding nothing (Fists), alive and not seated. It shows eight numbered slots in the order you wore your emotes, and the camera holds still while it's open. It closes without playing anything if you draw a weapon or die.</p></li>
 <li><b>Point at an emote</b><p>Use the mouse or the right stick.</p></li>
 <li><b>Let go</b><p>You play the emote you're pointing at. Let go in the centre to cancel.</p></li>
 </ol>
-<p>Everyone in the world sees the emote in sync. It stops when you move, jump or fall, sit down, get hit or die. You can't start one while moving, in the air, seated or dead.</p>
+<p>Everyone in the world sees the emote in sync. It stops when it finishes (if it doesn't loop), or when you move, jump or fall, sit down, get hit or die. You can't start one while moving, in the air, seated or dead, so the wheel can open but nothing plays unless you're standing still. To wear a ninth emote, take one off first.</p>
 
 <h2 id="assets">Assets <span class="status live">Live</span></h2>
 <p>Press "ASSETS" in the top bar, beside AVATAR, to browse the vehicles, weapons and script packages creators have published. Getting one adds it to your library, so you can use it in the worlds you build in Unreal. Everything is free for now.</p>
 <ul>
-<li><b>Browse:</b> pick "All", "Vehicles", "Weapons" or "Scripts" on the left, and "All" or "Owned" at the top (each shows how many items it has; LT and RT switch between them on a gamepad). Use "Search vehicles, weapons and scripts" to find something by name. More items load as you scroll.</li>
-<li><b>Cards:</b> each shows a picture, the item's name, "by [creator]" and "Free". Items you've got are marked "Owned", and items you published are marked "Yours".</li>
+<li><b>Browse:</b> pick "ALL", "VEHICLES", "WEAPONS" or "SCRIPTS" on the left, and "All" or "Owned" at the top (each shows how many items it has; LT and RT switch between them on a gamepad). Use "Search vehicles, weapons and scripts" to find something by name, description or creator. More items load as you scroll.</li>
+<li><b>Cards:</b> each shows a picture, the item's name, "by [creator]" and "FREE". Items you've got are marked "OWNED", and items you published are marked "YOURS".</li>
 <li><b>Details:</b> select a card to see its description, its creator, "Version N, published [date]", a <b>Get</b> button ("Got" once it's yours) and "Report this item". A script package also lists its files, which side each one runs on and the parameters its Script Points take. Select a file to read its code before you get it: "Read only: this is exactly what runs."</li>
 <li><b>After Get:</b> the item shows under Owned, with a reminder of where to use it: "Use it in Unreal: Tools &gt; Mantle &gt; Library &gt; Mine". See <a href="/docs/creators/script-packages/#use">Using another creator's package</a>.</li>
 <li><b>Owned:</b> everything you've got and everything you've published. Items you published say "You published this. Manage it in Unreal: Tools &gt; Mantle &gt; Library."</li>
-<li><b>Removing an item:</b> press "Remove" on something you got, then confirm with "Remove [item]?". It leaves your library but stays in Assets, so you can get it again any time. If one of your worlds stores it, the dialog names it: "Your place [name] stores this. Its next publish will refuse until you remove it from storage." That world keeps running as it is; only its next publish waits until you take the item out of its storage.</li>
+<li><b>Removing an item:</b> press "Remove" on something you got. A box titled "Remove [item]?" opens: press "REMOVE" in it to confirm. It leaves your library but stays in Assets, so you can get it again any time. If one of your worlds stores it, the dialog names it: "Your place [name] stores this. Its next publish will refuse until you remove it from storage." That world keeps running as it is; only its next publish, promotion or rollback is refused until you take the item out of its storage.</li>
 <li><b>Prices:</b> nothing is sold yet. An item with a price would show a "Buy — Coming soon" button you can't press.</li>
 </ul>
 
@@ -97,30 +97,30 @@
 <tr><td>Healthpack</td><td>Heals 50</td></tr>
 </tbody></table></div>
 <p>Hitting with the butt of an armed weapon (<kbd>B</kbd> / right bumper) does 100 damage.</p>
-<p>Aiming makes your shots more accurate, and crouching makes them even more accurate. Jumping makes them less accurate.</p>
+<p>On most weapons, aiming and crouching make your shots more accurate, and jumping or falling makes them less accurate.</p>
 
 <h2 id="vehicles">Vehicles <span class="status live">Live</span></h2>
-<p>Vehicles also only appear in worlds where the creator has added them. Walk within 4.5 m of an empty car and press <kbd>F</kbd> / Y ("Drive"). <span class="status wip">Next release</span> The character walks round to the door and climbs in; press <kbd>F</kbd> / Y at the front passenger seat of a car with a driver to ride along. A passenger can use a pistol or throw grenades from the seat, but the driver can't fire.</p>
+<p>Vehicles also only appear in worlds where the creator has added them. Walk within 4.5 m of an empty car and press <kbd>F</kbd> / Y ("Drive"). <span class="status wip">Next release</span> The character walks round to the door and climbs in; press <kbd>F</kbd> / Y at the front passenger seat of a car with a driver to ride along. A passenger can use a gun or throw grenades from the seat, as long as they're aiming where the seat allows. The driver can't use tools.</p>
 <ul>
 <li><b>Accelerate:</b> <kbd>W</kbd> / right trigger</li>
 <li><b>Brake:</b> <kbd>S</kbd> / left trigger (hold it when stopped to reverse)</li>
 <li><b>Handbrake:</b> <kbd>Space</kbd> / A</li>
 <li><b>Steer:</b> <kbd>A</kbd>/<kbd>D</kbd> / left stick</li>
 <li><b>Get out:</b> <kbd>F</kbd> / Y. Above walking pace you dive out instead, and roll clear.</li>
-<li><b>Horn:</b> <kbd>E</kbd> / left-stick click, if the car has one.</li>
+<li><b>Horn:</b> <kbd>E</kbd> / left-stick click, from the driver's seat. Cars without their own horn use a built-in one.</li>
 <li><b>Move to the other front seat:</b> <kbd>Q</kbd> / D-pad right, when it's free.</li>
 <li><b>Lock or unlock the car:</b> <kbd>L</kbd> / D-pad left, from the driver's seat only. A locked car opens only for the last player who drove it. Anyone else's tap rattles the door; <b>holding</b> <kbd>F</kbd> / Y at the door for at least 0.4 seconds breaks in (the window breaks and the car unlocks), and the car then needs hotwiring from the driver's seat before it starts.</li>
 <li><b>Carjacking:</b> pressing <kbd>F</kbd> / Y at an occupied seat pulls that player out and takes the seat, unless the world has turned carjacking off.</li>
-<li><b>The trunk:</b> on foot, at the back of a car that has one, <kbd>E</kbd> / B opens or shuts it.</li>
+<li><b>The trunk:</b> on foot, at the back of a car that has one, <kbd>E</kbd>, or B or X on a gamepad. Armed, B drops your tool and X reloads if your weapon can reload.</li>
 <li><b>Crashes hurt:</b> a hard enough crash injures everyone inside, and a very hard one is lethal. Someone who dies in a seat slumps there until the body is cleared away a little later, which frees the seat.</li>
-<li><b>Change paint colour:</b> <kbd>C</kbd> / X cycles through six colours.</li>
+<li><b>Change paint colour (driver's seat):</b> <kbd>C</kbd> / X cycles through six colours.</li>
 <li><b>Camera:</b> the mouse wheel or right-stick click switches between first person, close chase and far chase. The camera moves back behind the car shortly after you stop looking around.</li>
 <li>The screen shows your speed in KM/H and the current gear.</li>
 <li><b>Parked cars stay put:</b> walking or sprinting into an empty one won't push it out of the way.</li>
 </ul>
 
 <h2 id="leaderboard">Leaderboards <span class="status live">Live</span></h2>
-<p>Some worlds keep a leaderboard. Press <kbd>Tab</kbd> (on a gamepad, open the menu and choose "Leaderboard") to see the top 10, each row with a rank, the player's picture and name, and their score; your own row stands out. It updates every 30 seconds or so while you're watching it. Press <kbd>Tab</kbd> again, or choose "Hide leaderboard" in the menu, to close it. An empty board says "No entries yet." Not every world has one. If it doesn't, <kbd>Tab</kbd> opens nothing and the menu has no "Leaderboard" button.</p>
+<p>Some worlds keep a leaderboard. Press <kbd>Tab</kbd> (on a gamepad, open the menu and choose "LEADERBOARD") to see the top 10, each row with a rank, the player's picture and name, and their score; your own row stands out. The scores refresh about every 30 seconds, so they can be up to 30 seconds behind. Press <kbd>Tab</kbd> again, or choose "HIDE LEADERBOARD" in the menu, to close it. An empty board says "No entries yet." Not every world has one. If it doesn't, <kbd>Tab</kbd> opens nothing and the menu has no "Leaderboard" button.</p>
 <p>Worlds can use <kbd>Tab</kbd> for their own actions too. In a world that does, pressing it can open the leaderboard and do the world's action at the same time.</p>
 
 <h2 id="messages">World messages <span class="status live">Live</span></h2>
@@ -130,7 +130,7 @@
 <p>Worlds can also open their own screens, such as a shop, an inventory, a menu or a dialogue. Some take over while they're open: your character stops moving and looking around, and your cursor appears. Others stay on screen while you keep playing.</p>
 <ul>
 <li><b>Mouse:</b> click the screen's buttons and fields.</li>
-<li><b>Keyboard:</b> <kbd>Tab</kbd> or the arrow keys move between controls, and <kbd>Enter</kbd> or <kbd>Space</kbd> presses the one that's highlighted.</li>
+<li><b>Keyboard:</b> on a screen that takes over, <kbd>Tab</kbd> or the arrow keys move between controls, and <kbd>Enter</kbd> or <kbd>Space</kbd> presses the one that's highlighted. On a screen you play alongside, use the mouse, or type into its text fields.</li>
 <li><b>Gamepad:</b> the D-pad or left stick moves between controls, and A presses one.</li>
 <li><b>Closing:</b> <kbd>Esc</kbd> or B goes back. On a screen that has taken over, that usually closes it, unless the world uses it for its own "back" step.</li>
 <li><b>Screens you play alongside:</b> the mouse works on them straight away. On a gamepad, press View to move around one, and View or B to go back to playing. While one is on screen, View doesn't open text chat.</li>
@@ -138,10 +138,10 @@
 </ul>
 
 <h2 id="settings">Menu and settings <span class="status live">Live</span></h2>
-<p><kbd>Esc</kbd> opens the settings menu on top of the world. <b>The game doesn't pause.</b> While the menu is open, your cursor appears and your character won't respond to controls.</p>
+<p><kbd>Esc</kbd> (Start on a gamepad) opens the settings menu on top of the world. <b>The game doesn't pause.</b> While the menu is open, your cursor appears and your character won't respond to controls.</p>
 <ul>
-<li>The menu has "Leave world" and "Quit game", plus "Leaderboard" in worlds that keep one.</li>
-<li>Each tab is marked "Follows you" (saved to your account, so it applies wherever you play) or "On this PC" (saved on this computer only).</li>
+<li>The menu has "LEAVE WORLD" and "QUIT GAME", plus "LEADERBOARD" in worlds that keep one.</li>
+<li>The tabs are grouped under "FOLLOWS YOU" (saved to your account, so it applies wherever you play) or "ON THIS PC" (saved on this computer only). Graphics, Display and Audio are "ON THIS PC"; the rest follow you.</li>
 </ul>
 <div class="table-wrap"><table><thead><tr><th>Tab</th><th>Options</th></tr></thead><tbody>
 <tr><td>Graphics</td><td>Graphics quality (Low / Balanced / High / Epic / Custom), Auto-detect quality, 3D resolution scale (50–100%). Motion blur, Secondary motion (lets hair and clothing swing). Advanced: View distance, Shadows, Anti-aliasing, Textures, Effects, Post-processing, Reflections, Global illumination</td></tr>
@@ -149,13 +149,13 @@
 <tr><td>Audio</td><td>Master volume, Music (0–100%)</td></tr>
 <tr><td>Chat</td><td>Voice chat (Off / Push to talk / Open mic), Text chat. While you're in voice in a world, also "Your microphone" and "Other players' voices" (On / Muted), which only last until you leave that world</td></tr>
 <tr><td>Accessibility</td><td>Subtitles <span class="status live">Live</span>; Reduce motion and High contrast <span class="status wip">In progress</span> (these work in some menus that world creators build, but not yet in Mantle's own menus or in every world screen)</td></tr>
-<tr><td>Account</td><td>Profile picture (PNG or JPEG, up to 2048 by 2048 and 8 MB). My Places (on the home screen only; see below). Creator tokens and Hosting, for creators who publish from Unreal Editor or run their own servers.</td></tr>
+<tr><td>Account</td><td>Profile picture (PNG or JPEG, up to 2048 by 2048 and 8 MB). My Places (on the home screen only; see below). Creator tokens and Hosting (when available), for creators who publish from Unreal Editor or run their own servers.</td></tr>
 <tr><td>Safety</td><td>Blocked players, with Unblock. Support: "Open log folder" and "Copy diagnostics" (see <a href="/docs/players/troubleshooting/#get-help">Getting help</a>)</td></tr>
 </tbody></table></div>
-<p>To make text bigger or smaller, use Interface scale. When you change Window mode or Resolution, Mantle asks "Keep these display settings?" with "Keep" and "Revert". If you don't answer within 15 seconds, it goes back.</p>
+<p>To make text bigger or smaller, use Interface scale. When you change Window mode or Resolution, Mantle asks "Keep these display settings?" with "KEEP" and "REVERT". If you don't answer within 15 seconds, it goes back.</p>
 
 <h3 id="my-places">My Places <span class="status live">Live</span></h3>
-<p>If you make worlds, open Settings from the home screen, go to Account and press "Manage places" to see every world you've published or saved as a draft, newest updated first. Each one shows "Published" or "Draft", when it was last updated, and three buttons:</p>
+<p>If you make worlds, open Settings from the home screen, go to Account and press "MANAGE PLACES" to see every world you've published or saved as a draft, newest updated first. Each one shows "Published" or "Draft", when it was last updated, and three buttons:</p>
 <ul>
 <li><b>View place:</b> opens the world's page (published worlds only).</li>
 <li><b>Copy ID:</b> copies the world's ID.</li>
@@ -166,9 +166,9 @@
 
 <h2 id="sessions">Joining, leaving and respawning</h2>
 <ul>
-<li><span class="status live">Live</span> <b>Leave world</b> takes you back to the home screen.</li>
-<li><span class="status live">Live</span> <b>Respawning</b> happens automatically: 5 s after you die, you reappear at a spawn point. By default it's the one nearest to where you died, but a world can choose a random one or always the first. A death screen and countdown are coming later.</li>
+<li><span class="status live">Live</span> <b>"LEAVE WORLD"</b> takes you back to the home screen.</li>
+<li><span class="status live">Live</span> <b>Respawning</b> happens automatically: 5 s after you die, you reappear at a spawn point. By default it's the one nearest to where you died, but a world can choose a random one or always the first. <span class="status planned">Planned</span> A death screen and countdown are coming later.</li>
 <li><span class="status live">Live</span> <b>Always a character:</b> if something is sitting on your spawn point, like a parked car, you're placed on the nearest clear ground nearby instead, so you always start with a character to play.</li>
-<li><span class="status live">Live</span> <b>Server restarts:</b> official and private servers run for a limited time. Watch for a notice across the top of the screen — "This server restarts in 5 minutes", then "in 1 minute" — followed by "This server restarted." on Discover. Mantle then rejoins you automatically, to the same world or (on a private server) that same private server, once a new one is ready. Leaving, quitting, or starting another join yourself cancels the automatic rejoin. Community servers don't have a time limit.</li>
-<li><b>What's saved:</b> your avatar, outfits and "Follows you" settings save to your account. "On this PC" settings save on your computer. Your backpack and ammo reset each time you join a world.</li>
+<li><span class="status live">Live</span> <b>Server restarts:</b> official and private servers run for a limited time. Watch for a notice across the top of the screen: "This server restarts in 5 minutes", then "This server restarts in 1 minute". After that you'll see "This server restarted." on Discover. Mantle then rejoins you automatically, to the same world or (on a private server) that same private server, once a new one is ready. Leaving, quitting, or starting another join yourself cancels the automatic rejoin. Community servers don't have a time limit.</li>
+<li><b>What's saved:</b> your avatar, outfits and "FOLLOWS YOU" settings save to your account. "ON THIS PC" settings save on your computer. Your backpack and ammo reset each time you join a world.</li>
 </ul>

@@ -28,11 +28,13 @@
 <div class="table-wrap"><table><thead><tr><th>Message</th><th>What it means</th></tr></thead><tbody>
 <tr><td>Signing in with Steam… / Connecting to Epic Online Services… / Signing in from the Epic Games Launcher…</td><td>Sign-in is in progress</td></tr>
 <tr><td>Sign in with your Epic account to continue.</td><td>Sign in using Epic's window</td></tr>
+<tr><td>Epic sign-in is unavailable. Please try again. / Epic signed in, but Mantle could not verify the session. Please try again.</td><td>A temporary problem: try again in a moment</td></tr>
+<tr><td>Epic Online Services could not start. Check the Mantle installation and try again.</td><td>Mantle's files may be damaged: verify the game files in Steam or the Epic Games Launcher</td></tr>
 <tr><td>Steam is not running. Start Mantle from Steam and try again.</td><td>Open Steam first</td></tr>
 <tr><td>Steam could not confirm your account. Check that Steam is online and try again.</td><td>Steam is offline or couldn't verify you</td></tr>
 <tr><td>Epic sign-in was cancelled or could not be completed (…)</td><td>The Epic window was closed or failed</td></tr>
 <tr><td>Signed in securely with [Steam / Epic].</td><td>You're in</td></tr>
-<tr><td>You signed in to Mantle somewhere else, so this session ended.</td><td>Your account joined the same server from another PC, so you were taken out of the world here</td></tr>
+<tr><td>You signed in to Mantle somewhere else, so this session ended.</td><td>Your account joined the same server from somewhere else, so this connection was closed</td></tr>
 </tbody></table></div>
 <p>If you use Epic, Mantle asks to see your basic profile, friends list, online status and country. Your display name is the name you use on Steam or Epic, so you change it there, not in Mantle. See <a href="/docs/players/safety/#account">Your account</a> for what's stored.</p>
 
@@ -58,11 +60,11 @@
 <tr><td>Nothing published yet</td><td>There are no worlds to show</td></tr>
 </tbody></table></div>
 <h3 id="world-page">World and creator pages</h3>
-<p>A world's "About" tab shows its creator, "Players per server: up to N", its version ("Revision N") and "More from [creator]". Press "PLAY" to join.</p>
+<p>A world's "ABOUT" tab shows its creator, "Players per server" with "up to N" beside it, its version ("Version" with "Revision N" beside it) and "More from [creator]". Press "PLAY" to join.</p>
 <p>Click a creator's name to see their page and all their worlds.</p>
 
 <h3 id="community-servers">Community servers <span class="status live">Live</span></h3>
-<p>Some worlds also have servers run by players. If a world allows them, its page has a "Servers" tab next to "About" that lists them. "PLAY" always puts you on an official server. To play on a community server, pick it from this list.</p>
+<p>Some worlds also have servers run by players. If a world allows community or private servers, its page has a "SERVERS" tab next to "ABOUT". It lists the community servers. "PLAY" always puts you on an official server. To play on a community server, pick it from this list.</p>
 <ul>
 <li>Each server shows its name, "hosted by" and the host's name, how long it's been up, its region and how full it is.</li>
 <li>The list has the columns "SERVER", "REGION", "PLAYERS" and "STATUS", and a note above it: "Community servers are run by players. Play puts you on an official server; to play on one of these, join it here."</li>
@@ -74,34 +76,38 @@
 </ul>
 
 <h3 id="private-servers">Private servers <span class="status live">Live</span></h3>
-<p>A private server is a server for one world that only its members can join. You'll find "PRIVATE SERVERS" at the top of the world's "Servers" tab, above any community servers. You can make one for your own worlds, and for other worlds whose creator allows it.</p>
+<p>A private server is a server for one world that only its members can join. You'll find "PRIVATE SERVERS" at the top of the world's "SERVERS" tab, above any community servers. You can make one for your own worlds, and for other worlds whose creator allows it.</p>
 <ol class="steps">
-<li><b>Create it</b><p>Give it a name if you like ("Name it (optional)", 1 to 48 characters) and press "Create private server". You're its owner.</p></li>
-<li><b>Invite friends</b><p>Press "Invite friends" to get an invite code. It's shown once, so press "Copy" and send it to your friends in Steam or Epic chat. A code works for 7 days.</p></li>
-<li><b>Redeem a code</b><p>Your friend opens the world's page, goes to "Servers", types the code into "Enter an invite code" and presses "Redeem". They're now a member and can join whenever they like. A code redeemed on another world's page still works: they'll find the server on that world's "Servers" tab.</p></li>
-<li><b>Join</b><p>Press "Join" on the server's row. If it isn't running, Mantle starts it for you.</p></li>
+<li><b>Create it</b><p>Give it a name if you like ("Name it (optional)", 1 to 48 characters) and press "CREATE PRIVATE SERVER". You're its owner.</p></li>
+<li><b>Invite friends</b><p>Press "INVITE FRIENDS" to get an invite code. It's shown once, so press "COPY" and send it to your friends in Steam or Epic chat. A code works for 7 days.</p></li>
+<li><b>Redeem a code</b><p>Your friend opens the world's page, goes to "SERVERS", types the code into "Invite code" and presses "REDEEM". They're now a member and can join whenever they like. A code redeemed on another world's page still works: they'll find the server on that world's "SERVERS" tab.</p></li>
+<li><b>Join</b><p>Press "JOIN" on the server's row. If it isn't running, Mantle starts it for you. (If the owner runs it on their own PC, the owner has to start it: you'll see "That private server's community server isn't running right now. Try again later.")</p></li>
 </ol>
 <ul>
 <li>Each row shows whether you're the "Owner" or a "Member", how many members it has, and "Nobody playing" or how many are playing. A server that can't be joined shows "Unavailable" or "Suspended".</li>
-<li><b>Owners</b> press "Manage" to rename the server, make invite codes, see and remove members, or delete the server. Deleting it disconnects anyone playing and stops its codes working, and can't be undone.</li>
-<li><b>Members</b> press "Members" to see who else is in it, or "Leave server" to leave. You'll need a new invite code to get back in.</li>
+<li><b>Owners</b> press "MANAGE" to rename the server, make invite codes, see and remove members, or delete the server. Deleting it disconnects anyone playing and stops its codes working, and can't be undone.</li>
+<li><b>Members</b> press "MEMBERS" to see who else is in it, or "LEAVE SERVER" to leave. You'll need a new invite code to get back in.</li>
 <li>A private server can have up to 25 invite codes at a time. You can own up to 10 private servers, each with up to 200 members. Only one of your private servers can run at a time.</li>
 <li>Private servers that Mantle runs come with a monthly amount of free play time for their owner. When it's used up, nobody can start that owner's servers until it resets, and joining says when.</li>
 <li>An owner can also run a private server on their own PC. See <a href="/docs/platform/community-servers/#private">Private community servers</a>.</li>
 </ul>
 <div class="table-wrap"><table><thead><tr><th>If you see…</th><th>What it means</th></tr></thead><tbody>
 <tr><td>That invite code isn't valid. Check it and try again. / That invite code has expired. Ask for a new one. / That invite code has already been used. Ask for a new one.</td><td>Ask the owner for a new code</td></tr>
+<tr><td>That private server can't be joined right now.</td><td>It's suspended, has expired or was deleted</td></tr>
+<tr><td>A private server's name must be 1 to 48 characters.</td><td>Change the name and try again</td></tr>
+<tr><td>Only the private server's owner can do that.</td><td>Only the owner can rename it, make codes or delete it</td></tr>
+<tr><td>You're doing that too often. Try again in N minutes.</td><td>You can create up to 20 private servers an hour and redeem up to 30 codes an hour</td></tr>
 <tr><td>That private server has no room for more members.</td><td>It already has 200 members</td></tr>
 <tr><td>That private server is full. Try again in a moment.</td><td>Every player slot is taken right now</td></tr>
 <tr><td>This private server's owner already has another private server running. Only one can run at a time.</td><td>Try again once the owner's other server has closed</td></tr>
-<tr><td>This private server's owner has used this month's 10 hours of free private-server time. It resets on [date] (UTC).</td><td>The owner's free time has run out until that date</td></tr>
+<tr><td>This private server's owner has used this month's 10 hours of free private-server time. It resets on [date] (UTC).</td><td>The owner's free time has run out until that date. A server that's already running gets a 30-minute grace period, then closes</td></tr>
 <tr><td>That private server is gone, or you're no longer a member.</td><td>It was deleted, or you were removed</td></tr>
 <tr><td>This world's creator hasn't turned on private servers.</td><td>The world doesn't allow them</td></tr>
-<tr><td>Private servers aren't available right now. Try again later. / Community servers aren't available right now. Try again later.</td><td>A problem on our side</td></tr>
+<tr><td>Private servers aren't available right now. Try again later. / Community servers aren't available right now. Try again later.</td><td>That feature is switched off at the moment</td></tr>
 <tr><td>You have as many private servers as you can own. Delete one to make another.</td><td>You own 10 already</td></tr>
 <tr><td>This private server has as many invites as it can hold. Wait for one to expire.</td><td>It already has 25 live invite codes</td></tr>
 <tr><td>The owner can't leave their own private server. Delete it instead.</td><td>Owners delete a server rather than leave it</td></tr>
-<tr><td>Private servers are at capacity for today. Try again after midnight UTC.</td><td>Try again tomorrow</td></tr>
+<tr><td>Private servers are at capacity for today. Try again after midnight UTC.</td><td>Everyone's private-server time for today is used up</td></tr>
 </tbody></table></div>
 
 <h2 id="joining">Joining a world <span class="status live">Live</span></h2>
@@ -112,6 +118,7 @@
 </ol>
 <p>While you join, the screen shows "JOINING" and the steps "Finding a server / Reading the world / Building the world / Connecting". You'll also see "CANCEL", "BACK" and "TRY AGAIN".</p>
 <p>Servers hold 16 players by default, or up to 100 if the world allows it.</p>
+<p>You need a saved avatar to join. If you haven't made one, open Avatar and press "Save" first.</p>
 <div class="table-wrap"><table><thead><tr><th>If you see…</th></tr></thead><tbody>
 <tr><td>Your server took too long to start. Try joining again.</td></tr>
 <tr><td>Sessions are unavailable.</td></tr>
@@ -124,6 +131,8 @@
 <tr><td>Could not reach Mantle. Check your internet connection and try again.</td></tr>
 <tr><td>Couldn't join [world]. Check your connection and try again.</td></tr>
 <tr><td>Something went wrong.</td></tr>
+<tr><td>You haven't created an avatar yet.</td></tr>
+<tr><td>Your saved avatar is no longer available. Open Avatar and save a valid one before joining.</td></tr>
 <tr><td>Couldn't join that world. Check your connection and try again.</td></tr>
 </tbody></table></div>
 <p>If the world can't be loaded after you've connected, Mantle takes you back to the home screen and shows "That world couldn't be loaded. Try joining again." (or "That world couldn't be loaded:" followed by the reason).</p>
