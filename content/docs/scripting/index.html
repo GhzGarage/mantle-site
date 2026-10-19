@@ -2,7 +2,7 @@
     <h2 id="quick">Five-minute start</h2>
     <ol class="steps">
       <li><b>Find your level's folder</b><p>Your level lives somewhere under <code>Content/</code>, for example <code>Content/MyPlace/MyPlace.umap</code>. Its scripts go in a folder called <code>Scripts</code> right next to it: <code>Content/MyPlace/Scripts/</code>.</p></li>
-      <li><b>Make a <code>Server</code> folder inside it and add a file</b>
+      <li><b>Make a <code>Server</code> folder inside it and add a file</b> <p>Or open the Mantle Scripts panel and choose <b>New Script...</b>, which creates the folders for you.</p>
         <div class="v has-ts">
           <div class="code" data-v="luau"><span class="tag">Scripts/Server/Hello.luau</span><pre id="ex-hello-luau" data-example-kind="source" data-language="luau">print(&quot;Hello from the server!&quot;)
 
@@ -46,12 +46,12 @@ Players.on_player(on_join)
         <tr><td><b>3. Tags connect scripts to things.</b></td><td>Tag actors in the editor (Details → Actor → Tags), then <code>World:OnTagged("killbrick", …)</code>.</td></tr>
       </tbody>
     </table></div>
-    <p>The file extension picks the language: <code>.luau</code>/<code>.lua</code>, <code>.ts</code>, <code>.js</code> or <code>.py</code>, in lower case. You can mix languages in one place.</p>
+    <p>The file extension picks the language: <code>.luau</code>/<code>.lua</code>, <code>.ts</code>, <code>.js</code> or <code>.py</code>, in lower case. You can mix languages in one place. <a href="/docs/scripting/visual-scripting/">Visual scripts</a> are graph assets instead of files with an extension. They follow the same <code>Server/</code> and <code>Client/</code> rule, but there's no <code>Shared/</code> for them.</p>
     <p>Inside <code>Server/</code>, <code>Client/</code> and <code>Shared/</code>, organise files however you like (<code>Server/Combat/Guns.luau</code> runs). A few rules apply:</p>
     <ul>
       <li>Folder names must match exactly, including capital letters. <code>server/</code> isn't recognised.</li>
-      <li>Files placed directly in <code>Scripts/</code>, or outside <code>Server/</code>, <code>Client/</code> and <code>Shared/</code>, don't run. <b>Tools → Mantle → Check this place</b> and Publish list each one as "Scripts/&lt;path&gt; is not inside Server/, Client/ or Shared/ (case-exact)." and you need to move or remove it. A file with any other extension gets "Scripts/&lt;path&gt; has an extension Mantle cannot map to a script language."</li>
-      <li>Script paths can use only the letters A to Z, digits, <code>_</code>, <code>.</code> and <code>-</code> (no spaces), up to 200 characters.</li>
+      <li>Files placed directly in <code>Scripts/</code>, or outside <code>Server/</code>, <code>Client/</code> and <code>Shared/</code>, don't run. <b>Tools → Mantle → Check this place</b> lists each one as "Scripts/&lt;path&gt; is not inside Server/, Client/ or Shared/ (case-exact)." and you need to move or remove it. Publish runs the same check first. A file with any other extension gets "Scripts/&lt;path&gt; has an extension Mantle cannot map to a script language."</li>
+      <li>Script paths can use only the plain letters A to Z and a to z, digits, <code>_</code>, <code>.</code> and <code>-</code> (no spaces or accented letters), up to 200 characters.</li>
       <li>A script's name, which is its file name without the extension, is 1 to 80 characters.</li>
       <li>Each file can be up to 1 MiB.</li>
     </ul>
