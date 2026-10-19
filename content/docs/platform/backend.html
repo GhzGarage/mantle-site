@@ -20,11 +20,14 @@
 <tr><td>New worlds</td><td>30 per account per hour</td></tr>
 <tr><td>Avatar items</td><td>60 created or edited per account per hour</td></tr>
 <tr><td>Library items</td><td>60 created, versioned or edited per account per hour</td></tr>
+<tr><td>Attribution writes</td><td>600 per account per hour</td></tr>
 <tr><td>Data export</td><td>3 per account per hour</td></tr>
 <tr><td>Script source</td><td>1 MiB per file</td></tr>
-<tr><td>UI documents</td><td>256 KiB per document or stylesheet; up to 64 documents and 64 images per world, images PNG or JPEG up to 2 MiB</td></tr>
+<tr><td>UI documents</td><td>256 KiB per document or stylesheet; up to 64 documents and stylesheets together and 64 images per world, images PNG or JPEG up to 2 MiB</td></tr>
 <tr><td>Place file</td><td>8 MiB</td></tr>
-<tr><td>Meshes</td><td>500,000 triangles / 1,500,000 vertices</td></tr>
+<tr><td>Static meshes</td><td>500,000 triangles / 1,500,000 vertices</td></tr>
+<tr><td>Skeletal meshes</td><td>100,000 triangles; 256 bones; 8 influences per vertex</td></tr>
+<tr><td>Heightfields</td><td>2049 × 2049 samples (about 8 MiB)</td></tr>
 <tr><td>Textures</td><td>2048 × 2048</td></tr>
 </tbody></table></div>
 <p>Going over an hourly upload limit shows "You've uploaded too much in the last hour. Try again in <i>N</i> minutes."</p>
@@ -33,8 +36,9 @@
 <p>Uploaded images, scripts and avatar items are screened before other players can see them, and moderators review anything that gets flagged.</p>
 <ul>
 <li><span class="status live">Live</span> <b>Uploaded images and scripts</b> (in every language, including visual scripts) are checked automatically before anyone else can see them. If the check can't finish, the content stays unapproved.</li>
-<li><span class="status live">Live</span> <b>Meshes and sounds</b> have no automatic check. Moderators act on reports about them.</li>
+<li><span class="status live">Live</span> <b>Meshes, sounds and other assets</b> such as materials, skeletal meshes, animation clips and heightfields have no automatic check. Moderators act on reports about them.</li>
 <li><span class="status live">Live</span> <b>Avatar items:</b> each item's thumbnail, name and description are checked the same way.</li>
+<li><span class="status live">Live</span> <b>Library items:</b> a vehicle, weapon or script package's thumbnail, name and description are checked too. If the check keeps failing, a moderator decides.</li>
 <li><span class="status live">Live</span> <b>Chat filter:</b> chat messages are filtered before anyone sees them. Some words are replaced with asterisks, and some messages aren't sent at all: "That message was not sent because it breaks the chat rules."</li>
 <li><span class="status live">Live</span> <b>Review:</b> flagged content waits for a moderator to approve or reject it.</li>
 <li><span class="status live">Live</span> <b>Acting on reports:</b> moderators can review and resolve reports, take content down, shut down community servers and suspend private servers.</li>
@@ -55,7 +59,7 @@
 <li><b>Browsing:</b> <code>GET /library/items?kind=script</code> and <code>GET /library/items/mine?kind=script</code> list script packages, as they do vehicles and weapons. Each card carries <code>price</code> (always <code>0</code>, free, for now) and, on an item you got, <code>source</code> (<code>"free"</code>).</li>
 <li><b>Details:</b> <code>GET /library/items/{itemId}</code> also answers <code>storedByMyPlaces</code>: <code>[{id, name}]</code>, your own places whose live or staged version stores any version of the item.</li>
 <li><b>Versions:</b> a script package's versions carry <code>scripts</code> and <code>manifest</code> and no <code>primaryAssetId</code>. Versions never change once made.</li>
-<li><b>Removing from your library:</b> <code>DELETE /library/items/{itemId}/get</code> answers 204, and again 204 if you call it twice, or for your own item (which stays yours). Your places that store the item keep running, and their next publish is refused until the entry is removed from storage. Player sign-ins and creator tokens can both use it.</li>
+<li><b>Removing from your library:</b> <code>DELETE /library/items/{itemId}/get</code> answers 204, and again 204 if you call it twice while the item is still visible to you (your own item, or one that is active, public and approved; your own item stays yours). Once an item has been delisted, made private or taken down, a repeat call answers 404 <code>not_found</code>. Your places that store the item keep running, and their next publish, promotion or rollback is refused until the entry is removed from storage. Player sign-ins and creator tokens can both use it.</li>
 </ul>
 
 <h3 id="library-script-items">Publishing a script package</h3>
@@ -77,8 +81,8 @@
 <ul>
 <li><b>Storage:</b> a place file's <code>storage</code> lists up to 32 <code>{name, item, version}</code> entries, script packages included. A script package's entry can also carry <code>settings</code>: <code>{key: string}</code>, at most 16 keys, values up to 256 characters. A setting left out takes the manifest's default.</li>
 <li><b>Script Points:</b> an entity of type <code>ScriptPoint</code> has <code>storageItem</code> (the name of a storage entry, which must be a script package), <code>parameters</code> (an object of text values, at most 16, keys matching <code>^[A-Za-z][A-Za-z0-9_]{0,31}$</code>, values up to 256 characters) and <code>enabled</code> (true by default). A place has at most 64.</li>
-<li><b>Checked at publish:</b> publishing and previews hold each stored package's settings, and each enabled Script Point's parameters, to the manifest of the version the place pins. A refusal answers 409 with the first issue's code and an <code>issues</code> list, each issue with a <code>path</code> and a plain-words <code>message</code>. Switched-off Script Points aren't checked. Promoting or rolling back to a sealed revision doesn't check them again, since neither the revision nor the versions it pins can change.</li>
-<li><b>Resolving storage:</b> a script package's entry answers <code>kind: "script"</code>, <code>scripts</code> (every file of the package, all sides; the game keeps only the ones its side runs), <code>manifest</code> and the <code>settings</code> the revision sealed. A package Mantle has taken down answers <code>scripts: []</code>, so it stops running in every place.</li>
+<li><b>Checked at publish:</b> publishing and previews hold each stored package's settings, and each enabled Script Point's parameters, to the manifest of the version the place pins. A refusal answers 409 with an <code>issues</code> list and a top-level code: <code>storage_unavailable</code> if any issue has it, then the wrong-kind code if any issue has it, and otherwise the first issue's code. Each issue has a <code>path</code> and a plain-words <code>message</code>. Switched-off Script Points aren't checked. Promoting or rolling back to a sealed revision doesn't check them again, since neither the revision nor the versions it pins can change.</li>
+<li><b>Resolving storage:</b> a script package's entry answers <code>kind: "script"</code>, <code>scripts</code> (every file of the package, all sides; the game keeps only the ones its side runs), <code>manifest</code> and the <code>settings</code> the revision sealed. A package Mantle has taken down answers <code>status: "taken_down"</code>, <code>scripts: []</code>, a <code>manifest</code> of null and <code>settings</code> of <code>{}</code>, so it stops running in every place.</li>
 </ul>
 <div class="table-wrap"><table><thead><tr><th>Code</th><th>Where</th><th>Example message</th></tr></thead><tbody>
 <tr><td><code>storage_settings_not_allowed</code></td><td><code>/storage/&lt;i&gt;/settings</code></td><td>Harbor_Pickup is a vehicle, and only a script package takes settings. Remove the settings from this storage entry.</td></tr>
@@ -101,10 +105,14 @@
 </ul>
 
 <h2 id="retention">Account deletion and data retention</h2>
-<p>Deleting an account takes effect straight away: your profile and saved progress are removed, your published worlds are taken down and your creator tokens and server keys are revoked. You can't delete your account from inside Mantle yet. See <a href="/docs/players/safety/#account-deletion">Deleting your account or data</a> for how to ask.</p>
+<p>Deleting an account takes effect straight away: your profile and saved progress are removed, your published worlds are taken down and your creator tokens and server keys are revoked. Your published library items and avatar items are delisted, so a place that stores one of your library items has its next publish refused. Items you got are removed, private servers you own are deleted, and assets and scripts you uploaded are kept. The backend has a <code>DELETE /me</code> route that needs a <code>confirm</code> body, but you can't delete your account from inside Mantle yet. See <a href="/docs/players/safety/#account-deletion">Deleting your account or data</a> for how to ask.</p>
 <ul>
 <li><b>Chat messages</b> are deleted after about 90 days.</li>
 <li><b>Play history</b> is deleted after about a year.</li>
+<li><b>Saved data changes</b> (the audit log of writes and deletes) are kept for about a year.</li>
+<li><b>Deleted private servers</b> lose their name, members and invites after 30 days.</li>
+<li><b>Revoked or expired creator tokens</b> are deleted 30 days later.</li>
+<li><b>Delisted avatar items</b> lose their name, description and thumbnail after 30 days.</li>
 <li><b>Resolved reports</b> are deleted a year after they're resolved. Reports nobody reviewed are deleted a year after they were filed.</li>
 <li><b>Deleted worlds</b>, including worlds you delete from My Places, are removed for good after 180 days.</li>
 <li><b>Old world versions</b> can be rolled back to for 180 days after they stop being live (30 days for previews and staged versions that never went live). After that they're deleted.</li>

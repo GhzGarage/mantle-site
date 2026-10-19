@@ -12,9 +12,9 @@
 <li><b>You join an official server.</b> If one for that world has room, you join it. If you already had a spot on one, you get it back. Otherwise Mantle starts a new one near you, which can take up to about 5 minutes. See <a href="#player-limits">How many players</a>.</li>
 <li><b>Play never puts you on a community server.</b> You join those from the world's Servers tab.</li>
 <li><b>Your copy of Mantle must be up to date.</b> If it isn't, you're turned away with "This version of Mantle is out of date. Update it through Steam or the Epic Games Store, then try again."</li>
-<li><b>The world loads on your PC,</b> along with any meshes, materials and textures its creator uploaded, then you connect.</li>
+<li><b>Mantle fetches the world's file, then connects you.</b> While the joining screen is up, your PC builds the world and downloads any meshes, materials and textures its creator uploaded. Your character appears once that's done.</li>
 <li><b>New versions of a world:</b> if the creator is rolling out a new version gradually, you might get either the new version or the current one.</li>
-<li><b>Official servers run for up to 60 minutes,</b> and hosted private servers for up to 4 hours. In the last 10 minutes of a public server, Play puts you on another server, and starts a fresh one only if there isn't one. Players already on a server stay until it ends.</li>
+<li><b>Official servers run for up to 60 minutes,</b> and hosted private servers for up to 4 hours. Community servers have no set lifetime, but each restarts at least once a day: see <a href="/docs/platform/community-servers/#while-running">While it's running</a>. In the last 10 minutes of a public server, Play puts you on another server, and starts a fresh one only if there isn't one. Players already on a server stay until it ends. They see "This server restarts in 5 minutes" and "This server restarts in 1 minute", and about 15 seconds before the end Mantle sends them back to a fresh server.</li>
 <li><b>When the last player leaves,</b> the server stops. Players who join later start from the top.</li>
 </ul>
 
@@ -25,11 +25,11 @@
 </ul>
 
 <h2 id="server-specs">Recommended server specs</h2>
-<p>If you plan to host a world yourself, these are the specs we recommend for the whole machine, including the operating system. They leave headroom for worlds with scripts, weapons and vehicles.</p>
+<p>If you plan to host a world yourself, these are rough estimates for the whole machine, including the operating system. For comparison, Mantle's own official servers reserve 1.5 vCPU and 3 GB of memory for the game server alone, at any player count up to 100.</p>
 <div class="table-wrap"><table><thead><tr><th>Players</th><th>Linux CPU</th><th>Linux memory</th><th>Windows CPU</th><th>Windows memory</th><th>Upload speed</th></tr></thead><tbody>
-<tr><td class="num">Up to 10</td><td>1 core</td><td class="num">2 GB</td><td>2 cores</td><td class="num">4 GB</td><td class="num">5 Mbps</td></tr>
-<tr><td class="num">Up to 25</td><td>1 core</td><td class="num">2 GB</td><td>2 cores</td><td class="num">4 GB</td><td class="num">10 Mbps</td></tr>
-<tr><td class="num">Up to 50</td><td>2 cores</td><td class="num">2 GB</td><td>4 cores</td><td class="num">6 GB</td><td class="num">20 Mbps</td></tr>
+<tr><td class="num">Up to 10</td><td>1 core</td><td class="num">3 GB</td><td>2 cores</td><td class="num">4 GB</td><td class="num">5 Mbps</td></tr>
+<tr><td class="num">Up to 25</td><td>1 core</td><td class="num">3 GB</td><td>2 cores</td><td class="num">4 GB</td><td class="num">10 Mbps</td></tr>
+<tr><td class="num">Up to 50</td><td>2 cores</td><td class="num">3 GB</td><td>4 cores</td><td class="num">6 GB</td><td class="num">20 Mbps</td></tr>
 <tr><td class="num">Up to 75</td><td>2 cores</td><td class="num">3 GB</td><td>4 cores</td><td class="num">8 GB</td><td class="num">35 Mbps</td></tr>
 <tr><td class="num">Up to 100</td><td>4 cores</td><td class="num">4 GB</td><td>6 cores</td><td class="num">8 GB</td><td class="num">50 Mbps</td></tr>
 </tbody></table></div>
