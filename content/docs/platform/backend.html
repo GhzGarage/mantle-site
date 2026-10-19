@@ -33,8 +33,9 @@
 <p>Uploaded images, scripts and avatar items are screened before other players can see them, and moderators review anything that gets flagged.</p>
 <ul>
 <li><span class="status live">Live</span> <b>Uploaded images and scripts</b> (in every language, including visual scripts) are checked automatically before anyone else can see them. If the check can't finish, the content stays unapproved.</li>
-<li><span class="status live">Live</span> <b>Meshes and sounds</b> have no automatic check. Moderators act on reports about them.</li>
+<li><span class="status live">Live</span> <b>Meshes, sounds and other assets</b> such as materials, skeletal meshes, animation clips and heightfields have no automatic check. Moderators act on reports about them.</li>
 <li><span class="status live">Live</span> <b>Avatar items:</b> each item's thumbnail, name and description are checked the same way.</li>
+<li><span class="status live">Live</span> <b>Library items:</b> a vehicle, weapon or script package's thumbnail, name and description are checked too. If the check keeps failing, a moderator decides.</li>
 <li><span class="status live">Live</span> <b>Chat filter:</b> chat messages are filtered before anyone sees them. Some words are replaced with asterisks, and some messages aren't sent at all: "That message was not sent because it breaks the chat rules."</li>
 <li><span class="status live">Live</span> <b>Review:</b> flagged content waits for a moderator to approve or reject it.</li>
 <li><span class="status live">Live</span> <b>Acting on reports:</b> moderators can review and resolve reports, take content down, shut down community servers and suspend private servers.</li>
@@ -55,7 +56,7 @@
 <li><b>Browsing:</b> <code>GET /library/items?kind=script</code> and <code>GET /library/items/mine?kind=script</code> list script packages, as they do vehicles and weapons. Each card carries <code>price</code> (always <code>0</code>, free, for now) and, on an item you got, <code>source</code> (<code>"free"</code>).</li>
 <li><b>Details:</b> <code>GET /library/items/{itemId}</code> also answers <code>storedByMyPlaces</code>: <code>[{id, name}]</code>, your own places whose live or staged version stores any version of the item.</li>
 <li><b>Versions:</b> a script package's versions carry <code>scripts</code> and <code>manifest</code> and no <code>primaryAssetId</code>. Versions never change once made.</li>
-<li><b>Removing from your library:</b> <code>DELETE /library/items/{itemId}/get</code> answers 204, and again 204 if you call it twice, or for your own item (which stays yours). Your places that store the item keep running, and their next publish is refused until the entry is removed from storage. Player sign-ins and creator tokens can both use it.</li>
+<li><b>Removing from your library:</b> <code>DELETE /library/items/{itemId}/get</code> answers 204, and again 204 if you call it twice, or for your own item (which stays yours). Your places that store the item keep running, and their next publish, promotion or rollback is refused until the entry is removed from storage. Player sign-ins and creator tokens can both use it.</li>
 </ul>
 
 <h3 id="library-script-items">Publishing a script package</h3>
