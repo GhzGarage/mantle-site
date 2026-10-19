@@ -413,7 +413,7 @@ end)
 	to   { opacity: 1; }
 }</pre></div>
     <p>Animate <code>transform</code> and <code>opacity</code> whenever you can. They move and fade what's already laid out. Animating <code>width</code>, <code>height</code>, margins or <code>top</code>/<code>left</code> lays the document out again every frame (see <a href="#uidoc-performance">Performance</a>).</p>
-    <p>Mantle respects the player's Reduce motion setting for you. While it's on, transitions don't run, animations jump straight to their end and fire their end event, and scrolling is instant. Mantle also puts two classes on the <code>&lt;body&gt;</code> by itself: <code>reduce-motion</code> while Reduce motion is on, and <code>high-contrast</code> while High contrast is on. Use them in your styles, with no <code>SetData</code> needed:</p>
+    <p>Mantle respects the player's Reduce motion setting for you. While it's on, new animations don't start, so the element keeps its own style, and turning the setting on stops an animation that's running (an endless one too). A running transition jumps straight to its end and fires its end event, and scrolling is instant. Mantle also puts two classes on the <code>&lt;body&gt;</code> by itself: <code>reduce-motion</code> while Reduce motion is on, and <code>high-contrast</code> while High contrast is on. Use them in your styles, with no <code>SetData</code> needed:</p>
 <div class="code"><span class="tag">UI/hud.rcss</span><pre data-example-kind="snippet">.high-contrast .panel { background-color: #000000; border: 2dp #FFFFFF; }
 .reduce-motion .pulse { opacity: 1; }</pre></div>
 
