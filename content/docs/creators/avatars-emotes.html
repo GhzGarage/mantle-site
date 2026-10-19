@@ -175,7 +175,7 @@
 <tr><td>Frame rate</td><td>Any. The plugin samples the clip at 30 frames a second, and the emote plays back at 30 frames a second.</td></tr>
 <tr><td>Required track</td><td><code>pelvis</code></td></tr>
 <tr><td>Root motion</td><td>The <code>root</code> bone can move at most 50 cm from its first frame. Emotes play in place: the player doesn't travel with the root.</td></tr>
-<tr><td>Anim Notifies</td><td>Only <code>footstep_l</code>, <code>footstep_r</code>, <code>impact</code> and <code>loop_start</code> are allowed, up to 64. Any other name is refused.</td></tr>
+<tr><td>Anim Notifies</td><td>Only <code>footstep_l</code>, <code>footstep_r</code>, <code>impact</code> and <code>loop_start</code> are kept, up to 64. Other notifies are left out.</td></tr>
 <tr><td>Size</td><td>Up to 512 KiB once converted. Shorter clips that animate fewer bones are smaller.</td></tr>
 </tbody></table></div>
 
@@ -201,7 +201,6 @@
 <tr><td>Problem: the root moves [N] cm, the limit is 50 cm. Emotes play in place: remove the root motion (or keep it within the limit).</td><td>As the message says.</td></tr>
 <tr><td>Problem: bone "[bone]" has a translation of [N] cm.</td><td>A bone is more than 100 m from its parent. Fix the stray key.</td></tr>
 <tr><td>Problem: [N] events, the limit is 64.</td><td>Remove some notifies.</td></tr>
-<tr><td>Problem: event "[name]" is not one of the allowed events. Allowed: footstep_l, footstep_r, impact, loop_start.</td><td>Rename or remove the notify.</td></tr>
 <tr><td>Problem: the clip is [N] bytes, the limit is 524288. Shorten it, or animate fewer bones.</td><td>As the message says.</td></tr>
 <tr><td>Problem: [animation] has no frames.</td><td>The Anim Sequence is empty.</td></tr>
 </tbody></table></div>

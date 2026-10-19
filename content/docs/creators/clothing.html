@@ -20,7 +20,7 @@
 <li><b>Choose Clothing and the slot</b><p>In <b>What are you publishing?</b> choose <b>Clothing</b>, then <code>top</code>, <code>bottom</code>, <code>footwear</code> or <code>nails</code>. Under <b>Asset</b>, pick the garment's Skeletal Mesh, and under <b>Sections</b>, tick the material sections that make up this garment.</p></li>
 <li><b>Check Authored on</b><p><b>Authored on</b> is the MetaHuman body you made the garment on. The tab fills it in when it finds a suitable body in your project, including a Cinematic MetaHuman under <code>/Game/CharacterAssemblies/</code>; if it picked the wrong one, choose yours. This body uploads with the item as its body shape, together with the MetaHuman face found next to it, which is used to fit collars.</p></li>
 <li><b>Colour it if you want</b><p>Under <b>Clothing colors</b>, choose which areas players can recolour. See <a href="#colours">Clothing colours</a>.</p></li>
-<li><b>Preview it</b><p>Under <b>Preview</b>, try the garment on one of Mantle's base avatars, on the body you made it on, or on another avatar by its item id. Nothing is uploaded.</p></li>
+<li><b>Preview it</b><p>Under <b>Preview</b>, try the garment on the body you made it on or on another avatar by its item id. Nothing is uploaded.</p></li>
 <li><b>Check only, then upload</b><p>Choose <b>Check only</b> and fix anything marked "Problem". Then <b>Upload to Mantle</b> (see <a href="/docs/creators/avatar-items/">Making avatar items</a>).</p></li>
 </ol>
 
@@ -122,7 +122,7 @@
 <tr><td><code>acc_back</code></td><td><code>spine_03</code></td><td>80 cm</td><td>70 cm</td></tr>
 <tr><td><code>acc_waist</code></td><td><code>pelvis</code></td><td>70 cm</td><td>55 cm</td></tr>
 </tbody></table></div>
-<p>"Longest side" is the longest edge of the mesh's bounding box. "Reach" is how far the box's farthest corner is from the pivot. Other limits: 4,000 triangles, 12,000 vertices, exactly 1 material. If the mesh has more than 4,000 triangles, the tab reduces a copy of it and says "Accessory: reduced from N to N triangles to fit the 4000 limit." Your asset isn't changed. The copy has one LOD, so the LODs you authored are left off.</p>
+<p>"Longest side" is the longest edge of the mesh's bounding box. "Reach" is how far the box's farthest corner is from the pivot. Other limits: 4,000 triangles, 12,000 vertices, exactly 1 material. If the mesh has more than 4,000 triangles, the tab reduces a copy of it and notes "Accessory: reduced from N to N triangles to fit the 4000 limit." under <b>Files and details</b>, not in the check list. Your asset isn't changed. The copy has one LOD, so the LODs you authored are left off.</p>
 <p>The sockets come with Mantle's supported skeletons. An avatar creator can move a socket for bodies whose proportions put a hat, glasses or backpack in the wrong place, under <b>Socket offsets</b> when uploading the avatar (see <a href="/docs/creators/avatars-emotes/#sockets">Accessories and sockets</a>). Your accessory then follows the moved socket. On an avatar whose skeleton doesn't have the socket, the accessory is set aside.</p>
 
 <h2 id="messages">Messages and how to fix them</h2>
@@ -168,7 +168,7 @@
 <h2 id="avatar-screen">How your items show to players <span class="status wip">In progress</span></h2>
 <p>Once an item passes screening, it appears in the Catalog on the players' <a href="/docs/players/playing/#avatar">Avatar screen</a>, under "Clothing", "Hair" or "Accessories" and the slot's own filter.</p>
 <ul>
-<li><b>Set aside:</b> if a player switches to an avatar that can't wear clothing, their clothing and hair are marked "Set aside". They stay owned and go back on when the player switches to an avatar they fit. The Avatar screen says, for example, "1 item is set aside: it doesn't fit this avatar, and goes back on with one it fits."</li>
+<li><b>Set aside:</b> if a player switches to an avatar that can't wear clothing, their clothing and hair are marked "SET ASIDE". They stay owned and go back on when the player switches to an avatar they fit. The Avatar screen says, for example, "1 item is set aside: it doesn't fit this avatar, and goes back on with one it fits."</li>
 <li><b>Fitting:</b> the same 3D clothing item fits every avatar that takes clothing.</li>
 <li><b>Colours:</b> if you marked areas under Clothing colours, players pick colours for them in the "Clothing colors" menu.</li>
 </ul>
