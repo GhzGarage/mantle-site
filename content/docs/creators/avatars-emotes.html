@@ -37,7 +37,7 @@
 
 <h3 id="metahuman-clothing">Clothing and the converted body</h3>
 <p>3D clothing, hair, eyebrows, eyelashes and facial hair fit an avatar only if its body has Mantle's reference topology: an LOD with the same vertex layout as Mantle's reference body. A converted MetaHuman has it. <b>Check only</b> then shows "Done: Garment-compatible: LOD N has Mantle's reference topology, so it takes 3D clothing."</p>
-<p>A body without that LOD still uploads on the as-is route, with "Note: not garment-compatible: export the MetaHuman with UE Optimized at Medium, High or Cinematic quality, without clothing. It still uploads as-is: it wears accessories and emotes, not 3D clothing." A converted body without it says "not clothing-ready yet: a converted MetaHuman wears no 3D clothing for now." It still uploads and animates, with Epic's default underwear.</p>
+<p>A body without that LOD still uploads on the as-is route, with "Note: not garment-compatible: export the MetaHuman with UE Optimized at Medium, High or Cinematic quality, without clothing. It still uploads as-is: it wears accessories and emotes, not 3D clothing. To wear clothing, pick it under Convert a character and choose Convert...: it becomes a MetaHuman." A converted body without it says "not clothing-ready yet: a converted MetaHuman wears no 3D clothing for now." It still uploads and animates, with Epic's default underwear.</p>
 <p>Players on an avatar that can't wear clothing keep their clothing and hair: those items are marked "Set aside" on the Avatar screen and go back on when they switch to an avatar that fits them. Accessories and emotes work on every avatar.</p>
 
 <h3 id="face">The face</h3>
@@ -91,9 +91,9 @@
 <h3 id="avatar-messages">Avatar messages</h3>
 <p>Numbers and names in brackets change with your mesh. The messages every kind shares are in <a href="/docs/creators/avatar-items/#checks">What the panel checks</a>.</p>
 <div class="table-wrap"><table><thead><tr><th>Message</th><th>How to fix it</th></tr></thead><tbody>
-<tr><td>Problem: Convert it first: this body isn't a MetaHuman with Mantle's reference topology</td><td>Pick the character under <b>Convert a character</b> and choose <b>Convert...</b>. "It becomes a MetaHuman that wears clothing and takes the avatar options, at Mantle's default height."</td></tr>
+<tr><td>Problem: Convert it first: this body isn't a MetaHuman with Mantle's reference topology</td><td>Pick the character under <b>Convert a character</b> and choose <b>Convert...</b>. The message says it "becomes a MetaHuman that wears clothing and takes the avatar options, at Mantle's default height."</td></tr>
 <tr><td>Problem: This character's skeleton isn't one we can use yet. Try the Convert route, which rebuilds it on a standard body.</td><td>Use <b>Convert a character</b>.</td></tr>
-<tr><td>Problem: no head: this body has Mantle's reference topology, which ends at the neck, and no face is chosen</td><td>Pick its face under "Face and sections": the MetaHuman's own face, which Convert picks for you.</td></tr>
+<tr><td>Problem: no head: this body has Mantle's reference topology, which ends at the neck, and no face is chosen</td><td>The message says "Pick its face under Face: the MetaHuman's own face, which Convert picks for you." The face box is in the "Face and sections" section.</td></tr>
 <tr><td>Problem: the skin has no [bone] bone; an avatar body on the [skeleton] skeleton must include it</td><td>Keep every bone of the body skeleton, even ones no vertex uses.</td></tr>
 <tr><td>Problem: bone "[bone]" points [N] degrees away from the [skeleton] (…, at most 20); upload in the [skeleton]</td><td>Pose the body in its skeleton's reference pose before exporting it: arms angled down and out, legs straight down. A T-pose or arms-down body is refused.</td></tr>
 <tr><td>Problem: bone "[bone]" has scale [x] x [y] x [z] in the reference pose; every bone's scale must be 1 (within 0.01): apply the scale before exporting</td><td>Apply the scale to the mesh and skeleton in your modelling tool, then reimport.</td></tr>
