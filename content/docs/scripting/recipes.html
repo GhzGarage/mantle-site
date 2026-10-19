@@ -13,7 +13,7 @@ World:OnTagged(&quot;guide_code_killbrick&quot;, function(brick)
 		player:Teleport(spawn)
 	end)
 end)
-</pre></div><h3 id="r-coins">Coins that bob, score and respawn</h3><p>This builds coins that bob up and down and give a point when collected: tag each coin actor in your level <code>guide_code_coin</code>. The server bobs the coin 40 cm up and down with a tween. When a player touches it, the server hides it, awards one point and shows it again after five seconds. Checking <code>Visible</code> first stops two touches at the same moment from scoring the same pickup twice. Keep these long-lived coins separate from templates you clone and throw away. The tween uses <code>Sine</code> easing with <code>InOut</code>, so the coin slows down gently at the top and bottom of each bob.</p><div class="code"><span class="tag">Scripts/Server/Modules/Recipes/ScoreRules.luau</span><pre id="ex-canonical-scorerules" data-example-kind="source" data-language="luau">local Rules = {}
+</pre></div><h3 id="r-coins">Coins that bob, score and respawn</h3><p>This builds coins that bob up and down and give a point when collected: tag each coin actor in your level <code>guide_code_coin</code>. The server bobs the coin 40 cm up and down with a tween. When a player touches it, the server hides it, awards one point and shows it again after five seconds. Checking <code>Visible</code> first stops a touch from scoring the pickup again while it's hidden: a hidden entity still collides and still fires <code>Touched</code>. Each bobbing coin uses one of the 256 tweens a place can run at once. Keep these long-lived coins separate from templates you clone and throw away. The tween uses <code>Sine</code> easing with <code>InOut</code>, so the coin slows down gently at the top and bottom of each bob.</p><div class="code"><span class="tag">Scripts/Server/Modules/Recipes/ScoreRules.luau</span><pre id="ex-canonical-scorerules" data-example-kind="source" data-language="luau">local Rules = {}
 function Rules.key(player)
 	return `guide.score:{player.UserId}`
 end
@@ -160,7 +160,7 @@ State.observe(&quot;guide.timeLeft&quot;, (seconds) =&gt; {
 	timeLabel.setText(`Time left: ${seconds ?? 0}s`);
 });
 Net.remote(&quot;GuideAnnounce&quot;).onClientEvent.connect((message) =&gt; UI.toast(message, 3));
-</pre></div><h3 id="r-button">A button players ask the server to press</h3><p>This builds a button that squashes down and springs back when a player presses it: tag the button actor in your level <code>guide_code_button</code>. When the local player touches the button, the client asks the server to press it. The server checks the message and where the sending player really is, and turns away new presses while the button is still busy. It plays both scale tweens, then tells the player the press worked. The client's message never picks which player pressed, and never adds a press by itself.</p><div class="code"><span class="tag">Scripts/Client/GuideButtonPrompt.luau</span><pre id="ex-canonical-guidebuttonprompt" data-example-kind="source" data-language="luau">local button = World:FindByTag(&quot;guide_code_button&quot;)[1]
+</pre></div><h3 id="r-button">A button players ask the server to press</h3><p>This builds a button that squashes down and springs back when a player presses it: tag the button actor in your level <code>guide_code_button</code>. When the local player touches the button, the client asks the server to press it. The server checks the message and where the sending player really is, and turns away new presses while the button is still busy. It plays both scale tweens, then tells the player the press worked, and a small client script shows that answer as a toast. The client's message never picks which player pressed, and never adds a press by itself.</p><div class="code"><span class="tag">Scripts/Client/GuideButtonPrompt.luau</span><pre id="ex-canonical-guidebuttonprompt" data-example-kind="source" data-language="luau">local button = World:FindByTag(&quot;guide_code_button&quot;)[1]
 button.Touched:Connect(function(player)
 	if player == Players.LocalPlayer then
 		Net:Remote(&quot;GuidePressButton&quot;):FireServer(&quot;press&quot;)
@@ -191,6 +191,9 @@ Net:Remote(&quot;GuidePressButton&quot;).OnServerEvent:Connect(function(player, 
 	result:FireClient(player, &quot;pressed&quot;)
 end)
 State:Set(&quot;guide.button.presses&quot;, 0)
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideButtonResult.luau</span><pre data-example-kind="source" data-language="luau">Net:Remote(&quot;GuideButtonResult&quot;).OnClientEvent:Connect(function(result)
+	UI:Toast(result == &quot;pressed&quot; and &quot;Button pressed&quot; or `Not pressed: {result}`)
+end)
 </pre></div><h3 id="r-spawn">Cloning and destroying things</h3><p>This shows how to copy and remove objects from a script: place a separate template actor tagged <code>guide_code_template</code>, and another actor tagged <code>guide_code_retired</code>. The script hides the template and makes one visible clone that stays. It then makes a second clone and destroys it, and destroys the retired actor you placed in the level. Players who join later see the clone that stayed and none of the destroyed objects. Clones copy their template's tags, so don't put pickup tags on a template unless you want every clone to be picked up by that recipe too.</p><div class="code"><span class="tag">Scripts/Server/GuideClones.luau</span><pre id="ex-canonical-guideclones" data-example-kind="source" data-language="luau">local template = World:FindByTag(&quot;guide_code_template&quot;)[1]
 template.Visible = false
 local survivor = template:Clone()
@@ -218,16 +221,18 @@ World.onTagged(&quot;guide_code_checkpoint&quot;, (pad: Entity) =&gt; {
 <p>Use <code>DataStore</code> <span class="side s">Server</span> to save boolean, number or string values so they&rsquo;re still there in later sessions (tables too, from API 1.13: see <a href="#r-datastore-tables">saved tables</a>). You can save them for the whole place (<code>Get</code>/<code>Set</code>) or for each player (<code>GetForPlayer</code>/<code>SetForPlayer</code>). There&rsquo;s nothing to set up in the level.</p>
 <div class="callout warn"><strong>A missing value doesn&rsquo;t mean zero</strong><p>When <code>DataStore:GetForPlayer</code> returns nil, you can&rsquo;t tell whether this is the player&rsquo;s first visit, their data hasn&rsquo;t finished loading, or the load failed. Scripts can&rsquo;t yet get a signal when data has loaded, or confirmation that a write was saved. Don&rsquo;t turn nil into zero and write it back, or you could overwrite a larger saved value such as a best score.</p></div>
 <h3 id="r-datastore-tables">Saved tables, removing and listing keys</h3>
-<p>From API 1.13, <code>DataStore:Set</code> and <code>SetForPlayer</code> also take a table of booleans, numbers, strings and tables, nested up to 4 levels deep and at most 64 KiB, so one key can hold a player's whole profile. Lists come back as lists and objects as objects, but an object's key order isn't kept. Vector3, entities and functions can't be saved. <code>RemoveKey</code> deletes a key, and <code>ListKeys</code> pages through keys that start with a prefix, 100 at a time. Like <code>Get</code>, <code>ListKeys</code> can lag behind other servers: it may not see what another server of the place wrote a moment ago.</p>
-<div class="code"><span class="tag">Scripts/Server/GuideProfile.luau</span><pre id="ex-guide-profile" data-example-kind="source" data-language="luau">Players:OnPlayer(function(player)
-	DataStore:SetForPlayer(player, &quot;guide.profile&quot;, { coins = 120, owned = { &quot;sword&quot;, &quot;shield&quot; } })
+<p>From API 1.13, <code>DataStore:Set</code> and <code>SetForPlayer</code> also take a table of booleans, numbers, strings and tables, nested up to 4 levels deep and at most 64 KiB, so one key can hold a player's whole profile. Lists come back as lists and objects as objects, but an object's key order isn't kept. Vector3, entities and functions can't be saved. <code>RemoveKey</code> deletes a key, and <code>ListKeys</code> pages through keys that start with a prefix, 100 at a time. <code>ListKeys</code> lists the place&rsquo;s keys; <code>ListKeysForPlayer(player, prefix, cursor)</code> lists one player&rsquo;s. <code>SetForPlayer</code> is an error if the player&rsquo;s account id isn&rsquo;t ready yet, so call it after they&rsquo;ve been in the session a moment, as the touch pad does here (tag a pad <code>guide_code_profilepad</code>). Like <code>Get</code>, <code>ListKeys</code> can lag behind other servers: it may not see what another server of the place wrote a moment ago.</p>
+<div class="code"><span class="tag">Scripts/Server/GuideProfile.luau</span><pre id="ex-guide-profile" data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_profilepad&quot;, function(pad)
+	pad.Touched:Connect(function(player)
+		DataStore:SetForPlayer(player, &quot;guide.profile&quot;, { coins = 120, owned = { &quot;sword&quot;, &quot;shield&quot; } })
+	end)
 end)
 
 DataStore:RemoveKey(&quot;guide.event.spring&quot;)   -- Get reads nil at once; deleted in the background
 
 local cursor = nil
 repeat
-	local page = DataStore:ListKeys(&quot;guide.&quot;, cursor)   -- up to 100 keys, in key order
+	local page = DataStore:ListKeys(&quot;guide.&quot;, cursor)   -- the place's own keys, up to 100, in key order
 	for _, key in page.keys do
 		print(key)
 	end
@@ -244,7 +249,7 @@ local function onRoundWon(player)
 end</pre></div>
 <p>Use <code>ascending = true</code> in the options table for "lowest is best" (race times), and <code>Leaderboard:Clear()</code> to hide the panel. Keys that aren't a UserId show as written (team names). Server scripts only.</p>
 <p><b>Your own leaderboard UI.</b> This keeps a wins leaderboard for your place and shows the top 10 on every player's screen with your own widgets, for when you want more than the built-in panel. It needs API 1.13. An ordered store keeps one whole number per key and reads them back sorted, across every server of the place. Key it by <code>player.UserId</code> exactly, so each player has one row: that's also how Mantle removes a player's rows when they delete their account, and includes them in their data export. Every ordered-store call returns a Signal that fires once with a result table: <code>ok</code>, <code>error</code> when it failed, and the answer (<code>value</code>, or <code>entries</code> and <code>nextCursor</code> for a page). Call <code>:Wait()</code> on it straight away, or connect with <code>:Once</code>. <code>IncrementAsync</code> adds in a single step, so two servers adding a win at the same moment never lose one.</p>
-<p>Fire the <code>GuideRoundWon</code> event with the winning player from whichever script decides a round, for example <code>Events:Get(&quot;GuideRoundWon&quot;):Fire(player)</code>. The store only holds ids, so the server fills in names for players who are in this session.</p>
+<p>Fire the <code>GuideRoundWon</code> event with the winning player from whichever script decides a round, for example <code>Events:Get(&quot;GuideRoundWon&quot;):Fire(player)</code>. Nothing else in these recipes fires it, so the board stays empty until you add that line. The store only holds ids, so the server fills in names for players who are in this session.</p>
 <div class="code"><span class="tag">Scripts/Server/GuideLeaderboard.luau</span><pre id="ex-guide-leaderboard" data-example-kind="source" data-language="luau">local wins = DataStore:GetOrderedDataStore(&quot;wins&quot;)
 
 Events:Get(&quot;GuideRoundWon&quot;):Connect(function(player)
@@ -306,20 +311,16 @@ while true do
 end
 </pre></div>
 <h3 id="r-door-hinge">A hinged door that swings open</h3>
-<p>This builds a door on a hinge that a player can push open, rather than one that tweens by script: place a <b>Physics Constraint Actor</b> between the door's Static Mesh Actor (Simulate Physics on) and nothing (Constraint Actor 2 left empty, so it joins to the world), with every Linear motion Locked, Swing 1 Motion set to Limited (how far the door swings) and Swing 2 and Twist Motion set to Locked. A joint that can turn about more than one axis is left out of the place, and <b>Check this place</b> says why. It needs API 1.30. Tag the door actor <code>guide_code_hingedoor</code>; the script listens for the hinge to break under a hard enough shove and reports it.</p>
-<div class="code"><span class="tag">Scripts/Server/GuideHingeDoor.luau</span><pre data-example-kind="source" data-language="luau">local door = World:FindByTag(&quot;guide_code_hingedoor&quot;)[1]
-local hinge = Constraints:FromEntity(door)
-	or Constraints:Create({
-		Type = &quot;hinge&quot;, EntityA = door, AnchorA = Vector3.new(0, -50, 0),
-		Axis = Vector3.new(0, 0, 1), Limits = { -90, 0 }, BreakForce = 20000,
-	})
+<p>This builds a door on a hinge that a player can push open, rather than one that tweens by script: place a <b>Physics Constraint Actor</b> between the door's Static Mesh Actor (Simulate Physics on) and nothing (Constraint Actor 2 left empty, so it joins to the world), with every Linear motion Locked, Swing 1 Motion set to Limited (how far the door swings, with a range that includes 0) and Swing 2 and Twist Motion set to Locked. Turn on <b>Linear Breakable</b> or <b>Angular Breakable</b> and set its threshold, or the joint never breaks and <code>Broken</code> never fires. Set Constraint Actor 1 to the door, leave Component Name empty and turn the linear and angular drives off, or the joint is left out of the place. A joint that can turn about more than one axis is left out of the place, and <b>Check this place</b> says why. It needs API 1.30. Tag the Physics Constraint Actor (not the door) <code>guide_code_hingedoor</code>; the script listens for the hinge to break under a hard enough shove and reports it.</p>
+<div class="code"><span class="tag">Scripts/Server/GuideHingeDoor.luau</span><pre data-example-kind="source" data-language="luau">local pivot = World:FindByTag(&quot;guide_code_hingedoor&quot;)[1]
+local hinge = Constraints:FromEntity(pivot)
 hinge.Broken:Connect(function()
 	State:Set(&quot;guide.hingedoor.broken&quot;, true)
 end)
 </pre></div>
-<p>A door already built as a Physics Constraint Actor in the level publishes as a Constraint automatically, so <code>Constraints:FromEntity</code> finds its joint; a script only needs <code>Constraints:Create</code> for a door it builds itself at runtime. A place holds at most 200 joints, its own included, and pulling a joint harder than <code>BreakForce</code> newtons breaks it for good.</p>
+<p>A Physics Constraint Actor in the level publishes as a Constraint automatically, and <code>Constraints:FromEntity</code> takes that actor (not the door mesh) and returns its joint; it returns nil for any other entity. A script only needs <code>Constraints:Create</code> for a door it builds itself at runtime, as in the <a href="/docs/scripting/concepts/#joints">joints example</a> (<code>AnchorA</code> is the hinge's position in the door's own space: <code>(0, -50, 0)</code> is 50 cm along its Y axis from the middle, at the door's edge, since Z is up). A place holds at most 200 joints, its own included, and pulling a joint harder than <code>BreakForce</code> newtons breaks it for good.</p>
 <h3 id="r-local-look">A haunted room with its own look, for one player</h3>
-<p>This dims and desaturates the picture for one player only, without touching what anyone else sees: tag the trigger volume in your level <code>guide_code_hauntedroom</code>. It needs API 1.29. A client script applies the look a server script sends it over a Remote, so only the player in the room sees it.</p>
+<p>This greys the picture and darkens its corners for one player only, without touching what anyone else sees: tag the trigger volume in your level <code>guide_code_hauntedroom</code>. It needs API 1.29. A client script applies the look a server script sends it over a Remote, so only the player in the room sees it.</p>
 <div class="code"><span class="tag">Scripts/Server/GuideHauntedRoom.luau</span><pre data-example-kind="source" data-language="luau">local look = Net:Remote(&quot;GuideLook&quot;)
 World:OnTagged(&quot;guide_code_hauntedroom&quot;, function(zone)
 	zone.Touched:Connect(function(player)
