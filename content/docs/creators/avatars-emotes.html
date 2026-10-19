@@ -1,82 +1,75 @@
 <div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
 
-<p><span class="status wip">In progress</span> An avatar is a whole body players can wear instead of Mantle's base avatars. An emote is a short animation players play from the emote wheel. You publish both from the <b>Mantle Cosmetics</b> tab. This page covers what each one needs. For signing in, the panel's fields, <b>Check only</b>, <b>Upload to Mantle</b> and screening, see <a href="/docs/creators/avatar-items/">Making avatar items</a>. Players find avatars and emotes on the <a href="/docs/players/playing/#avatar">Avatar screen</a>, which is still in progress.</p>
+<p><span class="status wip">In progress</span> An avatar is a whole body players can wear instead of Mantle's base avatars. An emote is a short animation players play from the emote wheel. A scar or tattoo is a mask players can wear on their skin. You publish all three from the <b>Mantle Cosmetics</b> tab. This page covers what each one needs. For signing in, the panel's fields, <b>Check only</b>, <b>Upload to Mantle</b> and screening, see <a href="/docs/creators/avatar-items/">Making avatar items</a>. Players find avatars and emotes on the <a href="/docs/players/playing/#avatar">Avatar screen</a>, which is still in progress.</p>
 
 <h2 id="avatars">Avatars <span class="status wip">In progress</span></h2>
-<p>You upload a body Skeletal Mesh, and for a MetaHuman its face too. You don't upload any animation: Mantle animates every avatar with its own animations and players' emotes.</p>
+<p>An avatar is a MetaHuman body and face. You don't build it by hand: you pick your character under <b>Convert a character</b> and Mantle builds it as a MetaHuman at Mantle's default height. You don't upload any animation: Mantle animates every avatar with its own animations and players' emotes.</p>
 
-<h3 id="skeletons">Supported skeletons</h3>
-<div class="table-wrap"><table><thead><tr><th>Skeleton</th><th>What it's for</th><th>Wears 3D clothing</th><th>Face</th></tr></thead><tbody>
-<tr><td>MetaHuman body (<code>metahuman_base_skel</code>)</td><td>MetaHumans and bodies made on the MetaHuman skeleton</td><td>Yes, if exported the right way (see <a href="#metahuman-clothing">MetaHumans that wear clothing</a>)</td><td>Optional MetaHuman face</td></tr>
-<tr><td>UE5 Mannequin (<code>SK_Mannequin</code>, the UE 5.4 and later skeleton with its corrective bones)</td><td>Stylised characters and Fab characters rigged to the UE5 Mannequin</td><td>No</td><td>None: the head is part of the body</td></tr>
-</tbody></table></div>
-<p>The UEFN mannequin skeleton is only for <a href="#emotes">emotes</a>, not avatars.</p>
-<p>To see which skeleton your mesh uses, open the Skeletal Mesh and look at its <b>Skeleton</b> asset. You don't choose it in the panel: the plugin tries both and picks the one that fits. A mesh on the full <code>SK_Mannequin</code> skeleton is read as a UE5 Mannequin, and <b>Check only</b> then shows "Done: UE5 Mannequin body: it wears accessories and emotes, 3D clothing is set aside while it is worn, and it takes no MetaHuman face." A mesh skinned only to bones the two skeletons share is read as a MetaHuman body.</p>
-
-<h3 id="bones">Bones and names</h3>
+<h3 id="convert">Converting a character</h3>
+<p>The panel's help for an avatar says: "Pick your character under Convert a character and choose Convert. Mantle builds it as a MetaHuman at Mantle's default height and checks whether the body and face are ready. Choose Use, then Upload to Mantle to add it to the catalog."</p>
+<p>The <b>Convert a character</b> section shows for Avatar, Clothing and Hair. It takes a character from Fab, Sketchfab or MetaHuman Creator that the checks refuse. Nothing of yours is changed: the fixes write new assets to a <code>Converted</code> folder next to the character (an Epic preset outside <code>/Game</code> goes to <code>/Game/Converted</code>), and each converted part comes back to the panel, ready to preview and upload.</p>
+<ol class="steps">
+<li><b>Pick the character</b><p>Choose a Skeletal Mesh, a MetaHuman Creator character (an Epic preset or your own), a built character's Blueprint or body, or a Static Mesh.</p></li>
+<li><b>Look at the fixes</b><p>Choose <b>Convert...</b>. Mantle shows "Looking at the character..." and then lists what it would fix: "N thing(s) to fix across N part(s), N of them here. Untick a fix to leave its problem for the checks. Nothing is written until you choose Convert; it writes to [folder]." With nothing to fix, it says "Nothing to fix in N part(s). Choose Convert to take them to the panel."</p></li>
+<li><b>Confirm what it asks</b><p>A fix you must confirm keeps <b>Convert</b> off until you tick it: "Tick to confirm. Convert stays off until you do." A fix the plugin can't make here is greyed out, and the line says why.</p></li>
+<li><b>Convert</b><p>Choose <b>Convert</b>. It shows "Converting. Making a MetaHuman can take several minutes; the editor waits until it is done." When it ends, it says "Converted into [folder]: N fix(es) applied, N failed. N of N part(s) are ready to upload; choose Use on one to preview and upload it." A part shows "[part]: ready to upload." or "[part]: N problem(s) still stop the upload." Anything it couldn't fix is listed as "Not fixed: [part]: [problem] ([reason])". Choose <b>Look again</b> to list the fixes for the character again.</p></li>
+<li><b>Use the part</b><p>Choose <b>Use</b> on a part. It fills the panel with what it is, the slot, the converted mesh, its face, its section and its body, so you can preview and upload it.</p></li>
+</ol>
+<h4>What Convert does</h4>
 <ul>
-<li>Every bone that carries skin weight must be a bone of the supported skeleton, with the same parent as on that skeleton.</li>
-<li>Extra bones that carry no weight, such as cloth or helper bones some exports add, are left out for you.</li>
-<li>The skeleton's root bone (<code>root</code>) must be included, and the bones must form one hierarchy.</li>
-<li>Bone names match whatever their case, so <code>Root</code> counts as <code>root</code>. Two bones whose names differ only in case are refused, because Unreal treats them as one bone.</li>
-<li>Up to 8 bone influences per vertex. Extra influences on the body and face are dropped for you, lightest first, with a "Done:" line (a "Note:" if a dropped weight was over 0.1).</li>
-<li>The mesh must be bound in its reference pose. Morph targets aren't uploaded.</li>
+<li><b>Keeps the face:</b> it puts the face on MetaHuman's own body at Mantle's default height. Everything below the face (clothing, armour, hair) is left out. Pick the feminine or the masculine body: "With the face kept: which body does it go on? Tick one". Players shape that body with the Weight, Muscle, Chest and Hips sliders.</li>
+<li><b>Needs bare skin:</b> "Convert won't fix a body for you: a character whose clothing is part of its body, with no skin under it, can't become a MetaHuman." You tick a line to confirm the kept parts are bare skin. To convert the whole body instead, untick the face line: that needs bare skin from head to feet.</li>
+<li><b>Rebuilds the rig:</b> other fixes map the rig onto a supported skeleton, set the default height, pose the body in its A-pose, and cut the number of triangles where it can. The list shows each one before it runs.</li>
+<li><b>Uses Epic's cloud:</b> building the MetaHuman uses Epic's tools: "Uses Epic's MetaHuman cloud (your Epic account) to make the skin and face rig." You need MetaHuman Optional Content installed (it's for Epic's skin texture synthesis) and to be signed in to Epic in MetaHuman Creator. If not, you'll see "MetaHuman Optional Content isn't installed (Epic's skin texture synthesis needs it): add it from Fab or the Epic launcher" or "Sign in to Epic in MetaHuman Creator first (Convert uses Epic's cloud for the skin and the face rig)".</li>
+<li><b>Splits clothing and hair:</b> for a Clothing or Hair part it can add simulated cloth as a plain garment, or refit a piece onto Mantle's neutral reference body. Clothing taken off the body isn't offered as an item yet: "that comes later".</li>
 </ul>
+<p>Uploading a character as it is, on its own skeleton, is switched off: "Avatars convert to a MetaHuman: uploading a character as-is isn't available." See <a href="#as-is">Uploading as it is</a>.</p>
 
 <h3 id="avatar-steps">Publishing an avatar</h3>
 <ol class="steps">
-<li><b>Prepare the body</b><p>Keep it in its reference pose with its feet on the origin, and check it fits the <a href="#avatar-limits">limits</a>. For a MetaHuman that should wear clothing, export it as described in <a href="#metahuman-clothing">MetaHumans that wear clothing</a>.</p></li>
-<li><b>Pick Avatar</b><p>In the <b>Mantle Cosmetics</b> tab, pick <b>Avatar</b> under "What are you publishing?". The slot is <code>avatar</code>.</p></li>
-<li><b>Pick the body</b><p>Under "Asset", choose the body Skeletal Mesh. For a MetaHuman exported to wear clothing, the plugin uploads the LOD that takes clothing. Otherwise, if LOD 0 is over the triangle limit, it uses the first LOD that fits.</p></li>
-<li><b>Add the face (MetaHuman only)</b><p>Under "Face and sections", choose the MetaHuman's face Skeletal Mesh. See <a href="#face">The face</a>.</p></li>
+<li><b>Convert it</b><p>Follow <a href="#convert">Converting a character</a> until you have a part that is ready to upload.</p></li>
+<li><b>Pick Avatar</b><p>In the <b>Mantle Cosmetics</b> tab, pick <b>Avatar</b> under "What are you publishing?". The slot is <code>avatar</code>. <b>Use</b> fills in the body under "Asset" and the face under "Face and sections".</p></li>
 <li><b>Check the section roles</b><p>Each material slot of the body is listed with a role: <code>skin</code>, <code>eyes</code> or <code>other</code>. See <a href="#skin-eyes">Skin tone and eye colour</a>.</p></li>
-<li><b>Set the jaw bone if needed</b><p>See <a href="#mouth">Mouth movement</a>.</p></li>
 <li><b>Move sockets if needed</b><p>Only if accessories sit in the wrong place on your body. See <a href="#sockets">Accessories and sockets</a>.</p></li>
-<li><b>Name, check and upload</b><p>Give it a name, choose <b>Check only</b>, fix any "Problem" lines, then <b>Upload to Mantle</b>. The thumbnail shows the avatar full body with its face.</p></li>
+<li><b>Preview it</b><p>Choose <b>Preview</b> to see the avatar posed the way players' games pose it. It needs the IK Rig plugin turned on and a UEFN mannequin skeletal mesh in your project (such as <code>SKM_UEFN_Mannequin</code> from the Game Animation Sample). Without them, you'll see "Your [skeleton] avatar in its reference pose: it needs [what's missing]."</p></li>
+<li><b>Name, check and upload</b><p>Give it a name, choose <b>Check only</b>, fix any "Problem" lines, then <b>Upload to Mantle</b>. The thumbnail shows the avatar full body with its face. The upload carries the body and face geometry, the rig data and the thumbnail. The game supplies the appearance materials and textures.</p></li>
 </ol>
 
-<h3 id="metahuman-clothing">MetaHumans that wear clothing</h3>
-<p>3D clothing, hair, eyebrows, eyelashes and facial hair fit an avatar only if its body is exported the right way: export the MetaHuman with <b>UE Optimized</b> at <b>Medium</b>, <b>High</b> or <b>Cinematic</b> quality, without clothing. For a Cinematic MetaHuman from Fab, the body is <code>SKM_&lt;Name&gt;_Body</code> under <code>CharacterAssemblies/&lt;Name&gt;/Body</code>. The plugin finds the right LOD and uploads it, and <b>Check only</b> shows "Done: Garment-compatible: LOD N has Mantle's reference topology, so it takes 3D clothing."</p>
-<p>A MetaHuman body without that LOD still uploads, with "Note: not garment-compatible: export the MetaHuman with UE Optimized at Medium, High or Cinematic quality, without clothing. It still uploads: it wears accessories and emotes, not 3D clothing." A UE5 Mannequin avatar never wears clothing.</p>
-<p>Players on an avatar that can't wear clothing keep their clothing and hair: those items are marked "SET ASIDE" on the Avatar screen and go back on when they switch to an avatar that fits them. Accessories and emotes work on every avatar.</p>
+<h3 id="metahuman-clothing">Clothing and the converted body</h3>
+<p>3D clothing, hair, eyebrows, eyelashes and facial hair fit an avatar only if its body has Mantle's reference topology: an LOD with the same vertex layout as Mantle's reference body. A converted MetaHuman has it. <b>Check only</b> then shows "Done: Garment-compatible: LOD N has Mantle's reference topology, so it takes 3D clothing."</p>
+<p>A body without that LOD still uploads on the as-is route, with "Note: not garment-compatible: export the MetaHuman with UE Optimized at Medium, High or Cinematic quality, without clothing. It still uploads as-is: it wears accessories and emotes, not 3D clothing." A converted body without it says "not clothing-ready yet: a converted MetaHuman wears no 3D clothing for now." It still uploads and animates, with Epic's default underwear.</p>
+<p>Players on an avatar that can't wear clothing keep their clothing and hair: those items are marked "Set aside" on the Avatar screen and go back on when they switch to an avatar that fits them. Accessories and emotes work on every avatar.</p>
 
 <h3 id="face">The face</h3>
 <ul>
-<li>Only a MetaHuman body takes a face, and it must be a MetaHuman face on the MetaHuman face skeleton. A UE5 Mannequin's head is part of its body.</li>
-<li>A MetaHuman body ends at the neck, so its face counts towards the avatar's height. Without the face, a MetaHuman body is usually too short to pass the minimum height.</li>
-<li>The plugin uploads a LOD of the face that fits the 10,000-triangle limit.</li>
-<li>The face's skin takes the player's skin tone and its eyes the eye colour. MetaHuman's see-through face parts (eye shell, eye edge, eyelashes, saliva and cartilage) aren't drawn. Players add eyelashes, eyebrows and facial hair as separate items in their own slots, which are fitted like <a href="/docs/creators/clothing/#hair">hair</a>.</li>
+<li>Only a MetaHuman body takes a face, and it must be a MetaHuman face on the MetaHuman face skeleton. Otherwise: "Problem: only a MetaHuman body takes a MetaHuman face."</li>
+<li>A MetaHuman body ends at the neck, so its face counts towards the avatar's height. Without the face, it fails with "Problem: no head: this body has Mantle's reference topology, which ends at the neck, and no face is chosen". Convert picks the face for you.</li>
+<li>The face has its own limits: 10,000 triangles, 12 material slots.</li>
+<li>The face's skin takes the player's skin tone and its eyes the eye colour. Players add eyelashes, eyebrows and facial hair as separate items in their own slots, which are fitted like <a href="/docs/creators/clothing/#hair">hair</a>.</li>
 </ul>
 
 <h3 id="skin-eyes">Skin tone and eye colour</h3>
 <p>Each section uploads its material's base colour, normal and ORM textures. The panel fills in a role for each section from its material slot name; change it if it's wrong. The role decides what the player's choices change:</p>
 <div class="table-wrap"><table><thead><tr><th>Role</th><th>What happens</th></tr></thead><tbody>
 <tr><td><code>skin</code></td><td>Takes the player's <b>Skin tone</b></td></tr>
-<tr><td><code>eyes</code></td><td>Takes the player's <b>Eye colour</b> on the iris</td></tr>
+<tr><td><code>eyes</code></td><td>Takes the player's eye colour on the iris</td></tr>
 <tr><td><code>other</code></td><td>Shown as you made it</td></tr>
 </tbody></table></div>
-<ul>
-<li>The Avatar screen shows the Skin tone row only if the avatar has a <code>skin</code> section, and Eye colour only if it has an <code>eyes</code> section. With neither, players see "This avatar has its own skin and eyes: there are no colours to pick." Mark everything <code>other</code> if your character's colours are part of its design.</li>
-<li>The "Body default" skin tone and eye colour show the avatar exactly as you exported it.</li>
-<li>Eye colour looks right on eyeballs UV-mapped like a MetaHuman eye.</li>
-<li>Any material slot whose name contains eyeshell, eyeedge, eyelash, saliva or cartilage and has the <code>other</code> role isn't drawn, so rename a slot you want to keep.</li>
-</ul>
+<p>Players with a converted avatar can also change the Height, Weight, Muscle, Chest and Hips sliders and pick scars and tattoos (see <a href="#overlays">Scars and tattoos</a>).</p>
 
 <h3 id="height">Height</h3>
-<p>Your avatar must stand between 151.1 cm and 218.1 cm tall (a MetaHuman measured with its face). Players can then change it with the <b>Height</b> slider, from 95% to 105%, which scales the whole avatar.</p>
+<p>A converted avatar is built at Mantle's default height: 165.6 cm, within 0.5 cm. Players can then change it with the <b>Height</b> slider, from 95% to 105%, which scales the whole avatar. The body sliders go from -100 to 100, where 0 is the body as uploaded. After a check, the panel tells you how the avatar plays: "Plays at [N] cm." The character in play (hitboxes, camera, collision) is sized between 150 cm and 210 cm. If your avatar is outside that, the line says "Plays at [N] cm: it stands [N] cm tall, [above or below] Mantle's [N] cm limit, so its character (hitboxes, camera, collision) is clamped to [N] cm. The avatar still shows at its own height."</p>
 
 <h3 id="sockets">Accessories and sockets</h3>
-<p>Accessories attach to eight sockets that come with Mantle's copy of each supported skeleton, so your mesh doesn't need them. <code>acc_hat</code> and <code>acc_face</code> are on <code>head</code>, <code>acc_neck</code> on <code>neck_01</code>, <code>acc_shoulder_l</code> and <code>acc_shoulder_r</code> on <code>clavicle_l</code> and <code>clavicle_r</code>, <code>acc_front</code> on <code>spine_04</code>, <code>acc_back</code> on <code>spine_03</code> and <code>acc_waist</code> on <code>pelvis</code>.</p>
-<p>If your body's proportions put a hat, glasses or backpack in the wrong place, move that socket under <b>Socket offsets</b> ("Move where accessories attach (optional)"). If your mesh has a socket of the same name on the same bone, the values start from it. The ranges and messages are in <a href="/docs/creators/avatar-items/#panel">The panel's fields</a>. Accessories themselves are covered in <a href="/docs/creators/clothing/#accessories">Clothing, hair and accessories</a>.</p>
+<p>Accessories attach to eight sockets that come with Mantle's copy of each supported skeleton, so your mesh doesn't need them. <code>acc_hat</code> and <code>acc_face</code> are on <code>head</code>, <code>acc_neck</code> on <code>neck_01</code>, <code>acc_shoulder_l</code> and <code>acc_shoulder_r</code> on <code>clavicle_l</code> and <code>clavicle_r</code>, <code>acc_front</code> on <code>spine_04</code>, <code>acc_back</code> on <code>spine_03</code> and <code>acc_waist</code> on <code>pelvis</code>. A ninth socket, <code>hand_rSocket</code> on <code>hand_r</code>, holds every tool and gun a player carries.</p>
+<p>If your body's proportions put a hat, glasses or backpack in the wrong place, move that socket under <b>Socket offsets</b> ("Move where accessories and held tools attach (optional)"). The values start at the body's own socket. The tool socket stays on its bone and at scale 1, because a scaled socket scales the tool it carries. The ranges and messages are in <a href="/docs/creators/avatar-items/#panel">The panel's fields</a>. Accessories themselves are covered in <a href="/docs/creators/clothing/#accessories">Clothing, hair and accessories</a>.</p>
+<p>Hats are fitted to the head for you. Unless you set the <code>acc_hat</code> location or scale yourself, the plugin measures the head and places the hat socket on it. If it can't, it says "Hats use the standard head size". Set the socket yourself if hats sit wrong.</p>
 
 <h3 id="first-person">First person</h3>
 <ul>
-<li>With a MetaHuman face, the first-person camera sits between its eyes. Without a face, including every UE5 Mannequin avatar, it sits at a standard mannequin's eye height.</li>
-<li>In first person, players don't see their own head and face, so they don't see the inside of their head. Other players still see it, and the head's shadow stays. On a body without a separate face, weight everything that would block the view to <code>head</code> or its child bones, so it hides too.</li>
+<li>With a MetaHuman face, the first-person camera sits between its eyes.</li>
+<li>In first person, players don't see their own head and face, so they don't see the inside of their head. Other players still see it, and the head's shadow stays.</li>
 </ul>
-
-<h3 id="mouth">Mouth movement</h3>
-<p>When a player talks on voice chat, the avatar's mouth moves with their voice. <b>Jaw bone</b> names the bone that opens it. Left empty, it's <code>FACIAL_C_Jaw</code> on a MetaHuman with its face, and none otherwise, so the mouth doesn't move. Type the name of a jaw bone in your body or face to use it.</p>
 
 <h3 id="avatar-limits">Avatar limits</h3>
 <div class="table-wrap"><table><thead><tr><th>Limit</th><th>Body</th><th>Face</th></tr></thead><tbody>
@@ -85,10 +78,12 @@
 <tr><td>Material slots</td><td class="num">8</td><td class="num">12</td></tr>
 <tr><td>Bone influences per vertex</td><td class="num">8</td><td class="num">8</td></tr>
 <tr><td>Textures (base colour, normal, ORM)</td><td>Up to 2048 on a side; larger ones are scaled down</td><td>Up to 2048 on a side; larger ones are scaled down</td></tr>
+<tr><td>LODs</td><td colspan="2">Up to 3. A converted MetaHuman keeps its three native LODs; other bodies get lower LODs made for them at half and a quarter of the triangles.</td></tr>
 <tr><td>Feet</td><td>Lowest point within 10 cm of the origin (z = 0)</td><td></td></tr>
-<tr><td>Height</td><td>151.1 cm to 218.1 cm (a MetaHuman with its face)</td><td></td></tr>
+<tr><td>Height</td><td>151.1 cm to 218.1 cm (a MetaHuman measured with its face)</td><td></td></tr>
 <tr><td>Width (X, arm span in the reference pose)</td><td>Up to 171.7 cm</td><td></td></tr>
 <tr><td>Depth (Y)</td><td>Up to 64.3 cm</td><td></td></tr>
+<tr><td>Reference pose</td><td colspan="2">Every bone at scale 1 (within 0.01). Arms, legs and spine within 20 degrees of the skeleton's own A-pose, so a T-pose is refused.</td></tr>
 <tr><td>File size</td><td colspan="2">Up to 64 MiB per uploaded file</td></tr>
 </tbody></table></div>
 <p>Every material slot needs a name, and no two slots can share one, because sections are matched by name.</p>
@@ -96,53 +91,83 @@
 <h3 id="avatar-messages">Avatar messages</h3>
 <p>Numbers and names in brackets change with your mesh. The messages every kind shares are in <a href="/docs/creators/avatar-items/#checks">What the panel checks</a>.</p>
 <div class="table-wrap"><table><thead><tr><th>Message</th><th>How to fix it</th></tr></thead><tbody>
-<tr><td>Problem: not skinned to a supported skeleton: bone "[bone]" is not on the metahuman skeleton. An avatar is skinned to the MetaHuman body skeleton or the UE5 Mannequin skeleton (SK_Mannequin).</td><td>A weighted bone isn't on either skeleton. Retarget or re-skin the mesh onto one of them.</td></tr>
-<tr><td>Problem: not skinned to a supported skeleton: bone "[bone]" has parent "[parent]", the metahuman skeleton has "[parent]". …</td><td>The hierarchy differs from the skeleton's. Put the bone back under the parent the message names.</td></tr>
-<tr><td>Problem: not skinned to a supported skeleton: the skin has no "root" bone; the metahuman skeleton's root must be included. …</td><td>Keep the <code>root</code> bone in the mesh's skeleton.</td></tr>
+<tr><td>Problem: Convert it first: this body isn't a MetaHuman with Mantle's reference topology</td><td>Pick the character under <b>Convert a character</b> and choose <b>Convert...</b>. "It becomes a MetaHuman that wears clothing and takes the avatar options, at Mantle's default height."</td></tr>
+<tr><td>Problem: This character's skeleton isn't one we can use yet. Try the Convert route, which rebuilds it on a standard body.</td><td>Use <b>Convert a character</b>.</td></tr>
+<tr><td>Problem: no head: this body has Mantle's reference topology, which ends at the neck, and no face is chosen</td><td>Pick its face under "Face and sections": the MetaHuman's own face, which Convert picks for you.</td></tr>
+<tr><td>Problem: the skin has no [bone] bone; an avatar body on the [skeleton] skeleton must include it</td><td>Keep every bone of the body skeleton, even ones no vertex uses.</td></tr>
+<tr><td>Problem: bone "[bone]" points [N] degrees away from the [skeleton] (…, at most 20); upload in the [skeleton]</td><td>Pose the body in its skeleton's reference pose before exporting it: arms angled down and out, legs straight down. A T-pose or arms-down body is refused.</td></tr>
+<tr><td>Problem: bone "[bone]" has scale [x] x [y] x [z] in the reference pose; every bone's scale must be 1 (within 0.01): apply the scale before exporting</td><td>Apply the scale to the mesh and skeleton in your modelling tool, then reimport.</td></tr>
 <tr><td>Problem: [N] triangles, the limit is 20000. followed by "It has no lower LOD. Add one in the Skeletal Mesh editor…" or "None of its N LODs is within the limit. Reduce its last LOD…"</td><td>Add or reduce a LOD as the message says. The plugin uses the first LOD under the limit.</td></tr>
 <tr><td>Problem: [N] material sections, the limit is 8. Merge materials so the mesh uses fewer material slots.</td><td>Merge materials.</td></tr>
 <tr><td>Done: the body: [N] vertices had more than 8 influences; the lightest were dropped and the rest renormalised (largest weight dropped: [W]). (The same for "the face:".)</td><td>Nothing. Above 0.1 it's a Note: to choose the weights yourself, set the mesh's Max Bone Influences (LOD settings) to 8 and reimport.</td></tr>
-<tr><td>Problem: section "[name]" spans [N] UV tiles (UDIM 1001, …); Mantle maps one 0..1 texture per section.</td><td>Bake the tiles into one texture with the UVs laid out in 0..1, then reimport the mesh and the texture.</td></tr>
 <tr><td>Problem: the body's lowest point is at z = [N] cm; the feet must stand on the origin (within 10 cm). Move the mesh so its feet are at the origin and reimport.</td><td>As the message says.</td></tr>
 <tr><td>Problem: the avatar is [N] cm tall, the limit is 218.1 cm.</td><td>Scale the body down.</td></tr>
-<tr><td>Problem: the avatar is [N] cm tall, the minimum is 151.1 cm.</td><td>A UE5 Mannequin body is too short. Scale it up.</td></tr>
 <tr><td>Problem: the avatar stands [N] cm tall, the minimum is 151.1 cm. A MetaHuman body ends at the neck: add its face mesh.</td><td>Choose the face under "Face and sections".</td></tr>
 <tr><td>Problem: the avatar is [N] cm wide (X), the limit is 171.7 cm.<br>Problem: the avatar is [N] cm deep (Y), the limit is 64.3 cm.</td><td>Bring the arms, props or loose parts in closer.</td></tr>
-<tr><td>Problem: only a MetaHuman body takes a MetaHuman face.</td><td>Clear the face for a UE5 Mannequin avatar.</td></tr>
-<tr><td>Problem: the face: not skinned to a supported skeleton: …</td><td>The face must be a MetaHuman face on its own face skeleton.</td></tr>
-<tr><td>Problem: the jaw bone "[bone]" is not in the body's or the face's skeleton.</td><td>Fix the name in <b>Jaw bone</b>, or clear it.</td></tr>
+<tr><td>Problem: only a MetaHuman body takes a MetaHuman face.</td><td>Clear the face.</td></tr>
+<tr><td>Problem: The converted MetaHuman body and face must share converter build provenance.</td><td>Use the body and face from the same Convert run.</td></tr>
+<tr><td>Note: The weight, muscle, chest and hips sliders will be off for this avatar: [reason].</td><td>The rest of the avatar uploads as normal. "Convert it again from its MetaHuman Creator character to get them."</td></tr>
 <tr><td>Problem: two materials are named "[name]"; sections are identified by material name. Rename one of the material slots in the mesh editor.</td><td>As the message says.</td></tr>
 <tr><td>Note: Body "[slot]" base colour: no base colour texture was found, so it uploads as a flat grey colour. Give the material a BaseColor texture parameter if it should look textured.</td><td>Give the material a base colour texture parameter. (It says "material" colour instead of "grey" when the material has a flat colour.)</td></tr>
 </tbody></table></div>
-<p>If Mantle's own processing refuses a file after the panel's checks pass, the upload stops with "Mantle's processing refused it:" and the reason. For an avatar the most likely one is that a bone's rest transform isn't the pose the mesh was bound in: export it in its reference pose.</p>
+<p>If Mantle's own processing refuses a file after the panel's checks pass, the upload stops with "Mantle's processing refused it:" and the reason. For an avatar the most likely one is that a bone's rest transform isn't the pose the mesh was bound in: export it in its reference pose. When it creates the item, Mantle also refuses a converted avatar that isn't the canonical height: "Converted publication requires canonical standing height, 165.6 cm within 0.5 cm, before runtime height scaling."</p>
 
-<h3 id="avatar-after">After you publish an avatar</h3>
+<h3 id="as-is">Uploading as it is</h3>
+<p>This route is off by default, so you won't see it in the panel. When it's switched on (a hidden setting in the per-user editor settings), <b>Convert a character</b> offers a second choice, <b>As-is</b>: "What you see is what you get: a supported skeleton and Mantle's limits, no customisation, no clothing." The avatar keeps its own skeleton and wears accessories and emotes only. It adds:</p>
 <ul>
-<li>Once it passes screening, it's listed under "Avatars" in the catalogue. Its page shows its skeleton ("METAHUMAN" or "UE5 MANNEQUIN") and "WEARS CLOTHING" or "NO CLOTHING: ACCESSORIES ONLY".</li>
-<li>Under "Avatars", every avatar is listed. Under "All", the "Fits my avatar" filter, which is on by default, hides avatars that don't wear clothing until the player turns it off.</li>
-<li>Players can wear it with their own skin tone, eye colour and height, and play their emotes on it.</li>
+<li><b>Four skeletons:</b> the MetaHuman body (<code>metahuman_base_skel</code>), the UE5 Mannequin (<code>SK_Mannequin</code>, the UE 5.4 and later skeleton with its corrective bones), the UE4 Mannequin (<code>SK_UE4_Mannequin</code>) and the UEFN Mannequin (<code>SK_UEFN_Mannequin</code>). The plugin works out which one your mesh uses. A mesh skinned only to bones that MetaHuman and the UE5 Mannequin share is read as a MetaHuman body. The Mannequins take no MetaHuman face: "Done: UE5 Mannequin body: it wears accessories and emotes, 3D clothing is set aside while it is worn, and it takes no MetaHuman face."</li>
+<li><b>Bones:</b> every bone that carries skin weight must be a bone of the supported skeleton, with the same parent. Extra bones that carry no weight are left out. The body must include 25 required bones (23 on the UE4 Mannequin, which has no <code>spine_04</code> or <code>spine_05</code>), starting with <code>root</code> and <code>pelvis</code>. Weighted bones that aren't on the skeleton are merged into their parent. Morph targets aren't uploaded.</li>
+<li><b>Jaw bone:</b> on a Mannequin body, <b>Jaw bone (optional)</b> names the bone that opens the mouth when the player talks on voice chat. Pick one of the bones below <code>head</code>. If you pick none: "no jaw bone: this avatar's mouth won't move with voice chat." A MetaHuman uses <code>FACIAL_C_Jaw</code> from its face.</li>
+<li><b>Secondary motion:</b> on a Mannequin body, <b>Secondary motion</b> maps your bone chains onto standard slots that swing as the avatar moves. Pick the first bone of each chain for a slot and a preset for how it swings. The slots are <code>chest_l</code>, <code>chest_r</code>, <code>hair_a</code> to <code>hair_f</code>, <code>back</code>, <code>cloth_a</code> to <code>cloth_d</code> and <code>tail</code>. Players can turn it off in their Graphics settings, which saves a little CPU time.</li>
 </ul>
+<div class="table-wrap"><table><thead><tr><th>Preset</th><th>Stiffness</th><th>Damping</th><th>Gravity</th><th>Largest swing</th></tr></thead><tbody>
+<tr><td><code>hair</code></td><td class="num">120</td><td class="num">9</td><td class="num">60</td><td class="num">50 degrees</td></tr>
+<tr><td><code>chest</code></td><td class="num">350</td><td class="num">14</td><td class="num">30</td><td class="num">12 degrees</td></tr>
+<tr><td><code>cloth</code></td><td class="num">160</td><td class="num">11</td><td class="num">80</td><td class="num">40 degrees</td></tr>
+<tr><td><code>tail</code></td><td class="num">90</td><td class="num">7</td><td class="num">40</td><td class="num">60 degrees</td></tr>
+</tbody></table></div>
+
+<h2 id="overlays">Scars and tattoos <span class="status wip">In progress</span></h2>
+<p>A scar or tattoo is a mask players can wear on a converted MetaHuman avatar. You paint a square mask to the MetaHuman UV layout of the body or the face, in white on black. Choose <b>Overlay</b> under "What are you publishing?", then the slot: <code>scar_body</code>, <code>scar_face</code>, <code>tattoo_body</code> or <code>tattoo_face</code>. The slot's name says whether it's drawn on the body or the face.</p>
+<ol class="steps">
+<li><b>Paint the mask</b><p>Use a square image whose size is a power of two (64, 128, 256, 512 or 1024 pixels), at most 1024 x 1024. Paint white where the scar or tattoo shows and black where it doesn't, as a greyscale image or in the red channel only. Choose <b>Save painting guide</b> to get an image of the UV layout to paint over: "Open this under your painting as a guide layer; paint on the area you want, then hide the guide before saving."</p></li>
+<li><b>Pick the mask</b><p>Under "Overlay images", the mask is the <b>Asset</b> (a Texture 2D), or a PNG file you choose with <b>Browse...</b> next to <b>Mask PNG</b> when the Asset is empty.</p></li>
+<li><b>Add a normal map (scars only)</b><p>A scar can add a normal map under "Scar normal map (optional)", or a PNG. Tattoos don't take one.</p></li>
+<li><b>Preview it</b><p>Pick <b>Preview body (optional)</b> and <b>Preview face (optional)</b>, then choose <b>Preview</b>. It's drawn with the same skin material players' clients use.</p></li>
+<li><b>Check and upload</b><p>Tick the rights box or choose Private, then choose <b>Check only</b> and <b>Upload to Mantle</b>. Mantle screens the mask and the normal map as images.</p></li>
+</ol>
+<div class="table-wrap"><table><thead><tr><th>Message</th><th>How to fix it</th></tr></thead><tbody>
+<tr><td>Problem: [image] is N x N; overlay images must be square.</td><td>Paint it on a square canvas such as 1024 x 1024, 512 x 512 or 256 x 256.</td></tr>
+<tr><td>Problem: [image] is N x N; the size must be a power of two.</td><td>Use 1024, 512, 256, 128 or 64 pixels on each side.</td></tr>
+<tr><td>Problem: [image] is N x N; overlay images are at most 1024 x 1024.</td><td>Scale it down to 1024 x 1024.</td></tr>
+<tr><td>Problem: [image] is a colour image; an overlay mask must be one channel.</td><td>Save it as a greyscale image (white where the overlay shows, black where it does not), or paint it only in the red channel.</td></tr>
+<tr><td>Problem: [image] is blank; there is nothing painted in it.</td><td>Paint the overlay in white (or red) on black. A mask that is all black shows nothing.</td></tr>
+<tr><td>Problem: [image] is solid white; it would cover all of the skin.</td><td>Paint only the shape of the scar or tattoo in white, and leave the rest black.</td></tr>
+<tr><td>Problem: [image] does not look like a normal map.</td><td>A normal map is a blue-purple image (flat areas are 128, 128, 255). Use the scar's tangent-space normal map, not a height or colour image.</td></tr>
+<tr><td>Problem: Tattoos do not take a normal map; only scars do.</td><td>Remove the normal map, or choose a scar slot.</td></tr>
+</tbody></table></div>
 
 <h2 id="emotes">Emotes <span class="status wip">In progress</span></h2>
-<p>An emote is an Anim Sequence. Mantle plays it on whichever avatar the player wears, so one emote works on MetaHuman and UE5 Mannequin avatars alike. Animate it on the UEFN mannequin skeleton (<code>SK_UEFN_Mannequin</code>), or on a MetaHuman body or the UE5 Mannequin (<code>SK_Mannequin</code>): Mantle identifies which one you used from its bones and, for the latter two, retargets it onto the UEFN mannequin automatically when you upload. There's nothing to set: pick your Anim Sequence under Asset and upload it as usual.</p>
+<p>An emote is an Anim Sequence. Mantle plays it on whichever avatar the player wears, so one emote works on every avatar alike. Animate it on the UEFN mannequin skeleton (<code>SK_UEFN_Mannequin</code>), or on a MetaHuman body, the UE5 Mannequin (<code>SK_Mannequin</code>) or the UE4 Mannequin (<code>SK_UE4_Mannequin</code>): Mantle identifies which one you used from its bones and, for the latter three, retargets it onto the UEFN mannequin automatically when you upload. There's nothing to set: pick your Anim Sequence under Asset and upload it as usual.</p>
 
 <h3 id="emote-steps">Publishing an emote</h3>
 <ol class="steps">
-<li><b>Make the animation</b><p>Animate on <code>SK_UEFN_Mannequin</code>, a MetaHuman body, or the UE5 Mannequin (<code>SK_Mannequin</code>), or retarget an existing animation onto one of them (right-click it and choose <b>Retarget Animations</b>) and use the retargeted copy.</p></li>
+<li><b>Make the animation</b><p>Animate on <code>SK_UEFN_Mannequin</code>, a MetaHuman body, the UE5 Mannequin or the UE4 Mannequin, or retarget an existing animation onto one of them (right-click it and choose <b>Retarget Animations</b>) and use the retargeted copy.</p></li>
 <li><b>Keep it in place</b><p>Keep the <code>root</code> bone within 50 cm of where it starts, and animate <code>pelvis</code>. See <a href="#emote-rules">Emote rules</a>.</p></li>
 <li><b>Mark a loop if you want one</b><p>Add an Anim Notify named <code>loop_start</code> where the loop should begin. See <a href="#looping">Looping</a>.</p></li>
 <li><b>Pick Emote</b><p>In the <b>Mantle Cosmetics</b> tab, pick <b>Emote</b> under "What are you publishing?". The slot is <code>emote</code>. Under "Asset", choose the Anim Sequence.</p></li>
-<li><b>Name, check and upload</b><p>Choose <b>Check only</b>, fix any "Problem" lines, then <b>Upload to Mantle</b>. If your clip is on a MetaHuman or UE5 Mannequin skeleton, <b>Files and details</b> notes that it was retargeted onto the UEFN mannequin.</p></li>
+<li><b>Say which character it was made on (optional)</b><p>Under "Animated on", pick the character the animation was made on. A MetaHuman, UE5 Mannequin or UE4 Mannequin clip is retargeted from this body's proportions. The animation's own preview mesh is used first when it has one; with neither, a mesh on the same skeleton is found.</p></li>
+<li><b>Name, check and upload</b><p>Choose <b>Check only</b>, fix any "Problem" lines, then <b>Upload to Mantle</b>. If your clip is on a MetaHuman, UE5 Mannequin or UE4 Mannequin skeleton, <b>Files and details</b> notes that it was retargeted onto the UEFN mannequin.</p></li>
 </ol>
 
 <h3 id="emote-rules">Emote rules</h3>
 <div class="table-wrap"><table><thead><tr><th>Rule</th><th>Value</th></tr></thead><tbody>
-<tr><td>Skeleton</td><td>The UEFN mannequin, a MetaHuman body or the UE5 Mannequin (<code>SK_Mannequin</code>). Every animated bone must be one of that skeleton's bones (names match whatever their case). A MetaHuman or UE5 Mannequin clip is retargeted onto the UEFN mannequin automatically. This needs the IK Rig plugin turned on, a UEFN mannequin skeletal mesh (such as <code>SKM_UEFN_Mannequin</code> from the Game Animation Sample) somewhere in your project, and a skeletal mesh on the clip's own skeleton.</td></tr>
+<tr><td>Skeleton</td><td>The UEFN mannequin, a MetaHuman body, the UE5 Mannequin (<code>SK_Mannequin</code>) or the UE4 Mannequin (<code>SK_UE4_Mannequin</code>). Every animated bone must be one of that skeleton's bones (names match whatever their case). A MetaHuman, UE5 Mannequin or UE4 Mannequin clip is retargeted onto the UEFN mannequin automatically. This needs the IK Rig plugin turned on, a UEFN mannequin skeletal mesh (such as <code>SKM_UEFN_Mannequin</code> from the Game Animation Sample) somewhere in your project, and a skeletal mesh on the clip's own skeleton.</td></tr>
 <tr><td>Length</td><td>Up to 10 seconds</td></tr>
-<tr><td>Frame rate</td><td>Any. The emote plays back at 30 frames a second.</td></tr>
+<tr><td>Frame rate</td><td>Any. The plugin samples the clip at 30 frames a second, and the emote plays back at 30 frames a second.</td></tr>
 <tr><td>Required track</td><td><code>pelvis</code></td></tr>
 <tr><td>Root motion</td><td>The <code>root</code> bone can move at most 50 cm from its first frame. Emotes play in place: the player doesn't travel with the root.</td></tr>
-<tr><td>Anim Notifies</td><td>Only <code>footstep_l</code>, <code>footstep_r</code>, <code>impact</code> and <code>loop_start</code> are kept, up to 64. Other notifies are left out.</td></tr>
+<tr><td>Anim Notifies</td><td>Only <code>footstep_l</code>, <code>footstep_r</code>, <code>impact</code> and <code>loop_start</code> are allowed, up to 64. Any other name is refused.</td></tr>
 <tr><td>Size</td><td>Up to 512 KiB once converted. Shorter clips that animate fewer bones are smaller.</td></tr>
 </tbody></table></div>
 
@@ -159,15 +184,16 @@
 
 <h3 id="emote-messages">Emote messages</h3>
 <div class="table-wrap"><table><thead><tr><th>Message</th><th>How to fix it</th></tr></thead><tbody>
-<tr><td>Problem: track "[bone]" is not a bone of the uefn skeleton. Emotes play on the UEFN mannequin. Retarget the animation onto SK_UEFN_Mannequin (right-click it > Retarget Animations) and upload the retargeted copy.</td><td>The clip isn't on the UEFN mannequin, a MetaHuman body or the UE5 Mannequin. As the message says, or re-export it on one of those three.</td></tr>
-<tr><td>Problem: the emote could not be retargeted onto the UEFN mannequin: [clip] is on the [metahuman or ue5mannequin] skeleton and emotes play on the UEFN mannequin, but this project has no UEFN mannequin to retarget it onto. Add SKM_UEFN_Mannequin (from the Game Animation Sample, or UEFN's mannequin) to the project and upload again.</td><td>Add a UEFN mannequin skeletal mesh to your project, then upload again.</td></tr>
+<tr><td>Problem: track "[bone]" is not a bone of the uefn skeleton. Emotes play on the UEFN mannequin. Retarget the animation onto SK_UEFN_Mannequin (right-click it > Retarget Animations) and upload the retargeted copy.</td><td>The clip isn't on the UEFN mannequin, a MetaHuman body, the UE5 Mannequin or the UE4 Mannequin. As the message says, or re-export it on one of those four.</td></tr>
+<tr><td>Problem: the emote could not be retargeted onto the UEFN mannequin: [clip] is on the [metahuman, ue5mannequin or ue4mannequin] skeleton and emotes play on the UEFN mannequin, but this project has no UEFN mannequin to retarget it onto. Add SKM_UEFN_Mannequin (from the Game Animation Sample, or UEFN's mannequin) to the project and upload again.</td><td>Add a UEFN mannequin skeletal mesh to your project, then upload again.</td></tr>
 <tr><td>Problem: the emote could not be retargeted onto the UEFN mannequin: no skeletal mesh in this project uses [clip]'s skeleton [skeleton], so it cannot be retargeted. Give the skeleton a preview mesh and upload again.</td><td>As the message says.</td></tr>
 <tr><td>Problem: the emote could not be retargeted onto the UEFN mannequin: IK Rig's batch retarget cannot be called (…): enable the IK Rig plugin and restart the editor.</td><td>Turn on the IK Rig plugin (Edit &gt; Plugins) and restart the editor.</td></tr>
 <tr><td>Problem: the clip is [N] s long, the limit is 10 s. Trim the animation (Animation editor > Remove frames) and try again.</td><td>As the message says.</td></tr>
 <tr><td>Problem: the clip has no "pelvis" track.</td><td>Key the <code>pelvis</code> bone.</td></tr>
 <tr><td>Problem: the root moves [N] cm, the limit is 50 cm. Emotes play in place: remove the root motion (or keep it within the limit).</td><td>As the message says.</td></tr>
 <tr><td>Problem: bone "[bone]" has a translation of [N] cm.</td><td>A bone is more than 100 m from its parent. Fix the stray key.</td></tr>
-<tr><td>Problem: [N] events, the limit is 64.</td><td>Remove some <code>footstep_l</code>, <code>footstep_r</code>, <code>impact</code> or <code>loop_start</code> notifies.</td></tr>
+<tr><td>Problem: [N] events, the limit is 64.</td><td>Remove some notifies.</td></tr>
+<tr><td>Problem: event "[name]" is not one of the allowed events. Allowed: footstep_l, footstep_r, impact, loop_start.</td><td>Rename or remove the notify.</td></tr>
 <tr><td>Problem: the clip is [N] bytes, the limit is 524288. Shorten it, or animate fewer bones.</td><td>As the message says.</td></tr>
 <tr><td>Problem: [animation] has no frames.</td><td>The Anim Sequence is empty.</td></tr>
 </tbody></table></div>
