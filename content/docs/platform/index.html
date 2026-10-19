@@ -25,7 +25,23 @@
 </ul>
 
 <h2 id="server-specs">Recommended server specs</h2>
-<p>If you plan to host a world yourself, these are rough estimates for the whole machine, including the operating system. For comparison, Mantle's own official servers reserve 1.5 vCPU and 3 GB of memory for the game server alone, at any player count up to 100.</p>
+<p>If you plan to host a world yourself, start with what we measured, then use the recommendations below. For comparison, Mantle's own official servers reserve 1.5 vCPU and 3 GB of memory for the game server alone, at any player count up to 100.</p>
+<h3>What we measured</h3>
+<p>We ran one Mantle game server on Linux, limited to 1.5 vCPU and 3 GiB of memory in Docker. Bots joined and walked around. They did not shoot, drive or chat. The tick stayed at 16.72 ms throughout, with no errors and no CPU throttling.</p>
+<div class="table-wrap"><table><thead><tr><th>Players</th><th>CPU (of one core)</th><th>Memory</th><th>Upload</th><th>Download</th></tr></thead><tbody>
+<tr><td class="num">10</td><td class="num">18%</td><td class="num">455 MB</td><td class="num">0.6 Mbit/s</td><td class="num">0.3 Mbit/s</td></tr>
+<tr><td class="num">25</td><td class="num">41%</td><td class="num">536 MB</td><td class="num">2.5 Mbit/s</td><td class="num">0.7 Mbit/s</td></tr>
+<tr><td class="num">50</td><td class="num">79% (84% at peak)</td><td class="num">700 MB</td><td class="num">6.4 Mbit/s</td><td class="num">1.1 Mbit/s</td></tr>
+</tbody></table></div>
+<p>The 50 player figures come from a run held for 6.5 minutes. Upload and download are measured at the server.</p>
+<p><b>What we did not measure:</b></p>
+<ul>
+<li>Anything above 50 players. The rows for 75 and 100 players below are estimates, not test results.</li>
+<li>Windows hosting. Every Windows figure below is an estimate.</li>
+<li>Real play. Weapons, vehicles and scripts doing work cost more per player than walking. Some bots also ran slower than normal at 50 players, so the real cost at 50 is probably a little higher than shown.</li>
+</ul>
+<h3>Recommendations</h3>
+<p>These figures are for the whole machine, including the operating system, and leave headroom above what we measured.</p>
 <div class="table-wrap"><table><thead><tr><th>Players</th><th>Linux CPU</th><th>Linux memory</th><th>Windows CPU</th><th>Windows memory</th><th>Upload speed</th></tr></thead><tbody>
 <tr><td class="num">Up to 10</td><td>1 core</td><td class="num">3 GB</td><td>2 cores</td><td class="num">4 GB</td><td class="num">5 Mbps</td></tr>
 <tr><td class="num">Up to 25</td><td>1 core</td><td class="num">3 GB</td><td>2 cores</td><td class="num">4 GB</td><td class="num">10 Mbps</td></tr>
