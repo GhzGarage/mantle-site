@@ -1,4 +1,4 @@
-<div class="callout tip"><strong>Scripting is in preview</strong><p>Luau, TypeScript, JavaScript, Python and visual scripts run in published places, in the Mantle client and on its servers. The current script API is 1.36, and the newest game release runs it. A feature that needs something a released game can't build yet is marked <span class="status wip">Next release</span> (see <a href="#versions">API versions</a>). Details on these pages may change before general release.</p></div>
+<div class="callout tip"><strong>Scripting is in preview</strong><p>Luau, TypeScript, JavaScript, Python and visual scripts run in published places, in the Mantle client and on its servers. The current script API is 1.37, and the newest game release runs it, so everything on these pages publishes and runs today. When a new version of the Mantle plugin adds members, they're marked <span class="status wip">Next release</span> until a game release carries them (see <a href="/docs/scripting/api/#versions">API versions</a>). Details on these pages may change before general release.</p></div>
     <h2 id="quick">Five-minute start</h2>
     <ol class="steps">
       <li><b>Find your level's folder</b><p>Your level lives somewhere under <code>Content/</code>, for example <code>Content/MyPlace/MyPlace.umap</code>. Its scripts go in a folder called <code>Scripts</code> right next to it: <code>Content/MyPlace/Scripts/</code>.</p></li>
@@ -34,7 +34,7 @@ Players.on_player(on_join)
         <p>If you only want players who join after you connect, use the <code>PlayerAdded</code> signal instead.</p>
       </li>
       <li><b>Check and publish</b><p>Run <b>Check All</b> in the Scripts panel (the <b>Mantle Scripts</b> button on the editor toolbar opens it), then publish with <b>Tools → Mantle → Publish</b>. Publishing creates a revision. When players join a session, it uses the published revision.</p></li>
-      <li><b>Join in a separate client</b><p>Start or request a session for your published place, then join it with the Mantle client. Anything a server script prints goes to the server log. Anything a client script prints goes to that client's log. Script messages appear under <code>LogMantleScript</code> and name the file they came from.</p><p>Scripts don't run when you press the editor's Play (PIE) button. To test them, publish and join the session with the Mantle client.</p></li>
+      <li><b>Join in a separate client</b><p>Start or request a session for your published place, then join it with the Mantle client. Anything a server script prints goes to the server log. Anything a client script prints goes to that client's log. Script messages appear under <code>LogMantleScript</code> and name the file they came from.</p><p>Scripts don't run when you press the editor's Play (PIE) button. To try them without publishing, choose <b>Tools → Mantle → Test Locally</b> (see <a href="/docs/creators/plugin/#test-locally">Testing with Test Locally</a>). To test them with other players, publish and join the session with the Mantle client.</p></li>
       <li><b>Edit, recheck and republish</b><p>Save your changes and publish a new revision. The next session uses it.</p></li>
     </ol>
     <h2 id="rules">The three rules</h2>
@@ -46,12 +46,13 @@ Players.on_player(on_join)
         <tr><td><b>3. Tags connect scripts to things.</b></td><td>Tag actors in the editor (Details → Actor → Tags), then <code>World:OnTagged("killbrick", …)</code>.</td></tr>
       </tbody>
     </table></div>
-    <p>The file extension picks the language: <code>.luau</code>/<code>.lua</code>, <code>.ts</code>, <code>.js</code> or <code>.py</code>. You can mix languages in one place.</p>
+    <p>The file extension picks the language: <code>.luau</code>/<code>.lua</code>, <code>.ts</code>, <code>.js</code> or <code>.py</code>, in lower case. You can mix languages in one place.</p>
     <p>Inside <code>Server/</code>, <code>Client/</code> and <code>Shared/</code>, organise files however you like (<code>Server/Combat/Guns.luau</code> runs). A few rules apply:</p>
     <ul>
       <li>Folder names must match exactly, including capital letters. <code>server/</code> isn't recognised.</li>
-      <li>Files placed directly in <code>Scripts/</code>, or outside <code>Server/</code>, <code>Client/</code> and <code>Shared/</code>, are skipped with a warning in the log.</li>
-      <li>Script paths can use only letters, digits, <code>_</code>, <code>.</code> and <code>-</code> (no spaces), up to 200 characters.</li>
+      <li>Files placed directly in <code>Scripts/</code>, or outside <code>Server/</code>, <code>Client/</code> and <code>Shared/</code>, don't run. <b>Tools → Mantle → Check this place</b> and Publish list each one as "Scripts/&lt;path&gt; is not inside Server/, Client/ or Shared/ (case-exact)." and you need to move or remove it. A file with any other extension gets "Scripts/&lt;path&gt; has an extension Mantle cannot map to a script language."</li>
+      <li>Script paths can use only the letters A to Z, digits, <code>_</code>, <code>.</code> and <code>-</code> (no spaces), up to 200 characters.</li>
+      <li>A script's name, which is its file name without the extension, is 1 to 80 characters.</li>
       <li>Each file can be up to 1 MiB.</li>
     </ul>
 <div class="code"><span class="tag">A level's scripts</span><pre data-example-kind="snippet">Content/MyPlace/
