@@ -31,7 +31,9 @@
 <tr><td>Save to Mantle</td><td>Uploads a private draft: "Saved to Mantle. Nobody can see it until you publish."</td></tr>
 <tr><td>Publish</td><td>Asks for optional revision notes, then checks, uploads and makes your world live: "Published revision N. Anyone can join it now." Progress shows in the <b>Mantle Publish</b> tab. See <a href="/docs/creators/publishing/">Publishing</a>.</td></tr>
 <tr><td>Convert vehicle</td><td>Turns the car skeletal mesh selected in the Content Browser, or a car placed in the level, into a Mantle vehicle asset. See <a href="/docs/creators/vehicles/">Vehicles</a>.</td></tr>
+<tr><td>Add Script Point</td><td>Adds a Script Point in front of you, to anchor a script package in the level. See <a href="/docs/creators/script-packages/#script-points">Script Points</a>.</td></tr>
 <tr><td>Cosmetics...</td><td>Opens the <b>Mantle Cosmetics</b> tab for publishing avatar items. See <a href="/docs/creators/avatar-items/">Making avatar items</a>.</td></tr>
+<tr><td>Library...</td><td>Opens the <b>Mantle Library</b> tab: find vehicles, weapons and script packages, get other creators' public ones, and add them to this place's storage. Nothing of another creator's is saved into your project. See <a href="/docs/creators/script-packages/#use">Using another creator's package</a>.</td></tr>
 <tr><td>Sign in with creator token... / Sign out</td><td>See <a href="#sign-in">Signing in to publish</a>.</td></tr>
 </tbody></table></div>
 <ul>
@@ -55,6 +57,7 @@
 <tr><td>Error</td><td>A World Partition level with cells the editor hasn't loaded: "This is a World Partition level, and N actors in cells the editor has not loaded … would be left out of the place." Load the whole level (select every cell in the World Partition window and choose Load Region From Selection), then check again.</td></tr>
 <tr><td>Error</td><td>Script files with an unknown extension, or outside the <code>Server/</code>, <code>Client/</code> or <code>Shared/</code> folders (folder names must match exactly, including capitals). Also visual script compile errors and <code>require</code> errors.</td></tr>
 <tr><td>Error</td><td>Files in the <code>UI/</code> folder that can't be published: too many, too large, a name Mantle can't use, an image that isn't really PNG or JPEG, or a document players' games would refuse to open. A <code>.rml</code> or <code>.rcss</code> file inside <code>Scripts/</code> is an error too: "It is a UI file: move it to the UI/ folder beside Scripts/." See <a href="/docs/scripting/ui-documents/#uidoc-limits">UI documents: limits and checks</a>.</td></tr>
+<tr><td>Error</td><td>Script packages in the <code>Packages/</code> folder and Script Points that can't be published, such as a package with no <code>package.json</code> or a Script Point naming a package the place doesn't have. See <a href="/docs/creators/script-packages/#checks">Script packages: what Check this place catches</a>.</td></tr>
 <tr><td>Warning</td><td>BSP brushes, volumes, placed pawns and cameras are named, for example "is BSP geometry, which Mantle does not publish." The rest of the place still publishes without them.</td></tr>
 <tr><td>Warning</td><td>Blueprint logic, and prefab components Mantle drops: "Blueprint logic isn't published: the place gets this actor's components, not its behaviour." See <a href="/docs/creators/building/#prefabs">Blueprint prefabs</a>.</td></tr>
 <tr><td>Warning</td><td>"Mantle provides the sky; this actor's settings are not published." (Sky Atmosphere, Sky Light, Volumetric Cloud, Exponential Height Fog)</td></tr>

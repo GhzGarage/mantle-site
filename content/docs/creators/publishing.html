@@ -6,11 +6,14 @@
 <ol class="steps">
 <li><b>Check this place</b><p>Runs the same checks as "Check this place". If anything fails, you'll see "This place has N problem(s) to fix first."</p></li>
 <li><b>Prepare meshes and materials</b><p>Converts the meshes and materials from your project that the level uses. A level built only from library assets skips this.</p></li>
-<li><b>Upload to Mantle</b><p>Uploads the converted files, your <a href="/docs/creators/building/#script-assets">Script Assets</a>, every script in the level's <code>Scripts</code> folder, and the documents, stylesheets and images in its <code>UI</code> folder (see <a href="/docs/scripting/ui-documents/">UI documents</a>). Files you've uploaded before aren't sent again.</p></li>
+<li><b>Upload to Mantle</b><p>Uploads the converted files, your <a href="/docs/creators/building/#script-assets">Script Assets</a>, every script in the level's <code>Scripts</code> folder and its <code>Packages</code> folder (see <a href="/docs/creators/script-packages/">Script packages</a>), and the documents, stylesheets and images in its <code>UI</code> folder (see <a href="/docs/scripting/ui-documents/">UI documents</a>). Files you've uploaded before aren't sent again.</p></li>
 <li><b>Mantle processes and screens them</b><p>Mantle processes the files and screens textures (including UI images), scripts and UI documents. Something that needs a moderator shows as "waiting for a Mantle moderator to look at it."</p></li>
 <li><b>Publish</b><p>The first time you publish a level, this creates a new world with the level's name. Later publishes update that same world. Mantle saves your draft and, for Publish, makes it live as a new, numbered revision.</p></li>
 </ol>
 <p>When it works, you'll see "Saved to Mantle. Nobody can see it until you publish." or "Published revision N. Anyone can join it now." If it stops, the tab says why and what to do. <b>Cancel</b> stops at any point without publishing anything, and <b>Publish again</b> carries on from where it stopped: everything already uploaded stays on Mantle.</p>
+
+<h3 id="packages">Script packages <span class="status live">Live</span></h3>
+<p>When a place goes live, each <a href="/docs/creators/script-packages/">script package</a> in the level's <code>Packages/</code> folder is published as a library item, public or private, in the same step that asks about vehicles and weapons, and the place stores it under the folder's name. A later publish adds a new version only when a package's files or <code>package.json</code> changed. <b>Save to Mantle</b> doesn't publish packages, so a draft leaves out the Script Points of packages that aren't stored yet. See <a href="/docs/creators/script-packages/#publish">Publishing a package</a>.</p>
 
 <h3 id="agent-tools">Using an AI agent <span class="status wip">In progress</span></h3>
 <p>The Mantle plugin includes tools that Unreal's own Model Context Protocol (MCP) server can offer to an AI agent, such as Claude Code, so you can ask it to check or publish your place. It uses Epic's experimental <b>Model Context Protocol</b> and <b>Toolset Registry</b> plugins, which are off by default. Mantle doesn't turn them on for you, and without them the Mantle plugin works exactly as before.</p>
@@ -45,6 +48,9 @@
 <tr><td>Files a moderator removed from your account</td><td>N file(s) this place uses are not yours on Mantle, so nothing went live. The list below names them.</td></tr>
 <tr><td>Scripts still being screened</td><td>Your changes are saved, but Mantle is still screening this place's new scripts, so it has not gone live yet. Choose Publish again in a minute.</td></tr>
 <tr><td>Scripts rejected</td><td>Some scripts in this place were rejected in review. Remove them to publish.</td></tr>
+<tr><td>A script package's scripts still being screened</td><td>Mantle is still screening the scripts of package '…', so nothing went live yet. Choose Publish again in a minute; nothing is uploaded twice.</td></tr>
+<tr><td>A stored item the place's owner can't use: not theirs, not got from the library, or removed from their library</td><td>This item is not available to this place's owner: it does not exist, is not theirs, or they have not got it from the library. Get it first, or remove it from the place's storage.</td></tr>
+<tr><td>A stored package's setting, or a Script Point's parameter, that the package doesn't declare, that doesn't fit its type, range or options, or that's required and missing</td><td>This place's storage settings or ScriptPoint parameters don't fit the item they're set on. KillBricks needs RoundLength. Set it in this storage entry's settings. First: /storage/0/settings/RoundLength.</td></tr>
 <tr><td>Too many uploads in an hour</td><td>Mantle limits how much one account uploads per hour, and this account can upload again in about [time]. See <a href="/docs/creators/hosting-data/#official-hosting">upload limits</a>.</td></tr>
 <tr><td>Draft changed by another save while publishing</td><td>Your draft changed while this was running. Try again.</td></tr>
 </tbody></table></div>

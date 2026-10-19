@@ -43,6 +43,50 @@
 <li><b>Saved data</b> is protected so that two servers can't silently overwrite each other's changes. See <a href="/docs/creators/hosting-data/#datastore">Saved data</a> for the limits.</li>
 </ul>
 
+<h2 id="library">The library: vehicles, weapons and script packages <span class="status live">Live</span></h2>
+<p>The library holds three kinds of item: <code>vehicle</code>, <code>weapon</code> and <code>script</code> (a <a href="/docs/creators/script-packages/">script package</a>). The Mantle plugin and the ASSETS tab use these routes for you; this section is for anyone building their own tools.</p>
+<ul>
+<li><b>Browsing:</b> <code>GET /library/items?kind=script</code> and <code>GET /library/items/mine?kind=script</code> list script packages, as they do vehicles and weapons. Each card carries <code>price</code> (always <code>0</code>, free, for now) and, on an item you got, <code>source</code> (<code>"free"</code>).</li>
+<li><b>Details:</b> <code>GET /library/items/{itemId}</code> also answers <code>storedByMyPlaces</code>: <code>[{id, name}]</code>, your own places whose live or staged version stores any version of the item.</li>
+<li><b>Versions:</b> a script package's versions carry <code>scripts</code> and <code>manifest</code> and no <code>primaryAssetId</code>. Versions never change once made.</li>
+<li><b>Removing from your library:</b> <code>DELETE /library/items/{itemId}/get</code> answers 204, and again 204 if you call it twice, or for your own item (which stays yours). Your places that store the item keep running, and their next publish is refused until the entry is removed from storage. Player sign-ins and creator tokens can both use it.</li>
+</ul>
+
+<h3 id="library-script-items">Publishing a script package</h3>
+<p><code>POST /library/items</code> with <code>kind: "script"</code>, and <code>POST /library/items/{itemId}/versions</code> for a script package, take:</p>
+<ul>
+<li><b><code>scripts</code>:</b> 1 to 64 files, each <code>{path, side, language, source}</code>. The <code>path</code> starts with <code>Server/</code>, <code>Client/</code> or <code>Shared/</code>, matching <code>side</code> (<code>server</code>, <code>client</code> or <code>shared</code>) exactly; paths are unique ignoring capital letters, up to 200 characters, and can't be a visual-script <code>.graph</code>. <code>language</code> is <code>luau</code>, <code>javascript</code>, <code>typescript</code> or <code>python</code> (a TypeScript file's source is its compiled JavaScript). <code>source</code> is the <code>src_</code> id of an approved script upload (<code>POST /scripts</code>). You don't have to be the one who uploaded it: identical scripts are stored once and every one is screened, so owning the upload proves nothing.</li>
+<li><b><code>manifest</code>:</b> <code>{name, description, parameters, settings}</code>, the package's <code>package.json</code>, with up to 16 parameters and 16 settings. Each option is <code>{name, type, default, help, required, min, max, options}</code>: <code>type</code> is <code>string</code>, <code>number</code>, <code>boolean</code> or <code>choice</code>; <code>default</code> and <code>help</code> are text, and a <code>default</code> of <code>""</code> means none; <code>required</code> is always present; <code>min</code> and <code>max</code> (numbers only) and <code>options</code> (choices only, 2 to 32 entries) appear only when set. Names are unique in each list ignoring capital letters.</li>
+</ul>
+<p>A script package body can't carry <code>primaryAssetId</code> or <code>dependencyAssetIds</code>, and a vehicle or weapon body can't carry <code>scripts</code> or <code>manifest</code>: both are refused with <code>item_field_not_allowed</code>.</p>
+<div class="table-wrap"><table><thead><tr><th>Code</th><th>Status</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>invalid_script</code></td><td>400</td><td>A file breaks a rule above, for example "A script's side is server, client or shared." The answer's <code>field</code> names it, such as <code>scripts[2].path</code>.</td></tr>
+<tr><td><code>too_many_scripts</code></td><td>400</td><td>"A script item version holds at most 64 script files."</td></tr>
+<tr><td><code>invalid_manifest</code></td><td>400</td><td>The manifest breaks a rule, for example "A parameter's type is string, number, boolean or choice.", with <code>field</code> naming it.</td></tr>
+<tr><td><code>script_unavailable</code></td><td>409</td><td>A source doesn't exist, isn't approved yet, or was refused by moderation.</td></tr>
+<tr><td><code>script_language_mismatch</code></td><td>409</td><td>A source is stored as a different language than the file says.</td></tr>
+</tbody></table></div>
+
+<h3 id="library-storage">Stored packages and Script Points in a place</h3>
+<ul>
+<li><b>Storage:</b> a place file's <code>storage</code> lists up to 32 <code>{name, item, version}</code> entries, script packages included. A script package's entry can also carry <code>settings</code>: <code>{key: string}</code>, at most 16 keys, values up to 256 characters. A setting left out takes the manifest's default.</li>
+<li><b>Script Points:</b> an entity of type <code>ScriptPoint</code> has <code>storageItem</code> (the name of a storage entry, which must be a script package), <code>parameters</code> (an object of text values, at most 16, keys matching <code>^[A-Za-z][A-Za-z0-9_]{0,31}$</code>, values up to 256 characters) and <code>enabled</code> (true by default). A place has at most 64.</li>
+<li><b>Checked at publish:</b> publishing and previews hold each stored package's settings, and each enabled Script Point's parameters, to the manifest of the version the place pins. A refusal answers 409 with the first issue's code and an <code>issues</code> list, each issue with a <code>path</code> and a plain-words <code>message</code>. Switched-off Script Points aren't checked. Promoting or rolling back to a sealed revision doesn't check them again, since neither the revision nor the versions it pins can change.</li>
+<li><b>Resolving storage:</b> a script package's entry answers <code>kind: "script"</code>, <code>scripts</code> (every file of the package, all sides; the game keeps only the ones its side runs), <code>manifest</code> and the <code>settings</code> the revision sealed. A package Mantle has taken down answers <code>scripts: []</code>, so it stops running in every place.</li>
+</ul>
+<div class="table-wrap"><table><thead><tr><th>Code</th><th>Where</th><th>Example message</th></tr></thead><tbody>
+<tr><td><code>storage_settings_not_allowed</code></td><td><code>/storage/&lt;i&gt;/settings</code></td><td>Harbor_Pickup is a vehicle, and only a script package takes settings. Remove the settings from this storage entry.</td></tr>
+<tr><td><code>storage_setting_unknown</code></td><td rowspan="3"><code>/storage/&lt;i&gt;/settings/&lt;key&gt;</code></td><td>KillBricks has no setting called Speeed. Remove it from this storage entry's settings. (Or: "… Did you mean Speed? Names match letter case exactly.")</td></tr>
+<tr><td><code>storage_setting_invalid</code></td><td>KillBricks: Speed is at most 10, and 12 is above that.</td></tr>
+<tr><td><code>storage_setting_required</code></td><td>KillBricks needs RoundLength. Set it in this storage entry's settings.</td></tr>
+<tr><td><code>script_point_parameter_unknown</code></td><td rowspan="3"><code>/entities/&lt;i&gt;/properties/parameters/&lt;key&gt;</code></td><td>Hazards has no parameter called Radus. Did you mean Radius? Names match letter case exactly.</td></tr>
+<tr><td><code>script_point_parameter_invalid</code></td><td>Hazards: Radius is a number, and "wide" is not one.</td></tr>
+<tr><td><code>script_point_parameter_required</code></td><td>Hazards needs Radius. Set it in this ScriptPoint's parameters.</td></tr>
+</tbody></table></div>
+<ul>
+<li><b>Servers:</b> a dedicated server may download the server and shared files of a package its signed revision stores, as well as the place's own scripts. It never gets a package's client files that way.</li>
+</ul>
+
 <h2 id="voice-chat">Chat and voice <span class="status live">Live</span></h2>
 <p>Text chat and voice are tied to the session you're playing in.</p>
 <ul>
