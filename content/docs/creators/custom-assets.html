@@ -31,8 +31,8 @@
 
 <h2 id="limits">Limits</h2>
 <div class="table-wrap"><table><thead><tr><th>Limit</th><th>Value</th><th>If you go over</th></tr></thead><tbody>
-<tr><td>Triangles per mesh</td><td class="num">500,000</td><td>Error in Check this place</td></tr>
-<tr><td>Vertices per mesh</td><td class="num">1,500,000</td><td>Error in Check this place</td></tr>
+<tr><td>Triangles per mesh</td><td class="num">500,000</td><td>Mantle publishes the mesh's first lower LOD that fits or, failing that, a reduced copy, with a warning. It's an error only if the mesh can't be reduced. See <a href="#meshes">Meshes</a>.</td></tr>
+<tr><td>Vertices per mesh</td><td class="num">1,500,000</td><td>The same</td></tr>
 <tr><td>Material slots per mesh</td><td class="num">8</td><td>Error in Check this place</td></tr>
 <tr><td>Lower-detail LODs per mesh</td><td>2, at most 250,000 and 125,000 triangles</td><td>That LOD is left off, with a warning</td></tr>
 <tr><td>Simple collision per mesh</td><td>64 boxes, spheres and capsules, and 64 convex hulls of up to 255 points (8,192 in all)</td><td>The mesh collides with its triangles, with a warning</td></tr>
@@ -42,7 +42,7 @@
 <tr><td>Emissive strength</td><td>Up to 100</td><td>Capped, with a warning</td></tr>
 <tr><td>Texture tiling and offset</td><td>Up to 1024</td><td>Clamped, with a warning</td></tr>
 <tr><td>Sound</td><td>60 seconds, 22,050 to 48,000 Hz, mono or stereo, 12 MiB; 64 MiB decoded per place</td><td>Error in Check this place</td></tr>
-<tr><td>Uploads per hour</td><td>5,000 files (meshes, materials, textures, sounds and the rest), and 2 GiB in total</td><td>Publish pauses and carries on by itself. See <a href="#rate-limits">Upload limits</a>.</td></tr>
+<tr><td>Uploads per hour</td><td>5,000 files (meshes, materials, textures, sounds, skeletal meshes, animation clips, landscapes, vehicles and weapons), and 2 GiB in total</td><td>Publish pauses and carries on by itself. See <a href="#rate-limits">Upload limits</a>.</td></tr>
 </tbody></table></div>
 <p>Only the material slots the full-detail mesh actually draws with count.</p>
 
@@ -50,9 +50,10 @@
 
 <h3 id="meshes">Meshes</h3>
 <ul>
-<li><b>Levels of detail:</b> the mesh's own LOD1 and LOD2 are published with the screen sizes set in the editor, so players far away see the lighter versions. A LOD with more triangles than the one before it, or past the limits above, is left off with a warning: "Mesh '…': LOD N was left off because …; players see the LODs before it at every distance." UV channel 1 and painted vertex colours are published too.</li>
-<li><b>Nanite:</b> players see a Nanite mesh's fallback mesh. If it looks too coarse, raise <b>Fallback Triangle Percent</b> in the mesh's Nanite settings. If it's over the triangle limit, lower it.</li>
-<li><b>Collision:</b> a mesh's simple collision (boxes, spheres, capsules and convex hulls) is published, unless its Collision Complexity is <b>Use Complex As Simple</b>. A mesh without simple collision, or with more than the limits above, collides using its own triangles. Tapered capsules and level sets are left out, with a warning.</li>
+<li><b>Levels of detail:</b> the mesh's own LOD1 and LOD2 are published with the screen sizes set in the editor, so players far away see the lighter versions. A LOD with more triangles than the one before it, or past the limits above, is left off with a warning: "Mesh '…': LOD N was left off because …; players see the LODs before it at every distance." (when more LODs follow, it says "LOD N and the LODs after it"). If the LODs make the file bigger than 64 MB, only LOD0 is published, with a warning. UV channel 1 and painted vertex colours are published too.</li>
+<li><b>Over the triangle or vertex limit:</b> Mantle doesn't change your mesh. It publishes the mesh's first lower LOD that fits (and draws with the same material slots), which then becomes its LOD0, and the LODs after it move up. If no LOD fits, it reduces a copy of the mesh to about 90% of the limit. The copy is published as a single LOD, so players see it at every distance. Either way, Check this place warns you. If the mesh can't be reduced, that's an error, and the message says why.</li>
+<li><b>Nanite:</b> players see a Nanite mesh's fallback mesh. If it looks too coarse, raise <b>Fallback Triangle Percent</b> in the mesh's Nanite settings. If the fallback is over the triangle limit, Mantle reduces it as above, or you can lower the percent.</li>
+<li><b>Collision:</b> a mesh's simple collision (boxes, spheres, capsules and convex hulls) is published, unless its Collision Complexity is <b>Use Complex As Simple</b>. A mesh without simple collision, or with more than the limits above, collides using its own triangles. Tapered capsules, level sets and shapes with no volume are left out, with a warning.</li>
 </ul>
 
 <h3 id="materials">Materials</h3>
@@ -104,16 +105,17 @@
 <h3 id="check-errors">Errors in Check this place</h3>
 <p>These stop a publish before anything is uploaded.</p>
 <div class="table-wrap"><table><thead><tr><th>Message</th><th>How to fix it</th></tr></thead><tbody>
-<tr><td>Mesh '…' (used by '…') has N triangles; a place mesh may have at most 500,000.</td><td>"Use a lower-detail version of it, or reduce it with the mesh editor's LOD tools (for Nanite meshes, lower Fallback Triangle Percent)."</td></tr>
-<tr><td>Mesh '…' (used by '…') has N vertices; a place mesh may have at most 1,500,000.</td><td>"Use a lower-detail version of it."</td></tr>
+<tr><td>Mesh '…' (used by '…') has N triangles; a place mesh may have at most 500,000.</td><td>"Use a lower-detail version of it, or reduce it with the mesh editor's LOD tools (for Nanite meshes, lower Fallback Triangle Percent)." Mantle only shows this when it couldn't reduce the mesh itself, and adds "Mantle couldn't reduce it automatically: [reason]."</td></tr>
+<tr><td>Mesh '…' (used by '…') has N vertices; a place mesh may have at most 1,500,000.</td><td>"Use a lower-detail version of it." Again with the reason Mantle couldn't reduce it.</td></tr>
 <tr><td>Mesh '…' (used by '…') has N material slots; a place mesh may have at most 8.</td><td>"Give it 8 materials or fewer (Merge Actors can bake several into one)."</td></tr>
-<tr><td>Mesh '…' (used by '…')'s material sections share vertices, which Mantle's mesh format cannot keep apart.</td><td>"Re-import the mesh, or give it one material."</td></tr>
 <tr><td>Mesh '…' (used by '…') has no render data, so it cannot be converted.</td><td>"Open the mesh in the editor once (or re-import it), then try again."</td></tr>
 </tbody></table></div>
 
 <h3 id="check-warnings">Warnings in Check this place</h3>
 <p>These don't stop a publish.</p>
 <div class="table-wrap"><table><thead><tr><th>Message</th><th>What to do</th></tr></thead><tbody>
+<tr><td>Mesh '…' (used by '…') has N triangles, more than the 500,000 a place mesh may have, so its LOD N (N triangles) is published instead. (It can name vertices too.)</td><td>"Nothing to do: your mesh is unchanged. To publish a more detailed version, make a LOD 0 that fits the limit in the mesh editor."</td></tr>
+<tr><td>Mesh '…' (used by '…') had N triangles, more than the 500,000 a place mesh may have, so Mantle reduced a copy to N triangles for publishing. Your mesh is unchanged.</td><td>"Nothing to do. If the reduced mesh looks too rough, make a LOD that fits the limit in the mesh editor and Mantle publishes that instead."</td></tr>
 <tr><td>Mesh '…' (used by '…') uses Nanite, so it exports as its fallback mesh (N triangles), which is what players will see.</td><td>"If it looks too coarse up close, raise Fallback Triangle Percent in the mesh's Nanite settings."</td></tr>
 <tr><td>Texture '…' (in material '…') is WxH; it is downscaled to 2048² when published.</td><td>"Nothing to do: Mantle textures are at most 2048 on a side. Detail finer than that is lost."</td></tr>
 <tr><td>Material '…' (used by '…'): followed by one of:
@@ -131,9 +133,14 @@
 <li>its [hair / cloth / eye / single layer water / thin translucent] shading becomes standard shading.</li>
 <li>its clear coat shading becomes standard shading; Mantle keeps a clear coat as car paint only on an opaque, one-sided material.</li>
 <li>it is unlit; Mantle shows it as a glowing material that lighting still touches.</li>
-<li>its [additive / modulate / alpha composite / alpha holdout / coloured transmittance] blending becomes ordinary translucency.</li>
+<li>its [modulate / alpha composite / alpha holdout / coloured transmittance] blending becomes ordinary translucency.</li>
 <li>it is not a surface material (a decal, light function or post-process material), so it is flattened as a plain surface.</li>
+<li>it varies its look per instance (Per Instance Random, Custom Data or Fade Amount), which a published material cannot, so it publishes at the average: Per Instance Random as 0.5, Custom Data as its default value.</li>
+<li>it is a lit additive material; Mantle draws additive blending unlit (the glow, with no lighting on the surface), so its lighting is lost.</li>
+<li>its Fresnel rim glow is dropped, so the edges no longer glow brighter than the face (the baked glow is seen face-on, where a Fresnel is 0).</li>
+<li>it draws the scene behind it (Scene Color), which Mantle cannot, so it publishes as tinted see-through glass.</li>
 </ul></td><td>"It still publishes. Nothing to do unless the effect matters to how your place looks; if it does, bake the effect into the material's textures or pick another material."</td></tr>
+<tr><td>Material '…' (used by '…'): it is a Clear Coat material, so it publishes as Mantle's car-paint shading (a clear coat over its base colour).</td><td>"Nothing to do. Its Clear Coat and Clear Coat Roughness carry over. Without flake parameters it is a plain clear coat with no flakes; for metallic flakes, give it FlakeDensity, FlakeSize or FlakeTint parameters (Mantle's defaults fill in any it lacks)."</td></tr>
 </tbody></table></div>
 
 <h3 id="prepare-messages">Messages while preparing</h3>
@@ -141,6 +148,7 @@
 <div class="table-wrap"><table><thead><tr><th>Level</th><th>Message</th><th>How to fix it</th></tr></thead><tbody>
 <tr><td>Error</td><td>Mesh '…' is N MB once converted; an upload may be at most 64 MB.</td><td>"Use a lower-detail version of it."</td></tr>
 <tr><td>Error</td><td>Mesh '…' could not be converted: [reason]</td><td>"Fix the mesh as the message says, or replace it, then try again."</td></tr>
+<tr><td>Error</td><td>Mesh '…' could not be converted: its smaller version does not draw with the same materials.</td><td>"Use a lower-detail version of the mesh, or give it a LOD that fits and draws with the same materials."</td></tr>
 <tr><td>Error</td><td>A mesh this place uses could not be loaded. / A material this place uses could not be loaded.</td><td>"Check the level for missing assets, then try again."</td></tr>
 <tr><td>Warning</td><td>Material '…' could not be flattened ([reason]), so it publishes as plain grey.</td><td>"Try a simpler material on these meshes, or report it with the log if it keeps happening."</td></tr>
 <tr><td>Warning</td><td>Material '…': its [part] part is dropped.</td><td rowspan="8">"It still publishes. Nothing to do unless it matters to how your place looks."</td></tr>
@@ -151,8 +159,12 @@
 <tr><td>Warning</td><td>Material '…': its texture tiling is beyond what Mantle keeps (1024), so it is clamped.</td></tr>
 <tr><td>Warning</td><td>[texture] ([use] of material '…') was re-encoded at JPEG quality N to fit the 8 MB upload limit. / … was downscaled to [size] to fit the 8 MB upload limit.</td></tr>
 <tr><td>Warning</td><td>Material '…': its [base colour / normal map / emissive] image could not be read, so it is left out.</td></tr>
-<tr><td>Warning</td><td>Mesh '…': LOD N was left off because …; players see the LODs before it at every distance. / Mesh '…': its LOD screen sizes (…) do not each fall below the one before, so only LOD0 was published.</td><td rowspan="2">"It still publishes." Reduce the LOD, or fix its screen sizes in the mesh editor, if the lighter versions matter.</td></tr>
-<tr><td>Warning</td><td>Mesh '…' has more simple collision than a place mesh may carry (…), so it collides with its triangles instead.</td></tr>
+<tr><td>Warning</td><td>Mesh '…': LOD N was left off because …; players see the LODs before it at every distance. / Mesh '…': its LOD screen sizes (…) do not each fall below the one before, so only LOD0 was published.</td><td>"It still publishes." Reduce the LOD, or fix its screen sizes in the mesh editor, if the lighter versions matter.</td></tr>
+<tr><td>Warning</td><td>Mesh '…' has more simple collision than a place mesh may carry (…), so it collides with its triangles instead.</td><td>"It still publishes." Simplify its collision in the mesh editor (fewer or smaller convex hulls) for cheaper collision.</td></tr>
+<tr><td>Warning</td><td>Mesh '…': part of its simple collision was left out: [what].</td><td>"It still publishes with the rest." Replace those shapes in the mesh editor's collision menu if they matter.</td></tr>
+<tr><td>Warning</td><td>Mesh '…' with its LODs is N MB once converted, over the 64 MB upload limit, so only LOD0 was published.</td><td>"It still publishes." Use lower-detail LODs to publish them.</td></tr>
+<tr><td>Warning</td><td>Material '…' publishes as car paint, which keeps one texture tiling for all its textures, full-strength normal and occlusion, the first UV channel and no vertex-colour tint, so those parts of it are dropped.</td><td>"It still publishes." Nothing more to do unless it matters to how your place looks.</td></tr>
+<tr><td>Warning</td><td>Material '…' was flattened without a renderer, so none of its textures could be baked.</td><td>"Publish from the editor with a window open to get its textures."</td></tr>
 </tbody></table></div>
 
 <h3 id="upload-messages">Messages while uploading and processing</h3>
@@ -160,6 +172,7 @@
 <div class="table-wrap"><table><thead><tr><th>Message</th><th>How to fix it</th></tr></thead><tbody>
 <tr><td>'…' did not pass Mantle's content screening, so a place cannot go live with it. Replace it or remove what uses it, then Publish again.</td><td>A texture was rejected. Replace it or stop using it.</td></tr>
 <tr><td>Mantle could not process '…': [reason]. Fix it as that says, or replace it, then Publish again.</td><td>As the message says.</td></tr>
+<tr><td>'…' uses a texture your account holds no claim on (a moderator removed it). Replace that texture, then Publish again.</td><td>Replace the texture the material uses.</td></tr>
 <tr><td>'…' was removed from your account by a Mantle moderator (usually after a licence complaint), so it cannot be uploaded or used again. Remove it from the level or replace it, then Publish again.</td><td>See <a href="#removed">If a file is rejected or removed</a>.</td></tr>
 <tr><td>'…' is too large for Mantle ([reason]). Lower its resolution or simplify it, then Publish again.</td><td>As the message says.</td></tr>
 <tr><td>Material '…' goes live without its [base colour / normal / roughness, metal and occlusion / emissive] map. '…' has exactly the same pixels as an image already on Mantle for another use, and Mantle prepares each image for one use only.</td><td>"To keep the map, give '…' pixels that differ from the other image (a copy with a small change is enough), then Publish again." This one is a warning: the place still goes live.</td></tr>
@@ -193,7 +206,7 @@
 <div class="callout tip"><strong>Only use assets you have the rights to</strong><p>Everything you upload is tied to your account. Use your own work, or Fab and marketplace content whose licence lets you use it in your game.</p></div>
 
 <h3 id="credits">Crediting assets <span class="status live">Live</span></h3>
-<p>If an asset's licence asks for credit, such as Creative Commons BY, add it in <b>Project Settings → Plugins → Mantle Credits</b>. Each rule names a content folder, such as <code>/Game/Fab/Crates</code>, and the <b>Attribution</b> players are shown for everything under it: plain text, one line, at most 500 characters, for example the title, author, source and licence. The deepest matching folder wins. One asset can override its folder with the <code>MantleAttribution</code> metadata tag on its package (an empty tag means no credit). Credits show on the world page of every place that uses the asset. Nothing is credited unless a rule or tag says so. The rules are saved with the project, so everyone working on it shares them.</p>
+<p>If an asset's licence asks for credit, such as Creative Commons BY, add it in <b>Project Settings → Plugins → Mantle Credits</b>. Each rule names a content folder, such as <code>/Game/Fab/Crates</code>, and the <b>Attribution</b> players are shown for everything under it: plain text, one line, at most 500 characters, for example the title, author, source and licence. The deepest matching folder wins. One asset can override its folder with the <code>MantleAttribution</code> metadata tag on its package (an empty tag means no credit). Credits show on the world page of every place that uses the asset. Nothing is credited unless a rule or tag says so, and Mantle never guesses a licence. The rules are saved with the project, so everyone working on it shares them. A credit over 500 characters stops the publish before anything is uploaded: "The credit for '…' is longer than the 500 characters Mantle shows. Shorten its Credits rule (Project Settings > Plugins > Mantle Credits) or its MantleAttribution tag, then Publish again."</p>
 
 <h2 id="rate-limits">Upload limits</h2>
-<p>Each account can upload up to 5,000 files (meshes, materials, textures, sounds and the rest) and 2 GiB per hour. Files your account already has on Mantle aren't sent again, so they don't count. A big pack's first publish can reach the limit. When it does, Publish pauses by itself and shows "Mantle's hourly upload limit is reached. Uploading continues by itself at HH:MM (in about N minutes); you can keep working meanwhile." If the wait would be longer than about an hour, it stops instead and tells you when to try again. Everything uploaded so far is kept. See <a href="/docs/creators/hosting-data/#official-hosting">Official hosting</a> for the other limits.</p>
+<p>Each account can upload up to 5,000 files (meshes, materials, textures, sounds, skeletal meshes, animation clips, landscapes, vehicles and weapons) and 2 GiB per hour. Files your account already has on Mantle aren't sent again, so they don't count. A big pack's first publish can reach the limit. When it does, Publish pauses by itself and shows "Mantle's hourly upload limit is reached. Uploading continues by itself at HH:MM (in about N minutes); you can keep working meanwhile." If the wait would be longer than about an hour, it stops instead and tells you when to try again. Everything uploaded so far is kept. See <a href="/docs/creators/hosting-data/#official-hosting">Official hosting</a> for the other limits.</p>
