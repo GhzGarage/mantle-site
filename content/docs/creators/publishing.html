@@ -13,15 +13,15 @@
 <p>When it works, you'll see "Saved to Mantle. Nobody can see it until you publish." or "Published revision N. Anyone can join it now." If it stops, the tab says why and what to do. <b>Cancel</b> stops at any point without publishing anything, and <b>Publish again</b> carries on from where it stopped: everything already uploaded stays on Mantle.</p>
 
 <h3 id="which-world">Which world a publish goes to <span class="status live">Live</span></h3>
-<p>The editor remembers which world each level publishes to, so a later publish updates it instead of making a copy. The link is kept in your own editor settings for the project, not in the project's files, and it's saved per Mantle account and per level path. So Publish makes a <b>new</b> world when:</p>
+<p>The editor remembers which world each level publishes to, so a later publish updates it instead of making a copy. The link is kept in your own editor settings for the project, not in the files you check in, and it's saved per Mantle account and per level path. So Publish makes a <b>new</b> world when:</p>
 <ul>
 <li>you publish from another PC, because the link isn't there.</li>
 <li>a teammate publishes the level from their account, because the link is yours only.</li>
 <li>you rename or move the level, because its path changed.</li>
-<li>you open a fresh checkout of the project, because the link isn't in the project's files.</li>
+<li>you open a fresh checkout of the project, because the link isn't in the files you check in.</li>
 <li>you deleted the world. The publish stops first and tells you (see <a href="#publish-blocked">What stops a publish</a>), and the next one creates a new world.</li>
 </ul>
-<p>You can see the saved links under <b>Project Settings → Plugins → Mantle</b>.</p>
+<p>You can see the saved links under <b>Editor Preferences → Plugins → Mantle</b>.</p>
 
 <h3 id="packages">Script packages <span class="status live">Live</span></h3>
 <p>When a place goes live, each <a href="/docs/creators/script-packages/">script package</a> in the level's <code>Packages/</code> folder is published as a library item, public or private, in the same step that asks about vehicles and weapons, and the place stores it under the folder's name. A later publish adds a new version only when a package's files or <code>package.json</code> changed. <b>Save to Mantle</b> doesn't publish packages, so a draft leaves out the Script Points of packages that aren't stored yet. See <a href="/docs/creators/script-packages/#publish">Publishing a package</a>.</p>
@@ -30,7 +30,7 @@
 <p>The Mantle plugin includes tools that Unreal's own Model Context Protocol (MCP) server can offer to an AI agent, such as Claude Code, so you can ask it to check or publish your place. It uses Epic's experimental <b>Unreal MCP</b> plugin, which needs Epic's experimental <b>Toolset Registry</b> plugin. Both are off by default. Mantle doesn't turn them on for you, the Mantle tools only appear once Toolset Registry is on, and without them the Mantle plugin works exactly as before.</p>
 <ol class="steps">
 <li><b>Turn on the plugins</b><p>In <b>Edit → Plugins</b>, enable <b>Unreal MCP</b>, which turns on <b>Toolset Registry</b> with it, then restart the editor.</p></li>
-<li><b>Start the server</b><p>Run the console command <code>ModelContextProtocol.StartServer</code>, or turn on <b>Auto Start Server</b> under Editor Preferences → Plugins → Model Context Protocol. By default it listens on <code>http://127.0.0.1:8000/mcp</code>.</p></li>
+<li><b>Start the server</b><p>Run the console command <code>ModelContextProtocol.StartServer</code>, or turn on <b>Auto Start Server</b> under <b>Editor Preferences → General → Model Context Protocol</b>. By default it listens on <code>http://127.0.0.1:8000/mcp</code>.</p></li>
 <li><b>Connect your agent</b><p>Point your agent at that address, for example <code>claude mcp add --transport http unreal-mcp http://127.0.0.1:8000/mcp</code>.</p></li>
 <li><b>Sign in yourself</b><p>To publish or list your places, <a href="/docs/creators/#sign-in">sign in</a> in the editor first. The agent never sees your creator token, and no tool asks for one. If an agent asks you to paste your token into its chat, don't.</p></li>
 </ol>
@@ -55,7 +55,7 @@
 <tr><td>Unreadable place file</td><td>That place file could not be read.</td></tr>
 <tr><td>Made with a newer version of Mantle</td><td>This place was made with a newer version of Mantle than the server understands.</td></tr>
 <tr><td>Needs more than the released game has: scripts that use a script API newer than the newest released game's. The report says "This place needs script API N.M, newer than the newest released game build's X.Y. Update the Mantle plugin and re-publish, or wait for the next release."</td><td>This revision is not compatible with the supported release matrix.</td></tr>
-<tr><td>Files still being processed</td><td>Your changes are saved, but Mantle is still processing N file(s), so it has not gone live yet. Choose Publish again in a minute; nothing is uploaded twice.</td></tr>
+<tr><td>Files still being processed</td><td>Your changes are saved, but Mantle is still processing N file(s) such as '…', so it has not gone live yet. Choose Publish again in a minute; nothing is uploaded twice.</td></tr>
 <tr><td>Files waiting for a moderator</td><td>Everything is uploaded, but Mantle's moderators have to look at N file(s) first, such as '…'. Nothing went live yet. Choose Publish again once they are approved; nothing is uploaded twice.</td></tr>
 <tr><td>Files rejected in review</td><td>Mantle's review rejected N file(s) this place uses, so nothing went live. The list below names them.</td></tr>
 <tr><td>Files a moderator removed from your account</td><td>N file(s) this place uses are not yours on Mantle, so nothing went live. The list below names them.</td></tr>
@@ -64,7 +64,7 @@
 <tr><td>A script package's scripts still being screened</td><td>Mantle is still screening the scripts of package '…', so nothing went live yet. Choose Publish again in a minute; nothing is uploaded twice.</td></tr>
 <tr><td>A stored item the place's owner can't use: not theirs, not got from the library, or removed from their library</td><td>This item is not available to this place's owner: it does not exist, is not theirs, or they have not got it from the library. Get it first, or remove it from the place's storage.</td></tr>
 <tr><td>A stored package's setting, or a Script Point's parameter, that the package doesn't declare, that doesn't fit its type, range or options, or that's required and missing</td><td>This place's storage settings or ScriptPoint parameters don't fit the item they're set on. KillBricks needs RoundLength. Set it in this storage entry's settings. First: /storage/0/settings/RoundLength.</td></tr>
-<tr><td>Too many uploads in an hour</td><td>Mantle limits how much one account uploads per hour, and this account can upload again in about [time]. Everything uploaded so far is kept. You only see this when the wait is longer than about 65 minutes: for a shorter wait, Publish pauses uploads and carries on by itself. See <a href="/docs/creators/hosting-data/#official-hosting">upload limits</a>. At other steps you'll see: You've uploaded too much in the last hour. Try again in N minutes.</td></tr>
+<tr><td>Too many uploads in an hour</td><td>Mantle limits how much one account uploads per hour, and this account can upload again in about [time]. Everything uploaded so far is kept: choose Publish again then and it continues from here. You only see this when the wait is longer than about 65 minutes: for a shorter wait, Publish pauses uploads and carries on by itself. See <a href="/docs/creators/hosting-data/#official-hosting">upload limits</a>. At other steps you'll see: You've uploaded too much in the last hour. Try again in N minutes.</td></tr>
 <tr><td>The world this level published to was deleted</td><td>The Mantle place this level used to publish to (…) no longer exists, so the level has been unlinked from it. Save or publish again to create a new place; links to the old one will not work.</td></tr>
 <tr><td>Draft changed by another save while publishing</td><td>Your draft changed while this was running. Try again.</td></tr>
 </tbody></table></div>
@@ -97,7 +97,7 @@
 <li><b>Refresh</b> reloads the list, and <b>Load more</b> shows older places.</li>
 </ul>
 <ul>
-<li>To change a world, edit the level and save or publish again from the editor. Editing a world's details in the editor or on My Places is coming later.</li>
+<li>To change a world, edit the level and save or publish again from the editor. <span class="status planned">Planned</span> Editing a world's details in the editor or on My Places.</li>
 <li>Deleting a world removes it from the catalogue, featured list, charts and favourites, and closes its servers. You can't undo this. Deleted worlds are removed for good after 180 days.</li>
 <li>Each world has one owner. <span class="status planned">Planned</span> Transferring ownership, plus collaborators and teams.</li>
 </ul>
