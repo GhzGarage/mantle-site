@@ -30,7 +30,7 @@
 <ul>
 <li><b>World and player data:</b> <code>DataStore:Get</code> and <code>DataStore:Set</code> save data for the whole world. <code>DataStore:GetForPlayer</code> and <code>DataStore:SetForPlayer</code> save data for one player, who must be on the server. DataStore is server only.</li>
 <li><b>Official and community data are kept apart:</b> all official servers share the same saved data. Each community server, including one you host yourself, has its own, so it can't read or write your official servers' data.</li>
-<li><b>Messages you may see:</b> "This experience has reached its saved-data limit." and "That saved value changed; read it again before writing." Also "That player is not in this server's experience." and "This server is sending saved-data requests too quickly."</li>
+<li><b>Messages you may see:</b> at the saved-data limit you may see either "This experience has reached its saved-data limit." (from the server) or <code>DataStore: "KEY" was not saved -- this place is at its saved-data limit.</code> (in your script's log, where KEY is the key you tried to save). You may also see "That saved value changed; read it again before writing.", "That player is not in this server's experience." and "This server is sending saved-data requests too quickly."</li>
 <li><span class="status planned">Planned</span> Tools for creators to view and reset saved data.</li>
 </ul>
 
@@ -44,7 +44,7 @@
 <h2 id="analytics">Analytics <span class="status planned">Planned</span></h2>
 <p>A creator dashboard and stats are coming later. For now, the only numbers are public ones: how many players are in a world right now (on world cards), plus play minutes and unique players while the world is on the "Top 10 this week" or "New and rising" chart. See <a href="/docs/creators/publishing/#discovery">How worlds get discovered</a>.</p>
 
-<h2 id="monetisation">Monetisation and UGC items <span class="status planned">Planned</span></h2>
+<h2 id="monetisation">Monetisation and UGC items <span class="status wip">In progress</span></h2>
 <ul>
 <li><span class="status wip">In progress</span> <b>Creator-made avatar items:</b> publish hair, clothing, accessories, avatars and emotes to the Mantle catalogue from the <b>Mantle Cosmetics</b> tab in the editor. Everything in the catalogue is free for now. See <a href="/docs/creators/avatar-items/">Making avatar items</a>.</li>
 <li><b>Marketplace:</b> listing and buying items, a wallet and creator payouts are all planned. Mantle is also exploring private or paid access to worlds.</li>

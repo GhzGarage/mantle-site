@@ -28,7 +28,7 @@
 <h2 id="install">Installing and turning it on</h2>
 <p><span class="status live">Live</span> Mantle Core is free on Fab for Unreal Engine 5.8 on Windows. This is version 0.1.0 (beta). Get it from <a href="https://www.fab.com/listings/0ab720ef-e3da-4dc7-81ee-7eafb573c6bc">Mantle Core on Fab</a>.</p>
 <ol class="steps">
-<li><b>Add it to your engine</b><p>On <a href="https://www.fab.com/listings/0ab720ef-e3da-4dc7-81ee-7eafb573c6bc">Mantle Core on Fab</a>, add Mantle Core to your library, then install it to Unreal Engine 5.8 from the Epic Games Launcher (<b>Fab Library</b> → <b>Install to Engine</b>). Fab plugins install into the engine, not into one project, under <code>Engine/Plugins/Fab</code>, so every 5.8 project can use it.</p></li>
+<li><b>Add it to your engine</b><p>On <a href="https://www.fab.com/listings/0ab720ef-e3da-4dc7-81ee-7eafb573c6bc">Mantle Core on Fab</a>, add Mantle Core to your library, then install it to Unreal Engine 5.8 from the Epic Games Launcher (<b>Fab Library</b> → <b>Install to Engine</b>). Fab plugins install into the engine, not into one project, so every 5.8 project can use it.</p></li>
 <li><b>Turn it on in your project</b><p>Open your project, choose <b>Edit → Plugins</b>, search for <b>Mantle Core</b> (in the "Mantle" category), tick it and restart the editor. Any blank or existing 5.8 project works.</p></li>
 <li><b>Check it's working</b><p>The Play toolbar now has a <b>Test Locally</b> button and a <b>Mantle</b> dropdown, and <b>Tools</b> has a <b>Mantle</b> section. Settings are under <b>Project Settings → Plugins → Mantle</b>.</p></li>
 </ol>
@@ -36,14 +36,14 @@
 
 <h3 id="agent-dependency">Experimental dependency: Toolset Registry</h3>
 <p>Mantle Core lists Epic's <b>Toolset Registry</b> plugin as an optional dependency. Epic marks Toolset Registry as Experimental. It's off by default, Mantle Core doesn't turn it on, and without it the plugin works exactly the same.</p>
-<p>Toolset Registry is only used for the <a href="/docs/creators/publishing/#agent-tools">AI agent tools</a>. When you turn on Toolset Registry and Epic's Unreal MCP plugin (also Experimental), Mantle registers a set of tools that Unreal's Model Context Protocol server offers to an AI agent, so the agent can check, preview or publish your place when you ask it to. If Epic discontinues Toolset Registry, only these agent tools are affected.</p>
+<p>Toolset Registry is only used for the <a href="/docs/creators/publishing/#agent-tools">AI agent tools</a>. When you turn on Epic's Unreal MCP plugin (also Experimental), which brings Toolset Registry with it, Mantle registers a set of tools that Unreal's Model Context Protocol server offers to an AI agent, so the agent can check, preview or publish your place when you ask it to. If Epic discontinues Toolset Registry, only these agent tools are affected.</p>
 
 <h2 id="workflow">Working with the plugin</h2>
 <h3 id="menus">Where the tools are</h3>
 <ul>
 <li><b>Tools → Mantle</b>, and the <b>Mantle</b> dropdown next to Play, hold the same commands: Test Locally, Stop Preview, Start a new place, Place settings, Check this place, Check what players receive, Save to Mantle, Publish, the vehicle, weapon, Cosmetics and Library tools, and signing in. See <a href="/docs/creators/#editor">The Mantle editor tools</a>.</li>
 <li>The <b>Mantle Scripts</b> panel and <b>Mantle Script Graph</b> assets. See <a href="/docs/scripting/api/#editor">Editor setup</a>.</li>
-<li><b>Project Settings → Plugins → Mantle</b>: which world each level publishes to, and the Mantle client Test Locally uses.</li>
+<li><b>Project Settings → Plugins → Mantle</b>: which world each level publishes to, and the Mantle client Test Locally uses. These settings are yours only. They're saved in your own editor settings, not shared with the project or your teammates.</li>
 </ul>
 
 <h3 id="flow">From level to live world</h3>
@@ -63,7 +63,7 @@
 <li>What your scripts save is kept between runs, separately for each level. <b>Reset local data</b> clears it so the next run starts fresh.</li>
 <li><b>Stop</b> or <b>Stop Preview</b> closes the test. It only closes the copy of Mantle the editor started, never one you started yourself, and the test also closes with the editor.</li>
 <li>Test Locally looks for the Mantle you installed from Steam or the Epic Games Store. If it can't find it, choose <b>Choose client...</b> in the panel, or set <b>Preview Client Executable</b> under <b>Project Settings → Plugins → Mantle</b> to <code>Mantle-Win64-Shipping.exe</code> in the install's <code>Mantle\Binaries\Win64</code> folder.</li>
-<li>If your Mantle is too old for Test Locally, you'll see "This Mantle client is too old for Test Locally; update it". Update Mantle from its store and try again.</li>
+<li>If your Mantle is too old for Test Locally, you'll see "This Mantle client (…, version …) is too old for Test Locally. Update Mantle in Steam or the Epic Games Launcher, then try again." Update Mantle from its store and try again.</li>
 </ul>
 <div class="callout tip"><strong>Scripts run only in Test Locally</strong>
 <p><b>Play in Editor</b> (PIE) and Simulate don't run Mantle places or scripts. Use Test Locally to try your place and its scripts, and publish when it's ready. To check what will publish without running anything, use "Check what players receive".</p></div>
