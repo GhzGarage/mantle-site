@@ -1,27 +1,27 @@
 <div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
 
-<p><span class="status live">Live</span> The <b>Mantle Cosmetics</b> tab in the editor publishes avatar items to the Mantle catalogue with one button. You pick what you're making, the asset and a name. The plugin checks it against Mantle's rules, exports it, makes a thumbnail, uploads everything and follows the item through screening. Players find published items on the <a href="/docs/players/playing/#avatar">Avatar screen</a>.</p>
+<p><span class="status live">Live</span> The <b>Mantle Cosmetics</b> tab in the editor publishes avatar items to the Mantle catalog with one button. You pick what you're making, the asset and a name. The plugin checks it against Mantle's rules, exports it, makes a thumbnail, uploads everything and follows the item through screening. Players find published items on the <a href="/docs/players/playing/#avatar">Avatar screen</a>.</p>
 
 <h2 id="kinds">What you can make</h2>
 <p>The panel's first drop-down picks the kind of item, and the second picks its slot. Each kind has its own page with the rules its asset has to meet.</p>
 <div class="table-wrap"><table><thead><tr><th>Kind</th><th>Asset</th><th>Slots</th><th>Guide</th></tr></thead><tbody>
 <tr><td>Hair</td><td>A groom, a hair cards Static Mesh, or a Skeletal Mesh: one section of it (such as a MetaHuman face's eyelashes) or the whole mesh</td><td><code>hair</code>, <code>eyebrows</code>, <code>eyelashes</code>, <code>facial_hair</code>, all worn together</td><td><a href="/docs/creators/clothing/">Clothing, hair and accessories</a></td></tr>
 <tr><td>Clothing</td><td>A Skeletal Mesh skinned to the MetaHuman body skeleton, or a parametric Outfit</td><td><code>top</code>, <code>bottom</code>, <code>footwear</code>, <code>nails</code></td><td><a href="/docs/creators/clothing/">Clothing, hair and accessories</a></td></tr>
-<tr><td>Accessory</td><td>A Static Mesh with one material, its pivot where it attaches</td><td><code>acc_hat</code>, <code>acc_face</code>, <code>acc_neck</code>, <code>acc_shoulder_l</code>, <code>acc_shoulder_r</code>, <code>acc_front</code>, <code>acc_back</code>, <code>acc_waist</code></td><td><a href="/docs/creators/clothing/">Clothing, hair and accessories</a></td></tr>
+<tr><td>Accessory</td><td>A Static Mesh with one material, its pivot where it attaches, or a MetaHuman Outfit made into one rigid piece</td><td><code>acc_hat</code>, <code>acc_face</code>, <code>acc_neck</code>, <code>acc_shoulder_l</code>, <code>acc_shoulder_r</code>, <code>acc_front</code>, <code>acc_back</code>, <code>acc_waist</code></td><td><a href="/docs/creators/clothing/">Clothing, hair and accessories</a></td></tr>
 <tr><td>Avatar</td><td>A character you convert to a MetaHuman body and face</td><td><code>avatar</code></td><td><a href="/docs/creators/avatars-emotes/">Avatars and emotes</a></td></tr>
 <tr><td>Emote</td><td>An Anim Sequence on the UEFN mannequin, MetaHuman, UE5 Mannequin or UE4 Mannequin skeleton, at most 10 seconds (retargeted for you)</td><td><code>emote</code></td><td><a href="/docs/creators/avatars-emotes/">Avatars and emotes</a></td></tr>
 <tr><td>Overlay</td><td>A square mask image, a power of two and at most 1024 x 1024 (a scar or a tattoo; a scar can add a normal map)</td><td><code>scar_body</code>, <code>scar_face</code>, <code>tattoo_body</code>, <code>tattoo_face</code></td><td><a href="/docs/creators/avatars-emotes/#overlays">Scars and tattoos</a></td></tr>
 </tbody></table></div>
-<p>The kind starts on Clothing, and the slot starts on the first one in its list. Everything in the catalogue is free. The panel has no price field, and paid items come later with the <a href="/docs/creators/hosting-data/#monetisation">marketplace</a>.</p>
+<p>The kind starts on Clothing, and the slot starts on the first one in its list. Everything in the catalog is free. The panel has no price field, and paid items come later with the <a href="/docs/creators/hosting-data/#monetisation">marketplace</a>.</p>
 
 <h2 id="publish">Publishing an item</h2>
 <ol class="steps">
 <li><b>Sign in</b><p>Uploading needs a creator token. See <a href="/docs/creators/#sign-in">Signing in to publish</a>. The top of the panel shows "Signed in as [your name]", or "Not signed in: Upload asks for a creator token (Tools > Mantle > Sign in with creator token)." If you aren't signed in, <b>Upload to Mantle</b> opens the sign-in window with "Sign in to publish this item to Mantle." once your checks pass. <b>Check only</b> and <b>Preview</b> on your own body need no sign-in.</p></li>
-<li><b>Open the panel</b><p>Choose <b>Tools → Mantle → Cosmetics...</b>. The <b>Mantle Cosmetics</b> tab opens, headed "Publish to the Mantle catalog".</p></li>
+<li><b>Open the panel</b><p>Choose <b>Tools → Mantle → Cosmetics...</b>. The <b>Mantle Cosmetics</b> tab opens, headed "Publish to the Mantle catalogue".</p></li>
 <li><b>Pick the kind and slot</b><p>Under "What are you publishing?", pick the kind and then the slot. A line under them describes what that kind takes.</p></li>
 <li><b>Pick the asset</b><p>Under "Asset", choose it from your project. The picker only offers the right type of asset for the kind. For an avatar, use <b>Convert a character</b> instead: see <a href="/docs/creators/avatars-emotes/#avatar-steps">Publishing an avatar</a>.</p></li>
 <li><b>Fill in the kind's details</b><p>Some kinds show extra sections. See <a href="#panel">The panel's fields</a>.</p></li>
-<li><b>Name it</b><p>Under "Listing", give it a <b>Name</b> (players see it in the catalogue; choosing the asset fills it in with the asset's name if it's empty) and an optional <b>Description</b>.</p></li>
+<li><b>Name it</b><p>Under "Listing", give it a <b>Name</b> (players see it in the catalog; choosing the asset fills it in with the asset's name if it's empty) and an optional <b>Description</b>.</p></li>
 <li><b>Choose who can use it</b><p>Under "Who can use it", leave it on Public and tick the rights box, or choose Private. See <a href="#visibility">Public and private items</a>.</p></li>
 <li><b>Check it</b><p><b>Check only</b> runs every check and the export without uploading anything. Fix anything listed as a "Problem".</p></li>
 <li><b>Upload it</b><p><b>Upload to Mantle</b> checks again, then exports, uploads and publishes. It won't start while any check fails. See <a href="#after-upload">After you upload</a>.</p></li>
@@ -30,12 +30,12 @@
 <h2 id="panel">The panel's fields</h2>
 <div class="table-wrap"><table><thead><tr><th>Section</th><th>Shown for</th><th>What it does</th></tr></thead><tbody>
 <tr><td>What are you publishing?</td><td>Every kind</td><td>The kind (Hair, Clothing, Accessory, Avatar, Emote or Overlay) and its slot.</td></tr>
-<tr><td>Sections</td><td>Clothing</td><td>"The mesh's sections this item takes. A one-piece outfit uploads once per slot, each time with that piece's sections ticked." Skin sections are greyed out: "the wearer's own body shows through; garments never carry skin". See <a href="/docs/creators/clothing/#outfits">One-piece outfits</a>.</td></tr>
+<tr><td>Sections</td><td>Clothing</td><td>"The mesh's sections this item takes. A one-piece outfit uploads once per slot, each time with that piece's sections ticked." Skin sections are grayed out: "the wearer's own body shows through; garments never carry skin". See <a href="/docs/creators/clothing/#outfits">One-piece outfits</a>.</td></tr>
 <tr><td>Asset</td><td>Every kind</td><td>The asset to publish. For a groom with cards, a second drop-down picks which cards to use, listed as "Group N, LOD N: [mesh] (N textures)". It starts on "Cards: automatic (finest LOD that fits the budget)". For a Skeletal Mesh as hair, a drop-down picks the section to lift: a section with "lash" in its name is picked for you, and otherwise it starts on "Whole hair mesh (all sections)". A groom also gets a <b>Generate cards from strands</b> button, which only works when Unreal's optional Hair Card Generator is available in your project with its Python setup finished (Mantle doesn't enable it for you). See <a href="/docs/creators/clothing/#hair">Hair, eyebrows, eyelashes and facial hair</a>.</td></tr>
-<tr><td>Parametric clothing</td><td>Clothing</td><td>Makes a parametric Outfit from a garment and adds the bodies it fits. See <a href="/docs/creators/clothing/#parametric">Parametric Outfits</a>.</td></tr>
-<tr><td>Clothing colors</td><td>Clothing</td><td>The areas of the item that players can recolour. See <a href="/docs/creators/clothing/#colours">Clothing colours</a>.</td></tr>
+<tr><td>Parametric clothing</td><td>Clothing</td><td>Makes a parametric Outfit from a garment. Mantle fits it to Epic's standard bodies automatically, and you can add bodies of your own. See <a href="/docs/creators/clothing/#parametric">Parametric Outfits</a>.</td></tr>
+<tr><td>Clothing colors</td><td>Clothing</td><td>The areas of the item that players can recolor. See <a href="/docs/creators/clothing/#colours">Clothing colors</a>.</td></tr>
 <tr><td>Convert a character</td><td>Avatar, Clothing, Hair</td><td>Makes a character upload-ready and fills the panel with its parts. See <a href="/docs/creators/avatars-emotes/#convert">Converting a character</a>.</td></tr>
-<tr><td>Hair colour</td><td>Hair from a groom or a cards mesh</td><td>The hair's colour as <code>#RRGGBB</code>. Leave it empty to read the colour from the groom's material ("#RRGGBB; empty reads the groom's material"). A value that isn't a colour shows "Not a colour: the groom's is used".</td></tr>
+<tr><td>Hair colour</td><td>Hair from a groom or a cards mesh</td><td>The hair's color as <code>#RRGGBB</code>. Leave it empty to read the color from the groom's material ("#RRGGBB; empty reads the groom's material"). A value that isn't a color shows "Not a colour: the groom's is used".</td></tr>
 <tr><td>Authored on</td><td>Clothing, Hair, Accessory</td><td>The MetaHuman body the item was made on. For clothing: "The MetaHuman body this was made on. Found automatically when the project has one; it uploads as the item's body shape for fitting to supported avatars." For hair it also takes the <b>Source MetaHuman face</b>. For an accessory it's only used for the preview: "Its body shape is not uploaded with a rigid accessory."</td></tr>
 <tr><td>Overlay images</td><td>Overlay</td><td>The mask (the asset above, or a PNG file when the asset is empty), a normal map for a scar (optional: tattoos take none), and the body and face to preview on (optional).</td></tr>
 <tr><td>Animated on</td><td>Emote</td><td>The character the animation was made on (optional). A MetaHuman, UE5 Mannequin or UE4 Mannequin clip is retargeted from this body's proportions.</td></tr>
@@ -52,8 +52,8 @@
 <ul>
 <li><b>Avatar:</b> a headshot with its face.</li>
 <li><b>Clothing:</b> on the body it was made on, framed on the clothing, with only the sections the item takes.</li>
-<li><b>Accessory:</b> on its own, in a three-quarter view from above.</li>
-<li><b>Hair and emotes:</b> the asset's own Unreal thumbnail. For a groom, the editor's thumbnail is an empty frame, so it uses the first group's cards mesh.</li>
+<li><b>Accessory:</b> on its own, in a three-quarter view from above. An accessory made from a skinned source, such as a hat from a MetaHuman Outfit, is turned upright as it's worn, so its picture is from the front and a little above instead, and it also shows the piece's inside.</li>
+<li><b>Hair and emotes:</b> the asset's own Unreal thumbnail. For a groom, the editor's thumbnail is an empty frame, so it uses the cards mesh that gets exported: the one you picked, or the finest level of detail that fits when "Cards: automatic" is chosen.</li>
 <li><b>Overlay:</b> the mask, drawn light on dark.</li>
 </ul>
 <p>If nothing can be rendered, the thumbnail is a plain dark square. <b>Files and details</b>, at the bottom of the panel, lists each file the item uploads with its size, and says how the thumbnail was made. Once an upload starts, it lists each file's progress instead.</p>
@@ -62,16 +62,16 @@
 <p>Under <b>Preview</b>, choose <b>Preview</b> to see the item without uploading anything.</p>
 <ul>
 <li><b>Clothing and hair:</b> fitted by the same code players' games run. Under "Preview on", pick "The body it was made on" or "Another avatar by id" (<code>itm_u</code> followed by 32 hex digits). Tick "Play an animation (else the reference pose)" to play an animation, or leave it unticked to hold the reference pose.</li>
-<li><b>Accessories:</b> shown on a local MetaHuman body you choose under <b>Authored on</b>, or on a catalogue avatar. Attachment edits update the preview and are saved for that mesh and slot.</li>
-<li><b>Avatars:</b> posed the way players' games pose them, copying the UEFN mannequin's standing idle. The Mantle plugin turns IK Rig on itself and has its own UEFN mannequin, so there's nothing to add. If your project has a UEFN mannequin, the plugin uses it instead: it finds any skeletal mesh on the <code>SK_UEFN_Mannequin</code> skeleton and prefers <code>SKM_UEFN_Mannequin</code> (from the Game Animation Sample). With the plugin's own mannequin there's no idle to play, so the avatar holds the A-pose.</li>
+<li><b>Accessories:</b> shown on a local MetaHuman body you choose under <b>Authored on</b>, or on a catalog avatar. Attachment edits update the preview and are saved for that mesh and slot.</li>
+<li><b>Avatars:</b> posed the way players' games pose them, copying the UEFN mannequin's standing idle. The Mantle plugin turns IK Rig on itself and has its own UEFN mannequin, so there's nothing to add. If your project has a UEFN mannequin, the plugin uses it instead: it finds any skeletal mesh on the <code>SK_UEFN_Mannequin</code> skeleton and prefers <code>SKM_UEFN_Mannequin</code> (from the Game Animation Sample). If the plugin's own mannequin has no idle clip to play, the avatar holds the A-pose.</li>
 <li><b>Overlays:</b> drawn on a converted MetaHuman body or face with the same skin material players' clients use. Pick the body and face under <b>Overlay images</b>, or leave them empty to use Mantle's reference ones when your project has built them. The skin material is project content (<code>/Game/Avatars/Appearance/Shared</code>): without it the preview shows the mesh as it is, and the text next to <b>Preview</b> says the mask isn't drawn.</li>
 </ul>
-<p>Previewing on a catalogue avatar needs you to be signed in. Clothing and hair say "Sign in to preview on avatars from the Mantle catalog." and accessories say "Sign in to preview accessories on catalog avatars." Avatar previews need no UEFN mannequin in your project. To see the avatar idle, add <code>SKM_UEFN_Mannequin</code> and its idle from the Game Animation Sample.</p>
+<p>Previewing on a catalog avatar needs you to be signed in. Clothing and hair say "Sign in to preview on avatars from the Mantle catalogue." and accessories say "Sign in to preview accessories on catalogue avatars." Avatar previews need no UEFN mannequin in your project. To see the avatar idle, add <code>SKM_UEFN_Mannequin</code> and its idle from the Game Animation Sample.</p>
 
 <h2 id="visibility">Public and private items <span class="status wip">In progress</span></h2>
 <p>Under "Who can use it" you choose one of two options:</p>
 <ul>
-<li><span class="status live">Live</span> <b>Public:</b> "Public: listed in the catalog for every player". This is the default. You also have to tick "I own this content or its licence permits public redistribution on Mantle". Without the tick you'll see "Tick the declaration to publish publicly, or choose Private." and <b>Upload to Mantle</b> stays greyed out. Choosing a new asset clears the tick.</li>
+<li><span class="status live">Live</span> <b>Public:</b> "Public: listed in the catalogue for every player". This is the default. You also have to tick "I own this content or its licence permits public redistribution on Mantle". Without the tick you'll see "Tick the declaration to publish publicly, or choose Private." and <b>Upload to Mantle</b> stays grayed out. Choosing a new asset clears the tick.</li>
 <li><span class="status wip">In progress</span> <b>Private:</b> "Private: only you can use it". It needs no declaration. Other players see a stand-in for a private item you wear, because showing it to them isn't built yet.</li>
 </ul>
 <p>Mantle also checks public items for copies. If another account uploaded the same content (or a re-exported copy of the same shape) first, you'll see "Another account uploaded this content first. Publish it privately, or contact support if it is yours." After three copyright strikes, public publishing is turned off for the account: "Public publishing is turned off for this account after repeated copyright strikes. You can still publish privately."</p>
@@ -80,7 +80,7 @@
 <p>Each check result is a line starting "Problem:" (it must be fixed), "Note:" (worth knowing, but it doesn't stop an upload) or "Done:" (something the plugin handled for you, such as uploading a lower LOD). When nothing is listed, you'll see "Every check passed." The line above the list says "Fix the problems below, then choose Upload to Mantle." or "Ready: choose Upload to Mantle."</p>
 <p>These checks come up for several kinds (the table says where one is for a single kind). The kind pages list the rest (skeletons, triangle and texture budgets, sizes and so on).</p>
 <div class="table-wrap"><table><thead><tr><th>Check</th><th>Message</th></tr></thead><tbody>
-<tr><td>No name</td><td>Problem: the item needs a name. Players see it in the catalog.</td></tr>
+<tr><td>No name</td><td>Problem: the item needs a name. Players see it in the catalogue.</td></tr>
 <tr><td>Name over 64 characters</td><td>Problem: the name is N characters, the limit is 64.</td></tr>
 <tr><td>Description over 1,000 characters</td><td>Problem: the description is N characters, the limit is 1000.</td></tr>
 <tr><td>Slot doesn't fit the kind</td><td>Problem: "[slot]" is not a slot for [kind]. Choose a slot from the list.</td></tr>
@@ -89,13 +89,13 @@
 <tr><td>A material slot with no name, or two with the same name</td><td>Problem: material slot N has no name; sections are identified by material name. Name every material slot in the mesh editor.<br>Problem: two materials are named "[name]"; sections are identified by material name. Rename one of the material slots in the mesh editor.</td></tr>
 <tr><td>A section laid out in UDIM tiles</td><td>Problem: [section] spans N UV tiles (UDIM 1001, …); Mantle maps one 0..1 texture per section. Bake its tiles into one texture with its UVs laid out in 0..1, then reimport the mesh and the texture.</td></tr>
 <tr><td>A vertex with more than 8 bone influences</td><td>Done: N vertices had more than 8 influences; the lightest were dropped and the rest renormalised (largest weight dropped: [W]). If the largest dropped weight is over 0.1, it's a Note instead.</td></tr>
-<tr><td>Bones that aren't on the skeleton</td><td>Note: N bones were merged into their parent bones and won't move on their own: [bone] -> [parent]. Mantle animates only the bones of its skeleton, so what they moved (a jaw, hair strands, cloth) now follows the parent bone. It still uploads.</td></tr>
+<tr><td>Bones that aren't on the skeleton</td><td>Note: N bones were merged into their parent bones and won't move on their own: [bone] -> [parent]. (For one bone: "1 bone was merged into its parent bone and won't move on its own: …". After 8 pairs it ends with ", and N more".) Mantle animates only the bones of its skeleton, so what they moved (a jaw, hair strands, cloth) now follows the parent bone. It still uploads.</td></tr>
 <tr><td>A socket offset out of range (avatars)</td><td>Problem: the [socket] socket's location (x, y, z): offsets are at most 50 cm on each axis. Mantle refuses it rather than clamping it. (Rotation says "rotations are between -180 and 180 degrees", and scale says "scale is between 0.5 and 2".)</td></tr>
 <tr><td>A socket that doesn't exist, or is set twice</td><td>Problem: "[socket]" is not an accessory or tool socket.<br>Problem: the [socket] socket is overridden twice.</td></tr>
 <tr><td>A tool socket moved off its bone or scaled</td><td>Problem: [socket] hangs from [bone], not [other bone].<br>Problem: hand_rSocket carries tools, so its scale stays 1.</td></tr>
 </tbody></table></div>
 <p>Overlay images are never scaled down: one over 1024 x 1024 is a Problem: "[name] is [W] x [H]; overlay images are at most 1024 x 1024." </p>
-<p>Textures larger than the limit (2048 on a side, 1024 for an accessory) are scaled down. You'll see "Done: [texture] is WxH; it is uploaded at most WxH." If a texture's PNG is over 8 MiB, the plugin halves its size until it fits and says "Done: [texture] is over 8 MiB at WxH; it is uploaded at WxH." A normal map that is plain grey holds no detail, so it is left out. <b>Files and details</b> shows the size each one uploads at.</p>
+<p>Textures larger than the limit (2048 on a side, 1024 for an accessory) are scaled down. You'll see "Done: [texture] is WxH; it is uploaded at most WxH." If a texture's PNG is over 8 MiB, the plugin halves its size until it fits and says "Done: [texture] is over 8 MiB at WxH; it is uploaded at WxH." A normal map that is plain gray holds no detail, so it is left out. <b>Files and details</b> shows the size each one uploads at.</p>
 
 <h2 id="after-upload">After you upload</h2>
 <p>The upload runs in the background with a progress bar, so you can keep working. The status line shows each stage:</p>
@@ -107,12 +107,12 @@
 </ol>
 <p>When it finishes, the status line says one of:</p>
 <ul>
-<li>"Published [item id]. Players can find it in the catalog now."</li>
-<li>"Published [item id]. A moderator will look at it; it appears in the catalog once approved."</li>
-<li>"Published [item id]. Mantle is still screening it; it appears in the catalog once it passes." (if screening takes more than 5 minutes)</li>
+<li>"Published [item id]. Players can find it in the catalogue now."</li>
+<li>"Published [item id]. A moderator will look at it; it appears in the catalogue once approved."</li>
+<li>"Published [item id]. Mantle is still screening it; it appears in the catalogue once it passes." (if screening takes more than 5 minutes)</li>
 </ul>
 <p>An item that hangs below the knee (footwear aside) is published with an extra line: "It hangs below the knee, so Mantle marks it "may clip in motion": the legs can show through it when the wearer moves."</p>
-<p>Once approved, a public item is listed in the catalogue for everyone, and players can find more of your public items with "More by [creator]". A private item shows only for you. If the panel stops following an item before it's decided, look for it on the Avatar screen: it shows up there once it passes.</p>
+<p>Once approved, a public item is listed in the catalog for everyone, and players can find more of your public items with "More by [creator]". A private item shows only for you. If the panel stops following an item before it's decided, look for it on the Avatar screen: it shows up there once it passes.</p>
 <p>If a request fails because of a bad connection or a busy server, the plugin tries again on its own, up to five times, waiting 2, 5, 10, 20 and 30 seconds. If Mantle answers that you're going too fast, it waits a minute each time. If Mantle is busy with other uploads, a file waits for its turn for up to 10 minutes in all, and that doesn't use up a try. A file that is still processing after 15 minutes stops the upload with a message.</p>
 <p><b>Cancel</b> stops an upload at any time, and closing the tab does the same. Everything already uploaded stays on Mantle: "Cancelled. Upload again to continue where it stopped."</p>
 
@@ -122,15 +122,15 @@
 <tr><td>Screening rejected the item</td><td>Screening rejected the item [item id] (its thumbnail, name or description). Change what was flagged and upload again.</td></tr>
 <tr><td>Screening rejected a file</td><td>[file]: moderation rejected it.</td></tr>
 <tr><td>Mantle's processing refused a file</td><td>[file]: Mantle's processing refused it: [reason]</td></tr>
-<tr><td>The body a garment was made on wasn't uploaded with the Mantle plugin</td><td>This body shape has no warp weights, which garments need to fit other bodies. Upload it again with the Mantle plugin, which adds them.<br>The body shape this item was made on has no warp weights, so it cannot fit other bodies. Upload the item again with the Mantle plugin, which sends a body shape that has them.</td></tr>
+<tr><td>The body a garment was made on wasn't uploaded with the Mantle plugin</td><td>[file]: Mantle's processing refused it: [reason]. Mantle's server gives two reasons here: "This body shape has no warp weights, which garments need to fit other bodies. Upload it again with the Mantle plugin, which adds them." and "The body shape this item was made on has no warp weights, so it cannot fit other bodies. Upload the item again with the Mantle plugin, which sends a body shape that has them."</td></tr>
 <tr><td>Processing refused a file the panel's checks passed</td><td>[file]: Mantle's processing refused it although the plugin's checks passed: a rule the plugin does not know yet. Please report it with the editor log.</td></tr>
 <tr><td>Processing is taking a long time</td><td>Mantle is still processing [file]. Nothing is lost: choose Upload again later and it continues from here.</td></tr>
 <tr><td>A garment's body wasn't approved in time</td><td>[file] waits for its body shape to be approved, and it was not approved in time. Choose Upload again in a minute.</td></tr>
 <tr><td>No connection</td><td>Could not reach Mantle while sending [file]. Check your connection; choosing Upload again resumes where this stopped.</td></tr>
-<tr><td>Hourly upload limit</td><td>Mantle limits how much one account uploads per hour. You've uploaded too much in the last hour. Try again in N minutes.</td></tr>
-<tr><td>File too large</td><td>[file] is too large for Mantle. Assets can be at most 64 MiB. (Textures: "Textures can be at most 8 MiB. Compress it or lower its resolution, then upload it again.")</td></tr>
+<tr><td>Hourly upload limit</td><td>Mantle limits how much one account uploads per hour. [followed by Mantle's own message, which says when you can upload again]</td></tr>
+<tr><td>File too large</td><td>[file] is too large for Mantle. [followed by Mantle's own message with the limit]</td></tr>
 <tr><td>The same file used for two jobs</td><td>[file]: these exact bytes are already on Mantle as a [kind] ([role]), and one upload is one kind. Make a copy of the source asset for this use. (The role is left out when the file has none. If Mantle itself answers, it says "these exact bytes were uploaded before as a different kind of file" and ends "Make a copy of the source asset for the second use.")</td></tr>
-<tr><td>A moderator removed the file from your account</td><td>A moderator removed [file] from your account (usually after a licence complaint), so it cannot be uploaded or used again. Use different content.</td></tr>
+<tr><td>A moderator removed the file from your account</td><td>A moderator removed [file] from your account (usually after a license complaint), so it cannot be uploaded or used again. Use different content.</td></tr>
 <tr><td>The item uses a file your account doesn't hold</td><td>the item names a file your account holds no claim on (a moderator removed it, or it was never uploaded from this project). Upload the item again from your own files.</td></tr>
 <tr><td>Another account uploaded the content first</td><td>Mantle refused the item. Another account uploaded this content first. Publish it privately, or contact support if it is yours.</td></tr>
 <tr><td>Public publishing is turned off</td><td>Mantle refused the item. Public publishing is turned off for this account after repeated copyright strikes. You can still publish privately.</td></tr>
@@ -151,17 +151,17 @@
 <p>When Mantle names the part at fault, its name follows in brackets, for example "(description)".</p>
 
 <h2 id="editing">Changing an item <span class="status wip">In progress</span></h2>
-<p>Mantle can update a published item in place, but the Cosmetics panel doesn't offer it yet. If you change the asset, slot, name, description or any other setting and choose <b>Upload to Mantle</b>, the panel publishes a separate new item, and the old one stays in the catalogue. If nothing changed, uploading the same asset to the same slot again doesn't make a copy: the log under <b>Files and details</b> says "This item was already published ([item id]); following it" and the panel follows the existing item.</p>
-<p>When editing arrives, an edited item is checked and screened again like a new one, and it leaves the catalogue until the new version passes. Each edit counts towards the hourly item limit.</p>
+<p>Mantle can update a published item in place, but the Cosmetics panel doesn't offer it yet. If you change the asset, slot, name, description or any other setting and choose <b>Upload to Mantle</b>, the panel publishes a separate new item, and the old one stays in the catalog. If nothing changed, uploading the same asset to the same slot again doesn't make a copy: the log under <b>Files and details</b> says "This item was already published ([item id]); following it" and the panel follows the existing item.</p>
+<p>When editing arrives, an edited item is checked and screened again like a new one, and it leaves the catalog until the new version passes. Each edit counts towards the hourly item limit.</p>
 
 <h2 id="delisting">Delisting an item <span class="status wip">In progress</span></h2>
-<p>Delisting takes an item out of the catalogue for good. The panel can't delist yet. A delisted item can't be worn or edited, and players wearing it have it taken off, and the Avatar screen tells them (for example "1 item is no longer available and was taken off"). To publish it again, upload it as a new item.</p>
+<p>Delisting takes an item out of the catalog for good. The panel can't delist yet. A delisted item can't be worn or edited, and players wearing it have it taken off, and the Avatar screen tells them (for example "1 item is no longer available and was taken off"). To publish it again, upload it as a new item.</p>
 
 <h2 id="reports">Reports and takedowns</h2>
 <ul>
 <li>Players can report an item with <b>Report this item</b> at the bottom of its page on the Avatar screen. See <a href="/docs/players/safety/#report-avatar-item">Report an avatar item</a>.</li>
 <li>A moderator can delist any item.</li>
-<li>If a moderator removes one of your uploaded files from your account (usually after a licence complaint), every item of yours that uses it is delisted, and that file can't be uploaded or used again.</li>
+<li>If a moderator removes one of your uploaded files from your account (usually after a license complaint), every item of yours that uses it is delisted, and that file can't be uploaded or used again.</li>
 <li>A moderator can also add a copyright strike when they take an item down. The third strike turns off public publishing for your account. You can still publish privately.</li>
 </ul>
 
@@ -178,4 +178,4 @@
 <tr><td>Items worn at once</td><td class="num">24 (8 of them accessories)</td></tr>
 <tr><td>Emotes equipped at once</td><td class="num">8</td></tr>
 </tbody></table></div>
-<p>If you reach a limit, the panel waits a minute and tries again up to five times, then the status line says how many minutes to wait. Upload limits are shared with <a href="/docs/creators/publishing/">publishing worlds</a>. See also <a href="/docs/creators/hosting-data/">Hosting and data</a>.</p>
+<p>If you reach a limit, the panel waits a minute and tries again up to five times, then the status line shows Mantle's message about the hourly limit. Upload limits are shared with <a href="/docs/creators/publishing/">publishing worlds</a>. See also <a href="/docs/creators/hosting-data/">Hosting and data</a>.</p>
