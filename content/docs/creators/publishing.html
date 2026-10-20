@@ -1,14 +1,14 @@
 <div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
 
 <h2 id="publish-flow">How publishing works <span class="status live">Live</span></h2>
-<p>Two commands in <b>Tools → Mantle</b> put your level on Mantle: <b>Save to Mantle</b> ("Upload this level as a private draft. Nobody else can see it.") and <b>Publish</b>. Both ask you to <a href="/docs/creators/#sign-in">sign in</a> first if you haven't. Publish also shows the picture your world will have in the catalogue (see the Thumbnail row in <a href="/docs/creators/building/#place-settings">Place settings</a>) and asks "What changed in this version?" for optional revision notes, which are kept with the revision. Notes over 1,000 characters are cut to 1,000 when they are sent, and notes over 2,000 characters are refused.</p>
+<p>Two commands in <b>Tools → Mantle</b> put your level on Mantle: <b>Save to Mantle</b> ("Upload this level as a private draft. Nobody else can see it.") and <b>Publish</b>. Both ask you to <a href="/docs/creators/#sign-in">sign in</a> first if you haven't. Publish also shows the picture your world will have in the catalog (see the Thumbnail row in <a href="/docs/creators/building/#place-settings">Place settings</a>) and asks "What changed in this version?" for optional revision notes, which are kept with the revision. Notes over 1,000 characters are cut to 1,000 when they are sent, and notes over 2,000 characters are refused.</p>
 <p>Both run in the background, so you can keep working. The <b>Mantle Publish</b> tab shows each step, with a progress bar, a "Needs your attention" list and a Details log:</p>
 <ol class="steps">
 <li><b>Check this place</b><p>Runs the same checks as "Check this place". If anything fails, you'll see "This place has N problem(s) to fix first."</p></li>
 <li><b>Prepare meshes and materials</b><p>Converts the meshes and materials from your project that the level uses. A level built only from library assets skips this.</p></li>
 <li><b>Upload to Mantle</b><p>Uploads the converted files, your <a href="/docs/creators/building/#script-assets">Script Assets</a>, the images in the level's <code>UI</code> folder (see <a href="/docs/scripting/ui-documents/">UI documents</a>) and the world's thumbnail. Files you've uploaded before aren't sent again. If the thumbnail can't be taken, the publish carries on without it and the tab warns "The place's thumbnail could not be taken (…), so it publishes without a picture." The world then has no picture. Publish again, or choose another view in <a href="/docs/creators/building/#place-settings">Place settings</a>.</p></li>
 <li><b>Mantle processes and screens them</b><p>Mantle processes the uploaded files and screens the textures (including UI images). Something that needs a moderator shows as "waiting for a Mantle moderator to look at it." Save to Mantle skips this step.</p></li>
-<li><b>Publish</b><p>Mantle uploads every script in the level's <code>Scripts</code> folder and its <code>Packages</code> folder (see <a href="/docs/creators/script-packages/">Script packages</a>), and the documents and stylesheets in its <code>UI</code> folder, and screens them. The first time you publish a level, this creates a new world with the level's name. Later publishes update that same world, as long as the level is still linked to it (see <a href="#which-world">Which world a publish goes to</a>). Mantle saves your draft and, for Publish, makes it live as a new, numbered revision. If the place has vehicles, weapons or script packages of your own, the tab first asks "Vehicles, weapons and script packages in this place: who can use them": <b>Public: listed in the library for every creator</b> (tick "I own this content or its licence permits public redistribution on Mantle" to go live) or <b>Private: only you can use them</b>.</p></li>
+<li><b>Publish</b><p>Mantle uploads every script in the level's <code>Scripts</code> folder and its <code>Packages</code> folder (see <a href="/docs/creators/script-packages/">Script packages</a>), and the documents and stylesheets in its <code>UI</code> folder, and screens them. The first time you publish a level, this creates a new world with the level's name. Later publishes update that same world, as long as the level is still linked to it (see <a href="#which-world">Which world a publish goes to</a>). Mantle saves your draft and, for Publish, makes it live as a new, numbered revision. If the place has vehicles, weapons or script packages of your own, the tab first asks "Vehicles, weapons and script packages in this place: who can use them": <b>Public: listed in the library for every creator</b> (check "I own this content or its licence permits public redistribution on Mantle" to go live) or <b>Private: only you can use them</b>.</p></li>
 </ol>
 <p>When it works, you'll see "Saved to Mantle. Nobody can see it until you publish." or "Published revision N. Anyone can join it now." If it stops, the tab says why and what to do. <b>Cancel</b> stops at any point without publishing anything, and <b>Publish again</b> carries on from where it stopped: everything already uploaded stays on Mantle.</p>
 
@@ -36,7 +36,7 @@
 </ol>
 <div class="table-wrap"><table><thead><tr><th>Tool</th><th>What it does</th></tr></thead><tbody>
 <tr><td><code>CheckPlace</code></td><td>Runs "Check this place" on the open level and returns every issue.</td></tr>
-<tr><td><code>ExportPreview</code></td><td>Exports the level in memory and summarises what would publish. Writes nothing.</td></tr>
+<tr><td><code>ExportPreview</code></td><td>Exports the level in memory and summarizes what would publish. Writes nothing.</td></tr>
 <tr><td><code>PreviewPlace</code></td><td>Shows the place as players receive it, like Tools → Mantle → Check what players receive.</td></tr>
 <tr><td><code>ExplainIssue(Query)</code></td><td>Every current issue whose message, actor or fix mentions the query, in full.</td></tr>
 <tr><td><code>ScriptApiRequirement</code></td><td>The script API version the place's scripts need.</td></tr>
@@ -98,13 +98,13 @@
 </ul>
 <ul>
 <li>To change a world, edit the level and save or publish again from the editor. <span class="status planned">Planned</span> Editing a world's details in the editor or on My Places.</li>
-<li>Deleting a world removes it from the catalogue, featured list, charts and favourites, and closes its servers. You can't undo this. Deleted worlds are removed for good after 180 days.</li>
+<li>Deleting a world removes it from the catalog, featured list, charts and favorites, and closes its servers. You can't undo this. Deleted worlds are removed for good after 180 days.</li>
 <li>Each world has one owner. <span class="status planned">Planned</span> Transferring ownership, plus collaborators and teams.</li>
 </ul>
 
 <h2 id="discovery">How worlds get discovered <span class="status live">Live</span></h2>
 <ul>
-<li><b>Catalogue and search:</b> published worlds are listed newest first. Search covers world names, descriptions and creator names, and results can be sorted by Best match (the default), Most played or Newest. Your creator page lists all your worlds.</li>
+<li><b>Catalog and search:</b> published worlds are listed newest first. Search covers world names, descriptions and creator names, and results can be sorted by Best match (the default), Most played or Newest. Your creator page lists all your worlds.</li>
 <li><b>Featured:</b> up to 12 worlds hand-picked by Mantle.</li>
 <li><b>Charts:</b> "Top 10 this week" shows the most played worlds of the past week. "New and rising" shows worlds that are picking up players, then the newest worlds.</li>
 <li><b>Stats:</b> your profile shows how many worlds you've published. World cards show how many people are playing now. Charts show unique players and play time. <span class="status planned">Planned</span> Detailed stats for your own worlds.</li>
