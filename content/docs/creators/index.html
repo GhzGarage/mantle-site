@@ -3,14 +3,14 @@
 <h2 id="requirements">What you need</h2>
 <ul>
 <li><span class="status live">Live</span> <b>Unreal Engine 5.8</b> from the Epic Games Launcher.</li>
-<li><span class="status live">Live</span> <b>Windows</b>, with Visual Studio 2022 for building the project.</li>
+<li><span class="status live">Live</span> <b>Windows (64-bit).</b> You only need Visual Studio if your project has its own C++ code.</li>
 <li><span class="status live">Live</span> <b>The Mantle plugin</b> is free on Fab for Unreal Engine 5.8 on Windows (version 0.1.0, beta). Get it from <a href="https://www.fab.com/listings/0ab720ef-e3da-4dc7-81ee-7eafb573c6bc">Mantle Core on Fab</a>. See <a href="/docs/creators/plugin/">The Mantle Core plugin</a> for installing it and what else it needs.</li>
 </ul>
 
 <h3 id="sign-in">Signing in to publish <span class="status live">Live</span></h3>
 <p>The editor signs in with a <b>creator token</b> that you make in the Mantle game.</p>
 <ol class="steps">
-<li><b>Make a token</b><p>In Mantle, open <b>Settings → Account → Creator tokens</b>. Give the token a name (up to 48 characters, such as "My laptop"), pick when it expires (Never, 30 days, 90 days or 1 year) and choose <b>Create</b>. The token is shown once, so copy it straight away. An account can have up to 10 tokens at a time: revoked and expired tokens don't count.</p></li>
+<li><b>Make a token</b><p>In Mantle, open <b>Settings → Account → Creator tokens</b>. Give the token a name (up to 48 characters, such as "My laptop"), pick when it expires (Never, 30 days, 90 days or 1 year) and choose <b>Create</b>. The token is shown once, so copy it right away. An account can have up to 10 tokens at a time: revoked and expired tokens don't count.</p></li>
 <li><b>Paste it into the editor</b><p>Choose <b>Tools → Mantle → Sign in with creator token...</b> and paste it. If you skip this, Save to Mantle, Publish, the Cosmetics panel and the Library panel ask for a token when you use them.</p></li>
 </ol>
 <ul>
@@ -37,13 +37,13 @@
 <tr><td>Add Weapon Spawn</td><td>Adds a Weapon Spawn in front of you, to leave a weapon you built for players to pick up. If you haven't built one yet, it says so. See <a href="/docs/creators/building/#weapons">Weapon spawns</a>.</td></tr>
 <tr><td>Add Script Point</td><td>Adds a Script Point in front of you, to anchor a script package in the level. See <a href="/docs/creators/script-packages/#script-points">Script Points</a>.</td></tr>
 <tr><td>Cosmetics...</td><td>Opens the <b>Mantle Cosmetics</b> tab for publishing avatar items. See <a href="/docs/creators/avatar-items/">Making avatar items</a>.</td></tr>
-<tr><td>Library...</td><td>Opens the <b>Mantle Library</b> tab: find vehicles, weapons and script packages, get other creators' public ones, and add them to this place's storage. Nothing of another creator's is saved into your project. See <a href="/docs/creators/script-packages/#use">Using another creator's package</a>.</td></tr>
+<tr><td>Library...</td><td>Opens the <b>Mantle Library</b> tab: find vehicles, weapons and script packages, get other creators' public ones and add them to this place's storage. Nothing of another creator's is saved into your project. See <a href="/docs/creators/script-packages/#use">Using another creator's package</a>.</td></tr>
 <tr><td>Sign in with creator token... / Sign out</td><td>See <a href="#sign-in">Signing in to publish</a>.</td></tr>
 </tbody></table></div>
 <ul>
-<li><b>Mantle Scripts</b> toolbar button and tab: New Script..., Open, Open Scripts Folder, Open in VS Code (whole project), Check All and Regenerate Types. See <a href="/docs/scripting/api/#editor">Editor setup</a>.</li>
+<li><b>Mantle Scripts</b> tab: open it with the <b>Mantle Scripts</b> button on the level editor toolbar. It has New Script..., Open, Open Scripts Folder, Open in VS Code (whole project), Check All and Regenerate Types. See <a href="/docs/scripting/api/#editor">Editor setup</a>.</li>
 <li><b>Mantle Script Graph</b> assets let you script visually. Find them in the Content Browser under the "Mantle" category. Each one has Graph, Details, My Blueprint and Compiler Results tabs. See <a href="/docs/scripting/visual-scripting/">Visual scripting</a>.</li>
-<li><b>Project Settings → Plugins → Mantle → Places → Place Id By Link</b> remembers which world each level publishes to, for each account you sign in with.</li>
+<li><b>Editor Preferences → Plugins → Mantle → Places → Place Id By Link</b> remembers which world each level publishes to, for each account you sign in with.</li>
 </ul>
 
 <h2 id="validation">What "Check this place" catches <span class="status live">Live</span></h2>
@@ -57,22 +57,22 @@
 <tr><td>Error</td><td>Mantle Place Settings: "limits the place to some platforms but selects none." Also a Storage entry that doesn't fit: "has a storage problem at …". See <a href="/docs/creators/building/#place-settings">Place settings</a>.</td></tr>
 <tr><td>Error</td><td>Vehicle and Weapon Spawns: "has no vehicle to park." or "has no weapon to leave.", "sets both a Vehicle and a Storage Item." (or a Weapon and a Storage Item), a storage name that Place Settings doesn't list and more than 32 spawns of either kind. See <a href="/docs/creators/vehicles/">Vehicles</a> and <a href="/docs/creators/building/#weapons">Weapon spawns</a>.</td></tr>
 <tr><td>Error</td><td>"This level has N actors that simulate physics; a place holds at most 500." The same check warns above 200. Joints, Scatter instances, instanced meshes and Effects have limits too. See <a href="/docs/creators/building/#export">What happens when you publish</a>.</td></tr>
-<tr><td>Error</td><td>A landscape that can't publish, for example one with holes painted in it, a landscape material Mantle can't read with a paint layer that has no entry, no layer that can be drawn, or a second landscape in the level. A painted layer the landscape material doesn't use is only a warning: it's left out and the landscape still publishes. See <a href="/docs/creators/building/#terrain">Terrain</a>.</td></tr>
+<tr><td>Error</td><td>A landscape that can't publish, for example one with holes painted in it, a landscape material Mantle can't read with a paint layer that has no entry, no layer that can be drawn or a second landscape in the level. A painted layer the landscape material doesn't use is only a warning: it's left out and the landscape still publishes. See <a href="/docs/creators/building/#terrain">Terrain</a>.</td></tr>
 <tr><td>Error</td><td>"has a scale of …; Mantle publishes scales above zero on every axis." To mirror a mesh, use a mirrored copy of the mesh rather than a negative scale.</td></tr>
 <tr><td>Error</td><td>"This level is empty." Also a level name over 80 characters (your world takes the level's name) and, when you publish, revision notes over 2,000 characters. Notes up to 1,000 characters are kept; anything longer is cut to 1,000.</td></tr>
 <tr><td>Error</td><td>A World Partition level with cells the editor hasn't loaded: "This is a World Partition level, and N actors in cells the editor has not loaded … would be left out of the place." Load the whole level (select every cell in the World Partition window and choose Load Region From Selection, or turn off Enable Streaming in World Settings), then check again.</td></tr>
 <tr><td>Error</td><td>Script files with an unknown extension, or outside the <code>Server/</code>, <code>Client/</code> or <code>Shared/</code> folders (folder names must match exactly, including capitals). Also visual script compile errors and <code>require</code> errors.</td></tr>
-<tr><td>Error</td><td>Files in the <code>UI/</code> folder that can't be published: too many, too large, a name Mantle can't use, an image that isn't really PNG or JPEG, or a document players' games would refuse to open. A <code>.rml</code> or <code>.rcss</code> file inside <code>Scripts/</code> is an error too: "It is a UI file: move it to the UI/ folder beside Scripts/." See <a href="/docs/scripting/ui-documents/#uidoc-limits">UI documents: limits and checks</a>.</td></tr>
+<tr><td>Error</td><td>Files in the <code>UI/</code> folder that can't be published: too many, too large, a name Mantle can't use, a document players' games would refuse to open or an image that isn't really PNG or JPEG. A <code>.rml</code> or <code>.rcss</code> file inside <code>Scripts/</code> is an error too: "It is a UI file: move it to the UI/ folder beside Scripts/." See <a href="/docs/scripting/ui-documents/#uidoc-limits">UI documents: limits and checks</a>.</td></tr>
 <tr><td>Error</td><td>Script packages in the <code>Packages/</code> folder and Script Points that can't be published, such as a package with no <code>package.json</code> or a Script Point naming a package the place doesn't have. See <a href="/docs/creators/script-packages/#checks">Script packages: what Check this place catches</a>.</td></tr>
 <tr><td>Warning</td><td>BSP brushes, volumes, placed pawns, cameras and Text Render Actors are named, for example "is BSP geometry, which Mantle does not publish." The rest of the place still publishes without them.</td></tr>
 <tr><td>Warning</td><td>Post Process Volumes: "is a Post Process Volume: Mantle carries its saturation, bloom, white balance and exposure, and uses Mantle's own post-process for the rest." See <a href="/docs/creators/building/#level-look">Your level's own look</a>.</td></tr>
-<tr><td>Warning</td><td>Blueprint logic, and prefab components Mantle drops: "Blueprint logic isn't published: the place gets this actor's components, not its behaviour." See <a href="/docs/creators/building/#prefabs">Blueprint prefabs</a>.</td></tr>
+<tr><td>Warning</td><td>Blueprint logic, and prefab components Mantle drops: "Blueprint logic isn't published: the place gets this actor's components, not its behavior." See <a href="/docs/creators/building/#prefabs">Blueprint prefabs</a>.</td></tr>
 <tr><td>Warning</td><td>"Mantle provides the sky; this actor's settings are not published." (Sky Atmosphere, Sky Light, Volumetric Cloud, Exponential Height Fog). Mantle still keeps some of their look: see <a href="/docs/creators/building/#level-look">Your level's own look</a>.</td></tr>
-<tr><td>Warning</td><td>The first Directional Light, when Mantle can't keep its pitch: "Mantle Place Settings sets the clock, so this light's pitch is not kept.", "This light is attached to another actor, so its pitch is not kept." or "This sun is at or below the horizon, so its pitch is not kept." The light's intensity, colour and heading (yaw) are kept: Mantle's sky clock sets its angle.</td></tr>
+<tr><td>Warning</td><td>The first Directional Light, when Mantle can't keep its pitch: "Mantle Place Settings sets the clock, so this light's pitch is not kept.", "This light is attached to another actor, so its pitch is not kept." or "This sun is at or below the horizon, so its pitch is not kept." The light's intensity, color and heading (yaw) are kept: Mantle's sky clock sets its angle.</td></tr>
 <tr><td>Warning</td><td>Materials from your project that lose an effect when they're converted, and textures above 2048 that are scaled down. See <a href="/docs/creators/building/#custom-assets">Your own assets</a>.</td></tr>
 <tr><td>Warning</td><td>"This place has no player start, so everyone will arrive, and respawn, at Mantle's default spawn point about 2 m above the world origin."</td></tr>
 <tr><td>Warning</td><td>"Scripts/… is a Shared module nothing requires."</td></tr>
-<tr><td>Warning</td><td>A UI document that shows an image the <code>UI/</code> folder doesn't have ("…; it will not draw."), uses a style property that doesn't draw in Mantle yet, or binds a <code>data-model</code> name that script data can't reach. Players' games still open it. A document's load time and element count are limited when the game opens it: Test Locally shows those.</td></tr>
+<tr><td>Warning</td><td>A UI document that shows an image the <code>UI/</code> folder doesn't have ("…; it will not draw."), uses a style property that doesn't draw in Mantle yet or binds a <code>data-model</code> name that script data can't reach. Players' games still open it. A document's load time and element count are limited when the game opens it: Test Locally shows those.</td></tr>
 </tbody></table></div>
 <div class="callout tip"><strong>Things that aren't published</strong>
 <ul>

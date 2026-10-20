@@ -5,12 +5,12 @@
 <h2 id="overview">How it works <span class="status live">Live</span></h2>
 <ul>
 <li><b>Make it:</b> put a folder in <code>Packages/</code>, next to your level's <code>Scripts/</code> folder. It holds a small <code>package.json</code> and the same <code>Server/</code>, <code>Client/</code> and <code>Shared/</code> folders you already use for scripts.</li>
-<li><b>Try it:</b> <b>Test Locally</b> runs the level's packages along with its own scripts, so you can prove a package before you publish it.</li>
+<li><b>Try it:</b> <b>Test Locally</b> runs the level's packages along with its own scripts, so you can prove a package before you publish it. See <a href="#test">Testing a package</a>.</li>
 <li><b>Publish it:</b> when your place goes live, each package is published to the Mantle library too, as public or private, the same choice you make for vehicles and weapons.</li>
 <li><b>Use someone else's:</b> get a public package from the <a href="/docs/players/playing/#assets">ASSETS tab</a> in Mantle or from <b>Tools → Mantle → Library...</b> in Unreal, add it to your place's storage, and it runs in your place.</li>
-<li><b>Anchor it:</b> drop <b>Script Points</b> where the package should act, and set each point's parameters in the Details panel.</li>
+<li><b>Add Script Points:</b> drop them where the package should act, and set each point's parameters in the Details panel.</li>
 </ul>
-<p>A place that uses script packages or Script Points needs script API 1.36.</p>
+<p>A place that uses script packages or Script Points needs script API 1.36. You don't set this yourself: Mantle raises the place's script API version to 1.36 for you when the place has a package (in the level's <code>Packages/</code> folder or stored in Place Settings → Storage) or a Script Point.</p>
 <p>A package's scripts run <b>once per side</b> (once on the server, once on each player's machine), not once per Script Point. The scripts loop over their points with <a href="/docs/scripting/concepts/#packages"><code>Script.Points</code></a>. A stored package with no Script Points still runs, which suits things that apply to the whole place, such as a double jump.</p>
 
 <h2 id="make">Making a package</h2>
@@ -30,7 +30,7 @@
       Shared/            modules both sides (and the place) can require
         Config.luau</pre></div>
 <ul>
-<li><b>The folder name</b> is a letter followed by up to 63 letters, digits or <code>_</code>, with no spaces, for example <code>Hazards</code> or <code>Kill_Bricks</code>. Don't name a package <code>Shared</code>, <code>Server</code> or <code>Client</code>: <code>require("@Shared/...")</code> would then reach the package instead of your own Shared folder.</li>
+<li><b>The folder name</b> is a letter followed by up to 63 letters, digits or <code>_</code>, with no spaces, for example <code>Hazards</code> or <code>Kill_Bricks</code>. Don't name a package <code>Shared</code>, <code>Server</code> or <code>Client</code>: <code>require("@Shared/...")</code> would then reach the package instead of your own Shared folder. <b>Check this place</b> doesn't catch this, so keep to it yourself.</li>
 <li><b>Files</b> follow the same rules as <a href="/docs/scripting/#rules">your Scripts folder</a>: <code>Server/</code>, <code>Client/</code> and <code>Shared/</code> spelled exactly, any folders inside them, and <code>.luau</code>/<code>.lua</code>, <code>.ts</code>, <code>.js</code> or <code>.py</code> files. <code>Shared/</code> and any <code>Modules</code> folder only hold modules, which run when something requires them.</li>
 <li><b>TypeScript</b> is compiled when you publish, and the package is published as the resulting JavaScript.</li>
 <li><b>Visual scripts:</b> a graph saved inside a package runs and publishes as the Luau saved beside it, with a warning to remind you. Save the graph after every change so its Luau is up to date.</li>
@@ -43,9 +43,9 @@
   "name": "Hazard Zones",
   "description": "Players inside a zone take damage every half second. Put a Script Point in the middle of each zone.",
   "parameters": [
-    { "name": "Radius", "type": "number", "default": 300, "help": "How far the zone reaches, in centimetres." },
+    { "name": "Radius", "type": "number", "default": 300, "help": "How far the zone reaches, in centimeters." },
     { "name": "Damage", "type": "number", "default": 10, "help": "Damage each half second." },
-    { "name": "Warning", "type": "string", "default": "Danger!", "help": "Shown to a player who walks in." }
+    { "name": "Message", "type": "string", "default": "Danger!", "help": "Shown to a player who walks in." }
   ]
 }</pre></div>
 <div class="table-wrap"><table><thead><tr><th>Key</th><th>Rules</th></tr></thead><tbody>
@@ -81,10 +81,10 @@ while true do
 	end
 	task.wait(0.5)
 end</pre></div>
-<p>Inside a package, a bare name like <code>require("Config")</code> looks in the package itself first. A package can't reach the place's own scripts, and the place's scripts reach a package's modules with <code>require("@Hazards/Config")</code>. They talk to each other through Events, State and Net. See <a href="/docs/scripting/concepts/#packages">Script packages and Script Points</a>.</p>
+<p>Inside a package, a bare name like <code>require("Config")</code> looks only in the package itself. A package can't reach the place's own scripts, and the place's scripts reach a package's modules with <code>require("@Hazards/Config")</code>. They talk to each other through Events, State and Net. See <a href="/docs/scripting/concepts/#packages">Script packages and Script Points</a>.</p>
 
 <h2 id="test">Testing a package</h2>
-<p><b>Test Locally</b> runs every package in the level's <code>Packages/</code> folder exactly as a stored one would, along with its Script Points and their typed parameters, even before the package has been published or stored. A place file you've exported to disk and launch by itself can also use a package that's only in the <code>Packages/</code> folder beside it; the log says so with a line starting "MANTLE_SCRIPT_PACKAGE '[name]' is not in the place's storage".</p>
+<p><b>Test Locally</b> can't fetch library items, so a package you stored from another creator doesn't run there. The Mantle Preview panel warns "This place stores library items (Place Settings &gt; Storage); a preview cannot fetch them, so it runs without." To try a package, put it in the level's <code>Packages/</code> folder. <b>Test Locally</b> runs every package in that folder exactly as a stored one would, along with its Script Points and their typed parameters, even before the package has been published or stored. A place file you've exported to disk and launch by itself can also use a package that's only in the <code>Packages/</code> folder beside it; the log says so with a line starting "MANTLE_SCRIPT_PACKAGE '[name]' is not in the place's storage".</p>
 
 <h2 id="publish">Publishing a package <span class="status live">Live</span></h2>
 <p>You don't publish a package on its own. When you <a href="/docs/creators/publishing/">publish</a> your place:</p>
@@ -119,7 +119,7 @@ end</pre></div>
 <p>Choose <b>Tools → Mantle → Add Script Point</b>. The point appears in front of you in the viewport, with the package's name floating above it in the editor (players never see a Script Point). In its Details panel:</p>
 <div class="table-wrap"><table><thead><tr><th>Field</th><th>What it does</th></tr></thead><tbody>
 <tr><td>Storage Item</td><td>A dropdown of the place's script packages: stored packages first, then packages in the level's <code>Packages/</code> folder that aren't stored yet ("(in Packages/, stored when you publish)"), then any storage entry typed in by hand. If there are none: "This place has no script package. Add one with Tools &gt; Mantle &gt; Library (Scripts), or make one in a Packages folder beside the level's Scripts folder."</td></tr>
-<tr><td>Parameters</td><td>One row for each parameter the package declares, labelled with its name and type (for example "Speed (number, 1 to 10, required)"), its help text, and its default as a hint. The row is a text box for a string or a number, a slider for a number with both a <code>min</code> and a <code>max</code>, a checkbox for a boolean and a dropdown for a choice. <b>Default</b> clears the value, so the package's default applies. A red note under the name flags a value that doesn't fit, or a required parameter with no value: "Hazards needs Radius."</td></tr>
+<tr><td>Parameters</td><td>One row for each parameter the package declares, labeled with its name and type (for example "Speed (number, 1 to 10, required)"), its help text, and its default as a hint. The row is a text box for a string or a number, a slider for a number with both a <code>min</code> and a <code>max</code>, a checkbox for a boolean and a dropdown for a choice. <b>Default</b> clears the value, so the package's default applies. A red note under the name flags a value that doesn't fit, or a required parameter with no value: "Hazards needs Radius."</td></tr>
 <tr><td>Enabled</td><td>Untick to keep the point in the level without the package's scripts seeing it.</td></tr>
 </tbody></table></div>
 <p>The point's position and rotation are what the scripts see. A place can have up to 64 Script Points, each setting up to 16 parameters, and each value can be up to 256 characters.</p>
