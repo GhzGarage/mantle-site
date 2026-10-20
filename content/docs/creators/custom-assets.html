@@ -41,7 +41,7 @@
 <tr><td>Texture file</td><td class="num">8 MB</td><td>Re-compressed or scaled down, with a warning</td></tr>
 <tr><td>Emissive strength</td><td>Up to 100</td><td>Capped, with a warning</td></tr>
 <tr><td>Texture tiling and offset</td><td>Up to 1024</td><td>Clamped, with a warning</td></tr>
-<tr><td>Sound</td><td>60 seconds, 22,050 to 48,000 Hz, mono or stereo, 12 MiB; 64 MiB decoded per place</td><td>Error in Check this place</td></tr>
+<tr><td>Sound</td><td>60 seconds, 22,050 to 48,000 Hz and mono or stereo: error in Check this place. 12 MiB as a WAV file: error while preparing. 64 MiB decoded per place: error in Check this place</td><td>Error</td></tr>
 <tr><td>Uploads per hour</td><td>5,000 files (meshes, materials, textures, sounds, skeletal meshes, animation clips, landscapes, vehicles and weapons), and 2 GiB in total</td><td>Publish pauses and carries on by itself. See <a href="#rate-limits">Upload limits</a>.</td></tr>
 </tbody></table></div>
 <p>Only the material slots the full-detail mesh actually draws with count.</p>
@@ -50,7 +50,7 @@
 
 <h3 id="meshes">Meshes</h3>
 <ul>
-<li><b>Levels of detail:</b> the mesh's own LOD1 and LOD2 are published with the screen sizes set in the editor, so players far away see the lighter versions. A LOD with more triangles than the one before it, or past the limits above, is left off with a warning: "Mesh '…': LOD N was left off because …; players see the LODs before it at every distance." (when more LODs follow, it says "LOD N and the LODs after it"). If the LODs make the file bigger than 64 MB, only LOD0 is published, with a warning. UV channel 1 and painted vertex colours are published too.</li>
+<li><b>Levels of detail:</b> the mesh's own LOD1 and LOD2 are published with the screen sizes set in the editor, so players far away see the lighter versions. A LOD with more triangles than the one before it, or past the limits above, is left off with a warning: "Mesh '…': LOD[N] was left off because …; players see the LODs before it at every distance." (when more LODs follow, it says "LOD[N] and the LODs after it"). If the LODs make the file bigger than 64 MB, only LOD0 is published, with a warning. UV channel 1 and painted vertex colors are published too.</li>
 <li><b>Over the triangle or vertex limit:</b> Mantle doesn't change your mesh. It publishes the mesh's first lower LOD that fits (and draws with the same material slots), which then becomes its LOD0, and the LODs after it move up. If no LOD fits, it reduces a copy of the mesh to about 90% of the limit. The copy is published as a single LOD, so players see it at every distance. Either way, Check this place warns you. If the mesh can't be reduced, that's an error, and the message says why.</li>
 <li><b>Nanite:</b> players see a Nanite mesh's fallback mesh. If it looks too coarse, raise <b>Fallback Triangle Percent</b> in the mesh's Nanite settings. If the fallback is over the triangle limit, Mantle reduces it as above, or you can lower the percent.</li>
 <li><b>Collision:</b> a mesh's simple collision (boxes, spheres, capsules and convex hulls) is published, unless its Collision Complexity is <b>Use Complex As Simple</b>. A mesh without simple collision, or with more than the limits above, collides using its own triangles. Tapered capsules, level sets and shapes with no volume are left out, with a warning.</li>
@@ -59,31 +59,31 @@
 <h3 id="materials">Materials</h3>
 <p>When you publish, Mantle converts each material to work in the game. This works for any material, including material instances and graphs built from material functions.</p>
 <ul>
-<li><b>Kept:</b> base colour, normal, roughness, metallic, ambient occlusion and emissive (with its strength, up to 100).</li>
+<li><b>Kept:</b> base color, normal, roughness, metallic, ambient occlusion and emissive (with its strength, up to 100).</li>
 <li><b>Blend modes:</b> Opaque, Masked (with its opacity mask clip value) and Translucent. Additive blend (below) is kept; other blend modes become ordinary translucency.</li>
 <li><b>Two Sided</b> is kept.</li>
 <li><b>Unlit materials</b> become a glowing material that lighting still touches.</li>
-<li><b>Per-texture tiling, offset and rotation</b>, normal and occlusion strength, ambient occlusion on UV channel 1, and vertex colour multiplying the base colour.</li>
-<li><b>Car paint:</b> an opaque, one-sided Clear Coat material publishes as Mantle's car paint, a clear coat over its base colour, with optional metallic flakes (give it <code>FlakeDensity</code>, <code>FlakeSize</code> or <code>FlakeTint</code> parameters). "Check this place" notes it: "it is a Clear Coat material, so it publishes as Mantle's car-paint shading".</li>
-<li><b>Scrolling textures:</b> a Panner feeding a Texture Sample's UVs, that sample going straight into Base Color, Normal or Emissive (or the ORM group), keeps scrolling in game at the same speed and tiling, instead of freezing. A panned base colour on a masked or translucent material needs its opacity to be the same sample's alpha.</li>
+<li><b>Per-texture tiling, offset and rotation</b>, normal and occlusion strength, ambient occlusion on UV channel 1, and vertex color multiplying the base color.</li>
+<li><b>Car paint:</b> an opaque, one-sided Clear Coat material publishes as Mantle's car paint, a clear coat over its base color, with optional metallic flakes (give it <code>FlakeDensity</code>, <code>FlakeSize</code> or <code>FlakeTint</code> parameters). "Check this place" notes it: "it is a Clear Coat material, so it publishes as Mantle's car-paint shading".</li>
+<li><b>Scrolling textures:</b> a Panner feeding a Texture Sample's UVs, that sample going straight into Base Color, Normal or Emissive (or the ORM group), keeps scrolling in game at the same speed and tiling, instead of freezing. A panned base color on a masked or translucent material needs its opacity to be the same sample's alpha.</li>
 <li><b>Swaying grass and foliage:</b> a SimpleGrassWind node on World Position Offset, with constant Wind Intensity and Wind Speed and a Wind Weight of Vertex Color's red, <code>1 - V</code> of the first UV, or a constant 1, sways in game instead of standing still. It stops swaying past 50 m, and doesn't work on translucent materials.</li>
-<li><b>World-aligned textures:</b> a WorldAlignedTexture (or WorldAlignedNormal) node on Base Color, Normal or the ORM group, with one constant tile size and sharpness and no World Position input, samples by world position in game instead of the mesh's own UVs, so its pattern runs on unbroken across neighbouring meshes. Opaque materials only; emissive keeps using UVs.</li>
+<li><b>World-aligned textures:</b> a WorldAlignedTexture (or WorldAlignedNormal) node on Base Color, Normal or the ORM group, with one constant tile size and sharpness and no World Position input, samples by world position in game instead of the mesh's own UVs, so its pattern runs on unbroken across neighboring meshes. Opaque materials only; emissive keeps using UVs.</li>
 <li><b>Vertex-painted layer blends:</b> a Lerp between two plain Texture Samples by one Vertex Color channel, on Base Color (with Normal and the ORM group blending the same way, or staying a plain sample), keeps the painted layer in game instead of dropping it. Opaque materials only.</li>
-<li><b>Additive materials:</b> an Additive blend publishes as an additive material, which shows only its glow. The glow is the emissive (or, for an unlit material, its colour), scaled by a constant opacity. The base colour and its vertex-colour tint aren't kept.</li>
+<li><b>Additive materials:</b> an Additive blend publishes as an additive material, which shows only its glow. The glow is the emissive (or, for an unlit material, its color), scaled by a constant opacity. The base color and its vertex-color tint aren't kept.</li>
 <li><b>Glass:</b> an unlit translucent material that draws the scene behind it (Scene Color on its emissive path) publishes as see-through tinted glass.</li>
-<li><b>Water:</b> a near-opaque, depth-faded translucent material publishes as Mantle's water, with its surface colour, roughness and up to two normal maps (with their layout and pan). Its base colour texture, roughness, metallic and occlusion textures, emissive and vertex-colour tint are dropped, with a warning. If the material blends more than two normal maps, only the first two are kept, with a warning.</li>
-<li><b>Foliage shading:</b> a masked, two-sided material built as foliage keeps its tint, strength and vertex-colour weight.</li>
+<li><b>Water:</b> a near-opaque, depth-faded translucent material publishes as Mantle's water, with its surface color, roughness and up to two normal maps (with their layout and pan). Its base color texture, roughness, metallic and occlusion textures, emissive and vertex-color tint are dropped, with a warning. If the material blends more than two normal maps, only the first two are kept, with a warning.</li>
+<li><b>Foliage shading:</b> a masked, two-sided material built as foliage keeps its tint, strength and vertex-color weight.</li>
 </ul>
-<p>For scrolling, swaying, world-aligned and layer-blend effects, these recognised shapes are the only ones Mantle carries: anything built differently, even if it looks similar in the material editor, still falls back to the plain conversion below. They aren't kept on car paint, or (other than swaying and a panned emissive) on unlit materials. A material keeps at most one of swaying, a world-aligned texture or a layer blend: swaying wins, then a world-aligned texture. (Additive, glass, water and foliage are separate, and aren't part of this rule.) A texture that one of those already uses doesn't scroll.</p>
-<p>Some effects can't be kept. Check this place names each one as a warning, and the material still publishes. The four rows marked below are exceptions: built in exactly one of the recognised shapes above, they carry across instead; anything else built the same way in spirit (a Panner feeding something other than a plain Texture Sample, wind on a translucent material, and so on) still falls back to the row's behaviour.</p>
+<p>For scrolling, swaying, world-aligned and layer-blend effects, these recognized shapes are the only ones Mantle carries: anything built differently, even if it looks similar in the material editor, still falls back to the plain conversion below. They aren't kept on car paint, or (other than swaying and a panned emissive) on unlit materials. A material keeps at most one of swaying, a world-aligned texture or a layer blend: swaying wins, then a world-aligned texture. (Additive, glass, water and foliage are separate, and aren't part of this rule.) A texture that one of those already uses doesn't scroll.</p>
+<p>Some effects can't be kept. Check this place names each one as a warning, and the material still publishes. The four rows marked below are exceptions: built in exactly one of the recognized shapes above, they carry across instead; anything else built the same way in spirit (a Panner feeding something other than a plain Texture Sample, wind on a translucent material, and so on) still falls back to the row's behavior.</p>
 <div class="table-wrap"><table><thead><tr><th>Effect</th><th>What players see</th></tr></thead><tbody>
-<tr><td>Time, Panner, Rotator, flipbooks</td><td>Frozen, <i>unless it's a recognised scrolling texture: then it keeps scrolling</i></td></tr>
-<tr><td>World Position Offset (wind, vertex animation)</td><td>The mesh doesn't sway or move, <i>unless it's recognised swaying grass: then it sways within 50 m</i></td></tr>
-<tr><td>World-aligned or triplanar mapping</td><td>The pattern doesn't line up across neighbouring meshes, <i>unless it's a recognised world-aligned texture: then it does</i></td></tr>
+<tr><td>Time, Panner, Rotator, flipbooks</td><td>Frozen, <i>unless it's a recognized scrolling texture: then it keeps scrolling</i></td></tr>
+<tr><td>World Position Offset (wind, vertex animation)</td><td>The mesh doesn't sway or move, <i>unless it's recognized swaying grass: then it sways within 50 m</i></td></tr>
+<tr><td>World-aligned or triplanar mapping</td><td>The pattern doesn't line up across neighboring meshes, <i>unless it's a recognized world-aligned texture: then it does</i></td></tr>
 <tr><td>Refraction</td><td>Plain see-through (an unlit material that draws the scene behind it becomes see-through glass)</td></tr>
 <tr><td>Subsurface shading models</td><td>Flatter skin, wax and leaves</td></tr>
 <tr><td>Bump offset and parallax</td><td>A flat surface up close</td></tr>
-<tr><td>Vertex colour used for anything but multiplying the base colour</td><td>Layers painted per vertex don't show, <i>unless it's a recognised layer blend: then the painted layer shows</i></td></tr>
+<tr><td>Vertex color used for anything but multiplying the base color</td><td>Layers painted per vertex don't show, <i>unless it's a recognized layer blend: then the painted layer shows</i></td></tr>
 <tr><td>Detail normal maps (two or more normal textures)</td><td>Fine detail may soften</td></tr>
 <tr><td>Pixel depth offset, displacement</td><td>Dropped</td></tr>
 <tr><td>Hair, cloth, eye, single layer water, thin translucent, and clear coat on a two-sided or translucent material</td><td>Standard shading</td></tr>
@@ -96,7 +96,7 @@
 <li>Textures are at most 2048 on the longest side. Larger ones are scaled down when you publish, keeping their shape. Detail finer than that is lost.</li>
 <li>Each texture file must fit in 8 MB. If one is too big, it's compressed harder or scaled down, with a warning.</li>
 <li>Every texture is screened before a place can go live with it.</li>
-<li>If one image is used for two different jobs, such as colour in one material and a normal map in another, one of them may be left out. See <a href="#upload-messages">the upload messages</a>.</li>
+<li>If one image is used for two different jobs, such as color in one material and a normal map in another, one of them may be left out. See <a href="#upload-messages">the upload messages</a>.</li>
 </ul>
 
 <h2 id="messages">Messages and how to fix them</h2>
@@ -126,7 +126,7 @@
 <li>refraction is dropped; it renders as plain see-through.</li>
 <li>subsurface scattering is dropped, so skin, wax and leaves look flatter.</li>
 <li>parallax depth is flattened, so the surface looks flat up close.</li>
-<li>vertex-colour blending is dropped, so layers painted per vertex will not show (only Vertex Color's RGB multiplying the base colour, and on an opaque material a Lerp between two textures by one Vertex Color channel, are kept).</li>
+<li>vertex-colour blending is dropped, so layers painted per vertex will not show (only Vertex Colour's RGB multiplying the base colour, and on an opaque material a Lerp between two textures by one Vertex Colour channel, are kept).</li>
 <li>its detail normals are baked at the material's texture size, so fine surface detail may soften.</li>
 <li>pixel depth offset is dropped.</li>
 <li>displacement is dropped, so the surface keeps the mesh's own shape.</li>
@@ -138,7 +138,7 @@
 <li>it varies its look per instance (Per Instance Random, Custom Data or Fade Amount), which a published material cannot, so it publishes at the average: Per Instance Random as 0.5, Custom Data as its default value.</li>
 <li>it is a lit additive material; Mantle draws additive blending unlit (the glow, with no lighting on the surface), so its lighting is lost.</li>
 <li>its Fresnel rim glow is dropped, so the edges no longer glow brighter than the face (the baked glow is seen face-on, where a Fresnel is 0).</li>
-<li>it draws the scene behind it (Scene Color), which Mantle cannot, so it publishes as tinted see-through glass.</li>
+<li>it draws the scene behind it (Scene Colour), which Mantle cannot, so it publishes as tinted see-through glass.</li>
 </ul></td><td>"It still publishes. Nothing to do unless the effect matters to how your place looks; if it does, bake the effect into the material's textures or pick another material."</td></tr>
 <tr><td>Material '…' (used by '…'): it is a Clear Coat material, so it publishes as Mantle's car-paint shading (a clear coat over its base colour).</td><td>"Nothing to do. Its Clear Coat and Clear Coat Roughness carry over. Without flake parameters it is a plain clear coat with no flakes; for metallic flakes, give it FlakeDensity, FlakeSize or FlakeTint parameters (Mantle's defaults fill in any it lacks)."</td></tr>
 </tbody></table></div>
@@ -147,6 +147,7 @@
 <p>These come from the <b>Prepare meshes and materials</b> step and appear with the notes from Check this place. Errors stop the publish with "N mesh(es), material(s) or sound(s) could not be prepared for Mantle. The list below says why."</p>
 <div class="table-wrap"><table><thead><tr><th>Level</th><th>Message</th><th>How to fix it</th></tr></thead><tbody>
 <tr><td>Error</td><td>Mesh '…' is N MB once converted; an upload may be at most 64 MB.</td><td>"Use a lower-detail version of it."</td></tr>
+<tr><td>Error</td><td>Mesh '…' has N material slots; a place mesh may have at most 8.</td><td>"Give it fewer materials (Merge Actors can bake several into one)."</td></tr>
 <tr><td>Error</td><td>Mesh '…' could not be converted: [reason]</td><td>"Fix the mesh as the message says, or replace it, then try again."</td></tr>
 <tr><td>Error</td><td>Mesh '…' could not be converted: its smaller version does not draw with the same materials.</td><td>"Use a lower-detail version of the mesh, or give it a LOD that fits and draws with the same materials."</td></tr>
 <tr><td>Error</td><td>A mesh this place uses could not be loaded. / A material this place uses could not be loaded.</td><td>"Check the level for missing assets, then try again."</td></tr>
@@ -160,8 +161,8 @@
 <tr><td>Warning</td><td>Material '…': its normal strength of N is outside what Mantle keeps (0 to 10), so it is clamped.</td></tr>
 <tr><td>Warning</td><td>Material '…': it blends N normal maps; Mantle's water keeps the first two.</td></tr>
 <tr><td>Warning</td><td>[texture] ([use] of material '…') was re-encoded at JPEG quality N to fit the 8 MB upload limit. / … was downscaled to [size] to fit the 8 MB upload limit.</td></tr>
-<tr><td>Warning</td><td>Material '…': its [base colour / normal map / emissive] image could not be read, so it is left out.</td></tr>
-<tr><td>Warning</td><td>Mesh '…': LOD N was left off because …; players see the LODs before it at every distance. / Mesh '…': its LOD screen sizes (…) do not each fall below the one before, so only LOD0 was published.</td><td>"It still publishes." Reduce the LOD, or fix its screen sizes in the mesh editor, if the lighter versions matter.</td></tr>
+<tr><td>Warning</td><td>Material '…': its [base colour / normal map / emissive / and so on] image could not be read, so it is left out.</td></tr>
+<tr><td>Warning</td><td>Mesh '…': LOD[N] was left off because …; players see the LODs before it at every distance. / Mesh '…': its LOD screen sizes (…) do not each fall below the one before, so only LOD0 was published.</td><td>"It still publishes." Reduce the LOD, or fix its screen sizes in the mesh editor, if the lighter versions matter.</td></tr>
 <tr><td>Warning</td><td>Mesh '…' has more simple collision than a place mesh may carry (…), so it collides with its triangles instead.</td><td>"It still publishes." Simplify its collision in the mesh editor (fewer or smaller convex hulls) for cheaper collision.</td></tr>
 <tr><td>Warning</td><td>Mesh '…': part of its simple collision was left out: [what].</td><td>"It still publishes with the rest." Replace those shapes in the mesh editor's collision menu if they matter.</td></tr>
 <tr><td>Warning</td><td>Mesh '…' with its LODs is N MB once converted, over the 64 MB upload limit, so only LOD0 was published.</td><td>"It still publishes." Use lower-detail LODs to publish them.</td></tr>
@@ -170,7 +171,7 @@
 </tbody></table></div>
 
 <h3 id="sound-messages">Messages for sounds</h3>
-<p>Check this place and the prepare step refuse a sound with these errors. Re-import it after you fix it. Mantle only publishes sound waves imported from a WAV: a Sound Cue, a MetaSound or a sound generated while the game runs gets an error of its own that says so.</p>
+<p>A sound that breaks one of these errors stops the publish. Re-import it after you fix it. The table gives the prepare step's wording. The first four errors also come from Check this place, which words them around the actor, for example "'[actor]' uses sound '[name]', which has N channels, and Mantle plays mono or stereo sounds." The 12 MB error comes only from the prepare step. The decoded total and the warning come only from Check this place. Mantle only publishes sound waves imported from a WAV: a Sound Cue, a MetaSound or a sound generated while the game runs gets an error of its own that says so.</p>
 <div class="table-wrap"><table><thead><tr><th>Level</th><th>Message</th><th>How to fix it</th></tr></thead><tbody>
 <tr><td>Error</td><td>Sound '…' has no imported audio in this project to publish.</td><td>"Re-import it from its WAV file (Reimport in the Content Browser), then try again."</td></tr>
 <tr><td>Error</td><td>Sound '…' has N channels, and Mantle plays mono or stereo sounds.</td><td>"Export it from your audio editor as mono or stereo, re-import it, then try again."</td></tr>
@@ -215,12 +216,12 @@
 <ul>
 <li><b>Rejected in screening or review:</b> the place can't go live with it. Replace the texture (or the material or mesh that uses it), or remove what uses it, then publish again.</li>
 <li><b>Waiting for a moderator:</b> nothing goes live until it's approved. Choose <b>Publish again</b> once it is. Nothing is uploaded twice.</li>
-<li><b>Removed by a moderator:</b> moderators can remove a file from your account, usually after a licence complaint (for example a Fab pack you don't have the rights to). After that it can't be uploaded or used again, and your world's next publish is stopped until you replace it or remove what uses it.</li>
+<li><b>Removed by a moderator:</b> moderators can remove a file from your account, usually after a license complaint (for example a Fab pack you don't have the rights to). After that it can't be uploaded or used again, and your world's next publish is stopped until you replace it or remove what uses it.</li>
 </ul>
-<div class="callout tip"><strong>Only use assets you have the rights to</strong><p>Everything you upload is tied to your account. Use your own work, or Fab and marketplace content whose licence lets you use it in your game.</p></div>
+<div class="callout tip"><strong>Only use assets you have the rights to</strong><p>Everything you upload is tied to your account. Use your own work, or Fab and marketplace content whose license lets you use it in your game.</p></div>
 
 <h3 id="credits">Crediting assets <span class="status live">Live</span></h3>
-<p>If an asset's licence asks for credit, such as Creative Commons BY, add it in <b>Project Settings → Plugins → Mantle Credits</b>. Each rule names a content folder, such as <code>/Game/Fab/Crates</code>, and the <b>Attribution</b> players are shown for everything under it: plain text, one line, at most 500 characters, for example the title, author, source and licence. The deepest matching folder wins. One asset can override its folder with the <code>MantleAttribution</code> metadata tag on its package (an empty tag means no credit). Credits show on the world page of every place that uses the asset. Nothing is credited unless a rule or tag says so, and Mantle never guesses a licence. The rules are saved with the project, so everyone working on it shares them. A credit over 500 characters stops the publish before anything is uploaded: "The credit for '…' is longer than the 500 characters Mantle shows. Shorten its Credits rule (Project Settings > Plugins > Mantle Credits) or its MantleAttribution tag, then Publish again."</p>
+<p>If an asset's license asks for credit, such as Creative Commons BY, add it in <b>Project Settings → Plugins → Mantle Credits</b>. Each rule names a content folder, such as <code>/Game/Fab/Crates</code>, and the <b>Attribution</b> players are shown for everything under it: plain text, one line, at most 500 characters, for example the title, author, source and license. The deepest matching folder wins. One asset can override its folder with the <code>MantleAttribution</code> metadata tag on its package (an empty tag means no credit). Credits show on the world page of every place that uses the asset. Nothing is credited unless a rule or tag says so, and Mantle never guesses a license. The rules are saved with the project, so everyone working on it shares them. A credit over 500 characters stops the publish before anything is uploaded: "The credit for '…' is longer than the 500 characters Mantle shows. Shorten its Credits rule (Project Settings > Plugins > Mantle Credits) or its MantleAttribution tag, then Publish again."</p>
 
 <h2 id="rate-limits">Upload limits</h2>
 <p>Each account can upload up to 5,000 files (meshes, materials, textures, sounds, skeletal meshes, animation clips, landscapes, vehicles and weapons) and 2 GiB per hour. Files your account already has on Mantle aren't sent again, so they don't count. A big pack's first publish can reach the limit. When it does, Publish pauses by itself and shows "Mantle's hourly upload limit is reached. Uploading continues by itself at HH:MM (in about N minutes); you can keep working meanwhile." If the wait would be longer than about an hour, it stops instead and tells you when to try again. Everything uploaded so far is kept. See <a href="/docs/creators/hosting-data/#official-hosting">Official hosting</a> for the other limits.</p>
