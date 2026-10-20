@@ -9,11 +9,11 @@
         <li>Firing remotes to one player or all of them.</li></ul></div>
       <div class="pane"><h4><span class="side c">Client</span> changes are local</h4><ul>
         <li>Setting a property of an entity (the object your script uses to work with an actor in the world) on a client changes only that player's view, as on Roblox. When the server next changes it, the server's value wins.</li>
-        <li>HUD text and toasts. <code>UI:Toast(text, seconds?)</code> shows a message at the top centre of the screen for 1 to 10 seconds (3 by default), replacing the one before it. <code>UI:SetText(slot, text)</code> keeps a named line at the top left: the same slot replaces its line, empty text clears it, and up to 8 lines show at once. Both are plain text with no line breaks, and anything past 120 characters is cut off. A ninth line is refused until you clear one. For anything bigger, build <a href="/docs/scripting/ui-documents/">UI documents</a> or UI nodes.</li>
+        <li>HUD text and toasts. <code>UI:Toast(text, seconds?)</code> shows a message at the top center of the screen for 1 to 10 seconds (3 by default), replacing the one before it. <code>UI:SetText(slot, text)</code> keeps a named line at the top left: the same slot replaces its line, empty text clears it, and up to 8 lines show at once. Both are plain text with no line breaks, and anything past 120 characters is cut off. A ninth line is refused until you clear one. For anything bigger, build <a href="/docs/scripting/ui-documents/">UI documents</a> or UI nodes.</li>
         <li><code>Players.LocalPlayer</code> is always set in a client script: client scripts start once the local player exists.</li>
         <li>Asking the server for things with <code>Remote:FireServer</code>.</li></ul></div>
     </div>
-    <p>In a session, server scripts run on the server and client scripts run on each player's machine as they join. Test multiplayer behaviour by publishing and joining with the Mantle client, and include a player who joins late. Scripts don't run in the editor's Play (PIE) mode: to try them on your own PC first, use <b>Tools → Mantle → Test Locally</b> (see <a href="/docs/creators/plugin/#test-locally">Testing with Test Locally</a>).</p>
+    <p>In a session, server scripts run on the server and client scripts run on each player's machine as they join. Test multiplayer behavior by publishing and joining with the Mantle client, and include a player who joins late. Scripts don't run in the editor's Play (PIE) mode: to try them on your own PC first, use <b>Tools → Mantle → Test Locally</b> (see <a href="/docs/creators/plugin/#test-locally">Testing with Test Locally</a>).</p>
     <h2 id="tags">Tags connect scripts to things</h2>
     <p>Give actors a tag in the editor, then write one script for every actor with that tag. These examples use the tag <code>guide_code_killbrick</code>. The script covers every tagged actor already placed and any added later, clones included. You never need to attach a script to an actor.</p>
     <div class="v has-ts">
@@ -103,7 +103,7 @@ console.log(round.number, round.spawn.z);    // 3 200</pre></div>
 r = State.get("round")
 print(r["number"], r["spawn"].z)             # 3 200</pre></div>
     </div>
-    <p>Positions are in centimetres (100 = 1 m), like Unreal. Rotations are <code>Vector3(pitch, yaw, roll)</code> in degrees.</p>
+    <p>Positions are in centimeters (100 = 1 m), like Unreal. Rotations are <code>Vector3(pitch, yaw, roll)</code> in degrees.</p>
     <p>A script can only move, rotate or scale a <b>dynamic</b> entity. A level actor is dynamic when you set it to <b>Movable</b> in the editor. Entities a script spawns or clones are dynamic already. Any other entity ignores the change and the log says why: see <a href="/docs/scripting/api/#errors">Errors and limits</a>.</p>
     <h2 id="modules">Sharing code</h2>
     <p>Put reusable code in <code>Shared/</code> (both sides) or a <code>Modules/</code> folder (that side only), then load it from your scripts. A leading <code>@Shared/</code> is optional and works in every language when Mantle runs your scripts. Only the Luau and TypeScript code editors also know it, so only they autocomplete it.</p>
@@ -123,9 +123,9 @@ console.log(roundSeconds);
 print(Config.ROUND_SECONDS)
 </pre></div></div>
     </div>
-    <p>Each labelled block is a separate file. Type <code>Shared/Modules/Examples/Config</code> exactly as shown: paths must match capital letters exactly, on Windows as well as Linux.</p><ul>
+    <p>Each labeled block is a separate file. Type <code>Shared/Modules/Examples/Config</code> exactly as shown: paths must match capital letters exactly, on Windows as well as Linux.</p><ul>
       <li>A <code>Modules</code> folder nested inside another folder still only holds modules.</li>
-      <li>If the capitalisation is wrong, or you require an entry script (a script that runs on its own rather than a module), you get a clear error. A path outside Scripts isn't found. You can leave off the file extension.</li>
+      <li>If the capitalization is wrong, or you require an entry script (a script that runs on its own rather than a module), you get a clear error. A path outside Scripts isn't found. You can leave off the file extension.</li>
       <li>A path starting with <code>./</code> or <code>../</code> is relative to the file that asks for it. Any other path starts from <code>Scripts/</code>, and is also tried under <code>Shared/</code> and under the asking script's own side.</li>
       <li>Luau and Python modules must finish loading without waiting. In Luau, a module that calls <code>task.wait</code> while loading gives "require: &lt;path&gt; waited while loading; modules must finish loading without task.wait".</li>
       <li>In Luau and Python, circular requires (modules that require each other in a loop) are an error: "require: &lt;path&gt; requires itself (directly or through another module)".</li>
@@ -137,7 +137,7 @@ print(Config.ROUND_SECONDS)
       <li>Luau and Python can only load files in their own language; JavaScript and TypeScript can import each other. Give modules unique names across languages, since an extensionless path can match a file in another language. To share between languages, use State, Events or a Remote (see <a href="#languages">Mixing languages</a>).</li>
     </ul>
     <h2 id="network">Talking over the network</h2>
-    <p><b>State</b> is for shared facts such as the score, round or phase. The server sets them. Every script can read them and be told when they change. <code>State:Observe</code> calls your function straight away with the current value, then again on every change.</p>
+    <p><b>State</b> is for shared facts such as the score, round or phase. The server sets them. Every script can read them and be told when they change. <code>State:Observe</code> calls your function right away with the current value, then again on every change.</p>
     <div class="v has-ts">
       <div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Server/NetworkState.luau</span><pre id="ex-state-server-luau" data-example-kind="source" data-language="luau">State:Set(&quot;guide.example.timeLeft&quot;, 30)
 </pre></div><div class="code"><span class="tag">Scripts/Client/NetworkHud.luau</span><pre id="ex-state-client-luau" data-example-kind="source" data-language="luau">local label = UI:Create(&quot;text&quot;)
@@ -195,8 +195,8 @@ State.observe(&quot;guide.example.timeLeft&quot;, lambda s: label.set_text(f&quo
 lamp:AddTag("streetlamp")
 lamp:Tween({ LightIntensity = 0 }, 5)   -- fade it out over five seconds (API 1.8)</pre></div></div>
 
-    <h3 id="spawn-meshes">Spawning and recolouring meshes (API 1.8)</h3>
-    <p><code>Assets:Spawn(assetId, position, props?)</code> <span class="side s">Server</span> places one of the place's meshes (placed in the level or listed under <a href="#script-assets">Script Assets</a>) and returns it as an <code>Entity</code>. Spawned meshes count towards the same 512 limit as clones. Any mesh can be tinted with <code>Color</code>, faded with <code>Transparency</code> (0 solid to 1 invisible), or given another of the place's materials with <code>SetMaterial(assetId, slot?)</code>. Only materials uploaded with the place can be tinted or made see-through. A spawned mesh stays where a script puts it: it can't be a physics object.</p>
+    <h3 id="spawn-meshes">Spawning and recoloring meshes (API 1.8)</h3>
+    <p><code>Assets:Spawn(assetId, position, props?)</code> <span class="side s">Server</span> places one of the place's meshes (placed in the level or listed under <a href="#script-assets">Script Assets</a>) and returns it as an <code>Entity</code>. Spawned meshes count toward the same 512 limit as clones. Any mesh can be tinted with <code>Color</code>, faded with <code>Transparency</code> (0 solid to 1 invisible), or given another of the place's materials with <code>SetMaterial(assetId, slot?)</code>. Only materials uploaded with the place can be tinted or made see-through. A spawned mesh stays where a script puts it: it can't be a physics object.</p>
     <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Crates.luau</span><pre data-example-kind="snippet">local CRATE = "ast_u…"   -- the id from the publish log
 
 local crate = Assets:Spawn(CRATE, Vector3.new(200, 0, 100), {
@@ -285,13 +285,13 @@ end)</pre></div></div>
 end</pre></div></div>
 
     <h3 id="environment">Time of day and weather (API 1.4 and 1.11)</h3>
-    <p>Every server has one sky, shared by every player. <code>Environment.TimeOfDay</code> runs from 0 to 24 (servers start at 9, and a day lasts 30 real minutes), <code>IsNight</code> is true while the sun is down, and <code>Weather</code> is <code>Clear</code>, <code>PartlyCloudy</code>, <code>Overcast</code>, <code>Rain</code>, <code>Storm</code>, <code>Cloudy</code>, <code>Foggy</code>, <code>LightRain</code>, <code>LightSnow</code>, <code>Snow</code>, <code>Blizzard</code>, <code>DustCalm</code> or <code>DustStorm</code>. On its own the weather moves between Clear (32%), PartlyCloudy (25%), Cloudy (15%), Overcast (10%), LightRain (6%), Rain (5%), Foggy (5%) and Storm (2%), and after a Storm comes Rain, LightRain or Overcast. LightSnow, Snow, Blizzard, DustCalm and DustStorm never come on their own: they only appear when a script or the place's settings ask for them. <code>WeatherChanged</code> fires when the weather turns, and <code>LightningStrike</code> <span class="side c">Client</span> fires with each flash; the default sky already shows the bolt and plays its thunder. From API 1.11, server scripts can change it: set <code>ClockTime</code> or <code>TimeScale</code>, <code>FreezeClock()</code>, hold the weather with <code>SetWeather</code> until <code>ResumeNaturalWeather</code>, and adjust the fog, stars, sun and the picture's colour. <code>PropertyChanged</code> fires everywhere when a script changes one of these.</p>
+    <p>Every server has one sky, shared by every player. <code>Environment.TimeOfDay</code> runs from 0 to 24 (servers start at 9, and a day lasts 30 real minutes), <code>IsNight</code> is true while the sun is down, and <code>Weather</code> is <code>Clear</code>, <code>PartlyCloudy</code>, <code>Overcast</code>, <code>Rain</code>, <code>Storm</code>, <code>Cloudy</code>, <code>Foggy</code>, <code>LightRain</code>, <code>LightSnow</code>, <code>Snow</code>, <code>Blizzard</code>, <code>DustCalm</code> or <code>DustStorm</code>. On its own the weather moves between Clear (32%), PartlyCloudy (25%), Cloudy (15%), Overcast (10%), LightRain (6%), Rain (5%), Foggy (5%) and Storm (2%), and after a Storm comes Rain, LightRain or Overcast. LightSnow, Snow, Blizzard, DustCalm and DustStorm never come on their own: they only appear when a script or the place's settings ask for them. <code>WeatherChanged</code> fires when the weather turns, and <code>LightningStrike</code> <span class="side c">Client</span> fires with each flash; the default sky already shows the bolt and plays its thunder. From API 1.11, server scripts can change it: set <code>ClockTime</code> or <code>TimeScale</code>, <code>FreezeClock()</code>, hold the weather with <code>SetWeather</code> until <code>ResumeNaturalWeather</code>, and adjust the fog, stars, sun and the picture's color. <code>PropertyChanged</code> fires everywhere when a script changes one of these.</p>
     <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Storm.luau</span><pre data-example-kind="snippet">Environment.ClockTime = 21        -- jump to night
 Environment:SetWeather("Storm", 30)  -- blend into a storm over 30 s
 task.wait(120)
 Environment:ResumeNaturalWeather()</pre></div></div>
-    <p>From API 1.27, a server script can also set <code>Bloom</code> (0 to 4, how strongly bright things glow) and a fixed colour-grading look with <code>ColorGrading</code> (<code>"Warm"</code>, <code>"Cool"</code>, <code>"Noir"</code>, <code>"Sepia"</code>, <code>"Vivid"</code> or <code>"Faded"</code>) and <code>ColorGradingIntensity</code> (0 to 1, how strongly it shows). Creators can't upload their own colour-grading textures yet.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Flashback.luau</span><pre data-example-kind="snippet">-- A black-and-white flashback with a strong glow, fading back to colour.
+    <p>From API 1.27, a server script can also set <code>Bloom</code> (0 to 4, how strongly bright things glow) and a fixed color-grading look with <code>ColorGrading</code> (<code>"Warm"</code>, <code>"Cool"</code>, <code>"Noir"</code>, <code>"Sepia"</code>, <code>"Vivid"</code> or <code>"Faded"</code>) and <code>ColorGradingIntensity</code> (0 to 1, how strongly it shows). Creators can't upload their own color-grading textures yet.</p>
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Flashback.luau</span><pre data-example-kind="snippet">-- A black-and-white flashback with a strong glow, fading back to color.
 Environment.ColorGrading = "Noir"
 Environment.Bloom = 4
 task.wait(10)
@@ -303,7 +303,7 @@ Environment.ColorGrading = nil
 Environment.ColorGradingIntensity = 1
 Environment.Bloom = nil</pre></div></div>
     <p>From API 1.29, a client script can give one player their own look on top of the server's, with <code>Environment:SetLocalLook(look)</code> <span class="side c">Client</span>. <code>look</code> takes any of <code>ExposureBias</code>, <code>Saturation</code>, <code>Contrast</code>, <code>Vignette</code>, <code>ColorTint</code>, <code>Bloom</code>, <code>ColorGrading</code> and <code>ColorGradingIntensity</code>, each clamped the same way as the server property of the same name. What the look sets wins over the server's value; what it leaves out follows the server, including later server changes. Each call replaces the whole look, no other player sees it, and the look goes when the script that set it stops. <code>Environment:ClearLocalLook()</code> <span class="side c">Client</span> gives the server's look back.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Client/HauntedWing.luau</span><pre data-example-kind="snippet">-- This player only: grey and vignetted, with a Noir grade the server's own bloom shows through.
+    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Client/HauntedWing.luau</span><pre data-example-kind="snippet">-- This player only: gray and vignetted, with a Noir grade the server's own bloom shows through.
 Environment:SetLocalLook({ Saturation = 0, Vignette = 0.6, ColorGrading = "Noir" })
 task.wait(5)
 Environment:ClearLocalLook()</pre></div></div>

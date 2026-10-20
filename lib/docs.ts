@@ -59,7 +59,7 @@ export const docsNav: DocSection[] = [
         title: "Ship",
         pages: [
           { slug: ["creators", "publishing"], title: "Publishing and managing worlds", description: "How publishing works, what can stop it, using an AI agent, going back to an earlier version, and helping players find your world." },
-          { slug: ["creators", "hosting-data"], title: "Hosting, data and monetisation", description: "Official and community hosting, upload limits, saving player data, your creator page, stats, avatar items and plans for earning." },
+          { slug: ["creators", "hosting-data"], title: "Hosting, data and monetization", description: "Official and community hosting, upload limits, saving player data, your creator page, stats, avatar items and plans for earning." },
         ],
       },
       {
