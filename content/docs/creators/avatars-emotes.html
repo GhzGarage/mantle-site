@@ -1,8 +1,8 @@
 <div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
 
-<p><span class="status wip">In progress</span> An avatar is a whole body players can wear instead of Mantle's base avatars. An emote is a short animation players play from the emote wheel. A scar or tattoo is a mask players can wear on their skin. You publish all three from the <b>Mantle Cosmetics</b> tab. This page covers what each one needs. For signing in, the panel's fields, <b>Check only</b>, <b>Upload to Mantle</b> and screening, see <a href="/docs/creators/avatar-items/">Making avatar items</a>. Players find avatars and emotes on the <a href="/docs/players/playing/#avatar">Avatar screen</a>, which is still in progress.</p>
+<p><span class="status live">Live</span> An avatar is a whole body players can wear instead of Mantle's base avatars. An emote is a short animation players play from the emote wheel. A scar or tattoo is a mask players can wear on their skin. You publish all three from the <b>Mantle Cosmetics</b> tab. This page covers what each one needs. For signing in, the panel's fields, <b>Check only</b>, <b>Upload to Mantle</b> and screening, see <a href="/docs/creators/avatar-items/">Making avatar items</a>. Players find avatars and emotes on the <a href="/docs/players/playing/#avatar">Avatar screen</a>.</p>
 
-<h2 id="avatars">Avatars <span class="status wip">In progress</span></h2>
+<h2 id="avatars">Avatars <span class="status live">Live</span></h2>
 <p>An avatar is a MetaHuman body and face. You don't build it by hand: you pick your character under <b>Convert a character</b> and Mantle builds it as a MetaHuman at Mantle's default height. You don't upload any animation: Mantle animates every avatar with its own animations and players' emotes.</p>
 
 <h3 id="convert">Converting a character</h3>
@@ -137,7 +137,7 @@
 <tr><td><code>tail</code></td><td class="num">90</td><td class="num">7</td><td class="num">40</td><td class="num">60 degrees</td></tr>
 </tbody></table></div>
 
-<h2 id="overlays">Scars and tattoos <span class="status wip">In progress</span></h2>
+<h2 id="overlays">Scars and tattoos <span class="status live">Live</span></h2>
 <p>A scar or tattoo is a mask players can wear on a converted MetaHuman avatar. You paint a square mask to the MetaHuman UV layout of the body or the face, in white on black. Choose <b>Overlay</b> under "What are you publishing?", then the slot: <code>scar_body</code>, <code>scar_face</code>, <code>tattoo_body</code> or <code>tattoo_face</code>. The slot's name says whether it's drawn on the body or the face.</p>
 <ol class="steps">
 <li><b>Paint the mask</b><p>Use a square image whose size is a power of two, such as 64, 128, 256, 512 or 1024 pixels, and at most 1024 x 1024. Paint white where the scar or tattoo shows and black where it doesn't, as a greyscale image or in the red channel only. Choose <b>Save painting guide</b> to get an image of the UV layout to paint over: "Open this under your painting as a guide layer; paint on the area you want, then hide the guide before saving."</p></li>
@@ -157,7 +157,7 @@
 <tr><td>Problem: Tattoos do not take a normal map; only scars do.</td><td>Remove the normal map, or choose a scar slot.</td></tr>
 </tbody></table></div>
 
-<h2 id="emotes">Emotes <span class="status wip">In progress</span></h2>
+<h2 id="emotes">Emotes <span class="status live">Live</span></h2>
 <p>An emote is an Anim Sequence. Mantle plays it on whichever avatar the player wears, so one emote works on every avatar alike. Animate it on the UEFN mannequin skeleton (<code>SK_UEFN_Mannequin</code>), or on a MetaHuman body, the UE5 Mannequin (<code>SK_Mannequin</code>) or the UE4 Mannequin (<code>SK_UE4_Mannequin</code>): Mantle identifies which one you used from its bones and, for the latter three, retargets it onto the UEFN mannequin automatically when you upload. There's nothing to set: pick your Anim Sequence under Asset and upload it as usual.</p>
 
 <h3 id="emote-steps">Publishing an emote</h3>
