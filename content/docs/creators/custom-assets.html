@@ -71,7 +71,7 @@
 <li><b>Vertex-painted layer blends:</b> a Lerp between two plain Texture Samples by one Vertex Color channel, on Base Color (with Normal and the ORM group blending the same way, or staying a plain sample), keeps the painted layer in game instead of dropping it. Opaque materials only.</li>
 <li><b>Additive materials:</b> an Additive blend publishes as an additive material, which shows only its glow. The glow is the emissive (or, for an unlit material, its colour), scaled by a constant opacity. The base colour and its vertex-colour tint aren't kept.</li>
 <li><b>Glass:</b> an unlit translucent material that draws the scene behind it (Scene Color on its emissive path) publishes as see-through tinted glass.</li>
-<li><b>Water:</b> a near-opaque, depth-faded translucent material publishes as Mantle's water, with its surface colour, roughness and up to two normal maps (with their layout and pan). Its base colour texture, roughness, metallic and occlusion textures, emissive and vertex-colour tint are dropped, with a warning.</li>
+<li><b>Water:</b> a near-opaque, depth-faded translucent material publishes as Mantle's water, with its surface colour, roughness and up to two normal maps (with their layout and pan). Its base colour texture, roughness, metallic and occlusion textures, emissive and vertex-colour tint are dropped, with a warning. If the material blends more than two normal maps, only the first two are kept, with a warning.</li>
 <li><b>Foliage shading:</b> a masked, two-sided material built as foliage keeps its tint, strength and vertex-colour weight.</li>
 </ul>
 <p>For scrolling, swaying, world-aligned and layer-blend effects, these recognised shapes are the only ones Mantle carries: anything built differently, even if it looks similar in the material editor, still falls back to the plain conversion below. They aren't kept on car paint, or (other than swaying and a panned emissive) on unlit materials. A material keeps at most one of swaying, a world-aligned texture or a layer blend: swaying wins, then a world-aligned texture. (Additive, glass, water and foliage are separate, and aren't part of this rule.) A texture that one of those already uses doesn't scroll.</p>
@@ -151,12 +151,14 @@
 <tr><td>Error</td><td>Mesh '…' could not be converted: its smaller version does not draw with the same materials.</td><td>"Use a lower-detail version of the mesh, or give it a LOD that fits and draws with the same materials."</td></tr>
 <tr><td>Error</td><td>A mesh this place uses could not be loaded. / A material this place uses could not be loaded.</td><td>"Check the level for missing assets, then try again."</td></tr>
 <tr><td>Warning</td><td>Material '…' could not be flattened ([reason]), so it publishes as plain grey.</td><td>"Try a simpler material on these meshes, or report it with the log if it keeps happening."</td></tr>
-<tr><td>Warning</td><td>Material '…': its [part] part is dropped.</td><td rowspan="8">"It still publishes. Nothing to do unless it matters to how your place looks."</td></tr>
+<tr><td>Warning</td><td>Material '…': its [part] part is dropped.</td><td rowspan="10">"It still publishes. Nothing to do unless it matters to how your place looks."</td></tr>
 <tr><td>Warning</td><td>Material '…': its emissive strength of N is capped at 100.</td></tr>
 <tr><td>Warning</td><td>Material '…': it samples a second UV channel; Mantle uses the first, so that texture may land in the wrong place.</td></tr>
 <tr><td>Warning</td><td>Material '…': its occlusion texture uses different tiling or offsets from its roughness and metallic texture; Mantle packs them into one, so the occlusion may line up differently.</td></tr>
 <tr><td>Warning</td><td>Material '…': its vertex-colour tint is dropped: it is unlit, and Mantle shows an unlit colour as glow, which vertex colour does not reach.</td></tr>
 <tr><td>Warning</td><td>Material '…': its texture tiling is beyond what Mantle keeps (1024), so it is clamped.</td></tr>
+<tr><td>Warning</td><td>Material '…': its normal strength of N is outside what Mantle keeps (0 to 10), so it is clamped.</td></tr>
+<tr><td>Warning</td><td>Material '…': it blends N normal maps; Mantle's water keeps the first two.</td></tr>
 <tr><td>Warning</td><td>[texture] ([use] of material '…') was re-encoded at JPEG quality N to fit the 8 MB upload limit. / … was downscaled to [size] to fit the 8 MB upload limit.</td></tr>
 <tr><td>Warning</td><td>Material '…': its [base colour / normal map / emissive] image could not be read, so it is left out.</td></tr>
 <tr><td>Warning</td><td>Mesh '…': LOD N was left off because …; players see the LODs before it at every distance. / Mesh '…': its LOD screen sizes (…) do not each fall below the one before, so only LOD0 was published.</td><td>"It still publishes." Reduce the LOD, or fix its screen sizes in the mesh editor, if the lighter versions matter.</td></tr>
@@ -165,6 +167,18 @@
 <tr><td>Warning</td><td>Mesh '…' with its LODs is N MB once converted, over the 64 MB upload limit, so only LOD0 was published.</td><td>"It still publishes." Use lower-detail LODs to publish them.</td></tr>
 <tr><td>Warning</td><td>Material '…' publishes as car paint, which keeps one texture tiling for all its textures, full-strength normal and occlusion, the first UV channel and no vertex-colour tint, so those parts of it are dropped.</td><td>"It still publishes." Nothing more to do unless it matters to how your place looks.</td></tr>
 <tr><td>Warning</td><td>Material '…' was flattened without a renderer, so none of its textures could be baked.</td><td>"Publish from the editor with a window open to get its textures."</td></tr>
+</tbody></table></div>
+
+<h3 id="sound-messages">Messages for sounds</h3>
+<p>Check this place and the prepare step refuse a sound with these errors. Re-import it after you fix it. Mantle only publishes sound waves imported from a WAV: a Sound Cue, a MetaSound or a sound generated while the game runs gets an error of its own that says so.</p>
+<div class="table-wrap"><table><thead><tr><th>Level</th><th>Message</th><th>How to fix it</th></tr></thead><tbody>
+<tr><td>Error</td><td>Sound '…' has no imported audio in this project to publish.</td><td>"Re-import it from its WAV file (Reimport in the Content Browser), then try again."</td></tr>
+<tr><td>Error</td><td>Sound '…' has N channels, and Mantle plays mono or stereo sounds.</td><td>"Export it from your audio editor as mono or stereo, re-import it, then try again."</td></tr>
+<tr><td>Error</td><td>Sound '…' is recorded at N Hz, and Mantle plays sounds at 22,050 to 48,000 Hz.</td><td>"Export it at 44,100 or 48,000 Hz, re-import it, then try again."</td></tr>
+<tr><td>Error</td><td>Sound '…' is N seconds long, and a sound may be at most 60 seconds.</td><td>"Trim it to 60 seconds or less (a loop needs only one pass), re-import it, then try again."</td></tr>
+<tr><td>Error</td><td>Sound '…' is N MB as a WAV file; a sound may be at most 12 MB.</td><td>"Shorten it, or make it mono or a lower sample rate, re-import it, then try again."</td></tr>
+<tr><td>Error</td><td>This place's N sound(s) come to N MB of audio once decoded; a place may use at most 64 MB, which every player's client holds in memory.</td><td>"Use fewer or shorter sounds, or mono instead of stereo, or a lower sample rate (22,050 Hz halves a 44,100 Hz sound)."</td></tr>
+<tr><td>Warning</td><td>Sound '…' (used by '…') has waveform edits made in Unreal (trims, fades or other processing), which aren't published: players hear it as it was imported.</td><td>"It still publishes. If the edits matter, make them in the WAV file itself and re-import it."</td></tr>
 </tbody></table></div>
 
 <h3 id="upload-messages">Messages while uploading and processing</h3>
