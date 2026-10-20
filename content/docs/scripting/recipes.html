@@ -319,6 +319,36 @@ hinge.Broken:Connect(function()
 end)
 </pre></div>
 <p>A Physics Constraint Actor in the level publishes as a Constraint automatically, and <code>Constraints:FromEntity</code> takes that actor (not the door mesh) and returns its joint; it returns nil for any other entity. A script only needs <code>Constraints:Create</code> for a door it builds itself at runtime, as in the <a href="/docs/scripting/concepts/#joints">joints example</a> (<code>AnchorA</code> is the hinge's position in the door's own space: <code>(0, -50, 0)</code> is 50 cm along its Y axis from the middle, at the door's edge, since Z is up). A place holds at most 200 joints, its own included, and pulling a joint harder than <code>BreakForce</code> newtons breaks it for good.</p>
+<h3 id="r-interaction-door">A door that opens when a player holds E <span class="status wip">Next release</span></h3>
+<p>This builds a door that a player opens by walking up and holding the key for half a second. It needs API 1.38, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Tag the door actor in your level <code>guide_code_interact_door</code>. The server gives the door a prompt that reads "Open door" and fires <code>Interacted</code> once the hold finishes. The script then slides the door down 390 cm over 0.6 seconds and changes the prompt to "Close door", and the next use closes it.</p>
+<div class="code"><span class="tag">Scripts/Server/GuideInteractDoor.luau</span><pre data-example-kind="source" data-language="luau">local OPEN = &quot;Open door&quot;
+local CLOSE = &quot;Close door&quot;
+
+local function setPrompt(door, text)
+	Interaction:SetOptions(door, {
+		{ Key = &quot;Primary&quot;, Text = text, HoldSeconds = 0.5 },
+	})
+end
+
+World:OnTagged(&quot;guide_code_interact_door&quot;, function(door)
+	door:SetAttribute(&quot;closedZ&quot;, door.Position.Z)
+	door:SetAttribute(&quot;isOpen&quot;, false)
+	setPrompt(door, OPEN)
+end)
+
+Interaction.Interacted:Connect(function(entity, player, part, action)
+	if not entity:HasTag(&quot;guide_code_interact_door&quot;) then
+		return
+	end
+	local closedZ = entity:GetAttribute(&quot;closedZ&quot;)
+	local opening = not entity:GetAttribute(&quot;isOpen&quot;)
+	entity:SetAttribute(&quot;isOpen&quot;, opening)
+	local z = if opening then closedZ - 390 else closedZ
+	entity:Tween({ Position = Vector3.new(entity.Position.X, entity.Position.Y, z) }, 0.6)
+	setPrompt(entity, if opening then CLOSE else OPEN)
+end)
+</pre></div>
+<p>Only the server's <code>Interacted</code> signal should change the door: the client signals (<code>Selected</code>, <code>Progress</code> and the rest) are for a sound or a glow. To stop players using the door, call <code>Interaction:SetEnabled(door, "Primary", false)</code>. <code>Interaction:Remove(door)</code> takes the prompt away completely.</p>
 <h3 id="r-local-look">A haunted room with its own look, for one player</h3>
 <p>This greys the picture and darkens its corners for one player only, without touching what anyone else sees: tag the trigger volume in your level <code>guide_code_hauntedroom</code>. It needs API 1.29. A client script applies the look a server script sends it over a Remote, so only the player in the room sees it.</p>
 <div class="code"><span class="tag">Scripts/Server/GuideHauntedRoom.luau</span><pre data-example-kind="source" data-language="luau">local look = Net:Remote(&quot;GuideLook&quot;)
