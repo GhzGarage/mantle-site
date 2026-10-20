@@ -104,6 +104,7 @@ r = State.get("round")
 print(r["number"], r["spawn"].z)             # 3 200</pre></div>
     </div>
     <p>Positions are in centimetres (100 = 1 m), like Unreal. Rotations are <code>Vector3(pitch, yaw, roll)</code> in degrees.</p>
+    <p>A script can only move, rotate or scale a <b>dynamic</b> entity. A level actor is dynamic when you set it to <b>Movable</b> in the editor. Entities a script spawns or clones are dynamic already. Any other entity ignores the change and the log says why: see <a href="/docs/scripting/api/#errors">Errors and limits</a>.</p>
     <h2 id="modules">Sharing code</h2>
     <p>Put reusable code in <code>Shared/</code> (both sides) or a <code>Modules/</code> folder (that side only), then load it from your scripts. A leading <code>@Shared/</code> is optional and works in every language when Mantle runs your scripts. Only the Luau and TypeScript code editors also know it, so only they autocomplete it.</p>
     <div class="v has-ts">
