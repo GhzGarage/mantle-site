@@ -490,6 +490,174 @@ Players.PlayerRemoving:Connect(function(player)
 end)
 </pre></div>
 <p>A plate is only drawn: it can't be clicked. For a marker that stays on the edge of the screen when its target is out of view, pass <code>OffScreen = "Clamp"</code>. To stop floating a node without destroying it, call <code>DetachFromWorld</code>. Every option is listed under <a href="/docs/scripting/api/#ref-uinode">UiNode</a>.</p>
+<h3 id="r-barrel">An explosive barrel <span class="status wip">Next release</span></h3>
+<p>This builds a barrel that blows up when a player bumps it. It needs API 1.42, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Tag each barrel actor in your level <code>guide_code_barrel</code>. <a href="/docs/scripting/api/#ref-explosions"><code>Explosions:Create</code></a> hurts everything within 600 cm. Damage is 80 at the middle and stays full out to 100 cm (<code>InnerRadius</code>), then drops in a straight line to 0 at the edge. <code>Effect = "Large"</code> picks the look of the blast (<code>"None"</code>, <code>"Small"</code>, <code>"Medium"</code>, <code>"Large"</code> or <code>"Dirt"</code>; <code>"Medium"</code> is the default). <code>Ragdoll</code> throws players in the blast to the ground, and <code>RagdollSeconds = 3</code> keeps them down for 3 seconds (2 is the default). <code>Attacker</code> credits the kill to the player who touched the barrel. It also means their own blast can hurt them, and that friendly fire protects their teammates. The call returns how many things were hurt, and the script saves that number in State. The barrel is destroyed straight after: a barrel that was only hidden would still collide and still fire <code>Touched</code>.</p>
+<div class="code"><span class="tag">Scripts/Server/GuideBarrels.luau</span><pre data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_barrel&quot;, function(barrel)
+	local blown = false
+	barrel.Touched:Connect(function(player)
+		if blown then
+			return
+		end
+		blown = true
+		local hurt = Explosions:Create(barrel.Position, {
+			Radius = 600,
+			InnerRadius = 100,
+			Damage = 80,
+			Attacker = player,
+			Effect = &quot;Large&quot;,
+			Ragdoll = true,
+			RagdollSeconds = 3,
+		})
+		State:Set(&quot;guide.barrel.lastHurt&quot;, hurt)
+		barrel:Destroy()
+	end)
+end)
+</pre></div>
+<p>The blast goes through the same damage path as weapons, so armor, the shield and the <code>Damaged</code> and <code>Died</code> signals all apply. By default nothing behind a wall is touched (<code>LineOfSight = true</code>), and a loose physics prop at the middle gets a push of 800 cm/s (<code>Impulse</code>). A server can set off 30 explosions a second. See <a href="/docs/scripting/concepts/#combat">Explosions, projectiles and NPC attacks</a> for the overview.</p>
+<h3 id="r-turret">A turret that shoots at players <span class="status wip">Next release</span></h3>
+<p>This builds a turret that fires a ball at the first player it finds within reach. It needs API 1.42, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Tag the turret actor in your level <code>guide_code_turret</code>. Every 1.5 seconds, the script looks for a player within 2,500 cm of the turret. If it finds one, <a href="/docs/scripting/api/#ref-projectiles"><code>Projectiles:Fire</code></a> sends a ball at the player's position at 3,000 cm/s. The ball arcs under gravity, and a <code>Target</code> is aimed for you. It deals 10 damage with the damage type <code>"Turret"</code> (any word of your own). The <code>Tag</code> comes back in <code>Hit</code>, so the handler knows which of its own shots landed. <code>Hit</code> passes the projectile id, the tag, the entity it struck, the player (nil unless it hit a character) and where. The damage has already happened by then. A shot that hits nothing for 5 seconds (the default <code>Lifetime</code>) fires <code>Expired</code> instead.</p>
+<div class="code"><span class="tag">Scripts/Server/GuideTurret.luau</span><pre data-example-kind="source" data-language="luau">local turret = World:FindByTag(&quot;guide_code_turret&quot;)[1]
+local RANGE = 2500
+
+Projectiles.Hit:Connect(function(id, tag, entity, player, position)
+	if tag == &quot;guide_turret&quot; and player then
+		State:Set(&quot;guide.turret.hits&quot;, (State:Get(&quot;guide.turret.hits&quot;) or 0) + 1)
+	end
+end)
+
+while true do
+	for _, player in Players:GetPlayers() do
+		local at = player.Position
+		if at and (at - turret.Position).Magnitude &lt; RANGE then
+			Projectiles:Fire({
+				Position = turret.Position + Vector3.new(0, 0, 100),
+				Target = at,
+				Speed = 3000,
+				Look = &quot;Ball&quot;,
+				Color = &quot;#FF7043&quot;,
+				Damage = 10,
+				DamageType = &quot;Turret&quot;,
+				Tag = &quot;guide_turret&quot;,
+			})
+			break
+		end
+	end
+	task.wait(1.5)
+end
+</pre></div>
+<p>The turret doesn't lead a moving player, so a player who keeps running can dodge. For a straight shot, pass <code>Velocity</code> instead of <code>Target</code>, with <code>GravityScale = 0</code>. <code>Look</code> can also be <code>"Rocket"</code>, <code>"Arrow"</code>, <code>"Cube"</code> or <code>"Invisible"</code>. Give the shot an <code>Explosion</code> table (the same options as <code>Explosions:Create</code>) to make it blow up where it lands. Up to 64 projectiles fly at once. See <a href="/docs/scripting/api/#ref-projectiles">Projectiles</a> for every option.</p>
+<h3 id="r-guard-npc">A guard that follows you and attacks trespassers <span class="status wip">Next release</span></h3>
+<p>This builds a guard NPC that walks after the first player in the session and fights anyone else who steps into a zone. It needs API 1.42, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Tag a marker actor <code>guide_code_guardpost</code> (the guard starts there) and a trigger volume <code>guide_code_guardzone</code>. Set <code>AVATAR</code> to the item id of a published avatar body: without one, the NPC has no body to draw. <a href="/docs/scripting/api/#ref-npc"><code>NPC:Follow</code></a> keeps the guard about 300 cm from its player, through respawns. When another player touches the zone, <code>NPC:Attack</code> makes them its enemy: the guard walks up and swings every 1.2 seconds for 15 damage. <code>TargetChanged</code> fires when the target changes. It fires with no target once the trespasser dies or leaves, and the script then goes back to following.</p>
+<div class="code"><span class="tag">Scripts/Server/GuideGuard.luau</span><pre data-example-kind="source" data-language="luau">local AVATAR = &quot;itm_u…&quot;   -- the item id of a published avatar body
+local post = World:FindByTag(&quot;guide_code_guardpost&quot;)[1]
+local guard = NPCs:Spawn(post.Position, { AvatarItemId = AVATAR })
+local owner = nil
+
+Players:OnPlayer(function(player)
+	if not owner then
+		owner = player
+		guard:Follow(player, 300)
+	end
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+	if player == owner then
+		owner = nil
+		guard:ClearTarget()
+	end
+end)
+
+World:OnTagged(&quot;guide_code_guardzone&quot;, function(zone)
+	zone.Touched:Connect(function(player)
+		if player ~= owner and guard.TargetPlayer ~= player then
+			guard:Attack(player, { Range = 150, Damage = 15, Interval = 1.2 })
+		end
+	end)
+end)
+
+guard.TargetChanged:Connect(function(_, entity, player)
+	if not entity and owner then
+		guard:Follow(owner, 300)
+	end
+end)
+</pre></div>
+<p>The hits go through the same damage path as weapons, so armor and the shield apply. A kill credits nobody, because an NPC isn't a player, and friendly fire doesn't protect a player from an NPC. <code>Follow</code> and <code>Attack</code> each replace whatever the NPC was doing, and <code>ClearTarget</code> stops both. Pass a <code>Projectile</code> table to <code>Attack</code> to make a ranged guard, or call <code>SetAggroRange</code> to have it pick its own targets. See <a href="/docs/scripting/api/#ref-npc">NPC</a>.</p>
+<h3 id="r-collision-layers">Crates that pass through each other and glass that shots ignore <span class="status wip">Next release</span></h3>
+<p>This sorts props into collision layers. It needs API 1.43, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Tag crates <code>guide_code_crate</code>, window panes <code>guide_code_glass</code> and a pad <code>guide_code_scanpad</code>. <a href="/docs/scripting/api/#ref-collision"><code>Collision:CreateLayer</code></a> makes a layer (up to 8 per place, named by 1 to 32 characters, and a name can't be used twice). A new layer collides with every layer, itself included, until you change a pair. <code>SetLayerCollides("Crates", "Crates", false)</code> lets crates pass through each other, so a pile of them can't jam. Setting <code>CollisionLayer</code> on an entity moves it to a layer. The glass stays solid for players, because players always collide with it. The pad then fires a ray that looks through glass: <code>ExcludeLayers</code> leaves out entities on the layers you name, in queries from server scripts. The script saves the name of whatever the ray hit.</p>
+<div class="code"><span class="tag">Scripts/Server/GuideLayers.luau</span><pre data-example-kind="source" data-language="luau">Collision:CreateLayer(&quot;Crates&quot;)
+Collision:CreateLayer(&quot;Glass&quot;)
+Collision:SetLayerCollides(&quot;Crates&quot;, &quot;Crates&quot;, false)
+
+World:OnTagged(&quot;guide_code_crate&quot;, function(crate)
+	crate.CollisionLayer = &quot;Crates&quot;
+end)
+
+World:OnTagged(&quot;guide_code_glass&quot;, function(pane)
+	pane.CollisionLayer = &quot;Glass&quot;
+end)
+
+World:OnTagged(&quot;guide_code_scanpad&quot;, function(pad)
+	pad.Touched:Connect(function(player)
+		local hit = World:Raycast(pad.Position, Vector3.new(3000, 0, 0), {
+			Exclude = { pad },
+			ExcludeLayers = { &quot;Glass&quot; },
+		})
+		State:Set(&quot;guide.scan&quot;, if hit then hit.Entity.Name else &quot;nothing&quot;)
+	end)
+end)
+</pre></div>
+<p>Layers sort the objects of your place and never let a player through a wall. Every object starts on the <code>"Default"</code> layer, which collides with everything and can't be changed, and players, vehicles and NPCs can't be put on a layer. So you can't make a ghost wall or a door for one team: a player always meets the world. To let teammates walk through each other, set <code>Teams.TeammatesCollide = false</code>. Enemies, players on no team and the world still collide as normal. See <a href="/docs/scripting/concepts/#collision-layers">Collision layers</a> for the overview.</p>
+<h3 id="r-team-chat">Team chat, and muting players who are out <span class="status wip">Next release</span></h3>
+<p>This gives each team a private chat channel, and mutes a player's voice for everyone while they're dead. It needs API 1.44, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). You don't need to tag anything in the level, but players must already be on teams, as in the <a href="#r-teams-rounds">two teams and timed rounds</a> recipe. <a href="/docs/scripting/api/#ref-chat"><code>Chat:SetAudience</code></a> makes what a player types reach only the players you list (and the player themselves), up to 128 of them. The script sets it again whenever a team changes, and every 10 seconds, because the call returns false for a player who has no verified account yet (this happens for a moment after joining). <a href="/docs/scripting/api/#ref-voice"><code>Voice:SetMuted</code></a> silences a player for every listener until you unmute them. It doesn't depend on distance: the mute holds wherever they stand.</p>
+<div class="code"><span class="tag">Scripts/Server/GuideTeamChat.luau</span><pre data-example-kind="source" data-language="luau">local function refreshAudiences()
+	for _, player in Players:GetPlayers() do
+		if player.Team then
+			Chat:SetAudience(player, Teams:GetPlayers(player.Team))
+		else
+			Chat:SetAudience(player, nil)
+		end
+	end
+end
+
+Teams.PlayerTeamChanged:Connect(refreshAudiences)
+
+Players:OnPlayer(function(player)
+	player.Died:Connect(function()
+		Voice:SetMuted(player, true)
+	end)
+	player.Respawned:Connect(function()
+		Voice:SetMuted(player, false)
+	end)
+end)
+
+while true do
+	refreshAudiences()
+	task.wait(10)
+end
+</pre></div>
+<p>These rules only ever make players quieter. A player who has muted or blocked someone themselves keeps them muted whatever your script does, and the chat filter, blocks and reports still apply to every team line. Team lines are private to the team, not hidden from Mantle: its moderators can still see them. Voice goes straight between players' games, not through the server, so a player on a modified game could ignore a mute. Use these calls to run your game, never to protect a secret. See <a href="/docs/scripting/concepts/#private-chat-voice">Private chat and voice</a> for the overview.</p>
+<h3 id="r-laser-marker">A laser flash that scorches the wall <span class="status wip">Next release</span></h3>
+<p>This builds a pad that fires a red laser along the X axis and leaves a scorch mark where it lands. It needs API 1.44, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Tag the pad <code>guide_code_laserpad</code>. A raycast finds the wall, then <a href="/docs/scripting/api/#ref-effects"><code>Effects:Beam</code></a> draws a beam 6 cm wide for 0.2 seconds, <code>Effects:Decal</code> leaves a <code>"Scorch"</code> mark 80 cm wide for 30 seconds, and <code>Effects:Play</code> adds an <code>"Impact"</code> puff. The raycast's <code>Normal</code> tells the decal which way the wall faces. The pad waits one second between flashes, so it makes 3 effect calls a second. A server script may make 10 a second.</p>
+<div class="code"><span class="tag">Scripts/Server/GuideLaserPad.luau</span><pre data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_laserpad&quot;, function(pad)
+	local ready = true
+	pad.Touched:Connect(function(player)
+		if not ready then
+			return
+		end
+		ready = false
+		local from = pad.Position + Vector3.new(0, 0, 50)
+		local hit = World:Raycast(from, Vector3.new(3000, 0, 0), { Exclude = { pad }, IgnorePlayers = true })
+		if hit then
+			Effects:Beam(from, hit.Position, { Color = &quot;#FF3030&quot;, Width = 6, Duration = 0.2 })
+			Effects:Decal(hit.Position, hit.Normal, { Style = &quot;Scorch&quot;, Size = 80, Lifetime = 30 })
+			Effects:Play(&quot;Impact&quot;, hit.Position)
+		end
+		task.wait(1)
+		ready = true
+	end)
+end)
+</pre></div>
+<p>All three effects are cosmetic: they hurt nobody and change nothing in the world. From a server script every player sees them, but a player who joins later doesn't. A beam longer than 1,000 m is cut short, and a player's machine keeps at most 16 beams and 64 decals at once. <code>Style</code> can also be <code>"BulletHole"</code> (the default) or <code>"Splat"</code>. See <a href="/docs/scripting/api/#ref-effects">Effects</a>.</p>
 <h3 id="r-alternate-hud">Standalone HUD and round timer</h3><p>This builds a self-contained round timer and HUD, with one server and client pair for each language to match the standalone coin versions. There&rsquo;s nothing to tag in the level. Use one pair instead of the main round timer and HUD recipe, not as well as it.</p><div class="v has-ts has-js has-py"><div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Server/Rounds.luau</span><pre id="ex-rounds-luau" data-example-kind="source" data-language="luau">local round = 0
 while true do
     round += 1
