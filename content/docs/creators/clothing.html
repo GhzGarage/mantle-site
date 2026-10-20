@@ -2,7 +2,7 @@
 
 <p>This guide covers how to build each kind of wearable item in Unreal so it passes Mantle's checks and fits players' avatars. For opening the Mantle Cosmetics tab, signing in, the listing fields, <b>Check only</b>, <b>Upload to Mantle</b> and screening, see <a href="/docs/creators/avatar-items/">Making avatar items</a>. Avatars themselves, emotes, scars and tattoos are in <a href="/docs/creators/avatars-emotes/">Avatars and emotes</a>.</p>
 
-<h2 id="kinds">What you can make <span class="status wip">In progress</span></h2>
+<h2 id="kinds">What you can make <span class="status live">Live</span></h2>
 <p>In the Cosmetics tab, <b>What are you publishing?</b> sets the kind of item, and the box next to it sets its slot. Each slot holds one item at a time on an avatar.</p>
 <div class="table-wrap"><table><thead><tr><th>Kind (in the tab)</th><th>Unreal asset</th><th>Slots</th><th>In the players' catalog</th></tr></thead><tbody>
 <tr><td>Clothing</td><td>Skeletal Mesh skinned to the MetaHuman body skeleton, or a parametric Outfit</td><td><code>top</code>, <code>bottom</code>, <code>footwear</code>, <code>nails</code></td><td>Clothing: "Tops", "Bottoms", "Shoes", "Nails"</td></tr>
@@ -12,7 +12,7 @@
 <p>3D clothing is only worn by avatars that take clothing: avatars built as a MetaHuman with Mantle's reference body (see <a href="/docs/creators/avatars-emotes/#convert">Converting a character</a> and <a href="#fitting">How clothing fits every body</a>). Hair is worn by converted avatars only. Accessories go on any avatar whose skeleton has the socket. The <code>nails</code> slot is for shaped press-on nails: it never hides or sinks the fingertips.</p>
 <p>If you have a character from Fab, Sketchfab or MetaHuman Creator that the checks refuse, <b>Convert a character</b> can refit a clothing or hair mesh from it for you. The section shows for Clothing and Hair as well as Avatar.</p>
 
-<h2 id="3d-clothing">3D clothing <span class="status wip">In progress</span></h2>
+<h2 id="3d-clothing">3D clothing <span class="status live">Live</span></h2>
 <p>A top, bottom or pair of shoes is a Skeletal Mesh skinned to the MetaHuman body skeleton (<code>metahuman_base_skel</code>). You make it on one MetaHuman body, and Mantle fits it to every other body that wears it.</p>
 <ol class="steps">
 <li><b>Start from a MetaHuman body</b><p>Use a MetaHuman body that has Mantle's reference topology: an LOD with the same vertex layout as Mantle's reference body. Export the MetaHuman you'll dress with <b>UE Optimized</b> at <b>Medium</b>, <b>High</b> or <b>Cinematic</b> quality, without clothing. For a Cinematic MetaHuman from Fab, the body is <code>SKM_&lt;Name&gt;_Body</code> under <code>CharacterAssemblies/&lt;Name&gt;/Body</code>.</p></li>
@@ -35,7 +35,7 @@
 <h3 id="outfits">One-piece outfits</h3>
 <p>When one mesh holds several garments, such as a jumpsuit or a character's full outfit, upload it once per slot. Choose the slot, tick only that piece's sections under <b>Sections</b>, upload, then do the same for the next slot. <b>Files and details</b> lists the sections each upload takes. The tab ticks the sections whose names fit the slot you chose, and sections that look like the character's own skin can't be ticked. If one is in the upload anyway, you'll see: "section "[name]" looks like the character's own skin, so every wearer would wear it. … Untick that section under Sections." If you tick sections of more than one garment for one slot, the tab says "this mesh holds more than one garment (…) and uploads as one "[slot]" item." With nothing ticked, it says "Problem: no section of [mesh] is chosen for this item."</p>
 
-<h3 id="parametric">Parametric Outfits <span class="status wip">In progress</span></h3>
+<h3 id="parametric">Parametric Outfits <span class="status live">Live</span></h3>
 <p>For a garment that should fit many body shapes, Clothing also takes a parametric Outfit (a MetaHuman Outfit Asset). You make one from your garment and the original body and head it was made on, then add converted bodies it should fit.</p>
 <ol class="steps">
 <li><b>Pick the garment</b><p>Choose <b>Clothing</b> and pick the garment's Skeletal Mesh under <b>Asset</b>.</p></li>
@@ -45,8 +45,8 @@
 </ol>
 <p>The Preview section also has an <b>Automatic source size (preview)</b> box. It only changes the preview: "Uploads automatically select from every authored size for each fit source."</p>
 
-<h3 id="colours">Clothing colours <span class="status wip">In progress</span></h3>
-<p>Players can recolour the areas of a garment you mark. Only tops, bottoms and shoes can be recoloured. The recolouring changes colour only: the normal and surface maps stay as you made them, and parts you don't mark keep their own colours.</p>
+<h3 id="colours">Clothing colours <span class="status live">Live</span></h3>
+<p>Players can recolour the areas of a garment you mark. Only tops, bottoms, shoes and accessories can be recoloured. The recolouring changes colour only: the normal and surface maps stay as you made them, and parts you don't mark keep their own colours.</p>
 <ul>
 <li><b>Found for you:</b> Mantle looks for the parts players can recolour when you check or upload, so you don't have to do anything. Choose <b>Preview</b> once to see them: "We found N areas players can recolour. Untick any you'd like to keep fixed." It reads the area maps in the material (a texture named like a mask). If none marks out separate areas, the whole material becomes one area called "Main". If there are none at all, it says "This item uploads in its original colours."</li>
 <li><b>Show the areas:</b> tick "Show each area in its own colour in the preview" to see them. Each area has a name box ("The name players see in the colour menu."), at most 64 characters.</li>
@@ -75,7 +75,7 @@
 </tbody></table></div>
 <p>The tab takes each section's base colour and normal map from its material: a texture plugged straight into Base Color or Normal, or a texture parameter with a common name such as <code>BaseColor</code>, <code>Albedo</code> or <code>Normal</code>. If it finds no base colour that way, it takes the largest colour texture the material uses. If there's none, the section uploads as a flat colour and the tab says so. Helper bones that carry no weight and aren't on the MetaHuman skeleton, which some exports add, are left out automatically.</p>
 
-<h2 id="hair">Hair, eyebrows, eyelashes and facial hair <span class="status wip">In progress</span></h2>
+<h2 id="hair">Hair, eyebrows, eyelashes and facial hair <span class="status live">Live</span></h2>
 <p>Hair has four slots: <code>hair</code>, <code>eyebrows</code>, <code>eyelashes</code> and <code>facial_hair</code> (beards and moustaches). A player can wear one item in each, all at once. Every hair item follows the wearer's head. Grooms and cards meshes upload as hair cards; a section lifted from a Skeletal Mesh (such as eyelashes) uploads with its own material's textures.</p>
 <ol class="steps">
 <li><b>Choose Hair and the slot</b><p>Choose <b>Hair</b>, then the slot.</p></li>
@@ -103,7 +103,7 @@
 </tbody></table></div>
 <p>Hair is only worn by converted avatars (a converted MetaHuman with its face). In game, hair is drawn masked, using its opacity texture or the base colour's own alpha. Translucent hair gets "its material is translucent; Mantle draws hair masked (the alpha dithered, then smoothed over frames), so soft edges look a little harder."</p>
 
-<h2 id="accessories">Accessories <span class="status wip">In progress</span></h2>
+<h2 id="accessories">Accessories <span class="status live">Live</span></h2>
 <p>An accessory is a rigid Static Mesh that attaches to one socket on the avatar's skeleton. It doesn't bend. A player can wear one accessory per socket, so 8 at most.</p>
 <ol class="steps">
 <li><b>Set the pivot</b><p>The mesh's pivot is where it attaches: model it so the pivot sits on the point that touches the body, near the socket. How far the mesh reaches from its pivot is limited (below).</p></li>
@@ -168,7 +168,7 @@
 </ul>
 <p>A hair item with too many or too large textures is refused when the item is created, for example "Mantle refused the item: a hair item may use at most 4 textures; [texture] ([where it's used]) is the 5th". Use fewer textures, or smaller ones.</p>
 
-<h2 id="avatar-screen">How your items show to players <span class="status wip">In progress</span></h2>
+<h2 id="avatar-screen">How your items show to players <span class="status live">Live</span></h2>
 <p>Once an item passes screening, it appears in the Catalog on the players' <a href="/docs/players/playing/#avatar">Avatar screen</a>, under "Clothing", "Hair" or "Accessories" and the slot's own filter.</p>
 <ul>
 <li><b>Set aside:</b> if a player switches to an avatar that can't wear clothing, their clothing and hair are marked "SET ASIDE". They stay owned and go back on when the player switches to an avatar they fit. The Avatar screen says, for example, "1 item is set aside: it doesn't fit this avatar, and goes back on with one it fits."</li>
