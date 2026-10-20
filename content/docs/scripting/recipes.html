@@ -13,7 +13,7 @@ World:OnTagged(&quot;guide_code_killbrick&quot;, function(brick)
 		player:Teleport(spawn)
 	end)
 end)
-</pre></div><h3 id="r-coins">Coins that bob, score and respawn</h3><p>This builds coins that bob up and down and give a point when collected: tag each coin actor in your level <code>guide_code_coin</code> and set it to <b>Movable</b>, or the script can't bob it (see <a href="/docs/scripting/api/#errors">Errors and limits</a>). The server bobs the coin 40 cm up and down with a tween. When a player touches it, the server hides it, awards one point and shows it again after five seconds. Checking <code>Visible</code> first stops a touch from scoring the pickup again while it's hidden: a hidden entity still collides and still fires <code>Touched</code>. Each bobbing coin uses one of the 256 tweens a place can run at once. Keep these long-lived coins separate from templates you clone and throw away. The tween uses <code>Sine</code> easing with <code>InOut</code>, so the coin slows down gently at the top and bottom of each bob.</p><div class="code"><span class="tag">Scripts/Server/Modules/Recipes/ScoreRules.luau</span><pre id="ex-canonical-scorerules" data-example-kind="source" data-language="luau">local Rules = {}
+</pre></div><h3 id="r-coins">Coins that bob, score and respawn</h3><p>This builds coins that bob up and down and give a point when collected: tag each coin actor in your level <code>guide_code_coin</code> and set it to <b>Movable</b>. On any other actor the tween raises the error <code>can't tween Position, Rotation or Scale on an entity that isn't dynamic; mark it "dynamic": true in the place</code> (see <a href="/docs/scripting/api/#errors">Errors and limits</a>). The server bobs the coin 40 cm up and down with a tween. When a player touches it, the server hides it, awards one point and shows it again after five seconds. Checking <code>Visible</code> first stops a touch from scoring the pickup again while it's hidden: a hidden entity still collides and still fires <code>Touched</code>. Each bobbing coin uses one of the 256 tweens a place can run at once. Keep these long-lived coins separate from templates you clone and throw away. The tween uses <code>Sine</code> easing with <code>InOut</code>, so the coin slows down gently at the top and bottom of each bob.</p><div class="code"><span class="tag">Scripts/Server/Modules/Recipes/ScoreRules.luau</span><pre id="ex-canonical-scorerules" data-example-kind="source" data-language="luau">local Rules = {}
 function Rules.key(player)
 	return `guide.score:{player.UserId}`
 end
@@ -116,7 +116,7 @@ end)
     coin.touched.connect(on_touch)
 
 World.on_tagged(&quot;guide_code_coin&quot;, setup)
-</pre></div></div></details><h3 id="r-door">A door that opens when someone walks up</h3><p>This builds a door that slides open when a player comes close: tag the door actor in your level <code>guide_code_door</code> and set it to <b>Movable</b>, or the script can't slide it (see <a href="/docs/scripting/api/#errors">Errors and limits</a>). Every 0.2 seconds, the script checks whether any player is within 450 cm of the door's saved closed position. If so, the door tweens 390 cm downward over 0.6 seconds. It closes again once everyone has left. The trigger area stays at the door's original position and doesn't move with the door.</p><div class="code"><span class="tag">Scripts/Server/GuideDoor.luau</span><pre id="ex-canonical-guidedoor" data-example-kind="source" data-language="luau">local door = World:FindByTag(&quot;guide_code_door&quot;)[1]
+</pre></div></div></details><h3 id="r-door">A door that opens when someone walks up</h3><p>This builds a door that slides open when a player comes close: tag the door actor in your level <code>guide_code_door</code> and set it to <b>Movable</b>, or moving it raises an error (see <a href="/docs/scripting/api/#errors">Errors and limits</a>). Every 0.2 seconds, the script checks whether any player is within 450 cm of the door's saved closed position. If so, the door tweens 390 cm downward over 0.6 seconds. It closes again once everyone has left. The trigger area stays at the door's original position and doesn't move with the door.</p><div class="code"><span class="tag">Scripts/Server/GuideDoor.luau</span><pre id="ex-canonical-guidedoor" data-example-kind="source" data-language="luau">local door = World:FindByTag(&quot;guide_code_door&quot;)[1]
 local closed = door.Position
 local isOpen = false
 while true do
@@ -160,7 +160,7 @@ State.observe(&quot;guide.timeLeft&quot;, (seconds) =&gt; {
 	timeLabel.setText(`Time left: ${seconds ?? 0}s`);
 });
 Net.remote(&quot;GuideAnnounce&quot;).onClientEvent.connect((message) =&gt; UI.toast(message, 3));
-</pre></div><h3 id="r-button">A button players ask the server to press</h3><p>This builds a button that squashes down and springs back when a player presses it: tag the button actor in your level <code>guide_code_button</code> and set it to <b>Movable</b>, or the script can't squash it (see <a href="/docs/scripting/api/#errors">Errors and limits</a>). When the local player touches the button, the client asks the server to press it. The server checks the message and where the sending player really is, and turns away new presses while the button is still busy. It plays both scale tweens, then tells the player the press worked, and a small client script shows that answer as a toast. The client's message never picks which player pressed, and never adds a press by itself.</p><div class="code"><span class="tag">Scripts/Client/GuideButtonPrompt.luau</span><pre id="ex-canonical-guidebuttonprompt" data-example-kind="source" data-language="luau">local button = World:FindByTag(&quot;guide_code_button&quot;)[1]
+</pre></div><h3 id="r-button">A button players ask the server to press</h3><p>This builds a button that squashes down and springs back when a player presses it: tag the button actor in your level <code>guide_code_button</code> and set it to <b>Movable</b>, or scaling it raises an error (see <a href="/docs/scripting/api/#errors">Errors and limits</a>). When the local player touches the button, the client asks the server to press it. The server checks the message and where the sending player really is, and turns away new presses while the button is still busy. It plays both scale tweens, then tells the player the press worked, and a small client script shows that answer as a toast. The client's message never picks which player pressed, and never adds a press by itself.</p><div class="code"><span class="tag">Scripts/Client/GuideButtonPrompt.luau</span><pre id="ex-canonical-guidebuttonprompt" data-example-kind="source" data-language="luau">local button = World:FindByTag(&quot;guide_code_button&quot;)[1]
 button.Touched:Connect(function(player)
 	if player == Players.LocalPlayer then
 		Net:Remote(&quot;GuidePressButton&quot;):FireServer(&quot;press&quot;)
@@ -194,7 +194,7 @@ State:Set(&quot;guide.button.presses&quot;, 0)
 </pre></div><div class="code"><span class="tag">Scripts/Client/GuideButtonResult.luau</span><pre data-example-kind="source" data-language="luau">Net:Remote(&quot;GuideButtonResult&quot;).OnClientEvent:Connect(function(result)
 	UI:Toast(result == &quot;pressed&quot; and &quot;Button pressed&quot; or `Not pressed: {result}`)
 end)
-</pre></div><h3 id="r-spawn">Cloning and destroying things</h3><p>This shows how to copy and remove objects from a script: place a separate template actor tagged <code>guide_code_template</code>, and another actor tagged <code>guide_code_retired</code>. The script hides the template and makes one visible clone that stays. It then makes a second clone and destroys it, and destroys the retired actor you placed in the level. Players who join later see the clone that stayed and none of the destroyed objects. Clones copy their template's tags, so don't put pickup tags on a template unless you want every clone to be picked up by that recipe too.</p><div class="code"><span class="tag">Scripts/Server/GuideClones.luau</span><pre id="ex-canonical-guideclones" data-example-kind="source" data-language="luau">local template = World:FindByTag(&quot;guide_code_template&quot;)[1]
+</pre></div><h3 id="r-spawn">Cloning and destroying things</h3><p>This shows how to copy and remove objects from a script: place a separate template actor tagged <code>guide_code_template</code>, and another actor tagged <code>guide_code_retired</code>. The script hides the template and makes one visible clone that stays. It then makes a second clone and destroys it, and destroys the retired actor you placed in the level. Players who join later see the clone that stayed and none of the destroyed objects. Clones copy their template's tags, so don't put pickup tags on a template unless you want every clone to be picked up by that recipe too. An NPC can't be cloned: <code>Clone</code> raises the error <code>an NPC can't be cloned; make another with NPCs:Spawn</code>.</p><div class="code"><span class="tag">Scripts/Server/GuideClones.luau</span><pre id="ex-canonical-guideclones" data-example-kind="source" data-language="luau">local template = World:FindByTag(&quot;guide_code_template&quot;)[1]
 template.Visible = false
 local survivor = template:Clone()
 survivor.Position = Vector3.new(4500, 2000, 120)
@@ -320,7 +320,7 @@ end)
 </pre></div>
 <p>A Physics Constraint Actor in the level publishes as a Constraint automatically, and <code>Constraints:FromEntity</code> takes that actor (not the door mesh) and returns its joint; it returns nil for any other entity. A script only needs <code>Constraints:Create</code> for a door it builds itself at runtime, as in the <a href="/docs/scripting/concepts/#joints">joints example</a> (<code>AnchorA</code> is the hinge's position in the door's own space: <code>(0, -50, 0)</code> is 50 cm along its Y axis from the middle, at the door's edge, since Z is up). A place holds at most 200 joints, its own included, and pulling a joint harder than <code>BreakForce</code> newtons breaks it for good.</p>
 <h3 id="r-interaction-door">A door that opens when a player holds E <span class="status wip">Next release</span></h3>
-<p>This builds a door that a player opens by walking up and holding the key for half a second. It needs API 1.38, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Tag the door actor in your level <code>guide_code_interact_door</code> and set it to <b>Movable</b>, or the script can't slide it (see <a href="/docs/scripting/api/#errors">Errors and limits</a>). The server gives the door a prompt that reads "Open door" and fires <code>Interacted</code> once the hold finishes. The script then slides the door down 390 cm over 0.6 seconds and changes the prompt to "Close door", and the next use closes it.</p>
+<p>This builds a door that a player opens by walking up and holding the key for half a second. It needs API 1.38, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Tag the door actor in your level <code>guide_code_interact_door</code> and set it to <b>Movable</b>, or moving it raises an error (see <a href="/docs/scripting/api/#errors">Errors and limits</a>). The server gives the door a prompt that reads "Open door" and fires <code>Interacted</code> once the hold finishes. The script then slides the door down 390 cm over 0.6 seconds and changes the prompt to "Close door", and the next use closes it.</p>
 <div class="code"><span class="tag">Scripts/Server/GuideInteractDoor.luau</span><pre data-example-kind="source" data-language="luau">local OPEN = &quot;Open door&quot;
 local CLOSE = &quot;Close door&quot;
 
@@ -371,6 +371,125 @@ look.OnClientEvent:Connect(function(t)
 end)
 </pre></div>
 <p>What the look sets wins over the server's own values; what it leaves out, such as <code>Bloom</code>, keeps following the server. The look goes when the client script that set it stops, so a bad table sent from the server only fails on that one player's client.</p>
+<h3 id="r-teams-rounds">Two teams and timed rounds <span class="status wip">Next release</span></h3>
+<p>This builds two teams that play 90-second rounds with a short break between them. It needs API 1.39, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). You don't need to tag anything in the level: just add the script. The server creates the teams with <a href="/docs/scripting/api/#ref-teams"><code>Teams:Create</code></a> and puts each new player on the smaller one by setting <code>Player.Team</code> (see <a href="/docs/scripting/api/#ref-player">Player</a>). It counts kills for each team, and <a href="/docs/scripting/api/#ref-match"><code>Match:StartRound</code></a> starts a timed round. When the round ends, <code>RoundEnded</code> passes the round number, the winner and a reason: <code>"Ended"</code> when a script called <code>EndRound</code>, <code>"Time"</code> when the clock ran out (the winner is always nil then) or <code>"MatchEnded"</code>. <code>Match</code> never picks a winner itself, so the script works it out from the kills. Dead players come back after the <a href="/docs/scripting/api/#ref-respawn"><code>Respawn.Delay</code></a> of 3 seconds. At the end of a round everyone gets a fresh character.</p>
+<div class="code"><span class="tag">Scripts/Server/GuideTeamRounds.luau</span><pre data-example-kind="source" data-language="luau">local ROUND_SECONDS = 90
+local BREAK_SECONDS = 10
+
+Teams:Create(&quot;Red&quot;, &quot;#E53935&quot;)
+Teams:Create(&quot;Blue&quot;, &quot;#1E88E5&quot;)
+Respawn.Delay = 3
+
+local kills = { Red = 0, Blue = 0 }
+
+Players:OnPlayer(function(player)
+	local red = #Teams:GetPlayers(&quot;Red&quot;)
+	local blue = #Teams:GetPlayers(&quot;Blue&quot;)
+	player.Team = if red &lt;= blue then &quot;Red&quot; else &quot;Blue&quot;
+	player.Died:Connect(function(_, killer)
+		if killer and killer.Team and killer.Team ~= player.Team then
+			kills[killer.Team] += 1
+		end
+	end)
+end)
+
+Match.RoundEnded:Connect(function(round, winner, reason)
+	if reason == &quot;Time&quot; and kills.Red ~= kills.Blue then
+		winner = if kills.Red &gt; kills.Blue then &quot;Red&quot; else &quot;Blue&quot;
+	end
+	State:Set(&quot;guide.lastWinner&quot;, winner or &quot;Draw&quot;)
+	for _, player in Players:GetPlayers() do
+		player:Respawn()
+	end
+	task.wait(BREAK_SECONDS)
+	kills.Red, kills.Blue = 0, 0
+	Match:StartRound(ROUND_SECONDS)
+end)
+
+Match:StartRound(ROUND_SECONDS)
+</pre></div>
+<p>Only the server runs the teams and the rounds. A client can read <code>Player.Team</code>, <code>Match.State</code>, <code>Match.Round</code> and <code>Match.TimeRemaining</code> for a HUD, but it can't change them. Teammates can't hurt each other unless you set <code>Teams.FriendlyFire = true</code>. Team names aren't case-sensitive, and a place can have up to 16 teams. See <a href="/docs/scripting/concepts/#teams-rounds">Teams and rounds</a> for the overview.</p>
+<h3 id="r-armor-shield">Armor, shield and custom damage <span class="status wip">Next release</span></h3>
+<p>This builds a pad that gives a player armor and a shield, and a pool of acid that hurts them. It needs API 1.39, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Tag the pad <code>guide_code_armorpad</code> and the acid <code>guide_code_acid</code>. Touching the pad sets <code>Armor</code> to 50 (the percent of every hit the character shrugs off), <code>MaxShield</code> to 50 and <code>Shield</code> to 50, and lets the shield refill by 10 a second after 5 seconds without a hit. Touching the acid calls <code>TakeDamage(20, nil, "Acid")</code>. The third argument tags the hit with a <code>damageType</code>: use a built-in such as <code>"Bullet"</code>, <code>"Melee"</code> or <code>"Explosion"</code>, or any word of your own up to 32 characters. Damage goes through armor first, then the shield, then health. So 20 damage becomes 10 after armor, and the shield takes all 10 while it lasts. <code>Damaged</code> fires on the server with the player, the amount that got through armor, the <code>damageType</code> and the attacker (nil here). It still fires when the shield soaks up the whole hit. Set these on a player who has a character: they read nil while the player is respawning.</p>
+<div class="code"><span class="tag">Scripts/Server/GuideArmorShield.luau</span><pre data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_armorpad&quot;, function(pad)
+	pad.Touched:Connect(function(player)
+		player.Armor = 50
+		player.MaxShield = 50
+		player.Shield = 50
+		player.ShieldRegenRate = 10
+	end)
+end)
+
+World:OnTagged(&quot;guide_code_acid&quot;, function(acid)
+	acid.Touched:Connect(function(player)
+		player:TakeDamage(20, nil, &quot;Acid&quot;)
+	end)
+end)
+
+Players:OnPlayer(function(player)
+	player.Damaged:Connect(function(_, amount, damageType, attacker)
+		print(`{player.Name} took {amount} {damageType} damage: shield {player.Shield}, health {player.Health}`)
+	end)
+end)
+</pre></div>
+<p><code>TakeDamage</code> returns false when nothing got through: the player has no character, is already dead, friendly fire blocked a teammate's hit, or <code>Armor</code> is 100. <code>Armor</code> and the shield settings last for the rest of the session, through respawns, and every respawn starts with the shield full. A killing hit fires <code>Damaged</code> first and then <code>Died</code>, and <code>Died</code> gets the same <code>damageType</code> (see <a href="/docs/scripting/api/#ref-player">Player</a>).</p>
+<h3 id="r-stamina">Sprint with stamina <span class="status wip">Next release</span></h3>
+<p>This builds a sprint that tires the player out, with a stamina readout on their screen. It needs API 1.40, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Tag a pad <code>guide_code_staminapad</code>. Touching it turns <code>StaminaEnabled</code> on for that player. It's off for everyone until a script does that, and turning it on starts the pool full. Sprinting then uses 30 stamina a second, and stamina comes back at 10 a second after 1 second of rest. A sprint stops at zero and can't start again until a tenth of <code>MaxStamina</code> (100 by default) has come back. <code>SprintSpeed</code> is 900 cm/s here. <code>StaminaChanged</code> passes the player, the old value and the new one, in steps of about half a percent of <code>MaxStamina</code>. It fires on the server and on every client, so the client script reads it for the local player. The server script also knocks a player down for 2 seconds with <code>Ragdoll</code> after a hit of 40 or more. That part is optional.</p>
+<div class="code"><span class="tag">Scripts/Server/GuideStamina.luau</span><pre data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_staminapad&quot;, function(pad)
+	pad.Touched:Connect(function(player)
+		player.StaminaEnabled = true
+		player.StaminaDrain = 30
+		player.StaminaRegen = 10
+		player.SprintSpeed = 900
+	end)
+end)
+
+Players:OnPlayer(function(player)
+	player.Damaged:Connect(function(_, amount)
+		if amount &gt;= 40 then
+			player:Ragdoll(2)
+		end
+	end)
+end)
+</pre></div>
+<div class="code"><span class="tag">Scripts/Client/GuideStaminaHud.luau</span><pre data-example-kind="source" data-language="luau">Players.LocalPlayer.StaminaChanged:Connect(function(_, old, new)
+	UI:SetText(&quot;stamina&quot;, `Stamina: {math.floor(new)}`)
+end)
+</pre></div>
+<p>Only the server can set these values. <code>Ragdoll</code> returns false when the player is dead, in a vehicle or already knocked down. <code>SprintStarted</code> and <code>SprintStopped</code> fire too, and <code>IsSprinting</code> and <code>IsRagdolled</code> read the state (see <a href="/docs/scripting/api/#ref-player">Player</a>).</p>
+<h3 id="r-nameplates">A nameplate over each player <span class="status wip">Next release</span></h3>
+<p>This puts a name over every other player's head, on your screen only. It needs API 1.41, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). It's a client script, and there's nothing to tag. The script makes a text node for each player and calls <a href="/docs/scripting/api/#ref-uinode"><code>UiNode:AttachToWorld</code></a> on it. <code>Bone = "head"</code> puts the plate on the head, <code>Offset</code> lifts it 30 cm, <code>MaxDistance</code> hides it past 2,500 cm, <code>FadeDistance</code> fades it out over the last 500 cm and <code>HideForSelf</code> keeps it off your own character. A plate follows its player and hides while they have no character. A script can float up to 32 nodes at once, and <code>AttachToWorld</code> returns false past that. The script destroys the plate then, and again when the player leaves, so it never wastes the node budget (256 nodes per script).</p>
+<div class="code"><span class="tag">Scripts/Client/GuideNameplates.luau</span><pre data-example-kind="source" data-language="luau">local plates = {}
+
+Players:OnPlayer(function(player)
+	local plate = UI:Create(&quot;text&quot;)
+	if not plate then
+		return
+	end
+	plate:SetText(player.Name)
+	local attached = plate:AttachToWorld(player, {
+		Bone = &quot;head&quot;,
+		Offset = Vector3.new(0, 0, 30),
+		MaxDistance = 2500,
+		FadeDistance = 500,
+		HideForSelf = true,
+	})
+	if attached then
+		plates[player.UserId] = plate
+	else
+		plate:Destroy()
+	end
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+	local plate = plates[player.UserId]
+	if plate then
+		plate:Destroy()
+		plates[player.UserId] = nil
+	end
+end)
+</pre></div>
+<p>A plate is only drawn: it can't be clicked. For a marker that stays on the edge of the screen when its target is out of view, pass <code>OffScreen = "Clamp"</code>. To stop floating a node without destroying it, call <code>DetachFromWorld</code>. Every option is listed under <a href="/docs/scripting/api/#ref-uinode">UiNode</a>.</p>
 <h3 id="r-alternate-hud">Standalone HUD and round timer</h3><p>This builds a self-contained round timer and HUD, with one server and client pair for each language to match the standalone coin versions. There&rsquo;s nothing to tag in the level. Use one pair instead of the main round timer and HUD recipe, not as well as it.</p><div class="v has-ts has-js has-py"><div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Server/Rounds.luau</span><pre id="ex-rounds-luau" data-example-kind="source" data-language="luau">local round = 0
 while true do
     round += 1
