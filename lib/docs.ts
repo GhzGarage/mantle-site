@@ -182,12 +182,15 @@ function highlight(code: string, lang: string) {
   return out + escapeHtml(code.slice(last));
 }
 
-function enhanceCode(html: string) {
-  return html.replace(/<div class="code"( data-v="(\w+)")?>(\s*<span class="tag">([\s\S]*?)<\/span>)?(\s*)<pre([^>]*)>([\s\S]*?)<\/pre>/g, (_, dv, v = "", tagBlock = "", tag = "", space, attrs, body) => {
+function enhanceCode(html: string, hasLanguageVariants: boolean) {
+  return html.replace(/<div class="code"( data-v="(\w+)")?>(\s*<span class="tag">([\s\S]*?)<\/span>)?(\s*)<pre([^>]*)>([\s\S]*?)<\/pre>(\s*<\/div>)/g, (_, dv, v = "", tagBlock = "", tag = "", space, attrs, body, close) => {
     const hint = `${v} ${tag.toLowerCase()}`;
     const lang = /luau|\.lua/.test(hint) ? "luau" : /\bpy|python|\.py/.test(hint) ? "py" : /\bjs|\bts|javascript|typescript|\.js|\.ts/.test(hint) ? "js" : null;
     const code = lang && !attrs.includes('data-example-kind="graph"') ? highlight(decodeHtml(body), lang) : body;
-    return `<div class="code"${dv ?? ""}>${tagBlock}${space}<pre${attrs}>${code}</pre><button type="button" class="copy" data-copy>Copy</button>`;
+    // On a page with a language switch, a Luau example with no other-language versions goes in a .v wrapper, so picking another language shows the
+    // "Shown in Luau" note instead of appearing to do nothing.
+    const block = `<div class="code"${dv ?? ""}>${tagBlock}${space}<pre${attrs}>${code}</pre><button type="button" class="copy" data-copy>Copy</button>${close}`;
+    return hasLanguageVariants && lang === "luau" && !dv ? `<div class="v">${block}</div>` : block;
   });
 }
 
@@ -208,7 +211,7 @@ export function getDoc(slug: string[]) {
   const link = (p?: DocPage): NavLink | undefined => (p ? { title: p.title, href: docHref(p.slug) } : undefined);
   return {
     ...page,
-    html: rewriteHashLinks(enhanceCode(raw)),
+    html: rewriteHashLinks(enhanceCode(raw, raw.includes("data-v="))),
     headings: headingsOf(raw),
     hasLanguageVariants: raw.includes("data-v="),
     prev: link(allPages[index - 1]),
