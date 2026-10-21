@@ -60,7 +60,7 @@ If you send too many requests, Mantle tries again for you, so you won't see a me
 </ul>
 
 <h3 id="secrets-set">Add, replace or delete a secret <span class="status live">Live</span></h3>
-<p>Before you start, sign in to Mantle in the editor and publish the level once. Secrets belong to the place you publish to, so a level that has never been published has none.</p>
+<p>Before you start, sign in to Mantle in the editor and save or publish the level once. Secrets belong to the place it saves or publishes to, so a level that has never been saved or published to Mantle has none.</p>
 <ol class="steps">
 <li><b>Open the section.</b> Choose <b>Tools → Mantle → Place settings</b> and find <b>Mantle: Secrets</b> in the Details panel. Press <b>Refresh</b> to load the list.</li>
 <li><b>Read the list.</b> Each secret shows its name, a masked value (••••••••) and "set" with the time you last saved it. The count, such as "3 / 50", shows how many you've used. A place holds up to 50.</li>
@@ -80,12 +80,12 @@ If you send too many requests, Mantle tries again for you, so you won't see a me
 
 <h3 id="secrets-problems">Secrets messages <span class="status live">Live</span></h3>
 <div class="table-wrap"><table><thead><tr><th>If you see…</th><th>What to do</th></tr></thead><tbody>
-<tr><td>This level has no place on Mantle yet. Save or publish it once, then come back to add secrets.</td><td>Publish the level once while you're signed in to the same Mantle account, then press <b>Refresh</b>. Only publishing links a level to a place.</td></tr>
+<tr><td>This level has no place on Mantle yet. Save or publish it once, then come back to add secrets.</td><td>Choose <b>Save to Mantle</b> or <b>Publish</b> once while you're signed in to the same Mantle account, then press <b>Refresh</b>.</td></tr>
 <tr><td>Not signed in to Mantle.</td><td>Sign in to Mantle in the editor, then press <b>Refresh</b>.</td></tr>
 <tr><td>Press Refresh to load this place's secrets.</td><td>Press <b>Refresh</b>.</td></tr>
 <tr><td>Secrets aren't available on this server.</td><td>The Mantle server you're connected to has secrets turned off. The section turns off too. Nothing on your side fixes it.</td></tr>
 <tr><td>Type a name for the secret.</td><td>Fill in the name box.</td></tr>
-<tr><td>A secret's name starts with a letter and has only capital letters, digits and underscores, up to 64 characters (for example DISCORD_WEBHOOK).</td><td>Rename it to follow those rules.</td></tr>
+<tr><td>A secret's name starts with a letter and has only capital letters, digits and underscores, up to 64 characters (for example API_KEY).</td><td>Rename it to follow those rules.</td></tr>
 <tr><td>Type or paste the value first.</td><td>Enter a value before you press <b>Save secret</b>.</td></tr>
 <tr><td>The value has a control character. Only tab and line breaks are allowed.</td><td>Remove the odd character, or paste the value as plain text.</td></tr>
 <tr><td>The value is N bytes; a secret holds at most 8192 bytes (bytes, not characters).</td><td>Shorten the value. Accented letters, emoji and other characters beyond plain English text take more than one byte each.</td></tr>
