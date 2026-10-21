@@ -43,6 +43,7 @@
 <ul>
 <li><b>Tools → Mantle</b>, and the <b>Mantle</b> dropdown next to Play, hold the same commands: Test Locally, Stop Preview, Start a new place, Place settings, Check this place, Check what players receive, Save to Mantle, Publish, the vehicle, weapon, Cosmetics and Library tools, and signing in. See <a href="/docs/creators/#editor">The Mantle editor tools</a>.</li>
 <li>The <b>Mantle Scripts</b> panel and <b>Mantle Script Graph</b> assets. See <a href="/docs/scripting/api/#editor">Editor setup</a>.</li>
+<li>The <code>Mantle.Check</code> console command, which runs Publish's check and export without publishing. See <a href="/docs/creators/#mantle-check">Checking from the console</a>.</li>
 <li><b>Editor Preferences → Plugins → Mantle</b>: which world each level publishes to, and the Mantle client Test Locally uses. These settings are yours only. They're saved in your own editor settings, not shared with the project or your teammates.</li>
 </ul>
 
@@ -58,13 +59,23 @@
 <h2 id="test-locally">Testing with Test Locally <span class="status live">Live</span></h2>
 <p><b>Test Locally</b> exports the level you have open and runs it in the Mantle game on your PC, with your scripts and UI. Nothing is uploaded or published, and you don't need to sign in. Press it again after a change to replace the running test.</p>
 <ul>
-<li><b>Mantle Preview</b> opens beside the editor. It says what Test Locally is doing, which Mantle client it found, whether the place's geometry, scripts and spawn are ready, and every message the game reports, including script errors. <b>Copy messages</b> copies them all.</li>
+<li><b>Mantle Preview</b> opens beside the editor. It says what Test Locally is doing, which Mantle client it found, whether the place's geometry, scripts and spawn are ready, and every message the game reports, including script errors. Under <b>Export coverage</b> it lists what the export kept, changed and left out. <b>Copy messages</b> copies them all.</li>
 <li>The test runs offline. Anything that tries to reach Mantle's online services is blocked, and the panel counts it.</li>
 <li>What your scripts save is kept between runs, separately for each level. <b>Reset local data</b> clears it so the next run starts fresh.</li>
 <li><b>Stop</b> or <b>Stop Preview</b> closes the test. It only closes the copy of Mantle the editor started, never one you started yourself, and the test also closes with the editor.</li>
 <li>Test Locally looks for the Mantle you installed from Steam or the Epic Games Store. If it can't find it, choose <b>Choose client...</b> in the panel, or set <b>Preview Client Executable</b> under <b>Editor Preferences → Plugins → Mantle</b> to <code>Mantle-Win64-Shipping.exe</code> in the install's <code>Mantle\Binaries\Win64</code> folder.</li>
+<li>Mantle developers can run Test Locally in a Mantle client project instead of the installed game. Set <b>Preview Client Project</b> under <b>Editor Preferences → Plugins → Mantle</b> to the client's <code>.uproject</code> file, or start the editor with <code>-MantlePreviewProject=&lt;path&gt;</code>, which wins over the setting. Test Locally then runs that project with <code>UnrealEditor.exe</code> and <code>-game</code>. It uses this editor's own <code>UnrealEditor.exe</code>, or the one you pick as <b>Preview Client Executable</b>. Any other executable can't run another project. It also needs the <code>MANTLE_COOK_TOOL</code> environment variable set to <code>mantle-cook.exe</code> (a packaged client has it in its <code>Mantle\Binaries\Win64</code> folder). Leave the setting empty to use the installed game. The <b>Mantle Preview</b> panel names the project: "Client: dev-editor, project [path], version [version]", or before the first run "Client: not looked for yet; will run the project [path]".</li>
 <li>If your Mantle is too old for Test Locally, you'll see "This Mantle client (…, version …) is too old for Test Locally. Update Mantle in Steam or the Epic Games Launcher, then try again." You may also see "This Mantle client is too old for Test Locally; update it…" followed by the client's path and the reason.</li>
 </ul>
+<h3 id="preview-project">If a Preview Client Project doesn't run <span class="status live">Live</span></h3>
+<p>These messages appear in the <b>Mantle Preview</b> panel. Some of them say <b>Project Settings</b>, but the setting is under <b>Editor Preferences → Plugins → Mantle</b>.</p>
+<div class="table-wrap"><table><thead><tr><th>Message</th><th>What to do</th></tr></thead><tbody>
+<tr><td>A Preview Client Project (…) is set, but the Preview Client Executable is …, which cannot run another project. Clear the Preview Client Executable (or set it to UnrealEditor.exe), or clear the Preview Client Project / -MantlePreviewProject.</td><td>As the message says.</td></tr>
+<tr><td>The Preview Client Project does not exist: …. Choose the Mantle client's .uproject (such as mantle/client/Mantle.uproject), or clear it.</td><td>Pick a project file that exists.</td></tr>
+<tr><td>The Preview Client Project must be a .uproject file: …</td><td>Pick the <code>.uproject</code> file, not a folder or another file.</td></tr>
+<tr><td>A dev-editor preview needs a cook tool: set the MANTLE_COOK_TOOL environment variable to mantle-cook.exe, or build one under artifacts/steam (a packaged client's Mantle/Binaries/Win64 folder has it).</td><td>Set <code>MANTLE_COOK_TOOL</code> to <code>mantle-cook.exe</code>.</td></tr>
+<tr><td>… (This is the Preview Client Project …, from Project Settings &gt; Plugins &gt; Mantle or -MantlePreviewProject. It must be a Mantle client project that answers -MantlePreviewCapabilities, such as mantle/client/Mantle.uproject; choose another, or clear it.)</td><td>The project didn't answer the way a Mantle client does, after the reason the message starts with. Choose a Mantle client project, or clear the setting.</td></tr>
+</tbody></table></div>
 <div class="callout tip"><strong>Scripts run only in Test Locally</strong>
 <p><b>Play in Editor</b> (PIE) and Simulate don't run Mantle places or scripts. Use Test Locally to try your place and its scripts, and publish when it's ready. To check what will publish without running anything, use "Check what players receive".</p></div>
 
