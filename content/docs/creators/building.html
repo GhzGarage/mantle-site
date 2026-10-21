@@ -105,6 +105,13 @@ See <a href="/docs/creators/#validation">What "Check this place" catches</a>.</l
 <tr><td>"is a Level Instance of '…' that isn't loaded in the editor, so what is inside it is left out of the place."</td><td>Load it (right-click the Level Instance &gt; Load) and publish again. Publish loads Level Instances for you, so you see this from <b>Tools → Mantle → Check this place</b> or when one won't load. See <a href="#big-levels">Big levels</a>.</td></tr>
 </tbody></table></div>
 
+<h3 id="export-report">The export report <span class="status live">Live</span></h3>
+<p>Every time Mantle exports your level, it counts what it kept, approximated and dropped, by category (static meshes, materials, terrain, lights, sky, fog, post process and so on). It names each dropped or approximated item and says why. You'll find the report in two places:</p>
+<ul>
+<li><b>Mantle Preview:</b> after <b>Test Locally</b>, the <b>Export coverage</b> section is titled with a summary such as "Export coverage: 2 dropped, 5 approximated", or "Export coverage: nothing dropped". Open it for each category's counts and the named items. <b>Copy messages</b> includes it.</li>
+<li><b>The Output Log:</b> <b>Check this place</b>, Publish and Test Locally write it as lines that start with <code>MANTLE_COVERAGE</code> (a category's counts) and <code>MANTLE_COVERAGE_ITEM</code> (one item).</li>
+</ul>
+<p><b>Check what players receive</b> is a shorter answer in a dialog: how many objects in the level will be sent to players, and a list of the ones that won't reach them. A feature the Mantle client you test with is too old to read is reported as "needs a newer Mantle client".</p>
 <h3 id="big-levels">Big levels <span class="status live">Live</span></h3>
 <p>Real Fab maps can be huge. Mantle checks how big your place will be before it converts or uploads anything, so a place that's too big stops right away, with the fix.</p>
 <ul>
@@ -292,14 +299,14 @@ See <a href="/docs/creators/#validation">What "Check this place" catches</a>.</l
 </ul>
 
 <h3 id="level-look">Your level's own look <span class="status live">Live</span></h3>
-<p>Mantle supplies its own sky, but the editor reads some of the look from the actors in your level. "Check what players receive" lists what it kept and what it left out.</p>
+<p>Mantle supplies its own sky, but the editor reads some of the look from the actors in your level. <a href="#export-report">The export report</a> lists what it kept and what it left out.</p>
 <ul>
 <li><b>The sun:</b> the first Directional Light keeps its intensity and color (a temperature is folded into the color). Its angle comes from the clock: if you set a <b>Clock Time</b>, or a <b>Time Scale</b> other than 1, in Place settings, they decide. If you didn't, and the light is at least 1° above the horizon, its angle becomes the place's clock, stopped at that hour with Time Scale 0, so the day and night cycle is off. Set Clock Time in Place settings to run the day from an hour you choose. A light less than 1° above the horizon leaves the clock alone, and so does a light that's attached to another actor. The clock's sun peaks at 60°, so a higher light is set to that. Its heading (yaw) is kept roughly: it is turned to fit the clock's sun.</li>
 <li><b>Weather in a level with its own look:</b> a level with a sun, sky atmosphere, sky light or volumetric cloud has one look, so the place holds its weather instead of letting it change. It holds Clear, Partly Cloudy or Overcast from the first cloud's coverage, or Clear when there are no clouds. <b>Start a new place</b> adds a sun, so a new place holds Clear until you choose another.</li>
 <li><b>Choosing the weather:</b> pick a <b>Weather</b> in Place settings for a different one. <b>Natural</b> lets the weather change on its own, even in a level with a sun or sky of its own. The default, <b>Level's Sky</b>, holds the weather as above in such a level, and lets it change on its own in a level without one.</li>
-<li><b>What the report says:</b> "Check what players receive" tells you which it did. With Natural chosen:"Mantle Place Settings chooses Natural, so the place holds no weather and it changes on its own, though the level has a sky of its own." With no clouds and the default: "the level has no volumetric cloud, so the place's weather is held at Clear instead of changing on its own; choose Natural or another Weather in Mantle Place Settings for a different one."</li>
-<li><b>Post Process Volume:</b> its saturation, bloom, white balance (as a color tint) and exposure are kept, from one volume (the enabled one with the highest priority). The rest of its settings aren't. Saturation, Bloom and Color Tint set in Place settings win over the volume's. A level with a sun, sky, fog or post-process volume also keeps its exposure, even without a volume, unless that exposure matches the game's own.</li>
-<li><b>Exponential Height Fog:</b> the first fog's density, height falloff, inscattering color, start distance and directional inscattering color are kept, if you've changed them from Unreal's default fog. They're held to the limits the place allows. The fog sits at ground level, whatever its height in the level.</li>
+<li><b>What the report says:</b> <a href="#export-report">The export report</a> tells you which it did. With Natural chosen:"Mantle Place Settings chooses Natural, so the place holds no weather and it changes on its own, though the level has a sky of its own." With no clouds and the default: "the level has no volumetric cloud, so the place's weather is held at Clear instead of changing on its own; choose Natural or another Weather in Mantle Place Settings for a different one."</li>
+<li><b>Post Process Volume:</b> its saturation, bloom, white balance (as a color tint) and exposure are kept, from one volume (the enabled one with the highest priority). The rest of its settings aren't. Saturation, Bloom and Color Tint set in Place settings win over the volume's. A level with a sun, sky, fog or post-process volume also keeps its exposure, even without a volume, unless that exposure matches the game's own. See <a href="#exposure-fog">Exposure and fog</a> for how each exposure setting maps.</li>
+<li><b>Exponential Height Fog:</b> the first fog's density, height falloff, inscattering color, start distance and directional inscattering color are kept, if you've changed them from Unreal's default fog. They're held to the limits the place allows. The fog sits at ground level, whatever its height in the level. See <a href="#exposure-fog">Exposure and fog</a> for the ranges.</li>
 <li><b>Sky Atmosphere:</b> the place has no setting for it, so Mantle's own is used. Volumetric clouds publish only their coverage, as the weather.</li>
 <li><b>Sky dome:</b> a level's own sky dome mesh, such as <code>BP_Sky_Sphere</code>, is left out, because Mantle supplies the sky. "Check this place" warns: "a sky mesh; Mantle supplies its own sky, so it isn't published." Inside a Blueprint, it says "has a sky mesh ('…'); Mantle supplies its own sky, so it isn't published." The rest of the actor publishes as usual.</li>
 <li><b>Sky Light:</b> Mantle uses its own sky light, but at the strength of your level's Sky Light, so an indoor level isn't lit by a sky it never shows. A Sky Light that uses a cubemap is read too, including an HDR panorama. To set it yourself, tick <b>Sky Light Intensity</b> in Place settings (0 is none, 1 is full). If Mantle can't read the brightness, it uses full strength and says why in "Check what players receive".</li>
@@ -321,6 +328,25 @@ See <a href="/docs/creators/#validation">What "Check this place" catches</a>.</l
 <tr><td>Color Grading Intensity</td><td>How strongly Color Grading shows: 1 (the default) is the full look, 0 is none of it.</td></tr>
 </tbody></table></div>
 <p>A server script's changes to the environment still win over these: they're the starting point a script's writes build on, not a floor under them. See <a href="/docs/scripting/api/#ref-environment">Environment</a> in the API reference for the full script API.</p>
+
+<h3 id="exposure-fog">Exposure and fog <span class="status live">Live</span></h3>
+<p>Place settings has no exposure or fog field. You set both in the level, and the place carries them: exposure from the Post Process Volume, fog from the Exponential Height Fog. Each value is held to the range below, and <a href="#export-report">the export report</a> says when one was clamped.</p>
+<p><b>Exposure</b> comes from the Post Process Volume's <b>Exposure</b> group (the enabled volume with the highest priority).</p>
+<div class="table-wrap"><table><thead><tr><th>In the editor</th><th>What players get</th></tr></thead><tbody>
+<tr><td><b>Metering Mode</b></td><td><b>Manual</b> is a fixed exposure: the same brightness wherever players look, like the game's own. <b>Auto Exposure Histogram</b> and <b>Auto Exposure Basic</b> adapt to what the player is looking at, as the editor does. With no Metering Mode override, your project's default is used, which adapts unless your project turned auto exposure off.</td></tr>
+<tr><td><b>Exposure Compensation</b></td><td>Stops brighter (above 0) or darker (below 0) than the game's own exposure, from -4 to 4. 0 is unchanged, and +1 doubles the brightness. A value past the range is clamped to it: "Exposure Compensation (N stops over the game's is past the place's range of 4, so clamped to it)". With Manual metering, the camera's settings are folded into the compensation.</td></tr>
+<tr><td><b>Min Brightness</b> and <b>Max Brightness</b></td><td>How dark and how bright a scene can get before the adaptation stops, from 0.03 to 20. They count only with an auto Metering Mode, and they default to 0.03 and 8. A Min above Max is lowered to match. If your project counts them in EV100, Mantle's own range is used: "Min and Max Brightness (the project counts them in EV100, which the place does not carry; Mantle's own range is used)".</td></tr>
+</tbody></table></div>
+<p>A script's <code>Environment.ExposureBias</code> replaces the compensation once it's set to anything but 0. A script that sets 0 leaves the place's compensation in force. See <a href="/docs/scripting/api/#ref-environment">Environment</a> in the API reference.</p>
+<p><b>Fog</b> comes from the level's first Exponential Height Fog. A later fog is listed in the report as not used. Only the values you changed from Unreal's default fog are carried, and the rest keep the game's own fog. The weather scales the density from there.</p>
+<div class="table-wrap"><table><thead><tr><th>In the editor</th><th>Range</th><th>Default</th></tr></thead><tbody>
+<tr><td><b>Fog Density</b></td><td class="num">0 to 0.05</td><td class="num">0.02</td></tr>
+<tr><td><b>Fog Height Falloff</b></td><td class="num">0.001 to 2</td><td class="num">0.2</td></tr>
+<tr><td><b>Fog Inscattering Luminance</b></td><td class="num">0 to 10 per color channel</td><td>Black, so the sky's own color shows through</td></tr>
+<tr><td><b>Start Distance</b></td><td class="num">0 to 1,000,000 cm</td><td class="num">0</td></tr>
+<tr><td><b>Directional Inscattering Luminance</b></td><td class="num">0 to 10 per color channel</td><td>Black: no glow around the sun</td></tr>
+</tbody></table></div>
+<p>A color past 10 on a channel is clamped, and the report says so: "Fog Inscattering Luminance (past the place's range, so clamped to it)".</p>
 
 <h3 id="water">Water <span class="status live">Live</span></h3>
 <p>Two kinds of water work today: water you draw with a material, and water bodies from the Water plugin.</p>
