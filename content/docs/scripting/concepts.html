@@ -768,25 +768,33 @@ def on_player(player):
 Players.on_player(on_player)</pre></div>
     </div>
 
-    <h3 id="backpack">Tools in the Backpack (API 1.5)</h3>
-    <p><code>Backpack:GrantBuiltIn(player, tool)</code> <span class="side s">Server</span> gives a player one of the built-in Tools: <code>"grenade"</code>, <code>"healthpack"</code> or <code>"spawnpad"</code>. It returns the new Tool's id, or nil when the player has no character right now, already has that Tool or has a full Backpack. From API 1.34, <code>Backpack:Grant(player, item)</code> gives a weapon your place stores, with the item id from <code>Storage:Get</code>. It's an error, not nil, for a wrong item, a vehicle, or a player who can't receive it. <code>GetTools</code>, <code>Remove</code>, <code>Clear</code>, <code>EquipSlot</code> and <code>SetWeaponColor</code> work with what a player holds.</p>
-    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Supplies.luau</span><pre data-example-kind="snippet">World:OnTagged("supplies", function(crate)
+    <h3 id="backpack">Weapons in the Backpack (API 1.5)</h3>
+    <p><code>Backpack:Grant(player, item)</code> <span class="side s">Server</span> (API 1.34) gives a player a weapon your place stores, with the item id from <code>Storage:Get</code>. Nothing is built in: a grenade is a weapon too, made with the weapon builder's Throwable hold and stored with the place. <code>Grant</code> returns the new Tool's id. It's an error, not nil, for a wrong item, a vehicle, or a player who can't receive it. <code>GetTools</code>, <code>Remove</code>, <code>Clear</code>, <code>EquipSlot</code> and <code>SetWeaponColor</code> work with what a player holds.</p>
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Supplies.luau</span><pre data-example-kind="snippet">local GRENADE = Storage:Get("Grenade")   -- the name your place's storage gives the Throwable
+
+World:OnTagged("supplies", function(crate)
 	crate.Touched:Connect(function(player)
-		Backpack:GrantBuiltIn(player, "healthpack")
+		Backpack:Grant(player, GRENADE)
 	end)
 end)</pre></div>
-      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Supplies.ts</span><pre data-example-kind="snippet">World.onTagged("supplies", (crate) =&gt; {
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Supplies.ts</span><pre data-example-kind="snippet">const GRENADE = Storage.get("Grenade");   // the name your place's storage gives the Throwable
+
+World.onTagged("supplies", (crate) =&gt; {
 	crate.touched.connect((player) =&gt; {
-		Backpack.grantBuiltIn(player, "healthpack");
+		Backpack.grant(player, GRENADE);
 	});
 });</pre></div>
-      <div class="code" data-v="js"><span class="tag">Scripts/Server/Supplies.js</span><pre data-example-kind="snippet">World.onTagged("supplies", (crate) =&gt; {
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Supplies.js</span><pre data-example-kind="snippet">const GRENADE = Storage.get("Grenade");   // the name your place's storage gives the Throwable
+
+World.onTagged("supplies", (crate) =&gt; {
 	crate.touched.connect((player) =&gt; {
-		Backpack.grantBuiltIn(player, "healthpack");
+		Backpack.grant(player, GRENADE);
 	});
 });</pre></div>
-      <div class="code" data-v="py"><span class="tag">Scripts/Server/Supplies.py</span><pre data-example-kind="snippet">def on_crate(crate):
-    crate.touched.connect(lambda player: Backpack.grant_built_in(player, "healthpack"))
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Supplies.py</span><pre data-example-kind="snippet">GRENADE = Storage.get("Grenade")   # the name your place's storage gives the Throwable
+
+def on_crate(crate):
+    crate.touched.connect(lambda player: Backpack.grant(player, GRENADE))
 
 World.on_tagged("supplies", on_crate)</pre></div>
     </div>
