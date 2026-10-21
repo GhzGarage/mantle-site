@@ -1,19 +1,54 @@
 <h2 id="recipes">Copy-ready recipes</h2>
-<p class="section-intro">Each code block is one file, and the label above it shows where the file goes. The main recipes fit together into one place written in Luau, JavaScript and TypeScript. If a recipe imports the shared configuration module, copy that module too. The language switch only changes the standalone versions, which come in every language.</p>
-<p>Each recipe finds the actors in your level by a tag that starts with <code>guide_code_</code>. Give your actors matching tags, or change the tags in the code. The <a href="/docs/scripting/visual-scripting/#graph-examples">visual scripting examples</a> use their own tags so both can live in one place.</p><h3 id="r-config">Shared configuration module</h3><p>This module holds the settings the other recipes share. Copy it into the same nested folders, keeping the exact capitalization of every folder and file name. By default, coins respawn after five seconds and a round lasts 60 seconds. Anything in a Modules folder is only ever used as a module, never run as a script by itself.</p><div class="code"><span class="tag">Scripts/Shared/Modules/Config/GuideConfig.luau</span><pre id="ex-canonical-guideconfig" data-example-kind="source" data-language="luau">-- Shared configuration is module-only, including nested Modules directories.
+<p class="section-intro">Each code block is one file, and the label above it shows where the file goes. Every recipe comes in Luau, TypeScript, JavaScript and Python: the language switch shows the files for the language you pick. Luau and Python scripts can only load modules written in their own language, so use one language for the recipes that share a module. If a recipe loads the shared configuration module, copy that module too. The text around the examples uses the Luau names, such as <code>FindByTag</code>. In JavaScript and TypeScript they start with a lowercase letter (<code>findByTag</code>), and in Python they use underscores (<code>find_by_tag</code>).</p>
+<p>Each recipe finds the actors in your level by a tag that starts with <code>guide_code_</code>. Give your actors matching tags, or change the tags in the code. The <a href="/docs/scripting/visual-scripting/#graph-examples">visual scripting examples</a> use their own tags so both can live in one place.</p><h3 id="r-config">Shared configuration module</h3><p>This module holds the settings the other recipes share. Copy it into the same nested folders, keeping the exact capitalization of every folder and file name. By default, coins respawn after five seconds and a round lasts 60 seconds. Anything in a Modules folder is only ever used as a module, never run as a script by itself.</p><div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Shared/Modules/Config/GuideConfig.luau</span><pre id="ex-canonical-guideconfig" data-example-kind="source" data-language="luau">-- Shared configuration is module-only, including nested Modules directories.
 return {
 	SafeSpawn = Vector3.new(0, 0, 120),
 	CoinRespawnSeconds = 5,
 	RoundSeconds = 60,
 }
-</pre></div><h3 id="r-killbrick">A kill brick that returns the player to safety</h3><p>This builds a hazard that sends players back to safety when they touch it: tag the hazard actor in your level <code>guide_code_killbrick</code>. The script teleports the player to their saved checkpoint, or to the configured safe spawn if they haven't reached a checkpoint yet.</p><div class="code"><span class="tag">Scripts/Server/GuideKillBricks.luau</span><pre id="ex-canonical-guidekillbricks" data-example-kind="source" data-language="luau">local Config = require(&quot;Shared/Modules/Config/GuideConfig&quot;)
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Shared/Modules/Config/GuideConfig.ts</span><pre id="ex-canonical-guideconfig-ts" data-example-kind="source" data-language="typescript">// Shared configuration is module-only, including nested Modules directories.
+export const safeSpawn = new Vector3(0, 0, 120);
+export const coinRespawnSeconds = 5;
+export const roundSeconds = 60;
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Shared/Modules/Config/GuideConfig.js</span><pre id="ex-canonical-guideconfig-js" data-example-kind="source" data-language="javascript">// Shared configuration is module-only, including nested Modules directories.
+export const safeSpawn = new Vector3(0, 0, 120);
+export const coinRespawnSeconds = 5;
+export const roundSeconds = 60;
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Shared/Modules/Config/GuideConfig.py</span><pre id="ex-canonical-guideconfig-py" data-example-kind="source" data-language="python"># Shared configuration is module-only, including nested Modules directories.
+SAFE_SPAWN = Vector3(0, 0, 120)
+COIN_RESPAWN_SECONDS = 5
+ROUND_SECONDS = 60
+</pre></div></div><h3 id="r-killbrick">A kill brick that returns the player to safety</h3><p>This builds a hazard that sends players back to safety when they touch it: tag the hazard actor in your level <code>guide_code_killbrick</code>. The script teleports the player to their saved checkpoint, or to the configured safe spawn if they haven't reached a checkpoint yet.</p><div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/GuideKillBricks.luau</span><pre id="ex-canonical-guidekillbricks" data-example-kind="source" data-language="luau">local Config = require(&quot;Shared/Modules/Config/GuideConfig&quot;)
 World:OnTagged(&quot;guide_code_killbrick&quot;, function(brick)
 	brick.Touched:Connect(function(player)
 		local spawn = State:Get(`guide.respawn:{player.UserId}`) or Config.SafeSpawn
 		player:Teleport(spawn)
 	end)
 end)
-</pre></div><h3 id="r-coins">Coins that bob, score and respawn</h3><p>This builds coins that bob up and down and give a point when collected: tag each coin actor in your level <code>guide_code_coin</code> and set it to <b>Movable</b>. On any other actor the tween raises the error <code>can't tween Position, Rotation or Scale on an entity that isn't dynamic; mark it "dynamic": true in the place</code> (see <a href="/docs/scripting/api/#errors">Errors and limits</a>). The server bobs the coin 40 cm up and down with a tween. When a player touches it, the server hides it, awards one point and shows it again after five seconds. Checking <code>Visible</code> first stops a touch from scoring the pickup again while it's hidden: a hidden entity still collides and still fires <code>Touched</code>. Each bobbing coin uses one of the 256 tweens a place can run at once. Keep these long-lived coins separate from templates you clone and throw away. The tween uses <code>Sine</code> easing with <code>InOut</code>, so the coin slows down gently at the top and bottom of each bob.</p><div class="code"><span class="tag">Scripts/Server/Modules/Recipes/ScoreRules.luau</span><pre id="ex-canonical-scorerules" data-example-kind="source" data-language="luau">local Rules = {}
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/GuideKillBricks.ts</span><pre id="ex-canonical-guidekillbricks-ts" data-example-kind="source" data-language="typescript">import { safeSpawn } from &quot;Shared/Modules/Config/GuideConfig&quot;;
+World.onTagged(&quot;guide_code_killbrick&quot;, (brick: Entity) =&gt; {
+	brick.touched.connect((player: Player) =&gt; {
+		const spawn = State.get(`guide.respawn:${player.userId}`) ?? safeSpawn;
+		player.teleport(spawn);
+	});
+});
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/GuideKillBricks.js</span><pre id="ex-canonical-guidekillbricks-js" data-example-kind="source" data-language="javascript">import { safeSpawn } from &quot;Shared/Modules/Config/GuideConfig&quot;;
+World.onTagged(&quot;guide_code_killbrick&quot;, (brick) =&gt; {
+	brick.touched.connect((player) =&gt; {
+		const spawn = State.get(`guide.respawn:${player.userId}`) ?? safeSpawn;
+		player.teleport(spawn);
+	});
+});
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/GuideKillBricks.py</span><pre id="ex-canonical-guidekillbricks-py" data-example-kind="source" data-language="python">Config = require(&quot;Shared/Modules/Config/GuideConfig&quot;)
+
+def setup(brick):
+    def on_touch(player):
+        spawn = State.get(f&quot;guide.respawn:{player.user_id}&quot;) or Config.SAFE_SPAWN
+        player.teleport(spawn)
+    brick.touched.connect(on_touch)
+
+World.on_tagged(&quot;guide_code_killbrick&quot;, setup)
+</pre></div></div><h3 id="r-coins">Coins that bob, score and respawn</h3><p>This builds coins that bob up and down and give a point when collected: tag each coin actor in your level <code>guide_code_coin</code> and set it to <b>Movable</b>. On any other actor the tween raises the error <code>can't tween Position, Rotation or Scale on an entity that isn't dynamic; mark it "dynamic": true in the place</code> (see <a href="/docs/scripting/api/#errors">Errors and limits</a>). The server bobs the coin 40 cm up and down with a tween. When a player touches it, the server hides it, awards one point and shows it again after five seconds. Checking <code>Visible</code> first stops a touch from scoring the pickup again while it's hidden: a hidden entity still collides and still fires <code>Touched</code>. Each bobbing coin uses one of the 256 tweens a place can run at once. Keep these long-lived coins separate from templates you clone and throw away. The tween uses <code>Sine</code> easing with <code>InOut</code>, so the coin slows down gently at the top and bottom of each bob.</p><div class="v has-ts has-js has-py"><div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Server/Modules/Recipes/ScoreRules.luau</span><pre id="ex-canonical-scorerules" data-example-kind="source" data-language="luau">local Rules = {}
 function Rules.key(player)
 	return `guide.score:{player.UserId}`
 end
@@ -42,7 +77,91 @@ World:OnTagged(&quot;guide_code_coin&quot;, function(coin)
 		coin.Visible = true
 	end)
 end)
-</pre></div><details><summary>Standalone coin versions in all four languages</summary><p>These are self-contained versions of the coin recipe, one for each language. Use one of them instead of the main coin recipe, not as well as it. They save the score under <code>score:&lt;UserId&gt;</code>, which is separate from the main recipes' score.</p><div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Coins.luau</span><pre id="ex-coins-luau" data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_coin&quot;, function(coin)
+</pre></div></div><div class="v" data-v="ts"><div class="code"><span class="tag">Scripts/Server/Modules/Recipes/ScoreRules.ts</span><pre id="ex-canonical-scorerules-ts" data-example-kind="source" data-language="typescript">export function key(player: Player): string {
+	return `guide.score:${player.userId}`;
+}
+export function award(player: Player): number {
+	const scoreKey = key(player);
+	const value = (State.get(scoreKey) ?? 0) + 1;
+	State.set(scoreKey, value);
+	return value;
+}
+</pre></div><div class="code"><span class="tag">Scripts/Server/GuideCoins.ts</span><pre id="ex-canonical-guidecoins-ts" data-example-kind="source" data-language="typescript">import { coinRespawnSeconds } from &quot;Shared/Modules/Config/GuideConfig&quot;;
+import * as Score from &quot;./Modules/Recipes/ScoreRules&quot;;
+World.onTagged(&quot;guide_code_coin&quot;, (coin: Entity) =&gt; {
+	const home = coin.position;
+	task.spawn(async () =&gt; {
+		while (true) {
+			await coin.tween({ position: home.add(new Vector3(0, 0, 40)) }, 1, &quot;Sine&quot;, &quot;InOut&quot;).wait();
+			await coin.tween({ position: home }, 1, &quot;Sine&quot;, &quot;InOut&quot;).wait();
+		}
+	});
+	coin.touched.connect(async (player: Player) =&gt; {
+		if (!coin.visible) return;
+		coin.visible = false;
+		Score.award(player);
+		await task.wait(coinRespawnSeconds);
+		coin.visible = true;
+	});
+});
+</pre></div></div><div class="v" data-v="js"><div class="code"><span class="tag">Scripts/Server/Modules/Recipes/ScoreRules.js</span><pre id="ex-canonical-scorerules-js" data-example-kind="source" data-language="javascript">export function key(player) {
+	return `guide.score:${player.userId}`;
+}
+export function award(player) {
+	const scoreKey = key(player);
+	const value = (State.get(scoreKey) ?? 0) + 1;
+	State.set(scoreKey, value);
+	return value;
+}
+</pre></div><div class="code"><span class="tag">Scripts/Server/GuideCoins.js</span><pre id="ex-canonical-guidecoins-js" data-example-kind="source" data-language="javascript">import { coinRespawnSeconds } from &quot;Shared/Modules/Config/GuideConfig&quot;;
+import * as Score from &quot;./Modules/Recipes/ScoreRules&quot;;
+World.onTagged(&quot;guide_code_coin&quot;, (coin) =&gt; {
+	const home = coin.position;
+	task.spawn(async () =&gt; {
+		while (true) {
+			await coin.tween({ position: home.add(new Vector3(0, 0, 40)) }, 1, &quot;Sine&quot;, &quot;InOut&quot;).wait();
+			await coin.tween({ position: home }, 1, &quot;Sine&quot;, &quot;InOut&quot;).wait();
+		}
+	});
+	coin.touched.connect(async (player) =&gt; {
+		if (!coin.visible) return;
+		coin.visible = false;
+		Score.award(player);
+		await task.wait(coinRespawnSeconds);
+		coin.visible = true;
+	});
+});
+</pre></div></div><div class="v" data-v="py"><div class="code"><span class="tag">Scripts/Server/Modules/Recipes/ScoreRules.py</span><pre id="ex-canonical-scorerules-py" data-example-kind="source" data-language="python">def key(player):
+    return f&quot;guide.score:{player.user_id}&quot;
+
+def award(player):
+    score_key = key(player)
+    value = (State.get(score_key) or 0) + 1
+    State.set(score_key, value)
+    return value
+</pre></div><div class="code"><span class="tag">Scripts/Server/GuideCoins.py</span><pre id="ex-canonical-guidecoins-py" data-example-kind="source" data-language="python">Config = require(&quot;Shared/Modules/Config/GuideConfig&quot;)
+Score = require(&quot;./Modules/Recipes/ScoreRules&quot;)
+
+def setup(coin):
+    home = coin.position
+
+    def bob():
+        while True:
+            yield coin.tween({&quot;position&quot;: home + Vector3(0, 0, 40)}, 1, &quot;Sine&quot;, &quot;InOut&quot;).wait()
+            yield coin.tween({&quot;position&quot;: home}, 1, &quot;Sine&quot;, &quot;InOut&quot;).wait()
+    task.spawn(bob)
+
+    def on_touch(player):
+        if not coin.visible:
+            return
+        coin.visible = False
+        Score.award(player)
+        yield task.wait(Config.COIN_RESPAWN_SECONDS)
+        coin.visible = True
+    coin.touched.connect(on_touch)
+
+World.on_tagged(&quot;guide_code_coin&quot;, setup)
+</pre></div></div></div><details><summary>Standalone coin versions in all four languages</summary><p>These are self-contained versions of the coin recipe, one for each language. Use one of them instead of the main coin recipe, not as well as it. They save the score under <code>score:&lt;UserId&gt;</code>, which is separate from the main recipes' score.</p><div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Coins.luau</span><pre id="ex-coins-luau" data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_coin&quot;, function(coin)
 	local home = coin.Position
 	task.spawn(function()
 		while true do
@@ -116,7 +235,7 @@ end)
     coin.touched.connect(on_touch)
 
 World.on_tagged(&quot;guide_code_coin&quot;, setup)
-</pre></div></div></details><h3 id="r-door">A door that opens when someone walks up</h3><p>This builds a door that slides open when a player comes close: tag the door actor in your level <code>guide_code_door</code> and set it to <b>Movable</b>, or moving it raises an error (see <a href="/docs/scripting/api/#errors">Errors and limits</a>). Every 0.2 seconds, the script checks whether any player is within 450 cm of the door's saved closed position. If so, the door tweens 390 cm downward over 0.6 seconds. It closes again once everyone has left. The trigger area stays at the door's original position and doesn't move with the door.</p><div class="code"><span class="tag">Scripts/Server/GuideDoor.luau</span><pre id="ex-canonical-guidedoor" data-example-kind="source" data-language="luau">local door = World:FindByTag(&quot;guide_code_door&quot;)[1]
+</pre></div></div></details><h3 id="r-door">A door that opens when someone walks up</h3><p>This builds a door that slides open when a player comes close: tag the door actor in your level <code>guide_code_door</code> and set it to <b>Movable</b>, or moving it raises an error (see <a href="/docs/scripting/api/#errors">Errors and limits</a>). Every 0.2 seconds, the script checks whether any player is within 450 cm of the door's saved closed position. If so, the door tweens 390 cm downward over 0.6 seconds. It closes again once everyone has left. The trigger area stays at the door's original position and doesn't move with the door.</p><div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/GuideDoor.luau</span><pre id="ex-canonical-guidedoor" data-example-kind="source" data-language="luau">local door = World:FindByTag(&quot;guide_code_door&quot;)[1]
 local closed = door.Position
 local isOpen = false
 while true do
@@ -133,7 +252,61 @@ while true do
 	end
 	task.wait(0.2)
 end
-</pre></div><h3 id="r-hud">Round timer on every client HUD</h3><p>This builds a round timer that shows the current round and time left on every player's screen. You don't need to tag anything in the level: just add both scripts. The server keeps track of the round and the time left. The JavaScript client creates its UI nodes first and then observes State, so players who join late still get the current values. The round-start announcement is a toast: it shows at the top center of each player&rsquo;s screen for three seconds, then goes away.</p><div class="code"><span class="tag">Scripts/Server/GuideRounds.luau</span><pre id="ex-canonical-guiderounds" data-example-kind="source" data-language="luau">local Config = require("Shared/Modules/Config/GuideConfig")
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/GuideDoor.ts</span><pre id="ex-canonical-guidedoor-ts" data-example-kind="source" data-language="typescript">task.spawn(async () =&gt; {
+	const door = World.findByTag(&quot;guide_code_door&quot;)[0];
+	const closed = door.position;
+	let isOpen = false;
+	while (true) {
+		let near = false;
+		for (const player of Players.getPlayers()) {
+			if (player.position &amp;&amp; player.position.sub(closed).magnitude &lt; 450) {
+				near = true;
+			}
+		}
+		if (near !== isOpen) {
+			isOpen = near;
+			State.set(&quot;guide.door.open&quot;, isOpen);
+			door.tween({ position: isOpen ? closed.sub(new Vector3(0, 0, 390)) : closed }, 0.6);
+		}
+		await task.wait(0.2);
+	}
+});
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/GuideDoor.js</span><pre id="ex-canonical-guidedoor-js" data-example-kind="source" data-language="javascript">task.spawn(async () =&gt; {
+	const door = World.findByTag(&quot;guide_code_door&quot;)[0];
+	const closed = door.position;
+	let isOpen = false;
+	while (true) {
+		let near = false;
+		for (const player of Players.getPlayers()) {
+			if (player.position &amp;&amp; player.position.sub(closed).magnitude &lt; 450) {
+				near = true;
+			}
+		}
+		if (near !== isOpen) {
+			isOpen = near;
+			State.set(&quot;guide.door.open&quot;, isOpen);
+			door.tween({ position: isOpen ? closed.sub(new Vector3(0, 0, 390)) : closed }, 0.6);
+		}
+		await task.wait(0.2);
+	}
+});
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/GuideDoor.py</span><pre id="ex-canonical-guidedoor-py" data-example-kind="source" data-language="python">def watch_door():
+    door = World.find_by_tag(&quot;guide_code_door&quot;)[0]
+    closed = door.position
+    is_open = False
+    while True:
+        near = False
+        for player in Players.get_players():
+            if player.position and (player.position - closed).magnitude &lt; 450:
+                near = True
+        if near != is_open:
+            is_open = near
+            State.set(&quot;guide.door.open&quot;, is_open)
+            door.tween({&quot;position&quot;: closed - Vector3(0, 0, 390) if is_open else closed}, 0.6)
+        yield task.wait(0.2)
+
+task.spawn(watch_door)
+</pre></div></div><h3 id="r-hud">Round timer on every client HUD</h3><p>This builds a round timer that shows the current round and time left on every player's screen. You don't need to tag anything in the level: just add both scripts. The server keeps track of the round and the time left. The client creates its UI nodes first and then observes State, so players who join late still get the current values. The round-start announcement is a toast: it shows at the top center of each player&rsquo;s screen for three seconds, then goes away.</p><div class="v has-ts has-js has-py"><div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Server/GuideRounds.luau</span><pre id="ex-canonical-guiderounds" data-example-kind="source" data-language="luau">local Config = require("Shared/Modules/Config/GuideConfig")
 local announce = Net:Remote("GuideAnnounce")
 local round = 0
 while true do
@@ -145,6 +318,66 @@ while true do
 		if remaining &gt; 0 then task.wait(1) end
 	end
 end
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideHud.luau</span><pre id="ex-canonical-guidehud-luau" data-example-kind="source" data-language="luau">-- Create retained widgets before subscribing. Observe replays current State for late joiners.
+local frame = UI:Create(&quot;frame&quot;)
+local roundLabel = UI:Create(&quot;text&quot;)
+local timeLabel = UI:Create(&quot;text&quot;)
+roundLabel:SetParent(frame)
+timeLabel:SetParent(frame)
+roundLabel:SetSemantics(&quot;label&quot;, &quot;Current round&quot;, &quot;The current round number&quot;, 0)
+timeLabel:SetSemantics(&quot;label&quot;, &quot;Time remaining&quot;, &quot;Seconds left in this round&quot;, 0)
+State:Observe(&quot;guide.round&quot;, function(round)
+	roundLabel:SetText(`Round {round or 0}`)
+end)
+State:Observe(&quot;guide.timeLeft&quot;, function(seconds)
+	timeLabel:SetText(`Time left: {seconds or 0}s`)
+end)
+Net:Remote(&quot;GuideAnnounce&quot;).OnClientEvent:Connect(function(message)
+	UI:Toast(message, 3)
+end)
+</pre></div></div><div class="v" data-v="ts"><div class="code"><span class="tag">Scripts/Server/GuideRounds.ts</span><pre id="ex-canonical-guiderounds-ts" data-example-kind="source" data-language="typescript">import { roundSeconds } from &quot;Shared/Modules/Config/GuideConfig&quot;;
+const announce = Net.remote(&quot;GuideAnnounce&quot;);
+task.spawn(async () =&gt; {
+	let round = 0;
+	while (true) {
+		round += 1;
+		State.set(&quot;guide.round&quot;, round);
+		announce.fireAllClients(`Round ${round} started`);
+		for (let remaining = roundSeconds; remaining &gt;= 0; remaining--) {
+			State.set(&quot;guide.timeLeft&quot;, remaining);
+			if (remaining &gt; 0) await task.wait(1);
+		}
+	}
+});
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideHud.ts</span><pre id="ex-canonical-guidehud-ts" data-example-kind="source" data-language="typescript">// Create retained widgets before subscribing. Observe replays current State for late joiners.
+const frame = UI.create(&quot;frame&quot;)!;
+const roundLabel = UI.create(&quot;text&quot;)!;
+const timeLabel = UI.create(&quot;text&quot;)!;
+roundLabel.setParent(frame);
+timeLabel.setParent(frame);
+roundLabel.setSemantics(&quot;label&quot;, &quot;Current round&quot;, &quot;The current round number&quot;, 0);
+timeLabel.setSemantics(&quot;label&quot;, &quot;Time remaining&quot;, &quot;Seconds left in this round&quot;, 0);
+State.observe(&quot;guide.round&quot;, (round) =&gt; {
+	roundLabel.setText(`Round ${round ?? 0}`);
+});
+State.observe(&quot;guide.timeLeft&quot;, (seconds) =&gt; {
+	timeLabel.setText(`Time left: ${seconds ?? 0}s`);
+});
+Net.remote(&quot;GuideAnnounce&quot;).onClientEvent.connect((message) =&gt; UI.toast(message, 3));
+</pre></div></div><div class="v" data-v="js"><div class="code"><span class="tag">Scripts/Server/GuideRounds.js</span><pre id="ex-canonical-guiderounds-js" data-example-kind="source" data-language="javascript">import { roundSeconds } from &quot;Shared/Modules/Config/GuideConfig&quot;;
+const announce = Net.remote(&quot;GuideAnnounce&quot;);
+task.spawn(async () =&gt; {
+	let round = 0;
+	while (true) {
+		round += 1;
+		State.set(&quot;guide.round&quot;, round);
+		announce.fireAllClients(`Round ${round} started`);
+		for (let remaining = roundSeconds; remaining &gt;= 0; remaining--) {
+			State.set(&quot;guide.timeLeft&quot;, remaining);
+			if (remaining &gt; 0) await task.wait(1);
+		}
+	}
+});
 </pre></div><div class="code"><span class="tag">Scripts/Client/GuideHud.js</span><pre id="ex-canonical-guidehud" data-example-kind="source" data-language="javascript">// Create retained widgets before subscribing. Observe replays current State for late joiners.
 const frame = UI.create(&quot;frame&quot;);
 const roundLabel = UI.create(&quot;text&quot;);
@@ -160,7 +393,33 @@ State.observe(&quot;guide.timeLeft&quot;, (seconds) =&gt; {
 	timeLabel.setText(`Time left: ${seconds ?? 0}s`);
 });
 Net.remote(&quot;GuideAnnounce&quot;).onClientEvent.connect((message) =&gt; UI.toast(message, 3));
-</pre></div><h3 id="r-button">A button players ask the server to press</h3><p>This builds a button that squashes down and springs back when a player presses it: tag the button actor in your level <code>guide_code_button</code> and set it to <b>Movable</b>, or scaling it raises an error (see <a href="/docs/scripting/api/#errors">Errors and limits</a>). When the local player touches the button, the client asks the server to press it. The server checks the message and where the sending player really is, and turns away new presses while the button is still busy. It plays both scale tweens, then tells the player the press worked, and a small client script shows that answer as a toast. The client's message never picks which player pressed, and never adds a press by itself.</p><div class="code"><span class="tag">Scripts/Client/GuideButtonPrompt.luau</span><pre id="ex-canonical-guidebuttonprompt" data-example-kind="source" data-language="luau">local button = World:FindByTag(&quot;guide_code_button&quot;)[1]
+</pre></div></div><div class="v" data-v="py"><div class="code"><span class="tag">Scripts/Server/GuideRounds.py</span><pre id="ex-canonical-guiderounds-py" data-example-kind="source" data-language="python">Config = require(&quot;Shared/Modules/Config/GuideConfig&quot;)
+announce = Net.remote(&quot;GuideAnnounce&quot;)
+
+def run_rounds():
+    round_number = 0
+    while True:
+        round_number += 1
+        State.set(&quot;guide.round&quot;, round_number)
+        announce.fire_all_clients(f&quot;Round {round_number} started&quot;)
+        for remaining in range(Config.ROUND_SECONDS, -1, -1):
+            State.set(&quot;guide.timeLeft&quot;, remaining)
+            if remaining &gt; 0:
+                yield task.wait(1)
+
+task.spawn(run_rounds)
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideHud.py</span><pre id="ex-canonical-guidehud-py" data-example-kind="source" data-language="python"># Create retained widgets before subscribing. Observe replays current State for late joiners.
+frame = UI.create(&quot;frame&quot;)
+round_label = UI.create(&quot;text&quot;)
+time_label = UI.create(&quot;text&quot;)
+round_label.set_parent(frame)
+time_label.set_parent(frame)
+round_label.set_semantics(&quot;label&quot;, &quot;Current round&quot;, &quot;The current round number&quot;, 0)
+time_label.set_semantics(&quot;label&quot;, &quot;Time remaining&quot;, &quot;Seconds left in this round&quot;, 0)
+State.observe(&quot;guide.round&quot;, lambda round_number: round_label.set_text(f&quot;Round {round_number or 0}&quot;))
+State.observe(&quot;guide.timeLeft&quot;, lambda seconds: time_label.set_text(f&quot;Time left: {seconds or 0}s&quot;))
+Net.remote(&quot;GuideAnnounce&quot;).on_client_event.connect(lambda message: UI.toast(message, 3))
+</pre></div></div></div><h3 id="r-button">A button players ask the server to press</h3><p>This builds a button that squashes down and springs back when a player presses it: tag the button actor in your level <code>guide_code_button</code> and set it to <b>Movable</b>, or scaling it raises an error (see <a href="/docs/scripting/api/#errors">Errors and limits</a>). When the local player touches the button, the client asks the server to press it. The server checks the message and where the sending player really is, and turns away new presses while the button is still busy. It plays both scale tweens, then tells the player the press worked, and a small client script shows that answer as a toast. The client's message never picks which player pressed, and never adds a press by itself.</p><div class="v has-ts has-js has-py"><div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Client/GuideButtonPrompt.luau</span><pre id="ex-canonical-guidebuttonprompt" data-example-kind="source" data-language="luau">local button = World:FindByTag(&quot;guide_code_button&quot;)[1]
 button.Touched:Connect(function(player)
 	if player == Players.LocalPlayer then
 		Net:Remote(&quot;GuidePressButton&quot;):FireServer(&quot;press&quot;)
@@ -194,7 +453,109 @@ State:Set(&quot;guide.button.presses&quot;, 0)
 </pre></div><div class="code"><span class="tag">Scripts/Client/GuideButtonResult.luau</span><pre data-example-kind="source" data-language="luau">Net:Remote(&quot;GuideButtonResult&quot;).OnClientEvent:Connect(function(result)
 	UI:Toast(result == &quot;pressed&quot; and &quot;Button pressed&quot; or `Not pressed: {result}`)
 end)
-</pre></div><h3 id="r-spawn">Cloning and destroying things</h3><p>This shows how to copy and remove objects from a script: place a separate template actor tagged <code>guide_code_template</code>, and another actor tagged <code>guide_code_retired</code>. The script hides the template and makes one visible clone that stays. It then makes a second clone and destroys it, and destroys the retired actor you placed in the level. Players who join later see the clone that stayed and none of the destroyed objects. Clones copy their template's tags, so don't put pickup tags on a template unless you want every clone to be picked up by that recipe too. An NPC can't be cloned: <code>Clone</code> raises the error <code>an NPC can't be cloned; make another with NPCs:Spawn</code>.</p><div class="code"><span class="tag">Scripts/Server/GuideClones.luau</span><pre id="ex-canonical-guideclones" data-example-kind="source" data-language="luau">local template = World:FindByTag(&quot;guide_code_template&quot;)[1]
+</pre></div></div><div class="v" data-v="ts"><div class="code"><span class="tag">Scripts/Client/GuideButtonPrompt.ts</span><pre id="ex-canonical-guidebuttonprompt-ts" data-example-kind="source" data-language="typescript">const button = World.findByTag(&quot;guide_code_button&quot;)[0];
+button.touched.connect((player: Player) =&gt; {
+	if (player === Players.localPlayer) {
+		Net.remote(&quot;GuidePressButton&quot;).fireServer(&quot;press&quot;);
+	}
+});
+</pre></div><div class="code"><span class="tag">Scripts/Server/GuideButton.ts</span><pre id="ex-canonical-guidebutton-ts" data-example-kind="source" data-language="typescript">const button = World.findByTag(&quot;guide_code_button&quot;)[0];
+let busy = false;
+const result = Net.remote(&quot;GuideButtonResult&quot;);
+Net.remote(&quot;GuidePressButton&quot;).onServerEvent.connect(async (player, message) =&gt; {
+	if (message !== &quot;press&quot;) {
+		result.fireClient(player, &quot;payload&quot;);
+		return;
+	}
+	if (!player.position || player.position.sub(button.position).magnitude &gt; 400) {
+		result.fireClient(player, &quot;distance&quot;);
+		return;
+	}
+	if (busy) {
+		result.fireClient(player, &quot;busy&quot;);
+		return;
+	}
+	busy = true;
+	const size = button.scale;
+	await button.tween({ scale: new Vector3(size.x, size.y, size.z * 0.3) }, 0.15).wait();
+	await button.tween({ scale: size }, 0.4, &quot;Back&quot;, &quot;Out&quot;).wait();
+	State.set(&quot;guide.button.presses&quot;, (State.get(&quot;guide.button.presses&quot;) ?? 0) + 1);
+	busy = false;
+	result.fireClient(player, &quot;pressed&quot;);
+});
+State.set(&quot;guide.button.presses&quot;, 0);
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideButtonResult.ts</span><pre data-example-kind="source" data-language="typescript">Net.remote(&quot;GuideButtonResult&quot;).onClientEvent.connect((result) =&gt; {
+	UI.toast(result === &quot;pressed&quot; ? &quot;Button pressed&quot; : `Not pressed: ${result}`);
+});
+</pre></div></div><div class="v" data-v="js"><div class="code"><span class="tag">Scripts/Client/GuideButtonPrompt.js</span><pre id="ex-canonical-guidebuttonprompt-js" data-example-kind="source" data-language="javascript">const button = World.findByTag(&quot;guide_code_button&quot;)[0];
+button.touched.connect((player) =&gt; {
+	if (player === Players.localPlayer) {
+		Net.remote(&quot;GuidePressButton&quot;).fireServer(&quot;press&quot;);
+	}
+});
+</pre></div><div class="code"><span class="tag">Scripts/Server/GuideButton.js</span><pre id="ex-canonical-guidebutton-js" data-example-kind="source" data-language="javascript">const button = World.findByTag(&quot;guide_code_button&quot;)[0];
+let busy = false;
+const result = Net.remote(&quot;GuideButtonResult&quot;);
+Net.remote(&quot;GuidePressButton&quot;).onServerEvent.connect(async (player, message) =&gt; {
+	if (message !== &quot;press&quot;) {
+		result.fireClient(player, &quot;payload&quot;);
+		return;
+	}
+	if (!player.position || player.position.sub(button.position).magnitude &gt; 400) {
+		result.fireClient(player, &quot;distance&quot;);
+		return;
+	}
+	if (busy) {
+		result.fireClient(player, &quot;busy&quot;);
+		return;
+	}
+	busy = true;
+	const size = button.scale;
+	await button.tween({ scale: new Vector3(size.x, size.y, size.z * 0.3) }, 0.15).wait();
+	await button.tween({ scale: size }, 0.4, &quot;Back&quot;, &quot;Out&quot;).wait();
+	State.set(&quot;guide.button.presses&quot;, (State.get(&quot;guide.button.presses&quot;) ?? 0) + 1);
+	busy = false;
+	result.fireClient(player, &quot;pressed&quot;);
+});
+State.set(&quot;guide.button.presses&quot;, 0);
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideButtonResult.js</span><pre data-example-kind="source" data-language="javascript">Net.remote(&quot;GuideButtonResult&quot;).onClientEvent.connect((result) =&gt; {
+	UI.toast(result === &quot;pressed&quot; ? &quot;Button pressed&quot; : `Not pressed: ${result}`);
+});
+</pre></div></div><div class="v" data-v="py"><div class="code"><span class="tag">Scripts/Client/GuideButtonPrompt.py</span><pre id="ex-canonical-guidebuttonprompt-py" data-example-kind="source" data-language="python">button = World.find_by_tag(&quot;guide_code_button&quot;)[0]
+
+def on_touch(player):
+    if player == Players.local_player:
+        Net.remote(&quot;GuidePressButton&quot;).fire_server(&quot;press&quot;)
+button.touched.connect(on_touch)
+</pre></div><div class="code"><span class="tag">Scripts/Server/GuideButton.py</span><pre id="ex-canonical-guidebutton-py" data-example-kind="source" data-language="python">button = World.find_by_tag(&quot;guide_code_button&quot;)[0]
+button_state = {&quot;busy&quot;: False}
+result = Net.remote(&quot;GuideButtonResult&quot;)
+
+def on_press(player, message):
+    if message != &quot;press&quot;:
+        result.fire_client(player, &quot;payload&quot;)
+        return
+    if not player.position or (player.position - button.position).magnitude &gt; 400:
+        result.fire_client(player, &quot;distance&quot;)
+        return
+    if button_state[&quot;busy&quot;]:
+        result.fire_client(player, &quot;busy&quot;)
+        return
+    button_state[&quot;busy&quot;] = True
+    size = button.scale
+    yield button.tween({&quot;scale&quot;: Vector3(size.x, size.y, size.z * 0.3)}, 0.15).wait()
+    yield button.tween({&quot;scale&quot;: size}, 0.4, &quot;Back&quot;, &quot;Out&quot;).wait()
+    State.set(&quot;guide.button.presses&quot;, (State.get(&quot;guide.button.presses&quot;) or 0) + 1)
+    button_state[&quot;busy&quot;] = False
+    result.fire_client(player, &quot;pressed&quot;)
+
+Net.remote(&quot;GuidePressButton&quot;).on_server_event.connect(on_press)
+State.set(&quot;guide.button.presses&quot;, 0)
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideButtonResult.py</span><pre data-example-kind="source" data-language="python">def on_result(result):
+    UI.toast(&quot;Button pressed&quot; if result == &quot;pressed&quot; else f&quot;Not pressed: {result}&quot;)
+
+Net.remote(&quot;GuideButtonResult&quot;).on_client_event.connect(on_result)
+</pre></div></div></div><h3 id="r-spawn">Cloning and destroying things</h3><p>This shows how to copy and remove objects from a script: place a separate template actor tagged <code>guide_code_template</code>, and another actor tagged <code>guide_code_retired</code>. The script hides the template and makes one visible clone that stays. It then makes a second clone and destroys it, and destroys the retired actor you placed in the level. Players who join later see the clone that stayed and none of the destroyed objects. Clones copy their template's tags, so don't put pickup tags on a template unless you want every clone to be picked up by that recipe too. An NPC can't be cloned: <code>Clone</code> raises the error <code>an NPC can't be cloned; make another with NPCs:Spawn</code>.</p><div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/GuideClones.luau</span><pre id="ex-canonical-guideclones" data-example-kind="source" data-language="luau">local template = World:FindByTag(&quot;guide_code_template&quot;)[1]
 template.Visible = false
 local survivor = template:Clone()
 survivor.Position = Vector3.new(4500, 2000, 120)
@@ -205,24 +566,96 @@ doomed:AddTag(&quot;guide_code_destroyed&quot;)
 doomed:Destroy()
 local retired = World:FindByTag(&quot;guide_code_retired&quot;)[1]
 retired:Destroy()
-</pre></div><h3 id="r-cross">TypeScript checkpoints and Luau respawns</h3><p>This builds checkpoints in TypeScript that work with the Luau kill brick: tag each checkpoint pad in your level <code>guide_code_checkpoint</code>. The TypeScript script imports its nested Rules module. When a player touches a pad, it saves a respawn position (a Vector3) in State. <a href="#r-killbrick">GuideKillBricks.luau</a>, shown above, reads that position the next time the player touches a hazard. Don't add a second kill brick handler.</p><div class="code"><span class="tag">Scripts/Server/Modules/Rules/CheckpointRules.ts</span><pre id="ex-canonical-checkpointrules" data-example-kind="source" data-language="typescript">export function key(userId: string): string {
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/GuideClones.ts</span><pre id="ex-canonical-guideclones-ts" data-example-kind="source" data-language="typescript">const template = World.findByTag(&quot;guide_code_template&quot;)[0];
+template.visible = false;
+const survivor = template.clone();
+survivor.position = new Vector3(4500, 2000, 120);
+survivor.visible = true;
+survivor.addTag(&quot;guide_code_survivor&quot;);
+const doomed = template.clone();
+doomed.addTag(&quot;guide_code_destroyed&quot;);
+doomed.destroy();
+const retired = World.findByTag(&quot;guide_code_retired&quot;)[0];
+retired.destroy();
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/GuideClones.js</span><pre id="ex-canonical-guideclones-js" data-example-kind="source" data-language="javascript">const template = World.findByTag(&quot;guide_code_template&quot;)[0];
+template.visible = false;
+const survivor = template.clone();
+survivor.position = new Vector3(4500, 2000, 120);
+survivor.visible = true;
+survivor.addTag(&quot;guide_code_survivor&quot;);
+const doomed = template.clone();
+doomed.addTag(&quot;guide_code_destroyed&quot;);
+doomed.destroy();
+const retired = World.findByTag(&quot;guide_code_retired&quot;)[0];
+retired.destroy();
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/GuideClones.py</span><pre id="ex-canonical-guideclones-py" data-example-kind="source" data-language="python">template = World.find_by_tag(&quot;guide_code_template&quot;)[0]
+template.visible = False
+survivor = template.clone()
+survivor.position = Vector3(4500, 2000, 120)
+survivor.visible = True
+survivor.add_tag(&quot;guide_code_survivor&quot;)
+doomed = template.clone()
+doomed.add_tag(&quot;guide_code_destroyed&quot;)
+doomed.destroy()
+retired = World.find_by_tag(&quot;guide_code_retired&quot;)[0]
+retired.destroy()
+</pre></div></div><h3 id="r-cross">Checkpoints that work with the kill brick</h3><p>This builds checkpoints that work with the kill brick: tag each checkpoint pad in your level <code>guide_code_checkpoint</code>. The script loads its nested Rules module. When a player touches a pad, it saves a respawn position (a Vector3) in State. <a href="#r-killbrick">The kill brick</a>, shown above, reads that position the next time the player touches a hazard. The two scripts only share State, so they can be written in different languages. Don't add a second kill brick handler.</p><div class="v has-ts has-js has-py"><div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Server/Modules/Rules/CheckpointRules.luau</span><pre id="ex-canonical-checkpointrules-luau" data-example-kind="source" data-language="luau">local Rules = {}
+function Rules.key(userId)
+	return `guide.respawn:{userId}`
+end
+function Rules.destination(pad)
+	return pad.Position + Vector3.new(0, 0, 120)
+end
+return Rules
+</pre></div><div class="code"><span class="tag">Scripts/Server/GuideCheckpoint.luau</span><pre id="ex-canonical-guidecheckpoint-luau" data-example-kind="source" data-language="luau">local Rules = require(&quot;./Modules/Rules/CheckpointRules&quot;)
+World:OnTagged(&quot;guide_code_checkpoint&quot;, function(pad)
+	pad.Touched:Connect(function(player)
+		State:Set(Rules.key(player.UserId), Rules.destination(pad))
+	end)
+end)
+</pre></div></div><div class="v" data-v="ts"><div class="code"><span class="tag">Scripts/Server/Modules/Rules/CheckpointRules.ts</span><pre id="ex-canonical-checkpointrules-ts" data-example-kind="source" data-language="typescript">export function key(userId: string): string {
 	return `guide.respawn:${userId}`;
 }
 export function destination(pad: Entity): Vector3 {
 	return pad.position.add(new Vector3(0, 0, 120));
 }
-</pre></div><div class="code"><span class="tag">Scripts/Server/GuideCheckpoint.ts</span><pre id="ex-canonical-guidecheckpoint" data-example-kind="source" data-language="typescript">import { key, destination } from &quot;./Modules/Rules/CheckpointRules&quot;;
+</pre></div><div class="code"><span class="tag">Scripts/Server/GuideCheckpoint.ts</span><pre id="ex-canonical-guidecheckpoint-ts" data-example-kind="source" data-language="typescript">import { key, destination } from &quot;./Modules/Rules/CheckpointRules&quot;;
 World.onTagged(&quot;guide_code_checkpoint&quot;, (pad: Entity) =&gt; {
 	pad.touched.connect((player: Player) =&gt; {
 		State.set(key(player.userId), destination(pad));
 	});
 });
-</pre></div><h3 id="r-highscore">Saving data across sessions</h3>
+</pre></div></div><div class="v" data-v="js"><div class="code"><span class="tag">Scripts/Server/Modules/Rules/CheckpointRules.js</span><pre id="ex-canonical-checkpointrules-js" data-example-kind="source" data-language="javascript">export function key(userId) {
+	return `guide.respawn:${userId}`;
+}
+export function destination(pad) {
+	return pad.position.add(new Vector3(0, 0, 120));
+}
+</pre></div><div class="code"><span class="tag">Scripts/Server/GuideCheckpoint.js</span><pre id="ex-canonical-guidecheckpoint-js" data-example-kind="source" data-language="javascript">import { key, destination } from &quot;./Modules/Rules/CheckpointRules&quot;;
+World.onTagged(&quot;guide_code_checkpoint&quot;, (pad) =&gt; {
+	pad.touched.connect((player) =&gt; {
+		State.set(key(player.userId), destination(pad));
+	});
+});
+</pre></div></div><div class="v" data-v="py"><div class="code"><span class="tag">Scripts/Server/Modules/Rules/CheckpointRules.py</span><pre id="ex-canonical-checkpointrules-py" data-example-kind="source" data-language="python">def key(user_id):
+    return f&quot;guide.respawn:{user_id}&quot;
+
+def destination(pad):
+    return pad.position + Vector3(0, 0, 120)
+</pre></div><div class="code"><span class="tag">Scripts/Server/GuideCheckpoint.py</span><pre id="ex-canonical-guidecheckpoint-py" data-example-kind="source" data-language="python">Rules = require(&quot;./Modules/Rules/CheckpointRules&quot;)
+
+def setup(pad):
+    def on_touch(player):
+        State.set(Rules.key(player.user_id), Rules.destination(pad))
+    pad.touched.connect(on_touch)
+
+World.on_tagged(&quot;guide_code_checkpoint&quot;, setup)
+</pre></div></div></div><h3 id="r-highscore">Saving data across sessions</h3>
 <p>Use <code>DataStore</code> <span class="side s">Server</span> to save boolean, number or string values so they&rsquo;re still there in later sessions (tables too, from API 1.13: see <a href="#r-datastore-tables">saved tables</a>). You can save them for the whole place (<code>Get</code>/<code>Set</code>) or for each player (<code>GetForPlayer</code>/<code>SetForPlayer</code>). There&rsquo;s nothing to set up in the level.</p>
 <div class="callout warn"><strong>A missing value doesn&rsquo;t mean zero</strong><p>When <code>DataStore:GetForPlayer</code> returns nil, you can&rsquo;t tell whether this is the player&rsquo;s first visit, their data hasn&rsquo;t finished loading, or the load failed. Scripts can&rsquo;t yet get a signal when data has loaded, or confirmation that a write was saved. Don&rsquo;t turn nil into zero and write it back, or you could overwrite a larger saved value such as a best score.</p></div>
 <h3 id="r-datastore-tables">Saved tables, removing and listing keys</h3>
 <p>From API 1.13, <code>DataStore:Set</code> and <code>SetForPlayer</code> also take a table of booleans, numbers, strings and tables, nested up to 4 levels deep and at most 64 KiB, so one key can hold a player's whole profile. Lists come back as lists and objects as objects, but an object's key order isn't kept. Vector3, entities and functions can't be saved. <code>RemoveKey</code> deletes a key, and <code>ListKeys</code> pages through keys that start with a prefix, 100 at a time. <code>ListKeys</code> lists the place&rsquo;s keys; <code>ListKeysForPlayer(player, prefix, cursor)</code> lists one player&rsquo;s. <code>SetForPlayer</code> is an error if the player&rsquo;s account id isn&rsquo;t ready yet, so call it after they&rsquo;ve been in the session a moment, as the touch pad does here (tag a pad <code>guide_code_profilepad</code>). Like <code>Get</code>, <code>ListKeys</code> can lag behind other servers: it may not see what another server of the place wrote a moment ago.</p>
-<div class="code"><span class="tag">Scripts/Server/GuideProfile.luau</span><pre id="ex-guide-profile" data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_profilepad&quot;, function(pad)
+<div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/GuideProfile.luau</span><pre id="ex-guide-profile" data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_profilepad&quot;, function(pad)
 	pad.Touched:Connect(function(player)
 		DataStore:SetForPlayer(player, &quot;guide.profile&quot;, { coins = 120, owned = { &quot;sword&quot;, &quot;shield&quot; } })
 	end)
@@ -238,19 +671,85 @@ repeat
 	end
 	cursor = page.nextCursor
 until cursor == nil
-</pre></div>
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/GuideProfile.ts</span><pre id="ex-guide-profile-ts" data-example-kind="source" data-language="typescript">World.onTagged(&quot;guide_code_profilepad&quot;, (pad: Entity) =&gt; {
+	pad.touched.connect((player: Player) =&gt; {
+		DataStore.setForPlayer(player, &quot;guide.profile&quot;, { coins: 120, owned: [&quot;sword&quot;, &quot;shield&quot;] });
+	});
+});
+
+DataStore.removeKey(&quot;guide.event.spring&quot;);   // get reads undefined at once; deleted in the background
+
+let cursor: string | undefined;
+do {
+	const page = DataStore.listKeys(&quot;guide.&quot;, cursor);   // the place's own keys, up to 100, in key order
+	for (const key of page.keys) {
+		console.log(key);
+	}
+	cursor = page.nextCursor;
+} while (cursor !== undefined);
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/GuideProfile.js</span><pre id="ex-guide-profile-js" data-example-kind="source" data-language="javascript">World.onTagged(&quot;guide_code_profilepad&quot;, (pad) =&gt; {
+	pad.touched.connect((player) =&gt; {
+		DataStore.setForPlayer(player, &quot;guide.profile&quot;, { coins: 120, owned: [&quot;sword&quot;, &quot;shield&quot;] });
+	});
+});
+
+DataStore.removeKey(&quot;guide.event.spring&quot;);   // get reads undefined at once; deleted in the background
+
+let cursor;
+do {
+	const page = DataStore.listKeys(&quot;guide.&quot;, cursor);   // the place's own keys, up to 100, in key order
+	for (const key of page.keys) {
+		console.log(key);
+	}
+	cursor = page.nextCursor;
+} while (cursor !== undefined);
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/GuideProfile.py</span><pre id="ex-guide-profile-py" data-example-kind="source" data-language="python">def setup(pad):
+    def on_touch(player):
+        DataStore.set_for_player(player, &quot;guide.profile&quot;, {&quot;coins&quot;: 120, &quot;owned&quot;: [&quot;sword&quot;, &quot;shield&quot;]})
+    pad.touched.connect(on_touch)
+
+World.on_tagged(&quot;guide_code_profilepad&quot;, setup)
+
+DataStore.remove_key(&quot;guide.event.spring&quot;)   # get reads None at once; deleted in the background
+
+cursor = None
+while True:
+    page = DataStore.list_keys(&quot;guide.&quot;, cursor)   # the place's own keys, up to 100, in key order
+    for key in page[&quot;keys&quot;]:
+        print(key)
+    cursor = page.get(&quot;nextCursor&quot;)
+    if cursor is None:
+        break
+</pre></div></div>
 <h3 id="r-leaderboard">A leaderboard across every server</h3>
 <p><b>The easy way (API 1.26).</b> Fill an ordered store keyed by <code>player.UserId</code>, then show it with the built-in panel players open with Tab:</p>
-<div class="code"><span class="tag">Scripts/Server/GuideWins.luau</span><pre data-example-kind="snippet">local wins = DataStore:GetOrderedDataStore("wins")
+<div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/GuideWins.luau</span><pre data-example-kind="snippet">local wins = DataStore:GetOrderedDataStore("wins")
 Leaderboard:Configure("wins", { title = "Most wins", valueLabel = "Wins" })
 
 local function onRoundWon(player)
 	wins:IncrementAsync(player.UserId, 1)
-end</pre></div>
+end</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/GuideWins.ts</span><pre data-example-kind="snippet" data-language="typescript">const wins = DataStore.getOrderedDataStore(&quot;wins&quot;);
+Leaderboard.configure(&quot;wins&quot;, { title: &quot;Most wins&quot;, valueLabel: &quot;Wins&quot; });
+
+function onRoundWon(player: Player) {
+	wins.incrementAsync(player.userId, 1);
+}
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/GuideWins.js</span><pre data-example-kind="snippet" data-language="javascript">const wins = DataStore.getOrderedDataStore(&quot;wins&quot;);
+Leaderboard.configure(&quot;wins&quot;, { title: &quot;Most wins&quot;, valueLabel: &quot;Wins&quot; });
+
+function onRoundWon(player) {
+	wins.incrementAsync(player.userId, 1);
+}
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/GuideWins.py</span><pre data-example-kind="snippet" data-language="python">wins = DataStore.get_ordered_data_store(&quot;wins&quot;)
+Leaderboard.configure(&quot;wins&quot;, {&quot;title&quot;: &quot;Most wins&quot;, &quot;value_label&quot;: &quot;Wins&quot;})
+
+def on_round_won(player):
+    wins.increment_async(player.user_id, 1)
+</pre></div></div>
 <p>Use <code>ascending = true</code> in the options table for "lowest is best" (race times), and <code>Leaderboard:Clear()</code> to hide the panel. Keys that aren't a UserId show as written (team names). Server scripts only.</p>
 <p><b>Your own leaderboard UI.</b> This keeps a wins leaderboard for your place and shows the top 10 on every player's screen with your own widgets, for when you want more than the built-in panel. It needs API 1.13. An ordered store keeps one whole number per key and reads them back sorted, across every server of the place. Key it by <code>player.UserId</code> exactly, so each player has one row: that's also how Mantle removes a player's rows when they delete their account, and includes them in their data export. Every ordered-store call returns a Signal that fires once with a result table: <code>ok</code>, <code>error</code> when it failed, and the answer (<code>value</code>, or <code>entries</code> and <code>nextCursor</code> for a page). Call <code>:Wait()</code> on it right away, or connect with <code>:Once</code>. <code>IncrementAsync</code> adds in a single step, so two servers adding a win at the same moment never lose one.</p>
 <p>Fire the <code>GuideRoundWon</code> event with the winning player from whichever script decides a round, for example <code>Events:Get(&quot;GuideRoundWon&quot;):Fire(player)</code>. Nothing else in these recipes fires it, so the board stays empty until you add that line. The store only holds ids, so the server fills in names for players who are in this session.</p>
-<div class="code"><span class="tag">Scripts/Server/GuideLeaderboard.luau</span><pre id="ex-guide-leaderboard" data-example-kind="source" data-language="luau">local wins = DataStore:GetOrderedDataStore(&quot;wins&quot;)
+<div class="v has-ts has-js has-py"><div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Server/GuideLeaderboard.luau</span><pre id="ex-guide-leaderboard" data-example-kind="source" data-language="luau">local wins = DataStore:GetOrderedDataStore(&quot;wins&quot;)
 
 Events:Get(&quot;GuideRoundWon&quot;):Connect(function(player)
 	wins:IncrementAsync(player.UserId, 1)
@@ -280,8 +779,7 @@ while true do
 	end
 	task.wait(30)   -- stay well inside 300 DataStore requests a minute
 end
-</pre></div>
-<div class="code"><span class="tag">Scripts/Client/GuideLeaderboardHud.luau</span><pre id="ex-guide-leaderboard-hud" data-example-kind="source" data-language="luau">local frame = UI:Create(&quot;frame&quot;)
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideLeaderboardHud.luau</span><pre id="ex-guide-leaderboard-hud" data-example-kind="source" data-language="luau">local frame = UI:Create(&quot;frame&quot;)
 local lines = {}
 for i = 1, 10 do
 	lines[i] = UI:Create(&quot;text&quot;)
@@ -295,11 +793,144 @@ State:Observe(&quot;guide.leaderboard&quot;, function(rows)
 		lines[i]:SetText(if row then `{i}. {row.name}: {row.wins}` else &quot;&quot;)
 	end
 end)
-</pre></div>
+</pre></div></div><div class="v" data-v="ts"><div class="code"><span class="tag">Scripts/Server/GuideLeaderboard.ts</span><pre id="ex-guide-leaderboard-ts" data-example-kind="source" data-language="typescript">const wins = DataStore.getOrderedDataStore(&quot;wins&quot;);
+
+Events.get(&quot;GuideRoundWon&quot;).connect((player: Player) =&gt; {
+	wins.incrementAsync(player.userId, 1);
+});
+
+async function topTen() {
+	const result = await wins.getSortedAsync(false, 10).wait();   // highest first
+	if (!result.ok) {
+		console.warn(result.error);
+		return undefined;
+	}
+	const names: Record&lt;string, string&gt; = {};
+	for (const player of Players.getPlayers()) {
+		names[player.userId] = player.name;
+	}
+	const rows: { name: string; wins: number }[] = [];
+	for (const entry of result.entries) {
+		rows.push({ name: names[entry.key] ?? &quot;Someone&quot;, wins: entry.value });
+	}
+	return rows;
+}
+
+task.spawn(async () =&gt; {
+	while (true) {
+		const rows = await topTen();
+		if (rows) {
+			State.set(&quot;guide.leaderboard&quot;, rows);
+		}
+		await task.wait(30);   // stay well inside 300 DataStore requests a minute
+	}
+});
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideLeaderboardHud.ts</span><pre id="ex-guide-leaderboard-hud-ts" data-example-kind="source" data-language="typescript">const frame = UI.create(&quot;frame&quot;)!;
+const lines: UiNode[] = [];
+for (let i = 0; i &lt; 10; i++) {
+	lines[i] = UI.create(&quot;text&quot;)!;
+	lines[i].setParent(frame);
+}
+
+State.observe(&quot;guide.leaderboard&quot;, (rows) =&gt; {
+	rows = rows ?? [];
+	for (let i = 0; i &lt; 10; i++) {
+		const row = rows[i];
+		lines[i].setText(row ? `${i + 1}. ${row.name}: ${row.wins}` : &quot;&quot;);
+	}
+});
+</pre></div></div><div class="v" data-v="js"><div class="code"><span class="tag">Scripts/Server/GuideLeaderboard.js</span><pre id="ex-guide-leaderboard-js" data-example-kind="source" data-language="javascript">const wins = DataStore.getOrderedDataStore(&quot;wins&quot;);
+
+Events.get(&quot;GuideRoundWon&quot;).connect((player) =&gt; {
+	wins.incrementAsync(player.userId, 1);
+});
+
+async function topTen() {
+	const result = await wins.getSortedAsync(false, 10).wait();   // highest first
+	if (!result.ok) {
+		console.warn(result.error);
+		return undefined;
+	}
+	const names = {};
+	for (const player of Players.getPlayers()) {
+		names[player.userId] = player.name;
+	}
+	const rows = [];
+	for (const entry of result.entries) {
+		rows.push({ name: names[entry.key] ?? &quot;Someone&quot;, wins: entry.value });
+	}
+	return rows;
+}
+
+task.spawn(async () =&gt; {
+	while (true) {
+		const rows = await topTen();
+		if (rows) {
+			State.set(&quot;guide.leaderboard&quot;, rows);
+		}
+		await task.wait(30);   // stay well inside 300 DataStore requests a minute
+	}
+});
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideLeaderboardHud.js</span><pre id="ex-guide-leaderboard-hud-js" data-example-kind="source" data-language="javascript">const frame = UI.create(&quot;frame&quot;);
+const lines = [];
+for (let i = 0; i &lt; 10; i++) {
+	lines[i] = UI.create(&quot;text&quot;);
+	lines[i].setParent(frame);
+}
+
+State.observe(&quot;guide.leaderboard&quot;, (rows) =&gt; {
+	rows = rows ?? [];
+	for (let i = 0; i &lt; 10; i++) {
+		const row = rows[i];
+		lines[i].setText(row ? `${i + 1}. ${row.name}: ${row.wins}` : &quot;&quot;);
+	}
+});
+</pre></div></div><div class="v" data-v="py"><div class="code"><span class="tag">Scripts/Server/GuideLeaderboard.py</span><pre id="ex-guide-leaderboard-py" data-example-kind="source" data-language="python">wins = DataStore.get_ordered_data_store(&quot;wins&quot;)
+
+def on_round_won(player):
+    wins.increment_async(player.user_id, 1)
+Events.get(&quot;GuideRoundWon&quot;).connect(on_round_won)
+
+def run():
+    while True:
+        token = wins.get_sorted_async(False, 10).wait()   # highest first
+        yield token
+        result = token.result[0]
+        if result[&quot;ok&quot;]:
+            names = {}
+            for player in Players.get_players():
+                names[player.user_id] = player.name
+            rows = []
+            for entry in result[&quot;entries&quot;]:
+                rows.append({&quot;name&quot;: names.get(entry[&quot;key&quot;], &quot;Someone&quot;), &quot;wins&quot;: entry[&quot;value&quot;]})
+            State.set(&quot;guide.leaderboard&quot;, rows)
+        else:
+            warn(result[&quot;error&quot;])
+        yield task.wait(30)   # stay well inside 300 DataStore requests a minute
+
+task.spawn(run)
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideLeaderboardHud.py</span><pre id="ex-guide-leaderboard-hud-py" data-example-kind="source" data-language="python">frame = UI.create(&quot;frame&quot;)
+lines = []
+for i in range(10):
+    line = UI.create(&quot;text&quot;)
+    line.set_parent(frame)
+    lines.append(line)
+
+def on_rows(rows):
+    rows = rows or []
+    for i in range(10):
+        if i &lt; len(rows):
+            row = rows[i]
+            lines[i].set_text(str(i + 1) + &quot;. &quot; + row[&quot;name&quot;] + &quot;: &quot; + str(row[&quot;wins&quot;]))
+        else:
+            lines[i].set_text(&quot;&quot;)
+
+State.observe(&quot;guide.leaderboard&quot;, on_rows)
+</pre></div></div></div>
 <p>For the next 10, pass <code>result.nextCursor</code> back: <code>wins:GetSortedAsync(false, 10, cursor)</code>. <code>GetSortedAsync(true, ...)</code> reads lowest first, and ties are ordered by key. A place can fill 32 ordered stores of up to 50,000 keys each.</p>
 <h3 id="r-night-lamps">Lamps that turn on at night</h3>
 <p>This switches every lamp in the level on at dusk and off at dawn, and spawns one extra lamp from the script. It needs API 1.7. Tag each point or spot light in your level <code>guide_code_lamp</code>. The server sets <code>LightEnabled</code>, so every player sees the same lamps, including players who join later.</p>
-<div class="code"><span class="tag">Scripts/Server/GuideNightLamps.luau</span><pre id="ex-guide-night-lamps" data-example-kind="source" data-language="luau">local extra = Lights:Spawn(&quot;Point&quot;, Vector3.new(0, 0, 300), { Color = &quot;#FFD9A0&quot;, Intensity = 40 })
+<div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/GuideNightLamps.luau</span><pre id="ex-guide-night-lamps" data-example-kind="source" data-language="luau">local extra = Lights:Spawn(&quot;Point&quot;, Vector3.new(0, 0, 300), { Color = &quot;#FFD9A0&quot;, Intensity = 40 })
 extra:AddTag(&quot;guide_code_lamp&quot;)
 
 while true do
@@ -309,19 +940,70 @@ while true do
 	end
 	task.wait(5)
 end
-</pre></div>
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/GuideNightLamps.ts</span><pre id="ex-guide-night-lamps-ts" data-example-kind="source" data-language="typescript">const extra = Lights.spawn(&quot;Point&quot;, new Vector3(0, 0, 300), { color: &quot;#FFD9A0&quot;, intensity: 40 });
+extra.addTag(&quot;guide_code_lamp&quot;);
+
+task.spawn(async () =&gt; {
+	while (true) {
+		const night = Environment.isNight;
+		for (const lamp of World.findByTag(&quot;guide_code_lamp&quot;)) {
+			lamp.lightEnabled = night;
+		}
+		await task.wait(5);
+	}
+});
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/GuideNightLamps.js</span><pre id="ex-guide-night-lamps-js" data-example-kind="source" data-language="javascript">const extra = Lights.spawn(&quot;Point&quot;, new Vector3(0, 0, 300), { color: &quot;#FFD9A0&quot;, intensity: 40 });
+extra.addTag(&quot;guide_code_lamp&quot;);
+
+task.spawn(async () =&gt; {
+	while (true) {
+		const night = Environment.isNight;
+		for (const lamp of World.findByTag(&quot;guide_code_lamp&quot;)) {
+			lamp.lightEnabled = night;
+		}
+		await task.wait(5);
+	}
+});
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/GuideNightLamps.py</span><pre id="ex-guide-night-lamps-py" data-example-kind="source" data-language="python">extra = Lights.spawn(&quot;Point&quot;, Vector3(0, 0, 300), {&quot;color&quot;: &quot;#FFD9A0&quot;, &quot;intensity&quot;: 40})
+extra.add_tag(&quot;guide_code_lamp&quot;)
+
+def run():
+    while True:
+        night = Environment.is_night
+        for lamp in World.find_by_tag(&quot;guide_code_lamp&quot;):
+            lamp.light_enabled = night
+        yield task.wait(5)
+
+task.spawn(run)
+</pre></div></div>
 <h3 id="r-door-hinge">A hinged door that swings open</h3>
 <p>This builds a door on a hinge that a player can push open, rather than one that tweens by script: place a <b>Physics Constraint Actor</b> between the door's Static Mesh Actor (Simulate Physics on) and nothing (Constraint Actor 2 left empty, so it joins to the world), with every Linear motion Locked, Swing 1 Motion set to Limited (how far the door swings, with a range that includes 0) and Swing 2 and Twist Motion set to Locked. Turn on <b>Linear Breakable</b> or <b>Angular Breakable</b> and set its threshold, or the joint never breaks and <code>Broken</code> never fires. Set Constraint Actor 1 to the door, leave Component Name empty and turn the linear and angular drives off, or the joint is left out of the place. A joint that can turn about more than one axis is left out of the place, and <b>Check this place</b> says why. It needs API 1.30. Tag the Physics Constraint Actor (not the door) <code>guide_code_hingedoor</code>; the script listens for the hinge to break under a hard enough shove and reports it.</p>
-<div class="code"><span class="tag">Scripts/Server/GuideHingeDoor.luau</span><pre data-example-kind="source" data-language="luau">local pivot = World:FindByTag(&quot;guide_code_hingedoor&quot;)[1]
+<div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/GuideHingeDoor.luau</span><pre data-example-kind="source" data-language="luau">local pivot = World:FindByTag(&quot;guide_code_hingedoor&quot;)[1]
 local hinge = Constraints:FromEntity(pivot)
 hinge.Broken:Connect(function()
 	State:Set(&quot;guide.hingedoor.broken&quot;, true)
 end)
-</pre></div>
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/GuideHingeDoor.ts</span><pre data-example-kind="source" data-language="typescript">const pivot = World.findByTag(&quot;guide_code_hingedoor&quot;)[0];
+const hinge = Constraints.fromEntity(pivot)!;
+hinge.broken.connect(() =&gt; {
+	State.set(&quot;guide.hingedoor.broken&quot;, true);
+});
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/GuideHingeDoor.js</span><pre data-example-kind="source" data-language="javascript">const pivot = World.findByTag(&quot;guide_code_hingedoor&quot;)[0];
+const hinge = Constraints.fromEntity(pivot);
+hinge.broken.connect(() =&gt; {
+	State.set(&quot;guide.hingedoor.broken&quot;, true);
+});
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/GuideHingeDoor.py</span><pre data-example-kind="source" data-language="python">pivot = World.find_by_tag(&quot;guide_code_hingedoor&quot;)[0]
+hinge = Constraints.from_entity(pivot)
+
+def on_broken(constraint):
+    State.set(&quot;guide.hingedoor.broken&quot;, True)
+hinge.broken.connect(on_broken)
+</pre></div></div>
 <p>A Physics Constraint Actor in the level publishes as a Constraint automatically, and <code>Constraints:FromEntity</code> takes that actor (not the door mesh) and returns its joint; it returns nil for any other entity. A script only needs <code>Constraints:Create</code> for a door it builds itself at runtime, as in the <a href="/docs/scripting/concepts/#joints">joints example</a> (<code>AnchorA</code> is the hinge's position in the door's own space: <code>(0, -50, 0)</code> is 50 cm along its Y axis from the middle, at the door's edge, since Z is up). A place holds at most 200 joints, its own included, and pulling a joint harder than <code>BreakForce</code> newtons breaks it for good.</p>
 <h3 id="r-interaction-door">A door that opens when a player holds E <span class="status wip">Next release</span></h3>
 <p>This builds a door that a player opens by walking up and holding the key for half a second. It needs API 1.38, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Tag the door actor in your level <code>guide_code_interact_door</code> and set it to <b>Movable</b>, or moving it raises an error (see <a href="/docs/scripting/api/#errors">Errors and limits</a>). The server gives the door a prompt that reads "Open door" and fires <code>Interacted</code> once the hold finishes. The script then slides the door down 390 cm over 0.6 seconds and changes the prompt to "Close door", and the next use closes it.</p>
-<div class="code"><span class="tag">Scripts/Server/GuideInteractDoor.luau</span><pre data-example-kind="source" data-language="luau">local OPEN = &quot;Open door&quot;
+<div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/GuideInteractDoor.luau</span><pre data-example-kind="source" data-language="luau">local OPEN = &quot;Open door&quot;
 local CLOSE = &quot;Close door&quot;
 
 local function setPrompt(door, text)
@@ -347,11 +1029,89 @@ Interaction.Interacted:Connect(function(entity, player, part, action)
 	entity:Tween({ Position = Vector3.new(entity.Position.X, entity.Position.Y, z) }, 0.6)
 	setPrompt(entity, if opening then CLOSE else OPEN)
 end)
-</pre></div>
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/GuideInteractDoor.ts</span><pre data-example-kind="source" data-language="typescript">const OPEN = &quot;Open door&quot;;
+const CLOSE = &quot;Close door&quot;;
+
+function setPrompt(door: Entity, text: string) {
+	Interaction.setOptions(door, [
+		{ key: &quot;Primary&quot;, text: text, holdSeconds: 0.5 },
+	]);
+}
+
+World.onTagged(&quot;guide_code_interact_door&quot;, (door: Entity) =&gt; {
+	door.setAttribute(&quot;closedZ&quot;, door.position.z);
+	door.setAttribute(&quot;isOpen&quot;, false);
+	setPrompt(door, OPEN);
+});
+
+Interaction.interacted.connect((entity, player, part, action) =&gt; {
+	if (!entity.hasTag(&quot;guide_code_interact_door&quot;)) {
+		return;
+	}
+	const closedZ = entity.getAttribute(&quot;closedZ&quot;);
+	const opening = !entity.getAttribute(&quot;isOpen&quot;);
+	entity.setAttribute(&quot;isOpen&quot;, opening);
+	const z = opening ? closedZ - 390 : closedZ;
+	entity.tween({ position: new Vector3(entity.position.x, entity.position.y, z) }, 0.6);
+	setPrompt(entity, opening ? CLOSE : OPEN);
+});
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/GuideInteractDoor.js</span><pre data-example-kind="source" data-language="javascript">const OPEN = &quot;Open door&quot;;
+const CLOSE = &quot;Close door&quot;;
+
+function setPrompt(door, text) {
+	Interaction.setOptions(door, [
+		{ key: &quot;Primary&quot;, text: text, holdSeconds: 0.5 },
+	]);
+}
+
+World.onTagged(&quot;guide_code_interact_door&quot;, (door) =&gt; {
+	door.setAttribute(&quot;closedZ&quot;, door.position.z);
+	door.setAttribute(&quot;isOpen&quot;, false);
+	setPrompt(door, OPEN);
+});
+
+Interaction.interacted.connect((entity, player, part, action) =&gt; {
+	if (!entity.hasTag(&quot;guide_code_interact_door&quot;)) {
+		return;
+	}
+	const closedZ = entity.getAttribute(&quot;closedZ&quot;);
+	const opening = !entity.getAttribute(&quot;isOpen&quot;);
+	entity.setAttribute(&quot;isOpen&quot;, opening);
+	const z = opening ? closedZ - 390 : closedZ;
+	entity.tween({ position: new Vector3(entity.position.x, entity.position.y, z) }, 0.6);
+	setPrompt(entity, opening ? CLOSE : OPEN);
+});
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/GuideInteractDoor.py</span><pre data-example-kind="source" data-language="python">OPEN = &quot;Open door&quot;
+CLOSE = &quot;Close door&quot;
+
+def set_prompt(door, text):
+    Interaction.set_options(door, [
+        {&quot;key&quot;: &quot;Primary&quot;, &quot;text&quot;: text, &quot;hold_seconds&quot;: 0.5},
+    ])
+
+def setup(door):
+    door.set_attribute(&quot;closedZ&quot;, door.position.z)
+    door.set_attribute(&quot;isOpen&quot;, False)
+    set_prompt(door, OPEN)
+
+World.on_tagged(&quot;guide_code_interact_door&quot;, setup)
+
+def on_interacted(entity, player, part, action):
+    if not entity.has_tag(&quot;guide_code_interact_door&quot;):
+        return
+    closed_z = entity.get_attribute(&quot;closedZ&quot;)
+    opening = not entity.get_attribute(&quot;isOpen&quot;)
+    entity.set_attribute(&quot;isOpen&quot;, opening)
+    z = closed_z - 390 if opening else closed_z
+    entity.tween({&quot;position&quot;: Vector3(entity.position.x, entity.position.y, z)}, 0.6)
+    set_prompt(entity, CLOSE if opening else OPEN)
+
+Interaction.interacted.connect(on_interacted)
+</pre></div></div>
 <p>Only the server's <code>Interacted</code> signal should change the door: the client signals (<code>Selected</code>, <code>Progress</code> and the rest) are for a sound or a glow. To stop players using the door, call <code>Interaction:SetEnabled(door, "Primary", false)</code>. <code>Interaction:Remove(door)</code> takes the prompt away completely.</p>
 <h3 id="r-local-look">A haunted room with its own look, for one player</h3>
 <p>This grays the picture and darkens its corners for one player only, without touching what anyone else sees: tag the trigger volume in your level <code>guide_code_hauntedroom</code>. It needs API 1.29. A client script applies the look a server script sends it over a Remote, so only the player in the room sees it.</p>
-<div class="code"><span class="tag">Scripts/Server/GuideHauntedRoom.luau</span><pre data-example-kind="source" data-language="luau">local look = Net:Remote(&quot;GuideLook&quot;)
+<div class="v has-ts has-js has-py"><div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Server/GuideHauntedRoom.luau</span><pre data-example-kind="source" data-language="luau">local look = Net:Remote(&quot;GuideLook&quot;)
 World:OnTagged(&quot;guide_code_hauntedroom&quot;, function(zone)
 	zone.Touched:Connect(function(player)
 		look:FireClient(player, { Saturation = 0, Vignette = 0.6, ColorGrading = &quot;Noir&quot; })
@@ -360,8 +1120,7 @@ World:OnTagged(&quot;guide_code_hauntedroom&quot;, function(zone)
 		look:FireClient(player, false)
 	end)
 end)
-</pre></div>
-<div class="code"><span class="tag">Scripts/Client/GuideLook.luau</span><pre data-example-kind="source" data-language="luau">local look = Net:Remote(&quot;GuideLook&quot;)
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideLook.luau</span><pre data-example-kind="source" data-language="luau">local look = Net:Remote(&quot;GuideLook&quot;)
 look.OnClientEvent:Connect(function(t)
 	if t then
 		Environment:SetLocalLook(t)
@@ -369,11 +1128,65 @@ look.OnClientEvent:Connect(function(t)
 		Environment:ClearLocalLook()
 	end
 end)
-</pre></div>
+</pre></div></div><div class="v" data-v="ts"><div class="code"><span class="tag">Scripts/Server/GuideHauntedRoom.ts</span><pre data-example-kind="source" data-language="typescript">const look = Net.remote(&quot;GuideLook&quot;);
+World.onTagged(&quot;guide_code_hauntedroom&quot;, (zone: Entity) =&gt; {
+	zone.touched.connect((player: Player) =&gt; {
+		look.fireClient(player, { saturation: 0, vignette: 0.6, colorGrading: &quot;Noir&quot; });
+	});
+	zone.touchEnded.connect((player: Player) =&gt; {
+		look.fireClient(player, false);
+	});
+});
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideLook.ts</span><pre data-example-kind="source" data-language="typescript">const look = Net.remote(&quot;GuideLook&quot;);
+look.onClientEvent.connect((t) =&gt; {
+	if (t) {
+		Environment.setLocalLook(t);
+	} else {
+		Environment.clearLocalLook();
+	}
+});
+</pre></div></div><div class="v" data-v="js"><div class="code"><span class="tag">Scripts/Server/GuideHauntedRoom.js</span><pre data-example-kind="source" data-language="javascript">const look = Net.remote(&quot;GuideLook&quot;);
+World.onTagged(&quot;guide_code_hauntedroom&quot;, (zone) =&gt; {
+	zone.touched.connect((player) =&gt; {
+		look.fireClient(player, { saturation: 0, vignette: 0.6, colorGrading: &quot;Noir&quot; });
+	});
+	zone.touchEnded.connect((player) =&gt; {
+		look.fireClient(player, false);
+	});
+});
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideLook.js</span><pre data-example-kind="source" data-language="javascript">const look = Net.remote(&quot;GuideLook&quot;);
+look.onClientEvent.connect((t) =&gt; {
+	if (t) {
+		Environment.setLocalLook(t);
+	} else {
+		Environment.clearLocalLook();
+	}
+});
+</pre></div></div><div class="v" data-v="py"><div class="code"><span class="tag">Scripts/Server/GuideHauntedRoom.py</span><pre data-example-kind="source" data-language="python">look = Net.remote(&quot;GuideLook&quot;)
+
+def setup(zone):
+    def on_touch(player):
+        look.fire_client(player, {&quot;saturation&quot;: 0, &quot;vignette&quot;: 0.6, &quot;color_grading&quot;: &quot;Noir&quot;})
+    def on_touch_end(player):
+        look.fire_client(player, False)
+    zone.touched.connect(on_touch)
+    zone.touch_ended.connect(on_touch_end)
+
+World.on_tagged(&quot;guide_code_hauntedroom&quot;, setup)
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideLook.py</span><pre data-example-kind="source" data-language="python">look = Net.remote(&quot;GuideLook&quot;)
+
+def on_look(t):
+    if t:
+        Environment.set_local_look(t)
+    else:
+        Environment.clear_local_look()
+
+look.on_client_event.connect(on_look)
+</pre></div></div></div>
 <p>What the look sets wins over the server's own values; what it leaves out, such as <code>Bloom</code>, keeps following the server. The look goes when the client script that set it stops, so a bad table sent from the server only fails on that one player's client.</p>
 <h3 id="r-teams-rounds">Two teams and timed rounds <span class="status wip">Next release</span></h3>
 <p>This builds two teams that play 90-second rounds with a short break between them. It needs API 1.39, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). You don't need to tag anything in the level: just add the script. The server creates the teams with <a href="/docs/scripting/api/#ref-teams"><code>Teams:Create</code></a> and puts each new player on the smaller one by setting <code>Player.Team</code> (see <a href="/docs/scripting/api/#ref-player">Player</a>). It counts kills for each team, and <a href="/docs/scripting/api/#ref-match"><code>Match:StartRound</code></a> starts a timed round. When the round ends, <code>RoundEnded</code> passes the round number, the winner and a reason: <code>"Ended"</code> when a script called <code>EndRound</code>, <code>"Time"</code> when the clock ran out (the winner is always nil then) or <code>"MatchEnded"</code>. <code>Match</code> never picks a winner itself, so the script works it out from the kills. Dead players come back after the <a href="/docs/scripting/api/#ref-respawn"><code>Respawn.Delay</code></a> of 3 seconds. At the end of a round everyone gets a fresh character.</p>
-<div class="code"><span class="tag">Scripts/Server/GuideTeamRounds.luau</span><pre data-example-kind="source" data-language="luau">local ROUND_SECONDS = 90
+<div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/GuideTeamRounds.luau</span><pre data-example-kind="source" data-language="luau">local ROUND_SECONDS = 90
 local BREAK_SECONDS = 10
 
 Teams:Create(&quot;Red&quot;, &quot;#E53935&quot;)
@@ -407,11 +1220,116 @@ Match.RoundEnded:Connect(function(round, winner, reason)
 end)
 
 Match:StartRound(ROUND_SECONDS)
-</pre></div>
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/GuideTeamRounds.ts</span><pre data-example-kind="source" data-language="typescript">const ROUND_SECONDS = 90;
+const BREAK_SECONDS = 10;
+
+Teams.create(&quot;Red&quot;, &quot;#E53935&quot;);
+Teams.create(&quot;Blue&quot;, &quot;#1E88E5&quot;);
+Respawn.delay = 3;
+
+const kills: Record&lt;string, number&gt; = { Red: 0, Blue: 0 };
+
+Players.onPlayer((player: Player) =&gt; {
+	const red = Teams.getPlayers(&quot;Red&quot;).length;
+	const blue = Teams.getPlayers(&quot;Blue&quot;).length;
+	player.team = red &lt;= blue ? &quot;Red&quot; : &quot;Blue&quot;;
+	player.died.connect((_, killer) =&gt; {
+		if (killer &amp;&amp; killer.team &amp;&amp; killer.team !== player.team) {
+			kills[killer.team] += 1;
+		}
+	});
+});
+
+Match.roundEnded.connect(async (round, winner, reason) =&gt; {
+	if (reason === &quot;Time&quot; &amp;&amp; kills.Red !== kills.Blue) {
+		winner = kills.Red &gt; kills.Blue ? &quot;Red&quot; : &quot;Blue&quot;;
+	}
+	State.set(&quot;guide.lastWinner&quot;, winner ?? &quot;Draw&quot;);
+	for (const player of Players.getPlayers()) {
+		player.respawn();
+	}
+	await task.wait(BREAK_SECONDS);
+	kills.Red = 0;
+	kills.Blue = 0;
+	Match.startRound(ROUND_SECONDS);
+});
+
+Match.startRound(ROUND_SECONDS);
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/GuideTeamRounds.js</span><pre data-example-kind="source" data-language="javascript">const ROUND_SECONDS = 90;
+const BREAK_SECONDS = 10;
+
+Teams.create(&quot;Red&quot;, &quot;#E53935&quot;);
+Teams.create(&quot;Blue&quot;, &quot;#1E88E5&quot;);
+Respawn.delay = 3;
+
+const kills = { Red: 0, Blue: 0 };
+
+Players.onPlayer((player) =&gt; {
+	const red = Teams.getPlayers(&quot;Red&quot;).length;
+	const blue = Teams.getPlayers(&quot;Blue&quot;).length;
+	player.team = red &lt;= blue ? &quot;Red&quot; : &quot;Blue&quot;;
+	player.died.connect((_, killer) =&gt; {
+		if (killer &amp;&amp; killer.team &amp;&amp; killer.team !== player.team) {
+			kills[killer.team] += 1;
+		}
+	});
+});
+
+Match.roundEnded.connect(async (round, winner, reason) =&gt; {
+	if (reason === &quot;Time&quot; &amp;&amp; kills.Red !== kills.Blue) {
+		winner = kills.Red &gt; kills.Blue ? &quot;Red&quot; : &quot;Blue&quot;;
+	}
+	State.set(&quot;guide.lastWinner&quot;, winner ?? &quot;Draw&quot;);
+	for (const player of Players.getPlayers()) {
+		player.respawn();
+	}
+	await task.wait(BREAK_SECONDS);
+	kills.Red = 0;
+	kills.Blue = 0;
+	Match.startRound(ROUND_SECONDS);
+});
+
+Match.startRound(ROUND_SECONDS);
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/GuideTeamRounds.py</span><pre data-example-kind="source" data-language="python">ROUND_SECONDS = 90
+BREAK_SECONDS = 10
+
+Teams.create(&quot;Red&quot;, &quot;#E53935&quot;)
+Teams.create(&quot;Blue&quot;, &quot;#1E88E5&quot;)
+Respawn.delay = 3
+
+kills = {&quot;Red&quot;: 0, &quot;Blue&quot;: 0}
+
+def on_player(player):
+    red = len(Teams.get_players(&quot;Red&quot;))
+    blue = len(Teams.get_players(&quot;Blue&quot;))
+    player.team = &quot;Red&quot; if red &lt;= blue else &quot;Blue&quot;
+
+    def on_died(_, killer, damage_type):
+        if killer and killer.team and killer.team != player.team:
+            kills[killer.team] += 1
+    player.died.connect(on_died)
+
+Players.on_player(on_player)
+
+def on_round_ended(round_number, winner, reason):
+    if reason == &quot;Time&quot; and kills[&quot;Red&quot;] != kills[&quot;Blue&quot;]:
+        winner = &quot;Red&quot; if kills[&quot;Red&quot;] &gt; kills[&quot;Blue&quot;] else &quot;Blue&quot;
+    State.set(&quot;guide.lastWinner&quot;, winner or &quot;Draw&quot;)
+    for player in Players.get_players():
+        player.respawn()
+    yield task.wait(BREAK_SECONDS)
+    kills[&quot;Red&quot;] = 0
+    kills[&quot;Blue&quot;] = 0
+    Match.start_round(ROUND_SECONDS)
+
+Match.round_ended.connect(on_round_ended)
+
+Match.start_round(ROUND_SECONDS)
+</pre></div></div>
 <p>Only the server runs the teams and the rounds. A client can read <code>Player.Team</code>, <code>Match.State</code>, <code>Match.Round</code> and <code>Match.TimeRemaining</code> for a HUD, but it can't change them. Teammates can't hurt each other unless you set <code>Teams.FriendlyFire = true</code>. Team names aren't case-sensitive, and a place can have up to 16 teams. See <a href="/docs/scripting/concepts/#teams-rounds">Teams and rounds</a> for the overview.</p>
 <h3 id="r-armor-shield">Armor, shield and custom damage <span class="status wip">Next release</span></h3>
 <p>This builds a pad that gives a player armor and a shield, and a pool of acid that hurts them. It needs API 1.39, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Tag the pad <code>guide_code_armorpad</code> and the acid <code>guide_code_acid</code>. Touching the pad sets <code>Armor</code> to 50 (the percent of every hit the character shrugs off), <code>MaxShield</code> to 50 and <code>Shield</code> to 50, and lets the shield refill by 10 a second after 5 seconds without a hit. Touching the acid calls <code>TakeDamage(20, nil, "Acid")</code>. The third argument tags the hit with a <code>damageType</code>: use a built-in such as <code>"Bullet"</code>, <code>"Melee"</code> or <code>"Explosion"</code>, or any word of your own up to 32 characters. Damage goes through armor first, then the shield, then health. So 20 damage becomes 10 after armor, and the shield takes all 10 while it lasts. <code>Damaged</code> fires on the server with the player, the amount that got through armor, the <code>damageType</code> and the attacker (nil here). It still fires when the shield soaks up the whole hit. Set these on a player who has a character: they read nil while the player is respawning.</p>
-<div class="code"><span class="tag">Scripts/Server/GuideArmorShield.luau</span><pre data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_armorpad&quot;, function(pad)
+<div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/GuideArmorShield.luau</span><pre data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_armorpad&quot;, function(pad)
 	pad.Touched:Connect(function(player)
 		player.Armor = 50
 		player.MaxShield = 50
@@ -431,11 +1349,74 @@ Players:OnPlayer(function(player)
 		print(`{player.Name} took {amount} {damageType} damage: shield {player.Shield}, health {player.Health}`)
 	end)
 end)
-</pre></div>
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/GuideArmorShield.ts</span><pre data-example-kind="source" data-language="typescript">World.onTagged(&quot;guide_code_armorpad&quot;, (pad: Entity) =&gt; {
+	pad.touched.connect((player: Player) =&gt; {
+		player.armor = 50;
+		player.maxShield = 50;
+		player.shield = 50;
+		player.shieldRegenRate = 10;
+	});
+});
+
+World.onTagged(&quot;guide_code_acid&quot;, (acid: Entity) =&gt; {
+	acid.touched.connect((player: Player) =&gt; {
+		player.takeDamage(20, undefined, &quot;Acid&quot;);
+	});
+});
+
+Players.onPlayer((player: Player) =&gt; {
+	player.damaged.connect((_, amount, damageType, attacker) =&gt; {
+		console.log(`${player.name} took ${amount} ${damageType} damage: shield ${player.shield}, health ${player.health}`);
+	});
+});
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/GuideArmorShield.js</span><pre data-example-kind="source" data-language="javascript">World.onTagged(&quot;guide_code_armorpad&quot;, (pad) =&gt; {
+	pad.touched.connect((player) =&gt; {
+		player.armor = 50;
+		player.maxShield = 50;
+		player.shield = 50;
+		player.shieldRegenRate = 10;
+	});
+});
+
+World.onTagged(&quot;guide_code_acid&quot;, (acid) =&gt; {
+	acid.touched.connect((player) =&gt; {
+		player.takeDamage(20, undefined, &quot;Acid&quot;);
+	});
+});
+
+Players.onPlayer((player) =&gt; {
+	player.damaged.connect((_, amount, damageType, attacker) =&gt; {
+		console.log(`${player.name} took ${amount} ${damageType} damage: shield ${player.shield}, health ${player.health}`);
+	});
+});
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/GuideArmorShield.py</span><pre data-example-kind="source" data-language="python">def setup_pad(pad):
+    def on_touch(player):
+        player.armor = 50
+        player.max_shield = 50
+        player.shield = 50
+        player.shield_regen_rate = 10
+    pad.touched.connect(on_touch)
+
+World.on_tagged(&quot;guide_code_armorpad&quot;, setup_pad)
+
+def setup_acid(acid):
+    def on_touch(player):
+        player.take_damage(20, None, &quot;Acid&quot;)
+    acid.touched.connect(on_touch)
+
+World.on_tagged(&quot;guide_code_acid&quot;, setup_acid)
+
+def on_player(player):
+    def on_damaged(_, amount, damage_type, attacker):
+        print(f&quot;{player.name} took {amount} {damage_type} damage: shield {player.shield}, health {player.health}&quot;)
+    player.damaged.connect(on_damaged)
+
+Players.on_player(on_player)
+</pre></div></div>
 <p><code>TakeDamage</code> returns false when nothing got through: the player has no character, is already dead, friendly fire blocked a teammate's hit, or <code>Armor</code> is 100. <code>Armor</code> and the shield settings last for the rest of the session, through respawns, and every respawn starts with the shield full. A killing hit fires <code>Damaged</code> first and then <code>Died</code>, and <code>Died</code> gets the same <code>damageType</code> (see <a href="/docs/scripting/api/#ref-player">Player</a>).</p>
 <h3 id="r-stamina">Sprint with stamina <span class="status wip">Next release</span></h3>
 <p>This builds a sprint that tires the player out, with a stamina readout on their screen. It needs API 1.40, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Tag a pad <code>guide_code_staminapad</code>. Touching it turns <code>StaminaEnabled</code> on for that player. It's off for everyone until a script does that, and turning it on starts the pool full. Sprinting then uses 30 stamina a second, and stamina comes back at 10 a second after 1 second of rest. A sprint stops at zero and can't start again until a tenth of <code>MaxStamina</code> (100 by default) has come back. <code>SprintSpeed</code> is 900 cm/s here. <code>StaminaChanged</code> passes the player, the old value and the new one, in steps of about half a percent of <code>MaxStamina</code>. It fires on the server and on every client, so the client script reads it for the local player. The server script also knocks a player down for 2 seconds with <code>Ragdoll</code> after a hit of 40 or more. That part is optional.</p>
-<div class="code"><span class="tag">Scripts/Server/GuideStamina.luau</span><pre data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_staminapad&quot;, function(pad)
+<div class="v has-ts has-js has-py"><div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Server/GuideStamina.luau</span><pre data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_staminapad&quot;, function(pad)
 	pad.Touched:Connect(function(player)
 		player.StaminaEnabled = true
 		player.StaminaDrain = 30
@@ -451,15 +1432,75 @@ Players:OnPlayer(function(player)
 		end
 	end)
 end)
-</pre></div>
-<div class="code"><span class="tag">Scripts/Client/GuideStaminaHud.luau</span><pre data-example-kind="source" data-language="luau">Players.LocalPlayer.StaminaChanged:Connect(function(_, old, new)
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideStaminaHud.luau</span><pre data-example-kind="source" data-language="luau">Players.LocalPlayer.StaminaChanged:Connect(function(_, old, new)
 	UI:SetText(&quot;stamina&quot;, `Stamina: {math.floor(new)}`)
 end)
-</pre></div>
+</pre></div></div><div class="v" data-v="ts"><div class="code"><span class="tag">Scripts/Server/GuideStamina.ts</span><pre data-example-kind="source" data-language="typescript">World.onTagged(&quot;guide_code_staminapad&quot;, (pad: Entity) =&gt; {
+	pad.touched.connect((player: Player) =&gt; {
+		player.staminaEnabled = true;
+		player.staminaDrain = 30;
+		player.staminaRegen = 10;
+		player.sprintSpeed = 900;
+	});
+});
+
+Players.onPlayer((player: Player) =&gt; {
+	player.damaged.connect((_, amount) =&gt; {
+		if (amount &gt;= 40) {
+			player.ragdoll(2);
+		}
+	});
+});
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideStaminaHud.ts</span><pre data-example-kind="source" data-language="typescript">Players.localPlayer.staminaChanged.connect((_, old, newValue) =&gt; {
+	UI.setText(&quot;stamina&quot;, `Stamina: ${Math.floor(newValue)}`);
+});
+</pre></div></div><div class="v" data-v="js"><div class="code"><span class="tag">Scripts/Server/GuideStamina.js</span><pre data-example-kind="source" data-language="javascript">World.onTagged(&quot;guide_code_staminapad&quot;, (pad) =&gt; {
+	pad.touched.connect((player) =&gt; {
+		player.staminaEnabled = true;
+		player.staminaDrain = 30;
+		player.staminaRegen = 10;
+		player.sprintSpeed = 900;
+	});
+});
+
+Players.onPlayer((player) =&gt; {
+	player.damaged.connect((_, amount) =&gt; {
+		if (amount &gt;= 40) {
+			player.ragdoll(2);
+		}
+	});
+});
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideStaminaHud.js</span><pre data-example-kind="source" data-language="javascript">Players.localPlayer.staminaChanged.connect((_, old, newValue) =&gt; {
+	UI.setText(&quot;stamina&quot;, `Stamina: ${Math.floor(newValue)}`);
+});
+</pre></div></div><div class="v" data-v="py"><div class="code"><span class="tag">Scripts/Server/GuideStamina.py</span><pre data-example-kind="source" data-language="python">def setup(pad):
+    def on_touch(player):
+        player.stamina_enabled = True
+        player.stamina_drain = 30
+        player.stamina_regen = 10
+        player.sprint_speed = 900
+    pad.touched.connect(on_touch)
+
+World.on_tagged(&quot;guide_code_staminapad&quot;, setup)
+
+def on_player(player):
+    def on_damaged(_, amount, damage_type, attacker):
+        if amount &gt;= 40:
+            player.ragdoll(2)
+    player.damaged.connect(on_damaged)
+
+Players.on_player(on_player)
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideStaminaHud.py</span><pre data-example-kind="source" data-language="python">import math
+
+def on_stamina(_, old, new_value):
+    UI.set_text(&quot;stamina&quot;, f&quot;Stamina: {math.floor(new_value)}&quot;)
+
+Players.local_player.stamina_changed.connect(on_stamina)
+</pre></div></div></div>
 <p>Only the server can set these values. <code>Ragdoll</code> returns false when the player is dead, in a vehicle or already knocked down. <code>SprintStarted</code> and <code>SprintStopped</code> fire too, and <code>IsSprinting</code> and <code>IsRagdolled</code> read the state (see <a href="/docs/scripting/api/#ref-player">Player</a>).</p>
 <h3 id="r-nameplates">A nameplate over each player <span class="status wip">Next release</span></h3>
 <p>This puts a name over every other player's head, on your screen only. It needs API 1.41, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). It's a client script, and there's nothing to tag. The script makes a text node for each player and calls <a href="/docs/scripting/api/#ref-uinode"><code>UiNode:AttachToWorld</code></a> on it. <code>Bone = "head"</code> puts the plate on the head, <code>Offset</code> lifts it 30 cm, <code>MaxDistance</code> hides it past 2,500 cm, <code>FadeDistance</code> fades it out over the last 500 cm and <code>HideForSelf</code> keeps it off your own character. A plate follows its player and hides while they have no character. A script can float up to 32 nodes at once, and <code>AttachToWorld</code> returns false past that. The script destroys the plate then, and again when the player leaves, so it never wastes the node budget (256 nodes per script).</p>
-<div class="code"><span class="tag">Scripts/Client/GuideNameplates.luau</span><pre data-example-kind="source" data-language="luau">local plates = {}
+<div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Client/GuideNameplates.luau</span><pre data-example-kind="source" data-language="luau">local plates = {}
 
 Players:OnPlayer(function(player)
 	local plate = UI:Create(&quot;text&quot;)
@@ -488,11 +1529,97 @@ Players.PlayerRemoving:Connect(function(player)
 		plates[player.UserId] = nil
 	end
 end)
-</pre></div>
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Client/GuideNameplates.ts</span><pre data-example-kind="source" data-language="typescript">const plates = new Map&lt;string, UiNode&gt;();
+
+Players.onPlayer((player: Player) =&gt; {
+	const plate = UI.create(&quot;text&quot;);
+	if (!plate) {
+		return;
+	}
+	plate.setText(player.name);
+	const attached = plate.attachToWorld(player, {
+		bone: &quot;head&quot;,
+		offset: new Vector3(0, 0, 30),
+		maxDistance: 2500,
+		fadeDistance: 500,
+		hideForSelf: true,
+	});
+	if (attached) {
+		plates.set(player.userId, plate);
+	} else {
+		plate.destroy();
+	}
+});
+
+Players.playerRemoving.connect((player: Player) =&gt; {
+	const plate = plates.get(player.userId);
+	if (plate) {
+		plate.destroy();
+		plates.delete(player.userId);
+	}
+});
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Client/GuideNameplates.js</span><pre data-example-kind="source" data-language="javascript">const plates = new Map();
+
+Players.onPlayer((player) =&gt; {
+	const plate = UI.create(&quot;text&quot;);
+	if (!plate) {
+		return;
+	}
+	plate.setText(player.name);
+	const attached = plate.attachToWorld(player, {
+		bone: &quot;head&quot;,
+		offset: new Vector3(0, 0, 30),
+		maxDistance: 2500,
+		fadeDistance: 500,
+		hideForSelf: true,
+	});
+	if (attached) {
+		plates.set(player.userId, plate);
+	} else {
+		plate.destroy();
+	}
+});
+
+Players.playerRemoving.connect((player) =&gt; {
+	const plate = plates.get(player.userId);
+	if (plate) {
+		plate.destroy();
+		plates.delete(player.userId);
+	}
+});
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Client/GuideNameplates.py</span><pre data-example-kind="source" data-language="python">plates = {}
+
+def on_player(player):
+    plate = UI.create(&quot;text&quot;)
+    if not plate:
+        return
+    plate.set_text(player.name)
+    attached = plate.attach_to_world(player, {
+        &quot;bone&quot;: &quot;head&quot;,
+        &quot;offset&quot;: Vector3(0, 0, 30),
+        &quot;max_distance&quot;: 2500,
+        &quot;fade_distance&quot;: 500,
+        &quot;hide_for_self&quot;: True,
+    })
+    if attached:
+        plates[player.user_id] = plate
+    else:
+        plate.destroy()
+
+Players.on_player(on_player)
+
+def on_removing(player):
+    plate = plates.get(player.user_id)
+    if plate:
+        plate.destroy()
+        plates.pop(player.user_id)
+
+Players.player_removing.connect(on_removing)
+</pre></div></div>
 <p>A plate is only drawn: it can't be clicked. For a marker that stays on the edge of the screen when its target is out of view, pass <code>OffScreen = "Clamp"</code>. To stop floating a node without destroying it, call <code>DetachFromWorld</code>. Every option is listed under <a href="/docs/scripting/api/#ref-uinode">UiNode</a>.</p>
 <h3 id="r-barrel">An explosive barrel <span class="status wip">Next release</span></h3>
 <p>This builds a barrel that blows up when a player bumps it. It needs API 1.42, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Tag each barrel actor in your level <code>guide_code_barrel</code>. <a href="/docs/scripting/api/#ref-explosions"><code>Explosions:Create</code></a> hurts everything within 600 cm. Damage is 80 at the middle and stays full out to 100 cm (<code>InnerRadius</code>), then drops in a straight line to 0 at the edge. <code>Effect = "Large"</code> picks the look of the blast (<code>"None"</code>, <code>"Small"</code>, <code>"Medium"</code>, <code>"Large"</code> or <code>"Dirt"</code>; <code>"Medium"</code> is the default). <code>Ragdoll</code> throws players in the blast to the ground, and <code>RagdollSeconds = 3</code> keeps them down for 3 seconds (2 is the default). <code>Attacker</code> credits the kill to the player who touched the barrel. It also means their own blast can hurt them, and that friendly fire protects their teammates. The call returns how many things were hurt, and the script saves that number in State. The barrel is destroyed straight after: a barrel that was only hidden would still collide and still fire <code>Touched</code>.</p>
-<div class="code"><span class="tag">Scripts/Server/GuideBarrels.luau</span><pre data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_barrel&quot;, function(barrel)
+<div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/GuideBarrels.luau</span><pre data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_barrel&quot;, function(barrel)
 	local blown = false
 	barrel.Touched:Connect(function(player)
 		if blown then
@@ -512,11 +1639,72 @@ end)
 		barrel:Destroy()
 	end)
 end)
-</pre></div>
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/GuideBarrels.ts</span><pre data-example-kind="source" data-language="typescript">World.onTagged(&quot;guide_code_barrel&quot;, (barrel: Entity) =&gt; {
+	let blown = false;
+	barrel.touched.connect((player: Player) =&gt; {
+		if (blown) {
+			return;
+		}
+		blown = true;
+		const hurt = Explosions.create(barrel.position, {
+			radius: 600,
+			innerRadius: 100,
+			damage: 80,
+			attacker: player,
+			effect: &quot;Large&quot;,
+			ragdoll: true,
+			ragdollSeconds: 3,
+		});
+		State.set(&quot;guide.barrel.lastHurt&quot;, hurt);
+		barrel.destroy();
+	});
+});
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/GuideBarrels.js</span><pre data-example-kind="source" data-language="javascript">World.onTagged(&quot;guide_code_barrel&quot;, (barrel) =&gt; {
+	let blown = false;
+	barrel.touched.connect((player) =&gt; {
+		if (blown) {
+			return;
+		}
+		blown = true;
+		const hurt = Explosions.create(barrel.position, {
+			radius: 600,
+			innerRadius: 100,
+			damage: 80,
+			attacker: player,
+			effect: &quot;Large&quot;,
+			ragdoll: true,
+			ragdollSeconds: 3,
+		});
+		State.set(&quot;guide.barrel.lastHurt&quot;, hurt);
+		barrel.destroy();
+	});
+});
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/GuideBarrels.py</span><pre data-example-kind="source" data-language="python">def setup(barrel):
+    barrel_state = {&quot;blown&quot;: False}
+
+    def on_touch(player):
+        if barrel_state[&quot;blown&quot;]:
+            return
+        barrel_state[&quot;blown&quot;] = True
+        hurt = Explosions.create(barrel.position, {
+            &quot;radius&quot;: 600,
+            &quot;inner_radius&quot;: 100,
+            &quot;damage&quot;: 80,
+            &quot;attacker&quot;: player,
+            &quot;effect&quot;: &quot;Large&quot;,
+            &quot;ragdoll&quot;: True,
+            &quot;ragdoll_seconds&quot;: 3,
+        })
+        State.set(&quot;guide.barrel.lastHurt&quot;, hurt)
+        barrel.destroy()
+    barrel.touched.connect(on_touch)
+
+World.on_tagged(&quot;guide_code_barrel&quot;, setup)
+</pre></div></div>
 <p>The blast goes through the same damage path as weapons, so armor, the shield and the <code>Damaged</code> and <code>Died</code> signals all apply. By default nothing behind a wall is touched (<code>LineOfSight = true</code>), and a loose physics prop at the middle gets a push of 800 cm/s (<code>Impulse</code>). A server can set off 30 explosions a second. See <a href="/docs/scripting/concepts/#combat">Explosions, projectiles and NPC attacks</a> for the overview.</p>
 <h3 id="r-turret">A turret that shoots at players <span class="status wip">Next release</span></h3>
 <p>This builds a turret that fires a ball at the first player it finds within reach. It needs API 1.42, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Tag the turret actor in your level <code>guide_code_turret</code>. Every 1.5 seconds, the script looks for a player within 2,500 cm of the turret. If it finds one, <a href="/docs/scripting/api/#ref-projectiles"><code>Projectiles:Fire</code></a> sends a ball at the player's position at 3,000 cm/s. The ball arcs under gravity, and a <code>Target</code> is aimed for you. It deals 10 damage with the damage type <code>"Turret"</code> (any word of your own). The <code>Tag</code> comes back in <code>Hit</code>, so the handler knows which of its own shots landed. <code>Hit</code> passes the projectile id, the tag, the entity it struck, the player (nil unless it hit a character) and where. The damage has already happened by then. A shot that hits nothing for 5 seconds (the default <code>Lifetime</code>) fires <code>Expired</code> instead.</p>
-<div class="code"><span class="tag">Scripts/Server/GuideTurret.luau</span><pre data-example-kind="source" data-language="luau">local turret = World:FindByTag(&quot;guide_code_turret&quot;)[1]
+<div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/GuideTurret.luau</span><pre data-example-kind="source" data-language="luau">local turret = World:FindByTag(&quot;guide_code_turret&quot;)[1]
 local RANGE = 2500
 
 Projectiles.Hit:Connect(function(id, tag, entity, player, position)
@@ -544,11 +1732,99 @@ while true do
 	end
 	task.wait(1.5)
 end
-</pre></div>
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/GuideTurret.ts</span><pre data-example-kind="source" data-language="typescript">const turret = World.findByTag(&quot;guide_code_turret&quot;)[0];
+const RANGE = 2500;
+
+Projectiles.hit.connect((id, tag, entity, player, position) =&gt; {
+	if (tag === &quot;guide_turret&quot; &amp;&amp; player) {
+		State.set(&quot;guide.turret.hits&quot;, (State.get(&quot;guide.turret.hits&quot;) ?? 0) + 1);
+	}
+});
+
+task.spawn(async () =&gt; {
+	while (true) {
+		for (const player of Players.getPlayers()) {
+			const at = player.position;
+			if (at &amp;&amp; at.sub(turret.position).magnitude &lt; RANGE) {
+				Projectiles.fire({
+					position: turret.position.add(new Vector3(0, 0, 100)),
+					target: at,
+					speed: 3000,
+					look: &quot;Ball&quot;,
+					color: &quot;#FF7043&quot;,
+					damage: 10,
+					damageType: &quot;Turret&quot;,
+					tag: &quot;guide_turret&quot;,
+				});
+				break;
+			}
+		}
+		await task.wait(1.5);
+	}
+});
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/GuideTurret.js</span><pre data-example-kind="source" data-language="javascript">const turret = World.findByTag(&quot;guide_code_turret&quot;)[0];
+const RANGE = 2500;
+
+Projectiles.hit.connect((id, tag, entity, player, position) =&gt; {
+	if (tag === &quot;guide_turret&quot; &amp;&amp; player) {
+		State.set(&quot;guide.turret.hits&quot;, (State.get(&quot;guide.turret.hits&quot;) ?? 0) + 1);
+	}
+});
+
+task.spawn(async () =&gt; {
+	while (true) {
+		for (const player of Players.getPlayers()) {
+			const at = player.position;
+			if (at &amp;&amp; at.sub(turret.position).magnitude &lt; RANGE) {
+				Projectiles.fire({
+					position: turret.position.add(new Vector3(0, 0, 100)),
+					target: at,
+					speed: 3000,
+					look: &quot;Ball&quot;,
+					color: &quot;#FF7043&quot;,
+					damage: 10,
+					damageType: &quot;Turret&quot;,
+					tag: &quot;guide_turret&quot;,
+				});
+				break;
+			}
+		}
+		await task.wait(1.5);
+	}
+});
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/GuideTurret.py</span><pre data-example-kind="source" data-language="python">turret = World.find_by_tag(&quot;guide_code_turret&quot;)[0]
+RANGE = 2500
+
+def on_hit(projectile_id, tag, entity, player, position):
+    if tag == &quot;guide_turret&quot; and player:
+        State.set(&quot;guide.turret.hits&quot;, (State.get(&quot;guide.turret.hits&quot;) or 0) + 1)
+
+Projectiles.hit.connect(on_hit)
+
+def run():
+    while True:
+        for player in Players.get_players():
+            at = player.position
+            if at and (at - turret.position).magnitude &lt; RANGE:
+                Projectiles.fire({
+                    &quot;position&quot;: turret.position + Vector3(0, 0, 100),
+                    &quot;target&quot;: at,
+                    &quot;speed&quot;: 3000,
+                    &quot;look&quot;: &quot;Ball&quot;,
+                    &quot;color&quot;: &quot;#FF7043&quot;,
+                    &quot;damage&quot;: 10,
+                    &quot;damage_type&quot;: &quot;Turret&quot;,
+                    &quot;tag&quot;: &quot;guide_turret&quot;,
+                })
+                break
+        yield task.wait(1.5)
+
+task.spawn(run)
+</pre></div></div>
 <p>The turret doesn't lead a moving player, so a player who keeps running can dodge. For a straight shot, pass <code>Velocity</code> instead of <code>Target</code>, with <code>GravityScale = 0</code>. <code>Look</code> can also be <code>"Rocket"</code>, <code>"Arrow"</code>, <code>"Cube"</code> or <code>"Invisible"</code>. Give the shot an <code>Explosion</code> table (the same options as <code>Explosions:Create</code>) to make it blow up where it lands. Up to 64 projectiles fly at once. See <a href="/docs/scripting/api/#ref-projectiles">Projectiles</a> for every option.</p>
 <h3 id="r-guard-npc">A guard that follows you and attacks trespassers <span class="status wip">Next release</span></h3>
 <p>This builds a guard NPC that walks after the first player in the session and fights anyone else who steps into a zone. It needs API 1.42, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Tag a marker actor <code>guide_code_guardpost</code> (the guard starts there) and a trigger volume <code>guide_code_guardzone</code>. Set <code>AVATAR</code> to the item id of a published avatar body: without one, the NPC has no body to draw. <a href="/docs/scripting/api/#ref-npc"><code>NPC:Follow</code></a> keeps the guard about 300 cm from its player, through respawns. When another player touches the zone, <code>NPC:Attack</code> makes them its enemy: the guard walks up and swings every 1.2 seconds for 15 damage. <code>TargetChanged</code> fires when the target changes. It fires with no target once the trespasser dies or leaves, and the script then goes back to following.</p>
-<div class="code"><span class="tag">Scripts/Server/GuideGuard.luau</span><pre data-example-kind="source" data-language="luau">local AVATAR = &quot;itm_u…&quot;   -- the item id of a published avatar body
+<div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/GuideGuard.luau</span><pre data-example-kind="source" data-language="luau">local AVATAR = &quot;itm_u…&quot;   -- the item id of a published avatar body
 local post = World:FindByTag(&quot;guide_code_guardpost&quot;)[1]
 local guard = NPCs:Spawn(post.Position, { AvatarItemId = AVATAR })
 local owner = nil
@@ -580,11 +1856,107 @@ guard.TargetChanged:Connect(function(_, entity, player)
 		guard:Follow(owner, 300)
 	end
 end)
-</pre></div>
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/GuideGuard.ts</span><pre data-example-kind="source" data-language="typescript">const AVATAR = &quot;itm_u…&quot;;   // the item id of a published avatar body
+const post = World.findByTag(&quot;guide_code_guardpost&quot;)[0];
+const guard = NPCs.spawn(post.position, { avatarItemId: AVATAR });
+let owner: Player | undefined;
+
+Players.onPlayer((player: Player) =&gt; {
+	if (!owner) {
+		owner = player;
+		guard.follow(player, 300);
+	}
+});
+
+Players.playerRemoving.connect((player: Player) =&gt; {
+	if (player === owner) {
+		owner = undefined;
+		guard.clearTarget();
+	}
+});
+
+World.onTagged(&quot;guide_code_guardzone&quot;, (zone: Entity) =&gt; {
+	zone.touched.connect((player: Player) =&gt; {
+		if (player !== owner &amp;&amp; guard.targetPlayer !== player) {
+			guard.attack(player, { range: 150, damage: 15, interval: 1.2 });
+		}
+	});
+});
+
+guard.targetChanged.connect((_, entity, player) =&gt; {
+	if (!entity &amp;&amp; owner) {
+		guard.follow(owner, 300);
+	}
+});
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/GuideGuard.js</span><pre data-example-kind="source" data-language="javascript">const AVATAR = &quot;itm_u…&quot;;   // the item id of a published avatar body
+const post = World.findByTag(&quot;guide_code_guardpost&quot;)[0];
+const guard = NPCs.spawn(post.position, { avatarItemId: AVATAR });
+let owner;
+
+Players.onPlayer((player) =&gt; {
+	if (!owner) {
+		owner = player;
+		guard.follow(player, 300);
+	}
+});
+
+Players.playerRemoving.connect((player) =&gt; {
+	if (player === owner) {
+		owner = undefined;
+		guard.clearTarget();
+	}
+});
+
+World.onTagged(&quot;guide_code_guardzone&quot;, (zone) =&gt; {
+	zone.touched.connect((player) =&gt; {
+		if (player !== owner &amp;&amp; guard.targetPlayer !== player) {
+			guard.attack(player, { range: 150, damage: 15, interval: 1.2 });
+		}
+	});
+});
+
+guard.targetChanged.connect((_, entity, player) =&gt; {
+	if (!entity &amp;&amp; owner) {
+		guard.follow(owner, 300);
+	}
+});
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/GuideGuard.py</span><pre data-example-kind="source" data-language="python">AVATAR = &quot;itm_u…&quot;   # the item id of a published avatar body
+post = World.find_by_tag(&quot;guide_code_guardpost&quot;)[0]
+guard = NPCs.spawn(post.position, {&quot;avatar_item_id&quot;: AVATAR})
+guard_state = {&quot;owner&quot;: None}
+
+def on_player(player):
+    if not guard_state[&quot;owner&quot;]:
+        guard_state[&quot;owner&quot;] = player
+        guard.follow(player, 300)
+
+Players.on_player(on_player)
+
+def on_removing(player):
+    if player == guard_state[&quot;owner&quot;]:
+        guard_state[&quot;owner&quot;] = None
+        guard.clear_target()
+
+Players.player_removing.connect(on_removing)
+
+def setup_zone(zone):
+    def on_touch(player):
+        if player != guard_state[&quot;owner&quot;] and guard.target_player != player:
+            guard.attack(player, {&quot;range&quot;: 150, &quot;damage&quot;: 15, &quot;interval&quot;: 1.2})
+    zone.touched.connect(on_touch)
+
+World.on_tagged(&quot;guide_code_guardzone&quot;, setup_zone)
+
+def on_target_changed(_, entity, player):
+    if not entity and guard_state[&quot;owner&quot;]:
+        guard.follow(guard_state[&quot;owner&quot;], 300)
+
+guard.target_changed.connect(on_target_changed)
+</pre></div></div>
 <p>The hits go through the same damage path as weapons, so armor and the shield apply. A kill credits nobody, because an NPC isn't a player, and friendly fire doesn't protect a player from an NPC. <code>Follow</code> and <code>Attack</code> each replace whatever the NPC was doing, and <code>ClearTarget</code> stops both. Pass a <code>Projectile</code> table to <code>Attack</code> to make a ranged guard, or call <code>SetAggroRange</code> to have it pick its own targets. See <a href="/docs/scripting/api/#ref-npc">NPC</a>.</p>
 <h3 id="r-collision-layers">Crates that pass through each other and glass that shots ignore <span class="status wip">Next release</span></h3>
 <p>This sorts props into collision layers. It needs API 1.43, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Tag crates <code>guide_code_crate</code>, window panes <code>guide_code_glass</code> and a pad <code>guide_code_scanpad</code>. <a href="/docs/scripting/api/#ref-collision"><code>Collision:CreateLayer</code></a> makes a layer (up to 8 per place, named by 1 to 32 characters, and a name can't be used twice). A new layer collides with every layer, itself included, until you change a pair. <code>SetLayerCollides("Crates", "Crates", false)</code> lets crates pass through each other, so a pile of them can't jam. Setting <code>CollisionLayer</code> on an entity moves it to a layer. The glass stays solid for players, because players always collide with it. The pad then fires a ray that looks through glass: <code>ExcludeLayers</code> leaves out entities on the layers you name, in queries from server scripts. The script saves the name of whatever the ray hit.</p>
-<div class="code"><span class="tag">Scripts/Server/GuideLayers.luau</span><pre data-example-kind="source" data-language="luau">Collision:CreateLayer(&quot;Crates&quot;)
+<div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/GuideLayers.luau</span><pre data-example-kind="source" data-language="luau">Collision:CreateLayer(&quot;Crates&quot;)
 Collision:CreateLayer(&quot;Glass&quot;)
 Collision:SetLayerCollides(&quot;Crates&quot;, &quot;Crates&quot;, false)
 
@@ -605,11 +1977,77 @@ World:OnTagged(&quot;guide_code_scanpad&quot;, function(pad)
 		State:Set(&quot;guide.scan&quot;, if hit then hit.Entity.Name else &quot;nothing&quot;)
 	end)
 end)
-</pre></div>
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/GuideLayers.ts</span><pre data-example-kind="source" data-language="typescript">Collision.createLayer(&quot;Crates&quot;);
+Collision.createLayer(&quot;Glass&quot;);
+Collision.setLayerCollides(&quot;Crates&quot;, &quot;Crates&quot;, false);
+
+World.onTagged(&quot;guide_code_crate&quot;, (crate: Entity) =&gt; {
+	crate.collisionLayer = &quot;Crates&quot;;
+});
+
+World.onTagged(&quot;guide_code_glass&quot;, (pane: Entity) =&gt; {
+	pane.collisionLayer = &quot;Glass&quot;;
+});
+
+World.onTagged(&quot;guide_code_scanpad&quot;, (pad: Entity) =&gt; {
+	pad.touched.connect((player: Player) =&gt; {
+		const hit = World.raycast(pad.position, new Vector3(3000, 0, 0), {
+			exclude: [pad],
+			excludeLayers: [&quot;Glass&quot;],
+		});
+		State.set(&quot;guide.scan&quot;, hit ? hit.entity.name : &quot;nothing&quot;);
+	});
+});
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/GuideLayers.js</span><pre data-example-kind="source" data-language="javascript">Collision.createLayer(&quot;Crates&quot;);
+Collision.createLayer(&quot;Glass&quot;);
+Collision.setLayerCollides(&quot;Crates&quot;, &quot;Crates&quot;, false);
+
+World.onTagged(&quot;guide_code_crate&quot;, (crate) =&gt; {
+	crate.collisionLayer = &quot;Crates&quot;;
+});
+
+World.onTagged(&quot;guide_code_glass&quot;, (pane) =&gt; {
+	pane.collisionLayer = &quot;Glass&quot;;
+});
+
+World.onTagged(&quot;guide_code_scanpad&quot;, (pad) =&gt; {
+	pad.touched.connect((player) =&gt; {
+		const hit = World.raycast(pad.position, new Vector3(3000, 0, 0), {
+			exclude: [pad],
+			excludeLayers: [&quot;Glass&quot;],
+		});
+		State.set(&quot;guide.scan&quot;, hit ? hit.entity.name : &quot;nothing&quot;);
+	});
+});
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/GuideLayers.py</span><pre data-example-kind="source" data-language="python">Collision.create_layer(&quot;Crates&quot;)
+Collision.create_layer(&quot;Glass&quot;)
+Collision.set_layer_collides(&quot;Crates&quot;, &quot;Crates&quot;, False)
+
+def tag_crate(crate):
+    crate.collision_layer = &quot;Crates&quot;
+
+World.on_tagged(&quot;guide_code_crate&quot;, tag_crate)
+
+def tag_glass(pane):
+    pane.collision_layer = &quot;Glass&quot;
+
+World.on_tagged(&quot;guide_code_glass&quot;, tag_glass)
+
+def setup_scanpad(pad):
+    def on_touch(player):
+        hit = World.raycast(pad.position, Vector3(3000, 0, 0), {
+            &quot;exclude&quot;: [pad],
+            &quot;exclude_layers&quot;: [&quot;Glass&quot;],
+        })
+        State.set(&quot;guide.scan&quot;, hit[&quot;entity&quot;].name if hit else &quot;nothing&quot;)
+    pad.touched.connect(on_touch)
+
+World.on_tagged(&quot;guide_code_scanpad&quot;, setup_scanpad)
+</pre></div></div>
 <p>Layers sort the objects of your place and never let a player through a wall. Every object starts on the <code>"Default"</code> layer, which collides with everything and can't be changed, and players, vehicles and NPCs can't be put on a layer. So you can't make a ghost wall or a door for one team: a player always meets the world. To let teammates walk through each other, set <code>Teams.TeammatesCollide = false</code>. Enemies, players on no team and the world still collide as normal. See <a href="/docs/scripting/concepts/#collision-layers">Collision layers</a> for the overview.</p>
 <h3 id="r-team-chat">Team chat, and muting players who are out <span class="status wip">Next release</span></h3>
 <p>This gives each team a private chat channel, and mutes a player's voice for everyone while they're dead. It needs API 1.44, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). You don't need to tag anything in the level, but players must already be on teams, as in the <a href="#r-teams-rounds">two teams and timed rounds</a> recipe. <a href="/docs/scripting/api/#ref-chat"><code>Chat:SetAudience</code></a> makes what a player types reach only the players you list (and the player themselves), up to 128 of them. The script sets it again whenever a team changes, and every 10 seconds, because the call returns false for a player who has no verified account yet (this happens for a moment after joining). <a href="/docs/scripting/api/#ref-voice"><code>Voice:SetMuted</code></a> silences a player for every listener until you unmute them. It doesn't depend on distance: the mute holds wherever they stand.</p>
-<div class="code"><span class="tag">Scripts/Server/GuideTeamChat.luau</span><pre data-example-kind="source" data-language="luau">local function refreshAudiences()
+<div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/GuideTeamChat.luau</span><pre data-example-kind="source" data-language="luau">local function refreshAudiences()
 	for _, player in Players:GetPlayers() do
 		if player.Team then
 			Chat:SetAudience(player, Teams:GetPlayers(player.Team))
@@ -634,11 +2072,90 @@ while true do
 	refreshAudiences()
 	task.wait(10)
 end
-</pre></div>
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/GuideTeamChat.ts</span><pre data-example-kind="source" data-language="typescript">function refreshAudiences() {
+	for (const player of Players.getPlayers()) {
+		if (player.team) {
+			Chat.setAudience(player, Teams.getPlayers(player.team));
+		} else {
+			Chat.setAudience(player, undefined);
+		}
+	}
+}
+
+Teams.playerTeamChanged.connect(refreshAudiences);
+
+Players.onPlayer((player: Player) =&gt; {
+	player.died.connect(() =&gt; {
+		Voice.setMuted(player, true);
+	});
+	player.respawned.connect(() =&gt; {
+		Voice.setMuted(player, false);
+	});
+});
+
+task.spawn(async () =&gt; {
+	while (true) {
+		refreshAudiences();
+		await task.wait(10);
+	}
+});
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/GuideTeamChat.js</span><pre data-example-kind="source" data-language="javascript">function refreshAudiences() {
+	for (const player of Players.getPlayers()) {
+		if (player.team) {
+			Chat.setAudience(player, Teams.getPlayers(player.team));
+		} else {
+			Chat.setAudience(player, undefined);
+		}
+	}
+}
+
+Teams.playerTeamChanged.connect(refreshAudiences);
+
+Players.onPlayer((player) =&gt; {
+	player.died.connect(() =&gt; {
+		Voice.setMuted(player, true);
+	});
+	player.respawned.connect(() =&gt; {
+		Voice.setMuted(player, false);
+	});
+});
+
+task.spawn(async () =&gt; {
+	while (true) {
+		refreshAudiences();
+		await task.wait(10);
+	}
+});
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/GuideTeamChat.py</span><pre data-example-kind="source" data-language="python">def refresh_audiences(*_):
+    for player in Players.get_players():
+        if player.team:
+            Chat.set_audience(player, Teams.get_players(player.team))
+        else:
+            Chat.set_audience(player, None)
+
+Teams.player_team_changed.connect(refresh_audiences)
+
+def on_player(player):
+    def on_died(*_):
+        Voice.set_muted(player, True)
+    def on_respawned(*_):
+        Voice.set_muted(player, False)
+    player.died.connect(on_died)
+    player.respawned.connect(on_respawned)
+
+Players.on_player(on_player)
+
+def run():
+    while True:
+        refresh_audiences()
+        yield task.wait(10)
+
+task.spawn(run)
+</pre></div></div>
 <p>These rules only ever make players quieter. A player who has muted or blocked someone themselves keeps them muted whatever your script does, and the chat filter, blocks and reports still apply to every team line. Team lines are private to the team, not hidden from Mantle: its moderators can still see them. Voice goes straight between players' games, not through the server, so a player on a modified game could ignore a mute. Use these calls to run your game, never to protect a secret. See <a href="/docs/scripting/concepts/#private-chat-voice">Private chat and voice</a> for the overview.</p>
 <h3 id="r-laser-marker">A laser flash that scorches the wall <span class="status wip">Next release</span></h3>
 <p>This builds a pad that fires a red laser along the X axis and leaves a scorch mark where it lands. It needs API 1.44, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Tag the pad <code>guide_code_laserpad</code>. A raycast finds the wall, then <a href="/docs/scripting/api/#ref-effects"><code>Effects:Beam</code></a> draws a beam 6 cm wide for 0.2 seconds, <code>Effects:Decal</code> leaves a <code>"Scorch"</code> mark 80 cm wide for 30 seconds, and <code>Effects:Play</code> adds an <code>"Impact"</code> puff. The raycast's <code>Normal</code> tells the decal which way the wall faces. The pad waits one second between flashes, so it makes 3 effect calls a second. A server script may make 10 a second.</p>
-<div class="code"><span class="tag">Scripts/Server/GuideLaserPad.luau</span><pre data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_laserpad&quot;, function(pad)
+<div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/GuideLaserPad.luau</span><pre data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_laserpad&quot;, function(pad)
 	local ready = true
 	pad.Touched:Connect(function(player)
 		if not ready then
@@ -656,7 +2173,61 @@ end
 		ready = true
 	end)
 end)
-</pre></div>
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/GuideLaserPad.ts</span><pre data-example-kind="source" data-language="typescript">World.onTagged(&quot;guide_code_laserpad&quot;, (pad: Entity) =&gt; {
+	let ready = true;
+	pad.touched.connect(async (player: Player) =&gt; {
+		if (!ready) {
+			return;
+		}
+		ready = false;
+		const from = pad.position.add(new Vector3(0, 0, 50));
+		const hit = World.raycast(from, new Vector3(3000, 0, 0), { exclude: [pad], ignorePlayers: true });
+		if (hit) {
+			Effects.beam(from, hit.position, { color: &quot;#FF3030&quot;, width: 6, duration: 0.2 });
+			Effects.decal(hit.position, hit.normal, { style: &quot;Scorch&quot;, size: 80, lifetime: 30 });
+			Effects.play(&quot;Impact&quot;, hit.position);
+		}
+		await task.wait(1);
+		ready = true;
+	});
+});
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/GuideLaserPad.js</span><pre data-example-kind="source" data-language="javascript">World.onTagged(&quot;guide_code_laserpad&quot;, (pad) =&gt; {
+	let ready = true;
+	pad.touched.connect(async (player) =&gt; {
+		if (!ready) {
+			return;
+		}
+		ready = false;
+		const from = pad.position.add(new Vector3(0, 0, 50));
+		const hit = World.raycast(from, new Vector3(3000, 0, 0), { exclude: [pad], ignorePlayers: true });
+		if (hit) {
+			Effects.beam(from, hit.position, { color: &quot;#FF3030&quot;, width: 6, duration: 0.2 });
+			Effects.decal(hit.position, hit.normal, { style: &quot;Scorch&quot;, size: 80, lifetime: 30 });
+			Effects.play(&quot;Impact&quot;, hit.position);
+		}
+		await task.wait(1);
+		ready = true;
+	});
+});
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/GuideLaserPad.py</span><pre data-example-kind="source" data-language="python">def setup(pad):
+    pad_state = {&quot;ready&quot;: True}
+
+    def on_touch(player):
+        if not pad_state[&quot;ready&quot;]:
+            return
+        pad_state[&quot;ready&quot;] = False
+        start = pad.position + Vector3(0, 0, 50)
+        hit = World.raycast(start, Vector3(3000, 0, 0), {&quot;exclude&quot;: [pad], &quot;ignore_players&quot;: True})
+        if hit:
+            Effects.beam(start, hit[&quot;position&quot;], {&quot;color&quot;: &quot;#FF3030&quot;, &quot;width&quot;: 6, &quot;duration&quot;: 0.2})
+            Effects.decal(hit[&quot;position&quot;], hit[&quot;normal&quot;], {&quot;style&quot;: &quot;Scorch&quot;, &quot;size&quot;: 80, &quot;lifetime&quot;: 30})
+            Effects.play(&quot;Impact&quot;, hit[&quot;position&quot;])
+        yield task.wait(1)
+        pad_state[&quot;ready&quot;] = True
+    pad.touched.connect(on_touch)
+
+World.on_tagged(&quot;guide_code_laserpad&quot;, setup)
+</pre></div></div>
 <p>All three effects are cosmetic: they hurt nobody and change nothing in the world. From a server script every player sees them, but a player who joins later doesn't. A beam longer than 1,000 m is cut short, and a player's machine keeps at most 16 beams and 64 decals at once. <code>Style</code> can also be <code>"BulletHole"</code> (the default) or <code>"Splat"</code>. See <a href="/docs/scripting/api/#ref-effects">Effects</a>.</p>
 <h3 id="r-alternate-hud">Standalone HUD and round timer</h3><p>This builds a self-contained round timer and HUD, with one server and client pair for each language to match the standalone coin versions. There&rsquo;s nothing to tag in the level. Use one pair instead of the main round timer and HUD recipe, not as well as it.</p><div class="v has-ts has-js has-py"><div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Server/Rounds.luau</span><pre id="ex-rounds-luau" data-example-kind="source" data-language="luau">local round = 0
 while true do
