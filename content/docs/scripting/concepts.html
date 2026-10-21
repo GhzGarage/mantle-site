@@ -1116,7 +1116,7 @@ task.spawn(check_status)
       <li><b>Limits:</b> 50 secrets for a place, and up to 8 KiB for each value.</li>
       <li><b>Where they work:</b> server scripts on a Mantle-hosted dedicated server only. Community servers don't get secrets, and neither does standalone or listen play of a published place. There, <code>IsAvailable</code> is false and <code>Get</code> returns nil for every name. It's also false when the server couldn't reach Mantle to load them.</li>
       <li><b>When they load:</b> before any script starts, so the value is there from your script's first line. A change reaches servers that start after it. A server that's already running keeps the values it loaded.</li>
-      <li><b>Setting them:</b> the editor screen for setting secrets isn't shipped yet. To test, run the place file locally with <code>-MantlePlace</code> and put your values in a <code>secrets.local.json</code> file next to it, like <code>{"WEATHER_API_KEY": "abc123"}</code>. Keep that file out of version control.</li>
+      <li><b>Setting them:</b> in the editor, under Place settings. See <a href="/docs/creators/hosting-data/#secrets">Secrets</a> for creators, including how to test with a <code>secrets.local.json</code> file.</li>
     </ul>
     <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/CheckSecrets.luau</span><pre data-example-kind="source" data-language="luau">if not Secrets:IsAvailable() then
 	print(&quot;no secrets on this server&quot;)
