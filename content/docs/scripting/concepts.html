@@ -13,6 +13,7 @@
         <li><code>Players.LocalPlayer</code> is always set in a client script: client scripts start once the local player exists.</li>
         <li>Asking the server for things with <code>Remote:FireServer</code>.</li></ul></div>
     </div>
+    <p>Server scripts are private: only the creator who uploaded one, and the owner of a place or package that uses it, can read its source. Players never get it. Client and shared scripts are unchanged: a player's machine runs them, so treat their source as public.</p>
     <p>In a session, server scripts run on the server and client scripts run on each player's machine as they join. Test multiplayer behavior by publishing and joining with the Mantle client, and include a player who joins late. Scripts don't run in the editor's Play (PIE) mode: to try them on your own PC first, use <b>Tools → Mantle → Test Locally</b> (see <a href="/docs/creators/plugin/#test-locally">Testing with Test Locally</a>).</p>
     <h2 id="tags">Tags connect scripts to things</h2>
     <p>Give actors a tag in the editor, then write one script for every actor with that tag. These examples use the tag <code>guide_code_killbrick</code>. The script covers every tagged actor already placed and any added later, clones included. You never need to attach a script to an actor.</p>
@@ -1063,3 +1064,116 @@ end)</pre></div>
 
 Players.on_player(on_player)</pre></div>
     </div>
+    <h3 id="http">Calling web services (API 1.46)</h3>
+    <p>A server script can call a web service: your own backend, a Discord webhook or any public data API. <code>Http:RequestAsync(options)</code> <span class="side s">Server</span> sends the request. Players' games never make these requests. <code>Http:IsAvailable()</code> <span class="side s">Server</span> is false when the server's operator turned outbound requests off, so a place can quietly do without them.</p>
+    <p><code>RequestAsync</code> returns a signal that fires once with the result. Call <code>Wait()</code> on it right away (see <a href="#waiting">Waiting and timers</a>). The result has <code>ok</code> (true only for a 2xx answer), <code>status</code>, <code>headers</code>, <code>body</code>, <code>url</code>, <code>error</code> and <code>code</code>. A 404 or 500 still comes back with its <code>status</code> and <code>body</code>, and <code>code</code> is <code>"http_status"</code>. A request that failed after it was sent has <code>ok = false</code> and a <code>code</code> such as <code>"dns_failed"</code>, <code>"timeout"</code> or <code>"response_too_large"</code>.</p>
+    <p>In Python, <code>wait()</code> only works inside a generator, and the result comes back in a tuple: <code>token = Http.request_async({...}).wait()</code>, then <code>yield token</code>, then <code>result = token.result[0]</code>.</p>
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/WebStatus.luau</span><pre data-example-kind="source" data-language="luau">local result = Http:RequestAsync({ url = &quot;https://example.com/api/status&quot; }):Wait()
+if result.ok then
+	local data = Http:JsonDecode(result.body)
+	print(data.message)
+else
+	warn(`request failed: {result.code}`)
+end
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/WebStatus.ts</span><pre data-example-kind="source" data-language="typescript">task.spawn(async () =&gt; {
+	const result = await Http.requestAsync({ url: &quot;https://example.com/api/status&quot; }).wait();
+	if (result.ok) {
+		const data = Http.jsonDecode(result.body ?? &quot;&quot;);
+		console.log(data.message);
+	} else {
+		console.warn(`request failed: ${result.code}`);
+	}
+});
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/WebStatus.js</span><pre data-example-kind="source" data-language="javascript">task.spawn(async () =&gt; {
+	const result = await Http.requestAsync({ url: &quot;https://example.com/api/status&quot; }).wait();
+	if (result.ok) {
+		const data = Http.jsonDecode(result.body ?? &quot;&quot;);
+		console.log(data.message);
+	} else {
+		console.warn(`request failed: ${result.code}`);
+	}
+});
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/WebStatus.py</span><pre data-example-kind="source" data-language="python">def check_status():
+    token = Http.request_async({&quot;url&quot;: &quot;https://example.com/api/status&quot;}).wait()
+    yield token
+    result = token.result[0]
+    if result[&quot;ok&quot;]:
+        data = Http.json_decode(result[&quot;body&quot;])
+        print(data[&quot;message&quot;])
+    else:
+        warn(f&quot;request failed: {result['code']}&quot;)
+
+task.spawn(check_status)
+</pre></div></div>
+    <p><code>Http:JsonEncode(value)</code> turns a value into JSON text, and <code>Http:JsonDecode(text)</code> turns JSON text into a value (objects become tables with string keys, arrays become lists and null becomes nil). Both work on the server and on clients, and both raise an error for something that isn't valid JSON. JavaScript and Python have their own <code>JSON</code> and <code>json</code>. Luau has none, so these are mostly for Luau.</p>
+    <p>An address must start with <code>http://</code> or <code>https://</code> and use port 80, 443 or 1024 and up. Private and internal addresses are always refused. A body can be up to 2 MiB (not with GET) and a response up to 8 MiB. A timeout is 1 to 60 seconds (30 by default), and up to 5 redirects are followed. A server can have 16 requests under way at once, with 128 more waiting, and about 600 a minute. A request that's refused before it's sent raises an error that starts with a code, such as <code>bad_url</code>, <code>blocked_address</code>, <code>blocked_port</code>, <code>body_too_large</code>, <code>rate_limited</code> or <code>disabled</code>. Catch it with <code>pcall</code> (Luau) or <code>try</code> (JavaScript, TypeScript and Python). See <a href="/docs/scripting/api/#ref-http">Http</a> for every member.</p>
+    <p>Mantle logs the host, port, status and size of each request, never its path, headers or body. It also keeps a per-minute summary for each script and host (how many requests, how they ended and how many bytes) for 180 days, so moderators can look into abuse. Don't put a key in a script: store it as a <a href="#secrets">secret</a>.</p>
+
+    <h3 id="secrets">Secrets (API 1.47)</h3>
+    <p>A secret is a named value, such as an API key or a webhook address, that you store for your place instead of writing it in a script. <code>Secrets:Get(name)</code> <span class="side s">Server</span> returns the value, or nil when the place has no secret by that name. <code>Secrets:IsAvailable()</code> <span class="side s">Server</span> says whether this server loaded the place's secrets at all. Check it first, so a place can say what's missing instead of failing quietly.</p>
+    <ul>
+      <li><b>Names:</b> upper-case letters, digits and underscores, starting with a letter, up to 64 characters, like <code>DISCORD_WEBHOOK</code>. Any other name is an error.</li>
+      <li><b>Limits:</b> 50 secrets for a place, and up to 8 KiB for each value.</li>
+      <li><b>Where they work:</b> server scripts on a Mantle-hosted dedicated server only. Community servers don't get secrets, and neither does standalone or listen play of a published place. There, <code>IsAvailable</code> is false and <code>Get</code> returns nil for every name. It's also false when the server couldn't reach Mantle to load them.</li>
+      <li><b>When they load:</b> before any script starts, so the value is there from your script's first line. A change reaches servers that start after it. A server that's already running keeps the values it loaded.</li>
+      <li><b>Setting them:</b> the editor screen for setting secrets isn't shipped yet. To test, run the place file locally with <code>-MantlePlace</code> and put your values in a <code>secrets.local.json</code> file next to it, like <code>{"WEATHER_API_KEY": "abc123"}</code>. Keep that file out of version control.</li>
+    </ul>
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/CheckSecrets.luau</span><pre data-example-kind="source" data-language="luau">if not Secrets:IsAvailable() then
+	print(&quot;no secrets on this server&quot;)
+elseif not Secrets:Get(&quot;WEATHER_API_KEY&quot;) then
+	print(&quot;set WEATHER_API_KEY for this place&quot;)
+end
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/CheckSecrets.ts</span><pre data-example-kind="source" data-language="typescript">if (!Secrets.isAvailable()) {
+	console.log(&quot;no secrets on this server&quot;);
+} else if (Secrets.get(&quot;WEATHER_API_KEY&quot;) === undefined) {
+	console.log(&quot;set WEATHER_API_KEY for this place&quot;);
+}
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/CheckSecrets.js</span><pre data-example-kind="source" data-language="javascript">if (!Secrets.isAvailable()) {
+	console.log(&quot;no secrets on this server&quot;);
+} else if (Secrets.get(&quot;WEATHER_API_KEY&quot;) === undefined) {
+	console.log(&quot;set WEATHER_API_KEY for this place&quot;);
+}
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/CheckSecrets.py</span><pre data-example-kind="source" data-language="python">if not Secrets.is_available():
+    print(&quot;no secrets on this server&quot;)
+elif Secrets.get(&quot;WEATHER_API_KEY&quot;) is None:
+    print(&quot;set WEATHER_API_KEY for this place&quot;)
+</pre></div></div>
+    <div class="callout warn"><strong>Never send a secret to a player</strong><p>Anything a client gets, its player can read. Don't pass a secret's value in a remote event, State, an attribute, chat or UI. Use it to call a service from the server. Until secrets work everywhere, use keys you can rotate, and never put a long-lived key in a script.</p></div>
+
+    <h3 id="avatar-editor">The avatar editor (API 1.48)</h3>
+    <p>A client script can open Mantle's avatar editor over the running place, so a player changes their own look while the world goes on behind it: a barber chair that only changes hair, or a wardrobe that only changes clothes. <code>Avatar:OpenEditor(options?)</code> <span class="side c">Client</span> opens it and returns true. It returns false, and opens nothing, when the player has no character or the editor or another Mantle screen is already open. The player sees only items they own or that are free, and Save puts the look on their account just like Mantle's own avatar screen. Esc, the gamepad's B and the Close button shut it, asking first about unsaved changes.</p>
+    <ul>
+      <li><b>Categories:</b> a list that limits what the editor offers: <code>"body"</code>, <code>"hair"</code>, <code>"clothes"</code>, <code>"accessories"</code>, <code>"emotes"</code> or <code>"all"</code>, or slot names such as <code>"top"</code> or <code>"acc_hat"</code>. Leave it out to offer everything: only then are outfits offered too. An unknown name is a script error.</li>
+      <li><b>Title:</b> a heading over the panel, up to 40 characters.</li>
+      <li><b>FreezeCharacter:</b> true by default, which holds the character still and turns the camera onto it. False leaves the player in control and the camera where it is.</li>
+    </ul>
+    <p><code>Avatar:CloseEditor()</code> <span class="side c">Client</span> closes it like the Close button, without asking: unsaved changes are put back. It returns false when the editor wasn't open. <code>Avatar:IsEditorOpen()</code> <span class="side c">Client</span> says whether it's open, whoever opened it. The signals <code>EditorOpened()</code> and <code>EditorClosed(saved)</code> fire when it opens and closes, and <code>saved</code> is true when the player saved a look while it was open. <code>LookChanged(slot, oldItem, newItem)</code> fires once for each slot whose item changed, when the player's account confirms a save (from this editor or from Mantle's own avatar screen). The slot is <code>"avatar"</code> or a slot name such as <code>"hair"</code>, <code>"top"</code> or <code>"acc_hat"</code>, and the items are item ids, nil for nothing worn there. All of these are client only: a server script that calls them gets the usual error. See the <a href="/docs/scripting/recipes/#r-avatar-editor">barber recipe</a>, and <a href="/docs/scripting/api/#ref-avatar">Avatar</a> for every member.</p>
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Client/Barber.luau</span><pre data-example-kind="source" data-language="luau">Avatar.EditorClosed:Connect(function(saved)
+	if saved then
+		UI:Toast(&quot;Nice look!&quot;)
+	end
+end)
+
+local opened = Avatar:OpenEditor({ Categories = { &quot;hair&quot; }, Title = &quot;Barber&quot; })
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Client/Barber.ts</span><pre data-example-kind="source" data-language="typescript">Avatar.editorClosed.connect((saved) =&gt; {
+	if (saved) {
+		UI.toast(&quot;Nice look!&quot;);
+	}
+});
+
+const opened = Avatar.openEditor({ categories: [&quot;hair&quot;], title: &quot;Barber&quot; });
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Client/Barber.js</span><pre data-example-kind="source" data-language="javascript">Avatar.editorClosed.connect((saved) =&gt; {
+	if (saved) {
+		UI.toast(&quot;Nice look!&quot;);
+	}
+});
+
+const opened = Avatar.openEditor({ categories: [&quot;hair&quot;], title: &quot;Barber&quot; });
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Client/Barber.py</span><pre data-example-kind="source" data-language="python">def on_closed(saved):
+    if saved:
+        UI.toast(&quot;Nice look!&quot;)
+
+Avatar.editor_closed.connect(on_closed)
+
+opened = Avatar.open_editor({&quot;categories&quot;: [&quot;hair&quot;], &quot;title&quot;: &quot;Barber&quot;})
+</pre></div></div>
