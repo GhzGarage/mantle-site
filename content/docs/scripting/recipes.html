@@ -2403,3 +2403,223 @@ time_label.set_parent(frame)
 State.observe(&quot;alt.round&quot;, lambda value: round_label.set_text(f&quot;Round {value or 0}&quot;))
 State.observe(&quot;alt.timeLeft&quot;, lambda value: time_label.set_text(f&quot;Time left: {value or 0}s&quot;))
 </pre></div></div></div>
+<h3 id="r-weather-http">Fetching data from a web API with a secret key</h3>
+<p>This asks a web service for the temperature once a minute and shares it through State, so every script can read it. It needs API 1.47 (see <a href="/docs/scripting/api/#versions">API versions</a>). It runs on the server only: <a href="/docs/scripting/api/#ref-http"><code>Http</code></a> calls only work there, and <a href="/docs/scripting/api/#ref-secrets"><code>Secrets</code></a> only on a Mantle-hosted dedicated server. Store the API key as a secret named <code>WEATHER_API_KEY</code>, or put it in a <code>secrets.local.json</code> file for a local test (see <a href="/docs/scripting/concepts/#secrets">Secrets</a>). The script checks <code>Http:IsAvailable()</code> and <code>Secrets:IsAvailable()</code> first, then reads the key with <code>Secrets:Get</code>, and stops with a message when something is missing. The address <code>api.example.com</code> is made up: use your own service. A request that's refused before it's sent raises an error, and a service that answers with an error gives <code>ok = false</code>. The script catches both, skips that minute and tries again.</p>
+<div class="v has-ts has-js has-py"><div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Server/GuideWeather.luau</span><pre data-example-kind="source" data-language="luau">local function fetchTemperature(key)
+	local request = Http:RequestAsync({
+		url = &quot;https://api.example.com/v1/weather?city=Oslo&quot;,
+		headers = { Authorization = &quot;Bearer &quot; .. key },
+	})
+	local result = request:Wait()
+	if not result.ok then
+		error(`weather request failed: {result.code}`)
+	end
+	return Http:JsonDecode(result.body).temperature
+end
+
+local function run()
+	if not Http:IsAvailable() then
+		print(&quot;Outbound HTTP is off on this server.&quot;)
+		return
+	end
+	if not Secrets:IsAvailable() then
+		print(&quot;No secrets on this server.&quot;)
+		return
+	end
+	local key = Secrets:Get(&quot;WEATHER_API_KEY&quot;)
+	if not key then
+		print(&quot;Set WEATHER_API_KEY for this place.&quot;)
+		return
+	end
+	while true do
+		local ok, value = pcall(fetchTemperature, key)
+		if ok then
+			State:Set(&quot;guide.weather.temp&quot;, value)
+		else
+			warn(`Weather update skipped: {value}`)
+		end
+		task.wait(60)
+	end
+end
+
+task.spawn(run)
+</pre></div></div><div class="v" data-v="ts"><div class="code"><span class="tag">Scripts/Server/GuideWeather.ts</span><pre data-example-kind="source" data-language="typescript">async function run(): Promise&lt;void&gt; {
+	if (!Http.isAvailable()) {
+		console.log(&quot;Outbound HTTP is off on this server.&quot;);
+		return;
+	}
+	if (!Secrets.isAvailable()) {
+		console.log(&quot;No secrets on this server.&quot;);
+		return;
+	}
+	const key = Secrets.get(&quot;WEATHER_API_KEY&quot;);
+	if (key === undefined) {
+		console.log(&quot;Set WEATHER_API_KEY for this place.&quot;);
+		return;
+	}
+	while (true) {
+		try {
+			const result = await Http.requestAsync({
+				url: &quot;https://api.example.com/v1/weather?city=Oslo&quot;,
+				headers: { Authorization: `Bearer ${key}` },
+			}).wait();
+			if (!result.ok) {
+				throw new Error(`weather request failed: ${result.code}`);
+			}
+			const data = Http.jsonDecode(result.body ?? &quot;&quot;);
+			State.set(&quot;guide.weather.temp&quot;, data.temperature);
+		} catch (error) {
+			console.warn(`Weather update skipped: ${error}`);
+		}
+		await task.wait(60);
+	}
+}
+
+run();
+</pre></div></div><div class="v" data-v="js"><div class="code"><span class="tag">Scripts/Server/GuideWeather.js</span><pre data-example-kind="source" data-language="javascript">async function run() {
+	if (!Http.isAvailable()) {
+		console.log(&quot;Outbound HTTP is off on this server.&quot;);
+		return;
+	}
+	if (!Secrets.isAvailable()) {
+		console.log(&quot;No secrets on this server.&quot;);
+		return;
+	}
+	const key = Secrets.get(&quot;WEATHER_API_KEY&quot;);
+	if (key === undefined) {
+		console.log(&quot;Set WEATHER_API_KEY for this place.&quot;);
+		return;
+	}
+	while (true) {
+		try {
+			const result = await Http.requestAsync({
+				url: &quot;https://api.example.com/v1/weather?city=Oslo&quot;,
+				headers: { Authorization: `Bearer ${key}` },
+			}).wait();
+			if (!result.ok) {
+				throw new Error(`weather request failed: ${result.code}`);
+			}
+			const data = Http.jsonDecode(result.body ?? &quot;&quot;);
+			State.set(&quot;guide.weather.temp&quot;, data.temperature);
+		} catch (error) {
+			console.warn(`Weather update skipped: ${error}`);
+		}
+		await task.wait(60);
+	}
+}
+
+run();
+</pre></div></div><div class="v" data-v="py"><div class="code"><span class="tag">Scripts/Server/GuideWeather.py</span><pre data-example-kind="source" data-language="python">def run():
+    if not Http.is_available():
+        print(&quot;Outbound HTTP is off on this server.&quot;)
+        return
+    if not Secrets.is_available():
+        print(&quot;No secrets on this server.&quot;)
+        return
+    key = Secrets.get(&quot;WEATHER_API_KEY&quot;)
+    if key is None:
+        print(&quot;Set WEATHER_API_KEY for this place.&quot;)
+        return
+    while True:
+        try:
+            token = Http.request_async({
+                &quot;url&quot;: &quot;https://api.example.com/v1/weather?city=Oslo&quot;,
+                &quot;headers&quot;: {&quot;Authorization&quot;: &quot;Bearer &quot; + key},
+            }).wait()
+        except Exception as error:
+            warn(f&quot;Weather request refused: {error}&quot;)
+            yield task.wait(60)
+            continue
+        yield token
+        result = token.result[0]
+        if result[&quot;ok&quot;]:
+            try:
+                data = Http.json_decode(result[&quot;body&quot;])
+                State.set(&quot;guide.weather.temp&quot;, data[&quot;temperature&quot;])
+            except Exception as error:
+                warn(f&quot;Weather reply unreadable: {error}&quot;)
+        else:
+            warn(f&quot;Weather request failed: {result['code']}&quot;)
+        yield task.wait(60)
+
+task.spawn(run)
+</pre></div></div></div>
+<p>Any script can read the number with <code>State:Observe("guide.weather.temp", ...)</code> (see <a href="/docs/scripting/concepts/#network">Talking over the network</a>). Never put the key itself in State, a remote, an attribute, chat or UI: a client can read anything it's given. Secrets only work on hosted servers for now, so use keys you can rotate and never put a long-lived key in a script.</p>
+<h3 id="r-avatar-editor">A barber key that opens the avatar editor</h3>
+<p>This opens the avatar editor over the game when a player presses J, offers only hair and clothes, and reacts when they close it. It needs API 1.48 (see <a href="/docs/scripting/api/#versions">API versions</a>) and runs on the client. <a href="/docs/scripting/api/#ref-avatar"><code>Avatar:OpenEditor</code></a> returns false, and opens nothing, when the player has no character or the editor or another Mantle screen is already open, so the script shows a toast then. <code>Categories</code> limits what the editor offers, and <code>Title</code> is the heading over the panel. <code>EditorClosed</code> fires when the editor shuts, and <code>saved</code> is true when the player saved a look while it was open. <code>LookChanged</code> then fires once for each slot that changed, when the player's account confirms the save. Pick another key from <code>Input:GetBindableKeys()</code> if J doesn't suit your place. See <a href="/docs/scripting/concepts/#avatar-editor">The avatar editor</a>.</p>
+<div class="v has-ts has-js has-py"><div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Client/GuideBarber.luau</span><pre data-example-kind="source" data-language="luau">Avatar.EditorClosed:Connect(function(saved)
+	if saved then
+		UI:Toast(&quot;Looking sharp!&quot;)
+	end
+end)
+
+Avatar.LookChanged:Connect(function(slot, old, new)
+	print(`{slot} changed: {old} -&gt; {new}`)
+end)
+
+Input:BindAction(&quot;barber&quot;, { &quot;J&quot; }, function(phase)
+	if phase ~= &quot;Began&quot; then
+		return
+	end
+	local opened = Avatar:OpenEditor({ Categories = { &quot;hair&quot;, &quot;clothes&quot; }, Title = &quot;Barber&quot; })
+	if not opened then
+		UI:Toast(&quot;The editor can't open right now.&quot;)
+	end
+end)
+</pre></div></div><div class="v" data-v="ts"><div class="code"><span class="tag">Scripts/Client/GuideBarber.ts</span><pre data-example-kind="source" data-language="typescript">Avatar.editorClosed.connect((saved) =&gt; {
+	if (saved) {
+		UI.toast(&quot;Looking sharp!&quot;);
+	}
+});
+
+Avatar.lookChanged.connect((slot, oldItem, newItem) =&gt; {
+	console.log(`${slot} changed: ${oldItem} -&gt; ${newItem}`);
+});
+
+Input.bindAction(&quot;barber&quot;, [&quot;J&quot;], (phase) =&gt; {
+	if (phase !== &quot;Began&quot;) {
+		return;
+	}
+	const opened = Avatar.openEditor({ categories: [&quot;hair&quot;, &quot;clothes&quot;], title: &quot;Barber&quot; });
+	if (!opened) {
+		UI.toast(&quot;The editor can't open right now.&quot;);
+	}
+});
+</pre></div></div><div class="v" data-v="js"><div class="code"><span class="tag">Scripts/Client/GuideBarber.js</span><pre data-example-kind="source" data-language="javascript">Avatar.editorClosed.connect((saved) =&gt; {
+	if (saved) {
+		UI.toast(&quot;Looking sharp!&quot;);
+	}
+});
+
+Avatar.lookChanged.connect((slot, oldItem, newItem) =&gt; {
+	console.log(`${slot} changed: ${oldItem} -&gt; ${newItem}`);
+});
+
+Input.bindAction(&quot;barber&quot;, [&quot;J&quot;], (phase) =&gt; {
+	if (phase !== &quot;Began&quot;) {
+		return;
+	}
+	const opened = Avatar.openEditor({ categories: [&quot;hair&quot;, &quot;clothes&quot;], title: &quot;Barber&quot; });
+	if (!opened) {
+		UI.toast(&quot;The editor can't open right now.&quot;);
+	}
+});
+</pre></div></div><div class="v" data-v="py"><div class="code"><span class="tag">Scripts/Client/GuideBarber.py</span><pre data-example-kind="source" data-language="python">def on_closed(saved):
+    if saved:
+        UI.toast(&quot;Looking sharp!&quot;)
+
+def on_look_changed(slot, old_item, new_item):
+    print(f&quot;{slot} changed: {old_item} -&gt; {new_item}&quot;)
+
+Avatar.editor_closed.connect(on_closed)
+Avatar.look_changed.connect(on_look_changed)
+
+def on_key(phase, key):
+    if phase != &quot;Began&quot;:
+        return
+    opened = Avatar.open_editor({&quot;categories&quot;: [&quot;hair&quot;, &quot;clothes&quot;], &quot;title&quot;: &quot;Barber&quot;})
+    if not opened:
+        UI.toast(&quot;The editor can't open right now.&quot;)
+
+Input.bind_action(&quot;barber&quot;, [&quot;J&quot;], on_key)
+</pre></div></div></div>
