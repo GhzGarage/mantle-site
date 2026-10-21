@@ -10,7 +10,7 @@
 <li><b>Use someone else's:</b> get a public package from the <a href="/docs/players/playing/#assets">ASSETS tab</a> in Mantle or from <b>Tools → Mantle → Library...</b> in Unreal, add it to your place's storage, and it runs in your place.</li>
 <li><b>Add Script Points:</b> drop them where the package should act, and set each point's parameters in the Details panel.</li>
 </ul>
-<p>A place that uses script packages or Script Points needs script API 1.36. You don't set this yourself: Mantle raises the place's script API version to 1.36 for you when the place has a package (in the level's <code>Packages/</code> folder or stored in Place Settings → Storage) or a Script Point.</p>
+<p>A place that uses script packages or Script Points needs script API 1.36. You don't set this yourself. Mantle sets it when your place has a package (in the level's <code>Packages/</code> folder or stored in Place Settings → Storage) or a Script Point.</p>
 <p>A package's scripts run <b>once per side</b> (once on the server, once on each player's machine), not once per Script Point. The scripts loop over their points with <a href="/docs/scripting/concepts/#packages"><code>Script.Points</code></a>. A stored package with no Script Points still runs, which suits things that apply to the whole place, such as a double jump.</p>
 
 <h2 id="make">Making a package</h2>
@@ -58,7 +58,7 @@
 <div class="table-wrap"><table><thead><tr><th>Key</th><th>Rules</th></tr></thead><tbody>
 <tr><td><code>name</code></td><td>A letter followed by up to 31 letters, digits or <code>_</code>. Names in one list must be different even ignoring capital letters (<code>Speed</code> and <code>speed</code> clash).</td></tr>
 <tr><td><code>type</code></td><td><code>"string"</code>, <code>"number"</code>, <code>"boolean"</code> or <code>"choice"</code>.</td></tr>
-<tr><td><code>default</code></td><td>Written as its type: <code>100</code> for a number, <code>true</code> or <code>false</code> for a boolean, text in quotes for a string or a choice (a choice's default is one of its options). At most 256 characters, with no space at the start or end. A number, boolean or choice needs a default unless it's marked <code>"required": true</code>, so a place that leaves it out still has a value.</td></tr>
+<tr><td><code>default</code></td><td>Written as its type: <code>100</code> for a number, <code>true</code> or <code>false</code> for a boolean, text in quotes for a string or a choice (a choice's default is one of its options). At most 256 characters, with no space at the start or end. A number, boolean or choice needs a default unless it's marked <code>"required": true</code>.</td></tr>
 <tr><td><code>required</code></td><td><code>true</code> or <code>false</code> (the default). A required value with no default must be set by the place, or the place can't be published. A required value that has a default is satisfied by the default.</td></tr>
 <tr><td><code>min</code>, <code>max</code></td><td>Numbers only, both optional: the lowest and highest value allowed. <code>min</code> can't be above <code>max</code>, and the default must fit between them.</td></tr>
 <tr><td><code>options</code></td><td>Choices only: 2 to 32 different entries, each 1 to 64 characters.</td></tr>
@@ -67,7 +67,7 @@
 <p>Other keys in <code>package.json</code> are ignored.</p>
 
 <h3 id="example">A package's script</h3>
-<p>This server script runs once and checks every zone. Each Script Point is an entity at the point's position, and its parameters are read with <code>GetAttribute</code>, already turned into numbers and true/false as the manifest declares them. A player's <code>Position</code> is nil while they respawn, so the script checks it first.</p>
+<p>This server script runs once and checks every zone. Each Script Point sits at the point's position. The script reads its parameters with <code>GetAttribute</code>, as the numbers and true/false values the manifest declares. A player's <code>Position</code> is nil while they respawn, so the script checks it first.</p>
 <div class="code"><span class="tag">Packages/Hazards/Shared/Config.luau</span><pre data-example-kind="snippet">return { DamageScale = 1 }</pre></div>
 <div class="code"><span class="tag">Packages/Hazards/Server/Main.luau</span><pre data-example-kind="snippet">local Config = require("Config")   -- this package's Shared/Config.luau
 
@@ -84,7 +84,7 @@ end</pre></div>
 <p>Inside a package, a bare name like <code>require("Config")</code> looks only in the package itself. A package can't reach the place's own scripts, and the place's scripts reach a package's modules with <code>require("@Hazards/Config")</code>. They talk to each other through Events, State and Net. See <a href="/docs/scripting/concepts/#packages">Script packages and Script Points</a>.</p>
 
 <h2 id="test">Testing a package</h2>
-<p><b>Test Locally</b> can't fetch library items, so a package you stored from another creator doesn't run there. The Mantle Preview panel warns "This place stores library items (Place Settings &gt; Storage); a preview cannot fetch them, so it runs without." To try a package, put it in the level's <code>Packages/</code> folder. <b>Test Locally</b> runs every package in that folder exactly as a stored one would, along with its Script Points and their typed parameters, even before the package has been published or stored. A place file you've exported to disk and launch by itself can also use a package that's only in the <code>Packages/</code> folder beside it; the log says so with a line starting "MANTLE_SCRIPT_PACKAGE '[name]' is not in the place's storage".</p>
+<p><b>Test Locally</b> can't fetch library items, so a package you stored from another creator doesn't run there. The Mantle Preview panel warns "This place stores library items (Place Settings &gt; Storage); a preview cannot fetch them, so it runs without." To try a package, put it in the level's <code>Packages/</code> folder. <b>Test Locally</b> runs every package in that folder just as a stored one would, along with its Script Points and their parameters. It works even before you publish the package.</p>
 
 <h2 id="publish">Publishing a package <span class="status live">Live</span></h2>
 <p>You don't publish a package on its own. When you <a href="/docs/creators/publishing/">publish</a> your place:</p>
@@ -118,7 +118,7 @@ end</pre></div>
 <h2 id="script-points">Script Points <span class="status live">Live</span></h2>
 <p>Choose <b>Tools → Mantle → Add Script Point</b>. The point appears in front of you in the viewport, with the package's name floating above it in the editor (players never see a Script Point). In its Details panel:</p>
 <div class="table-wrap"><table><thead><tr><th>Field</th><th>What it does</th></tr></thead><tbody>
-<tr><td>Storage Item</td><td>A dropdown of the place's script packages: stored packages first, then packages in the level's <code>Packages/</code> folder that aren't stored yet ("(in Packages/, stored when you publish)"), then any storage entry typed in by hand. If there are none: "This place has no script package. Add one with Tools &gt; Mantle &gt; Library (Scripts), or make one in a Packages folder beside the level's Scripts folder."</td></tr>
+<tr><td>Storage Item</td><td>A dropdown of the place's script packages. It lists stored packages and packages in the level's <code>Packages/</code> folder that aren't stored yet ("(in Packages/, stored when you publish)"). You can also type a storage entry by hand. If there are none: "This place has no script package. Add one with Tools &gt; Mantle &gt; Library (Scripts), or make one in a Packages folder beside the level's Scripts folder."</td></tr>
 <tr><td>Parameters</td><td>One row for each parameter the package declares, labeled with its name and type (for example "Speed (number, 1 to 10, required)"), its help text, and its default as a hint. The row is a text box for a string or a number, a slider for a number with both a <code>min</code> and a <code>max</code>, a checkbox for a boolean and a dropdown for a choice. <b>Default</b> clears the value, so the package's default applies. A red note under the name flags a value that doesn't fit, or a required parameter with no value: "Hazards needs Radius."</td></tr>
 <tr><td>Enabled</td><td>Untick to keep the point in the level without the package's scripts seeing it.</td></tr>
 </tbody></table></div>
@@ -135,7 +135,7 @@ end</pre></div>
 <ul>
 <li><b>Setting them:</b> select <b>Mantle Place Settings</b> and open its <b>Storage</b> list. A stored package's row shows one row per setting, drawn the same way as a Script Point's parameters (text box, slider, checkbox or dropdown, with a <b>Default</b> button and a red note when something's wrong, such as "KillBricks needs RoundLength."). The values publish with the place, and the place keeps them with the version it pins. Scripts read them as <a href="/docs/scripting/api/#ref-script"><code>Script.Settings</code></a>.</li>
 <li><b>Your own package's first publish:</b> a package in your <code>Packages/</code> folder only gets a storage row once the place has published it, so you can't set its settings before then. Give every required setting a default in <code>package.json</code>, or Check this place and the first publish both stop. Check this place says: "Packages/… is stored with no settings when the place first publishes it: give that setting a default in its package.json."</li>
-<li><b>New versions:</b> when you update a package to a version that no longer declares a setting, that setting's value is dropped from the storage entry, and the Output Log says which ("MANTLE_STORAGE package '…' version N no longer declares the setting(s) …; dropped from its storage entry").</li>
+<li><b>New versions:</b> when you update a package to a version that no longer declares a setting, that setting's value is dropped from the storage entry, and the Output Log names it.</li>
 </ul>
 
 <h2 id="checks">What "Check this place" catches</h2>

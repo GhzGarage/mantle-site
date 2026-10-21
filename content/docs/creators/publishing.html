@@ -13,7 +13,7 @@
 <p>When it works, you'll see "Saved to Mantle. Nobody can see it until you publish." or "Published revision N. Anyone can join it now." If it stops, the tab says why and what to do. <b>Cancel</b> stops at any point without publishing anything, and <b>Publish again</b> carries on from where it stopped: everything already uploaded stays on Mantle.</p>
 
 <h3 id="which-world">Which world a publish goes to <span class="status live">Live</span></h3>
-<p>The editor remembers which world each level publishes to, so a later publish updates it instead of making a copy. The link is kept in your own editor settings for the project, not in the files you check in, and it's saved per Mantle account and per level path. So Publish makes a <b>new</b> world when:</p>
+<p>The editor remembers which world each level publishes to, so a later publish updates it instead of making a copy. The link is saved in your own editor settings, not in the files you check in. It belongs to your Mantle account and the level's path. So Publish makes a <b>new</b> world when:</p>
 <ul>
 <li>you publish from another PC, because the link isn't there.</li>
 <li>a teammate publishes the level from their account, because the link is yours only.</li>
@@ -27,7 +27,8 @@
 <p>When a place goes live, each <a href="/docs/creators/script-packages/">script package</a> in the level's <code>Packages/</code> folder is published as a library item, public or private, in the same step that asks about vehicles and weapons, and the place stores it under the folder's name. A later publish adds a new version only when a package's files or <code>package.json</code> changed. <b>Save to Mantle</b> doesn't publish packages, so a draft leaves out the Script Points of packages that aren't stored yet. See <a href="/docs/creators/script-packages/#publish">Publishing a package</a>.</p>
 
 <h3 id="agent-tools">Using an AI agent <span class="status live">Live</span></h3>
-<p>The Mantle plugin includes tools that Unreal's own Model Context Protocol (MCP) server can offer to an AI agent, such as Claude Code, so you can ask it to check or publish your place. It uses Epic's experimental <b>Unreal MCP</b> plugin, which needs Epic's experimental <b>Toolset Registry</b> plugin. Both are off by default. Mantle doesn't turn them on for you, the Mantle tools only appear once Toolset Registry is on, and without them the Mantle plugin works exactly as before.</p>
+<p>An AI agent, such as Claude Code, can check or publish your place for you. The Mantle plugin gives it tools through Unreal's own Model Context Protocol (MCP) server.</p>
+<p>You need two of Epic's experimental plugins: <b>Unreal MCP</b> and <b>Toolset Registry</b>. Both are off by default, and Mantle doesn't turn them on for you. Without them, the Mantle plugin works as it always has.</p>
 <ol class="steps">
 <li><b>Turn on the plugins</b><p>In <b>Edit → Plugins</b>, enable <b>Unreal MCP</b>, which turns on <b>Toolset Registry</b> with it, then restart the editor.</p></li>
 <li><b>Start the server</b><p>Run the console command <code>ModelContextProtocol.StartServer</code>, or turn on <b>Auto Start Server</b> under <b>Editor Preferences → General → Model Context Protocol</b>. By default it listens on <code>http://127.0.0.1:8000/mcp</code>.</p></li>
@@ -44,7 +45,7 @@
 <tr><td><code>UploadStatus(AssetName)</code></td><td>Each file's upload state in the running or last publish.</td></tr>
 <tr><td><code>ListMyPlaces</code></td><td>The first page of your places on Mantle.</td></tr>
 <tr><td><code>CheckCosmetic</code>, <code>UploadCosmetic</code></td><td>Check or upload an avatar item, like the <a href="/docs/creators/avatar-items/">Cosmetics panel</a>.</td></tr>
-<tr><td><code>MakeOutfitFromGarment</code></td><td>Make a MetaHuman Outfit from a third-party character's clothing: you give it the character's bare body and its garment meshes. It writes new assets in a Converted folder next to the body and never changes yours. Nothing is uploaded, and it takes minutes. Then check or upload each Outfit with <code>CheckCosmetic</code> and <code>UploadCosmetic</code>.</td></tr>
+<tr><td><code>MakeOutfitFromGarment</code></td><td>Makes a MetaHuman Outfit from a third-party character's clothing. Give it the character's bare body and its garment meshes. It writes new assets in a Converted folder next to the body and never changes yours. Nothing is uploaded. It takes minutes. Then check or upload each Outfit with <code>CheckCosmetic</code> and <code>UploadCosmetic</code>.</td></tr>
 <tr><td><code>ConvertCosmetic</code>, <code>MeasureHead</code></td><td>Convert a character so it can be uploaded (it writes new assets in a Converted folder and never changes yours), or measure an avatar's head for its hat socket. Nothing is uploaded.</td></tr>
 </tbody></table></div>
 
