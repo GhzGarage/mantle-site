@@ -52,7 +52,7 @@ If you send too many requests, Mantle tries again for you, so you won't see a me
 </ul>
 
 <h2 id="secrets">Secrets (API keys) <span class="status live">Live</span></h2>
-<p>A secret is a named value, such as an API key or a webhook address, that you keep with your place instead of writing it in a script. You set secrets in the editor. Your server scripts read them with <code>Secrets:Get</code>: see <a href="/docs/scripting/concepts/#secrets">Secrets</a> for how.</p>
+<p>A secret is a named value, such as an API key or a webhook address, that you keep with your place instead of writing it in a script. You set secrets in the editor. Your server scripts read them with <code>Secrets:Get</code> (script API 1.47 or newer): see <a href="/docs/scripting/concepts/#secrets">Secrets</a> for how.</p>
 <ul>
 <li><b>Write-only:</b> after you save a value, no one can read it back, including you. The panel shows only a name and a masked value.</li>
 <li><b>Server scripts only:</b> secrets reach server scripts on Mantle-hosted servers. Players' games never get them, and neither do community servers.</li>
@@ -64,7 +64,7 @@ If you send too many requests, Mantle tries again for you, so you won't see a me
 <ol class="steps">
 <li><b>Open the section.</b> Choose <b>Tools → Mantle → Place settings</b> and find <b>Mantle: Secrets</b> in the Details panel. Press <b>Refresh</b> to load the list.</li>
 <li><b>Read the list.</b> Each secret shows its name, a masked value (••••••••) and "set" with the time you last saved it. The count, such as "3 / 50", shows how many you've used. A place holds up to 50.</li>
-<li><b>Type a name.</b> It's upper-cased as you type. Use capital letters, digits and underscores, starting with a letter, up to 64 characters, like <code>DISCORD_WEBHOOK</code>.</li>
+<li><b>Type a name.</b> It's upper-cased as you type. Use capital letters, digits and underscores, starting with a letter, up to 64 characters, like <code>WEATHER_API_KEY</code>.</li>
 <li><b>Enter the value.</b> Type it in the value box, which hides what you type. For a value with several lines, such as a private key, copy it and press <b>Paste multi-line</b>: the box then shows "(N characters pasted)" instead of the value. Press <b>Clear value</b> to start over. A value is up to 8,192 bytes (bytes, not characters), and the only control characters it can hold are tab and line breaks.</li>
 <li><b>Press Save secret.</b> A new name adds a secret. A name that's already in the list replaces its value: type the name and the new value, and the old one is gone. You'll see "NAME saved. Servers that start from now on get it; running servers keep what they loaded."</li>
 <li><b>To delete one,</b> type its name and press <b>Delete the secret named above</b>. The button is on only when the name is in the list. Mantle asks "Delete the secret NAME? Server scripts will no longer get it on servers that start from now on." Choose Yes to delete it.</li>
@@ -88,11 +88,11 @@ If you send too many requests, Mantle tries again for you, so you won't see a me
 <tr><td>A secret's name starts with a letter and has only capital letters, digits and underscores, up to 64 characters (for example DISCORD_WEBHOOK).</td><td>Rename it to follow those rules.</td></tr>
 <tr><td>Type or paste the value first.</td><td>Enter a value before you press <b>Save secret</b>.</td></tr>
 <tr><td>The value has a control character. Only tab and line breaks are allowed.</td><td>Remove the odd character, or paste the value as plain text.</td></tr>
-<tr><td>The value is N bytes; a secret holds at most 8192 bytes (bytes, not characters).</td><td>Shorten the value. Characters outside plain English letters take more than one byte each.</td></tr>
-<tr><td>This place already holds 50 secrets, the most it can. Delete one to add another.</td><td>Delete a secret you don't use. Replacing a value doesn't count as adding one.</td></tr>
-<tr><td>That secret is no longer set.</td><td>It was deleted already. Press <b>Refresh</b>.</td></tr>
+<tr><td>The value is N bytes; a secret holds at most 8192 bytes (bytes, not characters).</td><td>Shorten the value. Accented letters, emoji and other characters beyond plain English text take more than one byte each.</td></tr>
+<tr><td>This place already holds 50 secrets, the most it can. Delete one to add another. / A place holds at most 50 secrets. Delete one first.</td><td>Delete a secret you don't use. Replacing a value doesn't count as adding one.</td></tr>
+<tr><td>This place has no secret with that name.</td><td>It was deleted already. Press <b>Refresh</b>.</td></tr>
 <tr><td>Could not reach Mantle. Check your internet connection and try again.</td><td>Check your connection, then try again.</td></tr>
-<tr><td>Your Mantle sign-in expired or was not accepted. Sign in again, or make a new creator token.</td><td>Sign in again.</td></tr>
+<tr><td>Your session is no longer valid. Sign in again.</td><td>Sign in again.</td></tr>
 <tr><td>Could not update PATH to ignore secrets.local.json. / Could not create PATH.</td><td>Make sure your project folder isn't read-only, then press <b>Create or open secrets.local.json</b> again. Mantle won't create the file unless it can ignore it first.</td></tr>
 <tr><td>Open a saved level first.</td><td>Save the level, then try again.</td></tr>
 </tbody></table></div>
