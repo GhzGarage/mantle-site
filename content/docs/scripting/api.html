@@ -1,10 +1,10 @@
 <h2 id="api">API at a glance</h2>
     <p>This page lists everything your scripts can use. The API is the same in every language, but each name follows that language's usual style: <code>FindByTag</code> in Luau, <code>findByTag</code> in JS/TS, <code>find_by_tag</code> in Python. Service names such as <code>World</code> stay the same in every language. Members marked <span class="side s">Server</span> or <span class="side c">Client</span> only work on that side. Everything else works on both. Every member, with its types and a description, is in the <a href="#reference">full reference</a> below, and in the generated type files (see <a href="#editor">Editor setup</a>).</p>
     <h3 id="versions">API versions</h3>
-    <p>The current script API is <b>1.45</b>, and the newest game release runs it. Members marked with a version, such as (API 1.9), were added in that version. When you publish, the Mantle plugin records the lowest API version your scripts actually use, not the version of the plugin.</p>
+    <p>The current script API is <b>1.48</b>, and the newest game release runs it. Members marked with a version, such as (API 1.9), were added in that version. When you publish, the Mantle plugin records the lowest API version your scripts actually use, not the version of the plugin.</p>
     <ul>
-      <li>The newest game release carries every member on this page from API 1.0 to 1.45, so scripts that use any of them publish and run today. API 1.33 to 1.37 added <code>Backpack:GetBuiltInTools</code>, the <code>Storage</code> service with <code>Backpack:Grant</code>, <code>Script.Package</code> and <code>Script.Points</code> for <a href="/docs/creators/script-packages/">script packages</a>, <code>Script.Settings</code>, and NPCs that drive cars.</li>
-      <li>API 1.38 to 1.45 add the members below. The newest game release carries them, so scripts that use any of them publish and run today.
+      <li>The newest game release carries every member on this page from API 1.0 to 1.48, so scripts that use any of them publish and run today. API 1.33 to 1.37 added <code>Backpack:GetBuiltInTools</code>, the <code>Storage</code> service with <code>Backpack:Grant</code>, <code>Script.Package</code> and <code>Script.Points</code> for <a href="/docs/creators/script-packages/">script packages</a>, <code>Script.Settings</code>, and NPCs that drive cars.</li>
+      <li>API 1.38 to 1.48 add the members below. The newest game release carries them, so scripts that use any of them publish and run today.
         <ul>
           <li><b>API 1.38</b> added the <code>Interaction</code> service.</li>
           <li><b>API 1.39</b> added the <code>Teams</code>, <code>Match</code> and <code>Respawn</code> services, <code>Player.Team</code>, armor, shield and health regeneration on <code>Player</code> (<code>Armor</code>, <code>Shield</code>, <code>MaxShield</code>, <code>RegenRate</code>, <code>RegenDelay</code>, <code>ShieldRegenRate</code>), the <code>Player</code> signals <code>Damaged</code> and <code>Respawned</code>, and a damage type on <code>Player:TakeDamage</code> and <code>Player.Died</code>.</li>
@@ -14,10 +14,14 @@
           <li><b>API 1.43</b> added health, fuel and boost for cars on <code>Vehicles</code>, the <code>Collision</code> service with <code>Entity.CollisionLayer</code> and the <code>Layers</code> and <code>ExcludeLayers</code> options of the spatial queries, and <code>Teams.TeammatesCollide</code>.</li>
           <li><b>API 1.44</b> added the <code>Voice</code> service, private chat (<code>Chat:SendToPlayers</code>, <code>Chat:SetAudience</code> and whispers), and more effects: new <code>Effects:Play</code> presets, <code>Effects:Beam</code> and <code>Effects:Decal</code>.</li>
           <li><b>API 1.45</b> added swimming and breath on <code>Player</code>: <code>IsSwimming</code>, <code>IsUnderwater</code>, <code>BreathEnabled</code>, <code>Breath</code>, <code>MaxBreath</code>, <code>BreathRegen</code>, <code>BreathRegenDelay</code>, <code>DrownDamage</code> and the signals <code>BreathChanged</code>, <code>OutOfBreath</code> and <code>BreathRestored</code>. A drowning death reaches <code>Died</code> with the damage type <code>"Drown"</code>. Characters swim in the place's water bodies.</li>
+          <li><b>API 1.46</b> added the <code>Http</code> service, so server scripts can call your own backend, a webhook or any public web service: <code>Http:RequestAsync</code> and <code>Http:IsAvailable</code> on the server, and <code>Http:JsonEncode</code> and <code>Http:JsonDecode</code> on both sides. See <a href="#ref-http">Http</a>.</li>
+          <li><b>API 1.47</b> added the <code>Secrets</code> service, so server scripts on Mantle-hosted servers can read the API keys and webhook URLs you store for the place: <code>Secrets:Get</code> and <code>Secrets:IsAvailable</code>. See <a href="#ref-secrets">Secrets</a>.</li>
+          <li><b>API 1.48</b> added the avatar editor for client scripts: <code>Avatar:OpenEditor</code>, <code>Avatar:CloseEditor</code>, <code>Avatar:IsEditorOpen</code> and the signals <code>EditorOpened</code>, <code>EditorClosed</code> and <code>LookChanged</code>. It replaces <code>Avatar:OpenCustomizer</code>, which is gone. See <a href="#ref-avatar">Avatar</a>.</li>
         </ul></li>
-      <li>When a new version of the Mantle plugin adds members, they're in the plugin and its type files, but publishing refuses a place that uses them until a game release that carries them is out. <b>Save to Mantle</b> still works. Publish stops with <code>This revision is not compatible with the supported release matrix.</code>, and the Output Log gives the reason, such as <code>This place needs script API 1.46, newer than the newest released game build's 1.45. Update the Mantle plugin and re-publish, or wait for the next release.</code></li>
+      <li>When a new version of the Mantle plugin adds members, they're in the plugin and its type files, but publishing refuses a place that uses them until a game release that carries them is out. <b>Save to Mantle</b> still works. Publish stops with <code>This revision is not compatible with the supported release matrix.</code>, and the Output Log gives the reason, such as <code>This place needs script API 1.49, newer than the newest released game build's 1.48. Update the Mantle plugin and re-publish, or wait for the next release.</code></li>
       <li>A game build with an older API doesn't start that place's scripts, and logs <code>Scripts not started for this place: this place needs script API 1.2; this build has 1.1. Update the game to run them.</code> The rest of the place still loads and plays.</li>
     </ul>
+    <div class="callout tip"><strong>Who can read your scripts</strong><p>Only the account that uploaded a server script can read its source. Players can read client and shared scripts, because their game downloads them, so never put a key or a password in one. Keep keys for outside services in <a href="#ref-secrets">Secrets</a>, and use keys you can replace.</p></div>
     <div class="table-wrap"><table class="api"><thead><tr><th>Service / object</th><th>Members</th></tr></thead><tbody>
       <tr><td><code>World</code></td><td><code>FindByTag</code>, <code>FindFirst</code>, <code>OnTagged</code>, <code>OnUntagged</code> · spatial queries <code>Raycast</code>, <code>Spherecast</code>, <code>Blockcast</code>, <code>GetEntitiesInRadius</code>, <code>GetEntitiesInBox</code> (API 1.6) · their <code>Layers</code> and <code>ExcludeLayers</code> options pick collision layers, in server scripts only (API 1.43)</td></tr>
       <tr><td><code>Entity</code></td><td><code>Name</code>, <code>Position</code>, <code>Rotation</code>, <code>Scale</code>, <code>Visible</code>, <code>CanCollide</code> (settable on both sides; a client write changes only that client's view), <code>Exists</code> · <code>Tween(goal, seconds, style?, direction?)</code> returns a Completed signal · <code>Clone</code>, <code>Destroy</code> · <code>HasTag</code>, <code>GetTags</code>, <code>AddTag</code>/<code>RemoveTag</code> <span class="side s">Server</span> · <code>GetAttribute</code>, <code>SetAttribute</code>, <code>ObserveAttribute</code> · signals <code>Touched</code>, <code>TouchEnded</code>, <code>AttributeChanged(name, value)</code></td></tr>
@@ -34,8 +38,10 @@
       <tr><td><code>Connection</code></td><td><code>Disconnect()</code>, <code>Connected</code></td></tr>
       <tr><td><code>UI</code> <span class="side c">Client</span></td><td><code>Create(kind)</code> returns a retained UI node (see <a href="#ui">UI reference</a>) · <code>OpenDocument(path, mode?)</code> opens a UI document and returns a <code>UiDocument</code> (API 1.31) · <code>Toast(text, seconds?)</code> and <code>SetText(slot, text)</code> for plain HUD text · <code>ActionLabel(action)</code>, <code>FormatNumber(value)</code>, <code>SetCursorVisible(visible?)</code> · preferences <code>Locale</code>, <code>TextScale</code>, <code>HighContrast</code>, <code>ReducedMotion</code>, <code>Captions</code></td></tr>
       <tr><td><code>UiDocument</code> <span class="side c">Client</span> (API 1.31)</td><td>What <code>UI:OpenDocument</code> returns, one open UI document (see <a href="/docs/scripting/ui-documents/">UI documents</a>) · <code>SetData(key, value)</code>, <code>SetMode(mode)</code>, <code>Close()</code> · <code>IsOpen</code> · signals <code>Event(name, args)</code>, <code>Closed(reason)</code></td></tr>
-      <tr><td><code>Avatar</code> <span class="side c">Client</span> (API 1.2)</td><td><code>OpenCustomizer()</code> opens Mantle's avatar screen, where the player changes their own look, and returns false if there's no local player · <code>PlayEmote(itemId)</code> plays one of the local player's equipped emotes and returns false if it isn't equipped, they have no character, or you call it again within half a second. <code>true</code> means the request was sent; the server checks it again and refuses it while the player is moving, in the air, seated or dead. Scripts can't change a player's look or give them items.</td></tr>
+      <tr><td><code>Avatar</code> <span class="side c">Client</span> (API 1.2)</td><td><code>OpenEditor(options?)</code> opens the avatar editor over the running place, where the player changes their own look, and returns false when it can't open. <code>options</code> holds <code>Categories</code>, <code>Title</code> and <code>FreezeCharacter</code> · <code>CloseEditor()</code>, <code>IsEditorOpen()</code> · signals <code>EditorOpened</code>, <code>EditorClosed(saved)</code> and <code>LookChanged(slot, old, new)</code> (API 1.48) · <code>PlayEmote(itemId)</code> plays one of the local player's equipped emotes and returns false if it isn't equipped, they have no character, or you call it again within half a second. <code>true</code> means the request was sent; the server checks it again and refuses it while the player is moving, in the air, seated or dead. Scripts can't change a player's look or give them items. See <a href="#ref-avatar">Avatar</a>.</td></tr>
       <tr><td><code>Server</code> <span class="side s">Server</span> (API 1.3)</td><td><code>PrivateServerId</code>, <code>PrivateServerOwnerId</code>: the private server this session belongs to and its owner's account id, or nil in a public session</td></tr>
+      <tr><td><code>Http</code> (API 1.46)</td><td><code>RequestAsync(options)</code> <span class="side s">Server</span> sends a web request and returns a Signal that fires once with <code>{ok, status, headers, body, url, error, code}</code> · <code>IsAvailable()</code> <span class="side s">Server</span> · <code>JsonEncode(value)</code> and <code>JsonDecode(text)</code> on both sides. Private and internal addresses are always refused. See <a href="#ref-http">Http</a>.</td></tr>
+      <tr><td><code>Secrets</code> <span class="side s">Server</span> (API 1.47)</td><td><code>Get(name)</code> returns a key or webhook address you stored for the place, or nil · <code>IsAvailable()</code>. Mantle-hosted servers only. See <a href="#ref-secrets">Secrets</a>.</td></tr>
       <tr><td><code>DataStore</code> <span class="side s">Server</span></td><td><code>Get</code>, <code>Set</code>, <code>GetForPlayer</code>, <code>SetForPlayer</code> for boolean, number or string values. A missing value can mean the data is still loading, the load failed or nothing was saved. See the <a href="#r-highscore">high-score readiness protocol</a>. · <code>RemoveKey</code>, <code>RemoveKeyForPlayer</code>, <code>ListKeys</code>, <code>ListKeysForPlayer</code>, <code>GetOrderedDataStore</code>, and table values in <code>Set</code> (API 1.13)</td></tr>
       <tr><td><code>OrderedDataStore</code> <span class="side s">Server</span> (API 1.13)</td><td><code>SetAsync</code>, <code>IncrementAsync</code>, <code>GetAsync</code>, <code>RemoveAsync</code>, <code>GetSortedAsync</code> on whole-number values; each returns a Signal that fires once with a result table. See the <a href="#r-leaderboard">leaderboard recipe</a>.</td></tr>
       <tr><td><code>Vehicles</code> <span class="side s">Server</span> (API 1.1)</td><td><code>Spawn(item, position)</code> spawns a vehicle the place stores (the id <code>Storage:Get</code> returns) and returns the car as an <code>Entity</code> · <code>Seat(vehicle, player)</code> uses the same checks as the driver's-seat prompt and returns false when they refuse · <code>Eject(player)</code> returns false if the player isn't driving, the car is moving, or there's no room beside it · <code>GetSpeed(vehicle)</code> in cm/s · <code>SetPaintColor(vehicle, "#RRGGBB")</code> returns false if the entity isn't a car · <code>SetLivery(vehicle, index)</code> (API 1.20) · <code>Lock(vehicle)</code>, <code>Unlock(vehicle)</code> and <code>IsLocked(vehicle)</code> (API 1.32) lock a car so it opens only for its last driver (breaking in is still possible). See <a href="/docs/creators/vehicles/">Vehicles</a> for how a place stores its own cars.</td></tr>
@@ -116,6 +122,11 @@
       <tr><td class="wrap"><code>params.Layers and params.ExcludeLayers work in server scripts only: collision layers are the server's</code>, <code>there is no collision layer named "Debris"</code></td><td>A spatial query got a <code>Layers</code> or <code>ExcludeLayers</code> option from a client script, or it named a layer that doesn't exist.</td></tr>
       <tr><td class="wrap"><code>that entity is not a vehicle</code>, <code>that vehicle no longer exists</code>, <code>health must be a finite number</code>, <code>amount cannot be negative</code></td><td>A <code>Vehicles</code> health, fuel or boost call got something that isn't a car, a car that's gone, or a number that isn't real or is negative where it can't be.</td></tr>
       <tr><td class="wrap"><code>expected a list of players</code>, <code>at most 10 players</code>, <code>that player is no longer in the session</code>, <code>unknown whisper mode "…" (expected Everyone, Team or Nobody)</code></td><td>A <code>Chat</code> or <code>Voice</code> call got a bad argument. <code>Chat:SendToPlayers</code> takes up to 10 players; <code>Chat:SetAudience</code> and <code>Voice:SetAudience</code> take up to 128.</td></tr>
+      <tr><td class="wrap"><code>bad_url: url must start with http:// or https://</code>, <code>bad_request: options.url is required</code>, <code>bad_header: the Host header is set by the server and can't be changed</code>, <code>blocked_port: port 22 is not allowed: use 80, 443 or a port from 1024 to 65535</code>, <code>blocked_address: 10.0.0.5 is a private or internal address and can't be reached</code>, <code>body_too_large: the request body is over the 2097152 byte limit</code></td><td><code>Http:RequestAsync</code> refused the request before sending it. The error starts with a code, then says what to change. Catch it with <code>pcall</code> (Luau) or <code>try</code> (JS, Python). See <a href="#http-codes">Error codes</a> under Http.</td></tr>
+      <tr><td class="wrap"><code>too_many_requests: too many requests are waiting (at most 16 in flight and 128 queued); wait for some to finish</code>, <code>rate_limited: this server is making requests too fast (about 600 a minute); try again in about 3 seconds</code>, <code>bandwidth_limited: this server has used its request bandwidth for now; try again in about 20 seconds</code>, <code>disabled: Outbound HTTP is turned off on this server</code></td><td>You went over the request limits, or the server's operator turned <code>Http</code> off. The call errors; the script keeps running. Check <code>Http:IsAvailable()</code> to find out whether it's off.</td></tr>
+      <tr><td class="wrap"><code>not valid JSON: expected a string key at character 2</code>, <code>text must be a string, got number</code>, <code>NaN and infinity can't be written as JSON</code>, <code>value is nested more than 32 deep</code></td><td><code>Http:JsonDecode</code> or <code>Http:JsonEncode</code> refused the value. The message says why.</td></tr>
+      <tr><td class="wrap"><code>"webhook" is not a secret name: use upper-case letters, digits and underscores, starting with a letter, at most 64 (like DISCORD_WEBHOOK)</code></td><td><code>Secrets:Get</code> got a name that can't be a secret's name. A name that's fine but not set returns nil, not an error.</td></tr>
+      <tr><td class="wrap"><code>unknown category "hats" (expected body, hair, clothes, accessories, emotes, all, or a slot such as "top" or "acc_hat")</code>, <code>unknown option "…" (expected Categories, Title or FreezeCharacter)</code></td><td><code>Avatar:OpenEditor</code> got a category or option name it doesn't know. Fix the name. A call that's fine but can't open right now returns false instead.</td></tr>
       <tr><td class="wrap"><code>script exhausted its instruction budget</code> (Luau, JS, Python) or <code>script exceeded its rolling CPU budget</code></td><td>Your script did too much work in one go (before it yielded) or over time. Split the work up with <code>task.wait()</code> and cut down repeated work. Adding a wait isn't enough on its own if the script stays busy.</td></tr>
       <tr><td class="wrap"><code>script ran past its rolling CPU budget (limit=8.0 ms/second) inside one call and was stopped there.</code></td><td>One JavaScript or TypeScript call, such as a huge <code>slice</code> or <code>JSON.stringify</code>, did more work than the whole budget allows. The call is stopped part-way and the script stops. Split the work up with <code>task.wait()</code>.</td></tr>
       <tr><td class="wrap"><code>… is a script that runs by itself, not a module. Put libraries in Shared/ or a Modules/ folder.</code></td><td>You called <code>require</code> on a script that runs by itself, not on a module. Move the library into <code>Shared/</code> or a <code>Modules/</code> folder.</td></tr>
@@ -153,6 +164,10 @@
       <tr><td>Chat system messages</td><td class="num">500 characters; 10 lines a minute per server. <code>Chat:SendToPlayers</code> (API 1.44) counts as one line, however many players it is for, and shares the 10 with <code>Chat:SendSystemMessage</code>.</td></tr>
       <tr><td>Private chat and voice rules (API 1.44)</td><td class="num"><code>Chat:SendToPlayers</code>: up to 10 players. <code>Chat:SetAudience</code> and <code>Voice:SetAudience</code>: up to 128 players. <code>Voice:MuteFor</code>: up to 4,096 listener and speaker pairs.</td></tr>
       <tr><td>Calls that go through the backend</td><td class="num">In a local place with no online session, <code>Chat:SendSystemMessage</code> and <code>Chat:SendToPlayers</code> return false: there is no session chat to post to.</td></tr>
+      <tr><td>Outbound HTTP requests (API 1.46)</td><td class="num">16 running at once, with 128 more waiting. About 600 a minute, in bursts of up to 120. All the scripts on one server share these limits. A request runs for up to 60 s (30 s unless you set <code>timeout</code>), follows up to 5 redirects and has up to 64 headers (16 KiB together).</td></tr>
+      <tr><td>Outbound HTTP sizes (API 1.46)</td><td class="num">A request body is up to 2 MiB; a response up to 8 MiB. A server sends up to 16 MiB and receives up to 128 MiB a minute. A URL is up to 8,192 characters.</td></tr>
+      <tr><td>Secrets (API 1.47)</td><td class="num">50 per place; a name is up to 64 characters; a value is up to 8 KiB</td></tr>
+      <tr><td>Avatar editor (API 1.48)</td><td class="num">A <code>Title</code> is up to 40 characters; a longer one is cut. Only one editor is open at a time.</td></tr>
       <tr><td>DataStore keys</td><td class="num">1 to 128 characters from letters, digits, <code>.</code>, <code>_</code>, <code>:</code> and <code>-</code>, starting with a letter or digit; 1,024 keys for the place and for each player</td></tr>
       <tr><td>DataStore size</td><td class="num">One value 64 KiB encoded; 10 MiB for the place, 1 MiB for each player. Tables nest at most 4 levels deep (API 1.13).</td></tr>
       <tr><td>DataStore requests</td><td class="num">300 a minute per server, ordered stores included</td></tr>
@@ -177,7 +192,7 @@
     <p>Check All checks your scripts for errors, but it doesn't run your game. Once it passes, run your level with <b>Test Locally</b> to try the scripts before you publish (see <a href="/docs/creators/plugin/#test-locally">Testing with Test Locally</a>).</p>
 
     <h2 id="reference">Full reference</h2>
-    <p>Every service and object in script API 1.45, matching the type files. The newest game release runs 1.45, so every member listed here publishes and runs today. Names are shown in Luau; the other languages use their own spelling (see <a href="#api">API at a glance</a>). <b>Side</b> says where a member works: a property can be read on one side and set on another. <b>API</b> is the version the member arrived in (see <a href="#versions">API versions</a>). A signal that reports a value changing passes the old value, then the new one: <code>HealthChanged(player, old, new)</code>, <code>StaminaChanged(player, old, new)</code>, <code>BreathChanged(player, old, new)</code>, <code>PlayerTeamChanged(player, old, new)</code>, <code>StateChanged(old, new)</code> and <code>Vehicles.FuelChanged(vehicle, old, new)</code>.</p>
+    <p>Every service and object in script API 1.48, matching the type files. The newest game release runs 1.48, so every member listed here publishes and runs today. Names are shown in Luau; the other languages use their own spelling (see <a href="#api">API at a glance</a>). <b>Side</b> says where a member works: a property can be read on one side and set on another. <b>API</b> is the version the member arrived in (see <a href="#versions">API versions</a>). A signal that reports a value changing passes the old value, then the new one: <code>HealthChanged(player, old, new)</code>, <code>StaminaChanged(player, old, new)</code>, <code>BreathChanged(player, old, new)</code>, <code>PlayerTeamChanged(player, old, new)</code>, <code>StateChanged(old, new)</code> and <code>Vehicles.FuelChanged(vehicle, old, new)</code>.</p>
 <h3 id="ref-world"><code>World</code></h3>
 <p>Service. Find and watch the things in the level.</p>
 <div class="table-wrap"><table class="api ref"><thead><tr><th>Member</th><th>Side</th><th>API</th><th>What it does</th></tr></thead><tbody>
@@ -448,12 +463,254 @@
   <tr><td class="wrap"><code>PrivateServerId: string?</code></td><td><span class="side s">Server</span> · read-only</td><td class="num">1.3</td><td>The id of the private server this session belongs to, or nil for a public session.</td></tr>
   <tr><td class="wrap"><code>PrivateServerOwnerId: string?</code></td><td><span class="side s">Server</span> · read-only</td><td class="num">1.3</td><td>The Mantle account id (a plain UUID) of the private server's owner, or nil for a public session.</td></tr>
 </tbody></table></div>
-<h3 id="ref-avatar"><code>Avatar</code></h3>
-<p>Service. The local player's avatar: open the avatar screen and play their equipped emotes. On the server, read a player's look with Player.Avatar and Player.Wearing. Added in API 1.2.</p>
+<h3 id="ref-http"><code>Http</code></h3>
+<p>Service. Call your own backend, a webhook or any public web service from a server script. Players' games never make these requests, so nothing a player runs can send one. Mantle always refuses private and internal addresses. Added in API 1.46.</p>
 <div class="table-wrap"><table class="api ref"><thead><tr><th>Member</th><th>Side</th><th>API</th><th>What it does</th></tr></thead><tbody>
-  <tr><td class="wrap"><code>OpenCustomizer() → boolean</code></td><td><span class="side c">Client</span></td><td class="num">1.2</td><td>Open Mantle's avatar screen, where the player changes their own look. Returns false when there is no local player to open it for. A script cannot change the look itself.</td></tr>
-  <tr><td class="wrap"><code>PlayEmote(itemId: string) → boolean</code></td><td><span class="side c">Client</span></td><td class="num">1.2</td><td>Play one of the local player's equipped emotes, by its item id (an emote on their emote wheel). Returns false, and plays nothing, when itemId is not one of their equipped emotes, when they have no character, or when called again too soon. true means the request went to the server, which checks it again and can still refuse it (the player is moving, in the air, seated or dead).</td></tr>
+  <tr><td class="wrap"><code>RequestAsync(options: {url: string, method: string?, headers: {[string]: string}?, body: string?, bodyBase64: string?, timeout: number?, followRedirects: boolean?, responseType: string?}) → Signal</code></td><td><span class="side s">Server</span></td><td class="num">1.46</td><td>Send a web request. You get a Signal that fires once with the result table: call <code>:Wait()</code> on it straight away, or <code>:Once(handler)</code>. A request Mantle refuses before sending it raises an error instead. See <a href="#http-options">Options</a>, <a href="#http-result">Result</a> and <a href="#http-codes">Error codes</a>.</td></tr>
+  <tr><td class="wrap"><code>IsAvailable() → boolean</code></td><td><span class="side s">Server</span></td><td class="num">1.46</td><td>False when the server's operator turned outbound HTTP off. <code>RequestAsync</code> then raises <code>disabled</code>. Check it when your place can do without HTTP.</td></tr>
+  <tr><td class="wrap"><code>JsonEncode(value: any) → string</code></td><td>Both</td><td class="num">1.46</td><td>A value as JSON text. It takes nil, booleans, finite numbers, strings and tables (a list becomes an array, any other table an object), nested up to 32 levels deep. Anything else is an error. JavaScript, TypeScript and Python have their own JSON tools, and these two work the same in every language.</td></tr>
+  <tr><td class="wrap"><code>JsonDecode(text: string) → any</code></td><td>Both</td><td class="num">1.46</td><td>JSON text as a value: objects become tables with string keys, arrays become lists and null becomes nil. It's an error when the text isn't valid JSON, and when you give it something that isn't a string (even a number). If a key repeats, the last value wins. Keys are case-sensitive: <code>"id"</code> and <code>"ID"</code> stay two keys.</td></tr>
 </tbody></table></div>
+<p id="http-options"><b>Options.</b> Give <code>RequestAsync</code> a table with these fields. Only <code>url</code> is required. Unknown fields are ignored, so spell them exactly as shown, in Python too: <code>bodyBase64</code>, <code>followRedirects</code> and <code>responseType</code> aren't snake_case there.</p>
+<div class="table-wrap"><table class="api"><thead><tr><th>Option</th><th>What it does</th></tr></thead><tbody>
+  <tr><td><code>url</code></td><td>Where to send it: <code>http://</code> or <code>https://</code>, up to 8,192 characters, plain ASCII (write international host names in punycode and percent-encode the rest). Ports 80, 443 and 1024 and up work. Any other port is refused. A user name or password in the address is refused: send an <code>Authorization</code> header instead.</td></tr>
+  <tr><td><code>method</code></td><td><code>GET</code> (the default), <code>POST</code>, <code>PUT</code>, <code>PATCH</code> or <code>DELETE</code>.</td></tr>
+  <tr><td><code>headers</code></td><td>A table of strings. Up to 64 headers, 16 KiB together. You can't set <code>Host</code>, <code>Content-Length</code>, <code>Transfer-Encoding</code>, <code>Connection</code>, <code>Keep-Alive</code>, <code>Upgrade</code>, <code>TE</code>, <code>Trailer</code>, <code>Expect</code>, <code>User-Agent</code>, <code>Accept-Encoding</code> or any header that starts with <code>Proxy-</code>. Mantle sets <code>User-Agent</code> itself, and it names Mantle and your place so the service you call can tell who is asking.</td></tr>
+  <tr><td><code>body</code></td><td>Text to send, as UTF-8. Up to 2 MiB. Not with <code>GET</code>.</td></tr>
+  <tr><td><code>bodyBase64</code></td><td>Binary data to send, written as base64 text. Up to 2 MiB once decoded. Not with <code>GET</code>. Give <code>body</code> or <code>bodyBase64</code>, not both.</td></tr>
+  <tr><td><code>timeout</code></td><td>Seconds to wait for the whole request, 1 to 60. The default is 30.</td></tr>
+  <tr><td><code>followRedirects</code></td><td>True (the default) follows up to 5 redirects. False gives you the redirect answer itself. See <a href="#http-redirects">Redirects</a>.</td></tr>
+  <tr><td><code>responseType</code></td><td><code>"text"</code> (the default) or <code>"base64"</code> for binary answers.</td></tr>
+</tbody></table></div>
+<p id="http-result"><b>Result.</b> The Signal fires once with a table:</p>
+<div class="table-wrap"><table class="api"><thead><tr><th>Field</th><th>What it holds</th></tr></thead><tbody>
+  <tr><td><code>ok</code></td><td>True only when the service answered with a 2xx status. Check it first.</td></tr>
+  <tr><td><code>status</code></td><td>The HTTP status number. Missing when no answer came back.</td></tr>
+  <tr><td><code>headers</code></td><td>The answer's headers, with names in lower case. A header sent more than once is joined with a comma and a space.</td></tr>
+  <tr><td><code>body</code></td><td>The answer's body, as text, or as base64 when you asked for <code>"base64"</code>. Bytes that aren't valid UTF-8 show as the replacement character. Up to 8 MiB.</td></tr>
+  <tr><td><code>url</code></td><td>The address the answer came from, after any redirects.</td></tr>
+  <tr><td><code>error</code></td><td>A short sentence, when <code>ok</code> is false.</td></tr>
+  <tr><td><code>code</code></td><td>A short name for what went wrong, when <code>ok</code> is false. See below.</td></tr>
+</tbody></table></div>
+<p>A 404 or a 500 isn't an error in your script: you get <code>ok = false</code> with its <code>status</code>, <code>headers</code> and <code>body</code>, and the code <code>"http_status"</code>. Read the body to see what the service said.</p>
+<p id="http-codes"><b>Error codes.</b> A request that fails after it was sent comes back in the result with <code>ok = false</code> and one of these codes:</p>
+<div class="table-wrap"><table class="api"><thead><tr><th>Code</th><th>What it means</th></tr></thead><tbody>
+  <tr><td><code>http_status</code></td><td>The service answered, but not with a 2xx status.</td></tr>
+  <tr><td><code>dns_failed</code></td><td>The host's name couldn't be found.</td></tr>
+  <tr><td><code>blocked_address</code></td><td>The host's name points to a private or internal address, or a redirect sent the request to one. Mantle won't connect.</td></tr>
+  <tr><td><code>connect_failed</code></td><td>Mantle couldn't connect to the host.</td></tr>
+  <tr><td><code>tls_failed</code></td><td>The secure (https) connection failed, for example because the host's certificate isn't trusted.</td></tr>
+  <tr><td><code>timeout</code></td><td>No full answer came back within <code>timeout</code> seconds.</td></tr>
+  <tr><td><code>too_many_redirects</code></td><td>The request was redirected more than 5 times.</td></tr>
+  <tr><td><code>redirect_blocked</code></td><td>A redirect was refused: it went from https to http, it said nowhere to go, or it went to an address or port Mantle doesn't allow.</td></tr>
+  <tr><td><code>response_too_large</code></td><td>The answer was over 8 MiB.</td></tr>
+  <tr><td><code>cancelled</code></td><td>The server was shutting down.</td></tr>
+</tbody></table></div>
+<p>A request Mantle refuses before sending it raises an error instead, and its text starts with the code, like <code>bad_url: url must start with http:// or https://</code>. Catch it with <code>pcall</code> (Luau) or <code>try</code> (JS, Python). These codes are <code>bad_url</code>, <code>blocked_address</code> (the address in your <code>url</code> is private or internal), <code>blocked_port</code>, <code>bad_header</code>, <code>bad_request</code> (a missing or wrongly typed option, an unknown method, a body on a <code>GET</code> and similar), <code>body_too_large</code>, <code>too_many_requests</code>, <code>rate_limited</code>, <code>bandwidth_limited</code> and <code>disabled</code>. The limits are in <a href="#errors">Errors and limits</a>.</p>
+<p id="http-rules"><b>What Mantle refuses.</b> A script can never reach a private or internal address, however it's written: <code>127.0.0.1</code>, <code>10.1.2.3</code>, <code>2130706433</code> and <code>0x7f.1</code> are all refused, and so is a name that points to one. That covers the server's own machine and cloud metadata addresses. Mantle checks every connection again after a redirect.</p>
+<h4 id="http-redirects">Redirects</h4>
+<p>With <code>followRedirects</code> on, Mantle follows a 301, 302, 303, 307 or 308 answer to its new address, up to 5 times, and checks each new address the same way as the first. A redirect from https to http is refused. A 307 or 308 keeps the method and the body; the others turn into a <code>GET</code> with no body. When a redirect goes to another host or port, or from http to https, Mantle drops the <code>Authorization</code> and <code>Cookie</code> headers. Any other header you set, such as <code>X-Api-Key</code>, <b>is still sent</b> to the new host. If you send a key in a custom header, turn <code>followRedirects</code> off, or only call services you trust.</p>
+<h4 id="http-privacy">Keys, logs and privacy</h4>
+<ul>
+  <li><b>Keys:</b> a server script's source is private, but a key in a script is still a key that can leak. Keep keys in <a href="#ref-secrets">Secrets</a> when you can, and use keys you can replace, not long-lived ones. Never send a key to a player: anything a client gets, its player can read.</li>
+  <li><b>What Mantle records:</b> the host, port, status and sizes of each request, never the rest of the address, the headers or the bodies. It keeps a per-minute count of each place's requests to each host, which it can look at if a service reports abuse. Those counts are kept for 180 days.</li>
+  <li><b>Turned off:</b> a server's operator can turn outbound HTTP off. <code>IsAvailable()</code> is then false.</li>
+  <li><b>Secure connections:</b> https certificates are checked. A host with a bad certificate fails with <code>tls_failed</code>.</li>
+</ul>
+<p><b>Example.</b> This posts a message to a webhook whose address you stored with <a href="#ref-secrets">Secrets</a>.</p>
+<div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Webhook.luau</span><pre data-example-kind="snippet" data-language="luau">local hookUrl = Secrets:Get(&quot;WEBHOOK_URL&quot;)
+
+local function announce(url: string, text: string)
+	local sent, result = pcall(function()
+		return Http:RequestAsync({
+			url = url,
+			method = &quot;POST&quot;,
+			headers = { [&quot;Content-Type&quot;] = &quot;application/json&quot; },
+			body = Http:JsonEncode({ content = text }),
+		}):Wait()
+	end)
+	if not sent then
+		warn(result) -- Mantle refused the request before sending it
+	elseif not result.ok then
+		warn(`webhook failed: {result.error}`)
+	end
+end
+
+if hookUrl then
+	announce(hookUrl, &quot;The server is up&quot;)
+else
+	print(&quot;Set WEBHOOK_URL for this place to turn announcements on&quot;)
+end
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Server/Webhook.ts</span><pre data-example-kind="snippet" data-language="typescript">const hookUrl = Secrets.get(&quot;WEBHOOK_URL&quot;);
+
+async function announce(url: string, text: string): Promise&lt;void&gt; {
+	try {
+		const result = await Http.requestAsync({
+			url,
+			method: &quot;POST&quot;,
+			headers: { &quot;Content-Type&quot;: &quot;application/json&quot; },
+			body: Http.jsonEncode({ content: text }),
+		}).wait();
+		if (!result.ok) {
+			console.warn(`webhook failed: ${result.error}`);
+		}
+	} catch (err) {
+		console.warn(String(err)); // Mantle refused the request before sending it
+	}
+}
+
+if (hookUrl) {
+	announce(hookUrl, &quot;The server is up&quot;);
+} else {
+	console.log(&quot;Set WEBHOOK_URL for this place to turn announcements on&quot;);
+}
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Server/Webhook.js</span><pre data-example-kind="snippet" data-language="javascript">const hookUrl = Secrets.get(&quot;WEBHOOK_URL&quot;);
+
+async function announce(url, text) {
+	try {
+		const result = await Http.requestAsync({
+			url,
+			method: &quot;POST&quot;,
+			headers: { &quot;Content-Type&quot;: &quot;application/json&quot; },
+			body: Http.jsonEncode({ content: text }),
+		}).wait();
+		if (!result.ok) {
+			console.warn(`webhook failed: ${result.error}`);
+		}
+	} catch (err) {
+		console.warn(String(err)); // Mantle refused the request before sending it
+	}
+}
+
+if (hookUrl) {
+	announce(hookUrl, &quot;The server is up&quot;);
+} else {
+	console.log(&quot;Set WEBHOOK_URL for this place to turn announcements on&quot;);
+}
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Server/Webhook.py</span><pre data-example-kind="snippet" data-language="python">hook_url = Secrets.get(&quot;WEBHOOK_URL&quot;)
+
+def announce(url, text):
+    try:
+        signal = Http.request_async({
+            &quot;url&quot;: url,
+            &quot;method&quot;: &quot;POST&quot;,
+            &quot;headers&quot;: {&quot;Content-Type&quot;: &quot;application/json&quot;},
+            &quot;body&quot;: Http.json_encode({&quot;content&quot;: text}),
+        })
+    except Exception as err:
+        warn(str(err))  # Mantle refused the request before sending it
+        return
+    token = signal.wait()
+    yield token
+    result = token.result[0]
+    if not result[&quot;ok&quot;]:
+        warn(&quot;webhook failed: &quot; + str(result[&quot;error&quot;]))
+
+if hook_url:
+    task.spawn(announce, hook_url, &quot;The server is up&quot;)
+else:
+    print(&quot;Set WEBHOOK_URL for this place to turn announcements on&quot;)
+</pre></div></div>
+<h3 id="ref-secrets"><code>Secrets</code></h3>
+<p>Service. Read the API keys and webhook addresses you store for a place, so they never sit in your scripts. They work in server scripts on Mantle-hosted servers only. Added in API 1.47.</p>
+<div class="table-wrap"><table class="api ref"><thead><tr><th>Member</th><th>Side</th><th>API</th><th>What it does</th></tr></thead><tbody>
+  <tr><td class="wrap"><code>Get(name: string) → string?</code></td><td><span class="side s">Server</span></td><td class="num">1.47</td><td>The value you stored under this name, or nil when the place has none by that name or secrets aren't available here. A name is upper-case letters, digits and underscores, starts with a letter and is at most 64 characters, like <code>WEBHOOK_URL</code>. Any other name is an error.</td></tr>
+  <tr><td class="wrap"><code>IsAvailable() → boolean</code></td><td><span class="side s">Server</span></td><td class="num">1.47</td><td>Whether this server loaded the place's secrets. It's true even when you haven't stored any. It's false when you run a published place on your own PC (standalone or listen play), on a community server, when the server couldn't reach Mantle, and for a place whose scripts don't use script API 1.47 or newer. <code>Get</code> then returns nil for every name.</td></tr>
+</tbody></table></div>
+<ul>
+  <li><b>When they load:</b> the server loads secrets before any script starts, so a value is there from your script's first line. A change reaches servers that start after it; servers that are already running keep the values they loaded.</li>
+  <li><b>Limits:</b> a place can hold 50 secrets, and a value is up to 8 KiB.</li>
+  <li><b>Setting them:</b> creators will set secrets in the Mantle editor plugin's place settings. That screen isn't ready yet, so for now there's no way to store one for a published place.</li>
+  <li><b>Testing on your PC:</b> when you run a place locally with the <code>-MantlePlace</code> option, values come from a file called <code>secrets.local.json</code> beside the place file, such as <code>{"WEBHOOK_URL": "https://..."}</code>. Keep that file out of version control.</li>
+  <li><b>Community servers:</b> they don't get secrets. Their operator can read what the server holds, so Mantle never hands a creator's keys to one. <code>IsAvailable()</code> is false there, so write your script to work without them.</li>
+  <li><b>Never send a value to a player</b> in a Remote, <code>State</code>, an attribute, chat or UI. Use it to call a service from the server, and keep keys you can replace.</li>
+</ul>
+<h3 id="ref-avatar"><code>Avatar</code></h3>
+<p>Service. The local player's avatar: open the avatar editor over the running place and play their equipped emotes. On the server, read a player's look with Player.Avatar and Player.Wearing. Added in API 1.2; the editor is API 1.48.</p>
+<div class="table-wrap"><table class="api ref"><thead><tr><th>Member</th><th>Side</th><th>API</th><th>What it does</th></tr></thead><tbody>
+  <tr><td class="wrap"><code>OpenEditor(options: {Categories: {string}?, Title: string?, FreezeCharacter: boolean?}?) → boolean</code></td><td><span class="side c">Client</span></td><td class="num">1.48</td><td>Open the avatar editor over the running place. The player changes their own look while the world goes on behind it. They see only the items they own or that are free, and Save puts the look on their account the same way Mantle's own avatar screen does. Esc, the gamepad's B and Close shut it, after asking about unsaved changes. Returns false, and opens nothing, when there's no local character, or the editor or another Mantle screen is already open. <code>Categories</code>, <code>Title</code> and <code>FreezeCharacter</code> are described below. An unknown category or option name is an error.</td></tr>
+  <tr><td class="wrap"><code>CloseEditor() → boolean</code></td><td><span class="side c">Client</span></td><td class="num">1.48</td><td>Close the editor as its Close button would, without asking: unsaved changes are put back, and a save that's already sent still lands. Returns false when the editor wasn't open.</td></tr>
+  <tr><td class="wrap"><code>IsEditorOpen() → boolean</code></td><td><span class="side c">Client</span></td><td class="num">1.48</td><td>Whether the editor is open on this client, whoever opened it.</td></tr>
+  <tr><td class="wrap"><code>PlayEmote(itemId: string) → boolean</code></td><td><span class="side c">Client</span></td><td class="num">1.2</td><td>Play one of the local player's equipped emotes, by its item id (an emote on their emote wheel). Returns false, and plays nothing, when itemId is not one of their equipped emotes, when they have no character, or when called again too soon. true means the request went to the server, which checks it again and can still refuse it (the player is moving, in the air, seated or dead).</td></tr>
+  <tr><td class="wrap"><code>EditorOpened()</code> signal</td><td><span class="side c">Client</span></td><td class="num">1.48</td><td>The editor opened on this client.</td></tr>
+  <tr><td class="wrap"><code>EditorClosed(saved: boolean)</code> signal</td><td><span class="side c">Client</span></td><td class="num">1.48</td><td>The editor closed, by the player or by <code>CloseEditor</code>. <code>saved</code> is true when the player saved a look while it was open. <code>LookChanged</code> says what changed, once their account has it.</td></tr>
+  <tr><td class="wrap"><code>LookChanged(slot: string, oldItem: string?, newItem: string?)</code> signal</td><td><span class="side c">Client</span></td><td class="num">1.48</td><td>The local player's saved look changed: once for each slot whose item changed, when their account confirms a save, from the editor or from Mantle's own avatar screen. <code>slot</code> is <code>"avatar"</code> or a slot name such as <code>"hair"</code>, <code>"top"</code> or <code>"acc_hat"</code>. <code>oldItem</code> and <code>newItem</code> are item ids, nil for nothing worn there. Use it for effects and your own records: the look is already the player's.</td></tr>
+</tbody></table></div>
+<p><b>Options.</b> All three are optional.</p>
+<ul>
+  <li><b>Categories:</b> what the editor offers. Use any of <code>"body"</code> (the avatar, skin tone, eye color, height and the rest of Body), <code>"hair"</code> (hair, eyebrows, eyelashes, facial hair), <code>"clothes"</code> (top, bottom, footwear), <code>"accessories"</code>, <code>"emotes"</code> or <code>"all"</code>, or slot names such as <code>"top"</code> or <code>"acc_hat"</code>. Leave it out for everything. Outfits are offered only then.</li>
+  <li><b>Title:</b> a heading over the panel, such as <code>"Barber"</code>. Up to 40 characters.</li>
+  <li><b>FreezeCharacter:</b> true (the default) holds the character still and turns the camera onto it. False leaves the player in control and the camera where it is.</li>
+</ul>
+<p><b>Example.</b> A barber chair that only offers hair.</p>
+<div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Client/Barber.luau</span><pre data-example-kind="snippet" data-language="luau">-- Call this when the player uses your barber chair.
+local function openBarber()
+	local opened = Avatar:OpenEditor({ Categories = { &quot;hair&quot; }, Title = &quot;Barber&quot; })
+	if not opened then
+		UI:Toast(&quot;The barber can't open right now&quot;)
+	end
+end
+
+Avatar.EditorClosed:Connect(function(saved: boolean)
+	if saved then
+		UI:Toast(&quot;Looking sharp!&quot;)
+	end
+end)
+
+Avatar.LookChanged:Connect(function(slot: string, oldItem: string?, newItem: string?)
+	print(`{slot} changed from {oldItem} to {newItem}`)
+end)
+</pre></div><div class="code" data-v="ts"><span class="tag">Scripts/Client/Barber.ts</span><pre data-example-kind="snippet" data-language="typescript">// Call this when the player uses your barber chair.
+function openBarber(): void {
+	const opened = Avatar.openEditor({ categories: [&quot;hair&quot;], title: &quot;Barber&quot; });
+	if (!opened) {
+		UI.toast(&quot;The barber can't open right now&quot;);
+	}
+}
+
+Avatar.editorClosed.connect((saved: boolean) =&gt; {
+	if (saved) {
+		UI.toast(&quot;Looking sharp!&quot;);
+	}
+});
+
+Avatar.lookChanged.connect((slot: string, oldItem: string | undefined, newItem: string | undefined) =&gt; {
+	console.log(`${slot} changed from ${oldItem} to ${newItem}`);
+});
+</pre></div><div class="code" data-v="js"><span class="tag">Scripts/Client/Barber.js</span><pre data-example-kind="snippet" data-language="javascript">// Call this when the player uses your barber chair.
+function openBarber() {
+	const opened = Avatar.openEditor({ categories: [&quot;hair&quot;], title: &quot;Barber&quot; });
+	if (!opened) {
+		UI.toast(&quot;The barber can't open right now&quot;);
+	}
+}
+
+Avatar.editorClosed.connect((saved) =&gt; {
+	if (saved) {
+		UI.toast(&quot;Looking sharp!&quot;);
+	}
+});
+
+Avatar.lookChanged.connect((slot, oldItem, newItem) =&gt; {
+	console.log(`${slot} changed from ${oldItem} to ${newItem}`);
+});
+</pre></div><div class="code" data-v="py"><span class="tag">Scripts/Client/Barber.py</span><pre data-example-kind="snippet" data-language="python"># Call this when the player uses your barber chair.
+def open_barber():
+    opened = Avatar.open_editor({&quot;categories&quot;: [&quot;hair&quot;], &quot;title&quot;: &quot;Barber&quot;})
+    if not opened:
+        UI.toast(&quot;The barber can't open right now&quot;)
+
+def on_closed(saved):
+    if saved:
+        UI.toast(&quot;Looking sharp!&quot;)
+
+def on_look_changed(slot, old_item, new_item):
+    print(slot + &quot; changed from &quot; + str(old_item) + &quot; to &quot; + str(new_item))
+
+Avatar.editor_closed.connect(on_closed)
+Avatar.look_changed.connect(on_look_changed)
+</pre></div></div>
+<p>A script can't change a player's look or give them items: the player does that in the editor.</p>
 <h3 id="ref-backpack"><code>Backpack</code></h3>
 <p>Service. Give players the built-in Tools and the weapons the place stores, take them away, and equip them (server only). Added in API 1.5.</p>
 <div class="table-wrap"><table class="api ref"><thead><tr><th>Member</th><th>Side</th><th>API</th><th>What it does</th></tr></thead><tbody>
@@ -569,7 +826,7 @@
   <tr><td class="wrap"><code>FogColor: string?</code></td><td>Read: Both · set: <span class="side s">Server</span></td><td class="num">1.11</td><td>The fog's color as "#RRGGBB", or nil for the sky's own. Set it on the server.</td></tr>
   <tr><td class="wrap"><code>StarsVisible: boolean?</code></td><td>Read: Both · set: <span class="side s">Server</span></td><td class="num">1.11</td><td>true shows the stars (even by day), false hides them, nil lets them come out at night on their own. Set it on the server.</td></tr>
   <tr><td class="wrap"><code>SunIntensityScale: number</code></td><td>Read: Both · set: <span class="side s">Server</span></td><td class="num">1.11</td><td>How bright the sun (and by night the moon) is, times its own: 1 is unchanged, 0 to 4. Set it on the server.</td></tr>
-  <tr><td class="wrap"><code>ExposureBias: number</code></td><td>Read: Both · set: <span class="side s">Server</span></td><td class="num">1.11</td><td>Brighten (above 0) or darken (below 0) the whole picture, in stops, from -4 to 4. Set it on the server.</td></tr>
+  <tr><td class="wrap"><code>ExposureBias: number</code></td><td>Read: Both · set: <span class="side s">Server</span></td><td class="num">1.11</td><td>Brighten (above 0) or darken (below 0) the whole picture, in stops, from -4 to 4. 0 is the game's own exposure, and +1 doubles the brightness. While it isn't 0, it's added to the game's own exposure and takes the place of the place's own exposure bias. Set it on the server.</td></tr>
   <tr><td class="wrap"><code>Saturation: number</code></td><td>Read: Both · set: <span class="side s">Server</span></td><td class="num">1.11</td><td>How colorful the picture is: 1 is unchanged, 0 is black and white, up to 2. Set it on the server.</td></tr>
   <tr><td class="wrap"><code>Contrast: number</code></td><td>Read: Both · set: <span class="side s">Server</span></td><td class="num">1.11</td><td>The picture's contrast: 1 is unchanged, from 0 to 2. Set it on the server.</td></tr>
   <tr><td class="wrap"><code>Vignette: number?</code></td><td>Read: Both · set: <span class="side s">Server</span></td><td class="num">1.11</td><td>How dark the picture's corners are, from 0 to 1, or nil for the game's own. Set it on the server.</td></tr>

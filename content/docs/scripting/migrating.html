@@ -12,7 +12,7 @@
       <tr><td>Instance:Clone() / Destroy()</td><td>Same</td></tr>
       <tr><td>task library, signals, Vector3</td><td>Same shape</td></tr>
       <tr><td>HumanoidDescription (reading what a player wears)</td><td><code>player.Avatar</code> and <code>player.Wearing</code>, read-only and server only</td></tr>
-      <tr><td>AvatarEditorService prompts, playing an emote</td><td><code>Avatar:OpenCustomizer()</code>, <code>Avatar:PlayEmote(itemId)</code> (client only; equipped emotes only)</td></tr>
+      <tr><td>AvatarEditorService prompts, playing an emote</td><td><code>Avatar:OpenEditor(options)</code>, which opens Mantle's avatar editor over the place and can offer only some categories, such as hair or clothes, and <code>Avatar:PlayEmote(itemId)</code> (client only; equipped emotes only)</td></tr>
       <tr><td>ScreenGui in StarterGui</td><td>A <a href="/docs/scripting/ui-documents/">UI document</a> in the <code>UI/</code> folder, opened from a client script with <code>UI:OpenDocument</code> (API 1.31), or nodes built with <code>UI:Create</code>. <code>UI:Toast</code> shows a quick message.</td></tr>
       <tr><td>ReplicatedStorage values for shared state</td><td><code>State</code> with <code>Observe</code></td></tr>
     </tbody></table></div>
