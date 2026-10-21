@@ -176,7 +176,7 @@ State.observe(&quot;guide.example.timeLeft&quot;, lambda s: label.set_text(f&quo
     <p>The <a href="/docs/scripting/recipes/#r-cross">checkpoint recipe</a> pairs <code>Server/GuideCheckpoint.ts</code> with <code>Server/GuideKillBricks.luau</code>: TypeScript writes a checkpoint vector into State; Luau reads it when the player touches a kill brick. Neither language imports the other's module.</p>
 
     <h2 id="services">More services</h2>
-    <p>The sections below cover services added in script API 1.4 to 1.37, and the newest changes in 1.39 to 1.44. The newest game release carries 1.4 to 1.37, and Check All and the type files know all of them. Each section names the version it needs. When a new plugin version adds members, they're marked <span class="status wip">Next release</span> until a game release carries them (see <a href="/docs/scripting/api/#versions">API versions</a>). The examples are in Luau; the other languages use the same members with their own spelling. Every member is listed in the <a href="/docs/scripting/api/#reference">full reference</a>.</p>
+    <p>The sections below cover services added in script API 1.4 to 1.37, and the newest changes in 1.39 to 1.44. The newest game release carries 1.4 to 1.37, and Check All and the type files know all of them. Each section names the version it needs. When a new plugin version adds members, they're marked <span class="status wip">Next release</span> until a game release carries them (see <a href="/docs/scripting/api/#versions">API versions</a>). Each example comes in all four languages: switch the language to see the others. Every member is listed in the <a href="/docs/scripting/api/#reference">full reference</a>.</p>
 
     <h3 id="script-assets">Assets your scripts use</h3>
     <p>A script can only spawn a mesh, show a material or play a sound that was published with the place. Anything placed in the level is published automatically. For an asset nothing in the level uses, such as a projectile a script spawns or a sound it plays on an event, add it to <b>Script Assets</b>:</p>
@@ -190,60 +190,192 @@ State.observe(&quot;guide.example.timeLeft&quot;, lambda s: label.set_text(f&quo
 
     <h3 id="lights">Lights (API 1.7)</h3>
     <p>Every point, spot and directional light in the place is an <code>Entity</code> with <code>LightEnabled</code>, <code>LightColor</code> (<code>"#RRGGBB"</code>), <code>LightIntensity</code>, <code>LightRange</code> and, for spot lights, <code>LightInnerCone</code>/<code>LightOuterCone</code>. <code>LightKind</code> says which kind it is, or nil for anything that isn't a light. Set them on the server and every player sees the change, including players who join later; set them on a client and only that player does. <code>Lights:Spawn</code> <span class="side s">Server</span> adds a new light. Shadows are off unless you pass <code>CastShadow = true</code>. A place can have at most 64 spawned lights at once; lights you placed in the editor don't count.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Lamp.luau</span><pre data-example-kind="snippet">local lamp = Lights:Spawn("Point", Vector3.new(0, 0, 300), {
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Lamp.luau</span><pre data-example-kind="snippet">local lamp = Lights:Spawn("Point", Vector3.new(0, 0, 300), {
 	Color = "#FFD9A0", Intensity = 40, Range = 1200,
 })
 lamp:AddTag("streetlamp")
-lamp:Tween({ LightIntensity = 0 }, 5)   -- fade it out over five seconds (API 1.8)</pre></div></div>
+lamp:Tween({ LightIntensity = 0 }, 5)   -- fade it out over five seconds (API 1.8)</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Lamp.ts</span><pre data-example-kind="snippet">const lamp = Lights.spawn("Point", new Vector3(0, 0, 300), {
+	color: "#FFD9A0", intensity: 40, range: 1200,
+});
+lamp.addTag("streetlamp");
+lamp.tween({ lightIntensity: 0 }, 5);   // fade it out over five seconds (API 1.8)</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Lamp.js</span><pre data-example-kind="snippet">const lamp = Lights.spawn("Point", new Vector3(0, 0, 300), {
+	color: "#FFD9A0", intensity: 40, range: 1200,
+});
+lamp.addTag("streetlamp");
+lamp.tween({ lightIntensity: 0 }, 5);   // fade it out over five seconds (API 1.8)</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Lamp.py</span><pre data-example-kind="snippet">lamp = Lights.spawn("Point", Vector3(0, 0, 300), {
+    "color": "#FFD9A0", "intensity": 40, "range": 1200,
+})
+lamp.add_tag("streetlamp")
+lamp.tween({"light_intensity": 0}, 5)   # fade it out over five seconds (API 1.8)</pre></div>
+    </div>
 
     <h3 id="spawn-meshes">Spawning and recoloring meshes (API 1.8)</h3>
     <p><code>Assets:Spawn(assetId, position, props?)</code> <span class="side s">Server</span> places one of the place's meshes (placed in the level or listed under <a href="#script-assets">Script Assets</a>) and returns it as an <code>Entity</code>. Spawned meshes count toward the same 512 limit as clones. Any mesh can be tinted with <code>Color</code>, faded with <code>Transparency</code> (0 solid to 1 invisible), or given another of the place's materials with <code>SetMaterial(assetId, slot?)</code>. Only materials uploaded with the place can be tinted or made see-through. A spawned mesh stays where a script puts it: it can't be a physics object.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Crates.luau</span><pre data-example-kind="snippet">local CRATE = "ast_u…"   -- the id from the publish log
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Crates.luau</span><pre data-example-kind="snippet">local CRATE = "ast_u…"   -- the id from the publish log
 
 local crate = Assets:Spawn(CRATE, Vector3.new(200, 0, 100), {
 	Scale = 1.5, Color = "#C0392B", Collision = "Blocking",
 })
 task.wait(3)
 crate:Tween({ Color = "#FFFFFF" }, 1)   -- fade the tint away
-crate.Transparency = 0.5</pre></div></div>
+crate.Transparency = 0.5</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Crates.ts</span><pre data-example-kind="snippet">const CRATE = "ast_u…";   // the id from the publish log
+
+task.spawn(async () =&gt; {
+	const crate = Assets.spawn(CRATE, new Vector3(200, 0, 100), {
+		scale: new Vector3(1.5, 1.5, 1.5), color: "#C0392B", collision: "Blocking",
+	});
+	await task.wait(3);
+	crate.tween({ color: "#FFFFFF" }, 1);   // fade the tint away
+	crate.transparency = 0.5;
+});</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Crates.js</span><pre data-example-kind="snippet">const CRATE = "ast_u…";   // the id from the publish log
+
+task.spawn(async () =&gt; {
+	const crate = Assets.spawn(CRATE, new Vector3(200, 0, 100), {
+		scale: new Vector3(1.5, 1.5, 1.5), color: "#C0392B", collision: "Blocking",
+	});
+	await task.wait(3);
+	crate.tween({ color: "#FFFFFF" }, 1);   // fade the tint away
+	crate.transparency = 0.5;
+});</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Crates.py</span><pre data-example-kind="snippet">CRATE = "ast_u…"   # the id from the publish log
+
+def spawn_crate():
+    crate = Assets.spawn(CRATE, Vector3(200, 0, 100), {
+        "scale": 1.5, "color": "#C0392B", "collision": "Blocking",
+    })
+    yield task.wait(3)
+    crate.tween({"color": "#FFFFFF"}, 1)   # fade the tint away
+    crate.transparency = 0.5
+
+task.spawn(spawn_crate)</pre></div>
+    </div>
 
     <h3 id="physics">Physics objects (API 1.15)</h3>
     <p>A static mesh with <b>Simulate Physics</b> turned on in the editor is published as a physics object: the server simulates it and every player sees it move. A player who joins later sees each one where the server has it, so a prop that has come to rest, or hangs from a rope, stays put for them too. On the server, <code>ApplyImpulse</code> and <code>ApplyAngularImpulse</code> push and spin it, <code>Velocity</code> reads or replaces its speed in cm/s, <code>Anchored = true</code> pins it in place and <code>false</code> lets it fall, and <code>Mass</code> reads its mass in kg. <code>Collided(other)</code> fires on the server when it starts touching something: another entity, a player's character, or nil. Every other entity is always anchored, and physics objects can't be cloned yet. A place can hold 500 physics objects.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Crate.luau</span><pre data-example-kind="snippet">local crate = World:FindFirst("PhysicsCrate")
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Crate.luau</span><pre data-example-kind="snippet">local crate = World:FindFirst("PhysicsCrate")
 crate.Collided:Connect(function(other)
 	print("hit", other and other.Name or "the world")
 end)
 -- Launch it upwards: an impulse in kg·cm/s, so divide by Mass for the speed change.
-crate:ApplyImpulse(Vector3.new(0, 0, 800) * crate.Mass)</pre></div></div>
+crate:ApplyImpulse(Vector3.new(0, 0, 800) * crate.Mass)</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Crate.ts</span><pre data-example-kind="snippet">const crate = World.findFirst("PhysicsCrate")!;
+crate.collided.connect((other) =&gt; {
+	console.log("hit", other ? other.name : "the world");
+});
+// Launch it upwards: an impulse in kg·cm/s, so divide by mass for the speed change.
+crate.applyImpulse(new Vector3(0, 0, 800).mul(crate.mass));</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Crate.js</span><pre data-example-kind="snippet">const crate = World.findFirst("PhysicsCrate");
+crate.collided.connect((other) =&gt; {
+	console.log("hit", other ? other.name : "the world");
+});
+// Launch it upwards: an impulse in kg·cm/s, so divide by mass for the speed change.
+crate.applyImpulse(new Vector3(0, 0, 800).mul(crate.mass));</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Crate.py</span><pre data-example-kind="snippet">crate = World.find_first("PhysicsCrate")
+
+def on_collided(other):
+    print("hit", other.name if other else "the world")
+
+crate.collided.connect(on_collided)
+# Launch it upwards: an impulse in kg·cm/s, so divide by mass for the speed change.
+crate.apply_impulse(Vector3(0, 0, 800) * crate.mass)</pre></div>
+    </div>
     <p>From API 1.25, <code>AngularVelocity</code> reads or (server only) replaces a physics object's spin, in degrees per second about the world axes. From API 1.28, <code>PhysicsMaterial</code> reads its surface preset (<code>"default"</code>, <code>"rubber"</code>, <code>"ice"</code>, <code>"metal"</code>, <code>"wood"</code> or <code>"stone"</code>), and a server script can change it, anchored or not; every player sees the new surface on its next bounce or slide. Setting <code>AngularVelocity</code> on an <code>Anchored</code> object is an error (set <code>Anchored = false</code> first), and setting either one on an object with no physics block is an error too. <code>PhysicsMaterial</code> works on an anchored object.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/IcyWheel.luau</span><pre data-example-kind="snippet">local wheel = World:FindFirst("Wheel")
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/IcyWheel.luau</span><pre data-example-kind="snippet">local wheel = World:FindFirst("Wheel")
 wheel.Anchored = false
 wheel.PhysicsMaterial = "ice"          -- API 1.28: slides instead of gripping
-wheel.AngularVelocity = Vector3.new(0, 0, 180)  -- API 1.25: half a turn a second about world Z</pre></div></div>
+wheel.AngularVelocity = Vector3.new(0, 0, 180)  -- API 1.25: half a turn a second about world Z</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/IcyWheel.ts</span><pre data-example-kind="snippet">const wheel = World.findFirst("Wheel")!;
+wheel.anchored = false;
+wheel.physicsMaterial = "ice";          // API 1.28: slides instead of gripping
+wheel.angularVelocity = new Vector3(0, 0, 180);  // API 1.25: half a turn a second about world Z</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/IcyWheel.js</span><pre data-example-kind="snippet">const wheel = World.findFirst("Wheel");
+wheel.anchored = false;
+wheel.physicsMaterial = "ice";          // API 1.28: slides instead of gripping
+wheel.angularVelocity = new Vector3(0, 0, 180);  // API 1.25: half a turn a second about world Z</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/IcyWheel.py</span><pre data-example-kind="snippet">wheel = World.find_first("Wheel")
+wheel.anchored = False
+wheel.physics_material = "ice"          # API 1.28: slides instead of gripping
+wheel.angular_velocity = Vector3(0, 0, 180)  # API 1.25: half a turn a second about world Z</pre></div>
+    </div>
 
     <h3 id="joints">Joints: welds, hinges and ropes (API 1.30)</h3>
     <p>A <b>Physics Constraint Actor</b> between two physics objects (or one and the world) publishes as a <code>Constraint</code>: a weld (no movement between them), a hinge (one turns about an axis, within limits) or a rope (the anchors stay within a length of each other). <code>Constraints:Create(params)</code> <span class="side s">Server</span> makes one at runtime and returns it; <code>Constraints:FromEntity(entity)</code> finds the joint a place's own Constraint made. Pull a joint harder than its <code>BreakForce</code> (newtons) and it breaks for good: <code>Broken</code> fires once, on the server. The two joined entities stop colliding with each other, and a place holds at most 200 joints, its own included. Joints exist only on the server: players just see the entities move.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Door.luau</span><pre data-example-kind="snippet">local door = World:FindFirst("Door")
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Door.luau</span><pre data-example-kind="snippet">local door = World:FindFirst("Door")
 local hinge = Constraints:Create({
 	Type = "hinge", EntityA = door, AnchorA = Vector3.new(0, -50, 0),
 	Axis = Vector3.new(0, 0, 1), Limits = { -90, 0 }, BreakForce = 20000,
 })
-hinge.Broken:Connect(function() print("the door came off") end)</pre></div></div>
+hinge.Broken:Connect(function() print("the door came off") end)</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Door.ts</span><pre data-example-kind="snippet">const door = World.findFirst("Door")!;
+const hinge = Constraints.create({
+	type: "hinge", entityA: door, anchorA: new Vector3(0, -50, 0),
+	axis: new Vector3(0, 0, 1), limits: [-90, 0], breakForce: 20000,
+});
+hinge.broken.connect(() =&gt; console.log("the door came off"));</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Door.js</span><pre data-example-kind="snippet">const door = World.findFirst("Door");
+const hinge = Constraints.create({
+	type: "hinge", entityA: door, anchorA: new Vector3(0, -50, 0),
+	axis: new Vector3(0, 0, 1), limits: [-90, 0], breakForce: 20000,
+});
+hinge.broken.connect(() =&gt; console.log("the door came off"));</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Door.py</span><pre data-example-kind="snippet">door = World.find_first("Door")
+hinge = Constraints.create({
+    "type": "hinge", "entity_a": door, "anchor_a": Vector3(0, -50, 0),
+    "axis": Vector3(0, 0, 1), "limits": [-90, 0], "break_force": 20000,
+})
+hinge.broken.connect(lambda joint: print("the door came off"))</pre></div>
+    </div>
 
     <h3 id="raycast">Raycasts and area queries (API 1.6)</h3>
     <p><code>World:Raycast(origin, direction, params?)</code> returns the first thing a ray hits as a table of <code>Entity</code>, <code>Player</code> (set when it hit a character), <code>Position</code>, <code>Normal</code> and <code>Distance</code>, or nil. <code>Spherecast</code> and <code>Blockcast</code> sweep a ball or box the same way, and <code>GetEntitiesInRadius</code> and <code>GetEntitiesInBox</code> list everything inside a shape, nearest first. <code>params</code> takes <code>MaxDistance</code>, <code>Include</code>, <code>Exclude</code>, <code>Tag</code> and <code>IgnorePlayers</code>. Queries run on the machine that asks, work on both sides, and reach at most 1 km. A ball can have a radius of up to 50 m and a box can be up to 100 m on a side. A list holds at most 256 entities, and a script can make 256 queries a frame. Rays pass through trigger (overlap-only) entities and never hit entities with no collision.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Laser.luau</span><pre data-example-kind="snippet">local laser = World:FindFirst("Laser")
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Laser.luau</span><pre data-example-kind="snippet">local laser = World:FindFirst("Laser")
 while true do
 	local hit = World:Raycast(laser.Position, Vector3.new(1, 0, 0), { MaxDistance = 3000, Exclude = { laser } })
 	if hit and hit.Player then
 		hit.Player:TakeDamage(10)   -- API 1.9
 	end
 	task.wait(0.25)
-end</pre></div></div>
+end</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Laser.ts</span><pre data-example-kind="snippet">const laser = World.findFirst("Laser")!;
+task.spawn(async () =&gt; {
+	while (true) {
+		const hit = World.raycast(laser.position, new Vector3(1, 0, 0), { maxDistance: 3000, exclude: [laser] });
+		if (hit &amp;&amp; hit.player) {
+			hit.player.takeDamage(10);   // API 1.9
+		}
+		await task.wait(0.25);
+	}
+});</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Laser.js</span><pre data-example-kind="snippet">const laser = World.findFirst("Laser");
+task.spawn(async () =&gt; {
+	while (true) {
+		const hit = World.raycast(laser.position, new Vector3(1, 0, 0), { maxDistance: 3000, exclude: [laser] });
+		if (hit &amp;&amp; hit.player) {
+			hit.player.takeDamage(10);   // API 1.9
+		}
+		await task.wait(0.25);
+	}
+});</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Laser.py</span><pre data-example-kind="snippet">laser = World.find_first("Laser")
+
+def watch():
+    while True:
+        hit = World.raycast(laser.position, Vector3(1, 0, 0), {"max_distance": 3000, "exclude": [laser]})
+        if hit and hit.get("player"):
+            hit["player"].take_damage(10)   # API 1.9
+        yield task.wait(0.25)
+
+task.spawn(watch)</pre></div>
+    </div>
 
     <h3 id="health">Health and damage (API 1.9)</h3>
     <p>Each player's character has <code>Health</code> and <code>MaxHealth</code> (100 unless a script changes it), plus <code>WalkSpeed</code> (500 cm/s) and <code>JumpHeight</code> (about 90 cm). Read them anywhere; set them on the server. <code>TakeDamage(amount, source?)</code> deals damage the same way weapons do, and <code>source</code> is the player credited with a kill. <code>Heal</code>, <code>Kill</code> and <code>Respawn(position?)</code> return false when they can't apply: <code>Heal</code> when the player is dead or already at full health, <code>Kill</code> when they're already dead, and <code>Respawn</code> when they're driving a vehicle (it does bring a dead player back). <code>Died(player, killer)</code> and <code>HealthChanged(player, old, new)</code> fire on the server and on every client.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Health.luau</span><pre data-example-kind="snippet">Players:OnPlayer(function(player)
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Health.luau</span><pre data-example-kind="snippet">Players:OnPlayer(function(player)
 	player.Died:Connect(function(_, killer)
 		if killer then
 			print(`{killer.Name} got {player.Name}`)
@@ -255,11 +387,50 @@ World:OnTagged("healpad", function(pad)
 	pad.Touched:Connect(function(player)
 		player:Heal(25)
 	end)
-end)</pre></div></div>
+end)</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Health.ts</span><pre data-example-kind="snippet">Players.onPlayer((player) =&gt; {
+	player.died.connect((_, killer) =&gt; {
+		if (killer) {
+			console.log(`${killer.name} got ${player.name}`);
+		}
+	});
+});
+
+World.onTagged("healpad", (pad) =&gt; {
+	pad.touched.connect((player) =&gt; {
+		player.heal(25);
+	});
+});</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Health.js</span><pre data-example-kind="snippet">Players.onPlayer((player) =&gt; {
+	player.died.connect((_, killer) =&gt; {
+		if (killer) {
+			console.log(`${killer.name} got ${player.name}`);
+		}
+	});
+});
+
+World.onTagged("healpad", (pad) =&gt; {
+	pad.touched.connect((player) =&gt; {
+		player.heal(25);
+	});
+});</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Health.py</span><pre data-example-kind="snippet">def on_player(player):
+    def on_died(_, killer, damage_type):
+        if killer:
+            print(f"{killer.name} got {player.name}")
+    player.died.connect(on_died)
+
+Players.on_player(on_player)
+
+def on_pad(pad):
+    pad.touched.connect(lambda player: player.heal(25))
+
+World.on_tagged("healpad", on_pad)</pre></div>
+    </div>
 
     <h3 id="input-camera">Input and camera (API 1.10)</h3>
     <p>On a client, <code>Input:BindAction(name, keys, callback)</code> calls you with <code>"Began"</code> when the player presses one of the keys and <code>"Ended"</code> when they let go. Keys are named like <code>"Q"</code>, <code>"F4"</code>, <code>"MouseMiddle"</code>, <code>"ButtonY"</code> or <code>"Tab"</code>. Binding a key Mantle uses for its own controls (movement, jumping, the number keys that pick a tool, chat, voice and the menu, among others) is an error; <code>Input:GetBindableKeys()</code> lists the free ones. A key you bind still does anything Mantle does with it, and nothing reaches your bindings while Mantle's menu or chat is open. <code>Tab</code> also opens the built-in leaderboard panel (API 1.26; see <a href="#leaderboard">Leaderboard</a>), but it isn't reserved: your script's binding still gets the press. From API 1.22, <code>BindAxis</code> reads the sticks, triggers and mouse wheel; a trigger Mantle uses only as a button (fire, aim) can still be read as an axis, since only the sticks' movement and each trigger's click are reserved. <code>Camera</code> can hold the view in first person (<code>Camera.Mode = "FirstPerson"</code>), cut to a fixed shot (<code>SetFixed</code>), tween to one (<code>TweenFixed</code>, API 1.22), follow an entity (<code>Follow</code>, API 1.22), change <code>FieldOfView</code> and <code>Shake</code>. Everything goes back to Mantle's own camera when the script stops or the player respawns, or when you call <code>Camera:Reset()</code>.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Client/Overview.luau</span><pre data-example-kind="snippet">local tower = World:FindFirst("Tower")
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Client/Overview.luau</span><pre data-example-kind="snippet">local tower = World:FindFirst("Tower")
 
 Input:BindAction("overview", { "Q" }, function(phase)
 	if phase == "Began" then
@@ -267,32 +438,102 @@ Input:BindAction("overview", { "Q" }, function(phase)
 	else
 		Camera:Reset()
 	end
-end)</pre></div></div>
+end)</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Client/Overview.ts</span><pre data-example-kind="snippet">const tower = World.findFirst("Tower")!;
+
+Input.bindAction("overview", ["Q"], (phase) =&gt; {
+	if (phase === "Began") {
+		Camera.tweenFixed(tower.position.add(new Vector3(-2000, 0, 1500)), tower.position, 1.5, "Sine", "InOut");   // API 1.22
+	} else {
+		Camera.reset();
+	}
+});</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Client/Overview.js</span><pre data-example-kind="snippet">const tower = World.findFirst("Tower");
+
+Input.bindAction("overview", ["Q"], (phase) =&gt; {
+	if (phase === "Began") {
+		Camera.tweenFixed(tower.position.add(new Vector3(-2000, 0, 1500)), tower.position, 1.5, "Sine", "InOut");   // API 1.22
+	} else {
+		Camera.reset();
+	}
+});</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Client/Overview.py</span><pre data-example-kind="snippet">tower = World.find_first("Tower")
+
+def on_overview(phase, key):
+    if phase == "Began":
+        Camera.tween_fixed(tower.position + Vector3(-2000, 0, 1500), tower.position, 1.5, "Sine", "InOut")   # API 1.22
+    else:
+        Camera.reset()
+
+Input.bind_action("overview", ["Q"], on_overview)</pre></div>
+    </div>
 
     <h3 id="sounds">Sounds and music (API 1.12)</h3>
     <p><code>Sounds:Play(sound, params?)</code> plays one of the place's uploaded sounds: a sound emitter's <code>SoundId</code>, or a sound's asset id. Give it a <code>Position</code> or <code>AttachTo</code> entity to place it in the world, where it fades out at <code>Radius</code> (4,000 cm by default); without either it plays flat, like an interface sound. From a server script every player hears it, or only <code>params.Player</code>; from a client script only that player does. It returns a <code>SoundHandle</code> with <code>Stop</code>, <code>SetVolume</code> and <code>IsPlaying</code>. Each player has one music track: <code>Sounds:PlayMusic</code> crossfades to a new one and <code>StopMusic</code> ends it. A placed sound emitter is an <code>Entity</code> with <code>PlaySound</code>, <code>StopSound</code> and <code>SoundVolume</code>. A script can start 10 sounds a frame, and a server script 20 a second (bursts of 40); going past either stops the script. A player's machine plays up to 32 script sounds at once, and a server script can have at most 32 looping sounds running at once (going past it stops the script).</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Bell.luau</span><pre data-example-kind="snippet">local bell = World:FindFirst("Bell")
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Bell.luau</span><pre data-example-kind="snippet">local bell = World:FindFirst("Bell")
 local BELL_SOUND = "ast_u…"   -- a sound listed under Script Assets
 
 bell.Touched:Connect(function(player)
 	Sounds:Play(BELL_SOUND, { AttachTo = bell, Radius = 3000, Pitch = 0.9 })
-end)</pre></div></div>
+end)</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Bell.ts</span><pre data-example-kind="snippet">const bell = World.findFirst("Bell")!;
+const BELL_SOUND = "ast_u…";   // a sound listed under Script Assets
+
+bell.touched.connect((player) =&gt; {
+	Sounds.play(BELL_SOUND, { attachTo: bell, radius: 3000, pitch: 0.9 });
+});</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Bell.js</span><pre data-example-kind="snippet">const bell = World.findFirst("Bell");
+const BELL_SOUND = "ast_u…";   // a sound listed under Script Assets
+
+bell.touched.connect((player) =&gt; {
+	Sounds.play(BELL_SOUND, { attachTo: bell, radius: 3000, pitch: 0.9 });
+});</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Bell.py</span><pre data-example-kind="snippet">bell = World.find_first("Bell")
+BELL_SOUND = "ast_u…"   # a sound listed under Script Assets
+
+def on_touch(player):
+    Sounds.play(BELL_SOUND, {"attach_to": bell, "radius": 3000, "pitch": 0.9})
+
+bell.touched.connect(on_touch)</pre></div>
+    </div>
 
     <h3 id="effects">Particle effects (API 1.19)</h3>
     <p>Mantle has five built-in particle effects: <code>Smoke</code>, <code>Fire</code>, <code>Sparks</code>, <code>Dust</code> and <code>Glow</code>. From API 1.44 it has seven more: <code>Explosion</code>, <code>Impact</code>, <code>MuzzleFlash</code>, <code>Blood</code>, <code>Splash</code>, <code>Confetti</code> and <code>Heal</code> <span class="status wip">Next release</span>. You can't upload your own particle systems. <code>Effects:Play(archetype, position, params?)</code> shows one for <code>Duration</code> seconds (1 by default, at most 10), and <code>params</code> can change its <code>Color</code>, <code>Size</code>, <code>Rate</code>, <code>Speed</code>, <code>Lifetime</code> and <code>Rotation</code>. From a server script every player sees it, but a player who joins later doesn't; from a client script only that player does. A player's machine shows at most 32 script effects at once (the oldest is cut). A script can play at most 10 effects a frame, and a server script at most 10 a second (bursts of 20); going past either stops the script. From API 1.44, <code>Effects:Beam(from, to, params?)</code> draws a short glowing line between two points, and <code>Effects:Decal(position, normal, params?)</code> leaves a mark such as a bullet hole or a scorch on a surface <span class="status wip">Next release</span>. They count toward the same limits as <code>Play</code>, and a player who joins later doesn't see either. See <a href="/docs/scripting/api/#ref-effects">Effects</a> and the <a href="/docs/scripting/recipes/#r-laser-marker">laser flash recipe</a>. A <b>Mantle Effect</b> placed in the level is an <code>Entity</code> with <code>PlayEffect</code>, <code>StopEffect</code>, <code>SetEffectColor</code> and <code>SetEffectRate</code>, and those changes do reach late joiners.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Explosion.luau</span><pre data-example-kind="snippet">local function explode(position)
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Explosion.luau</span><pre data-example-kind="snippet">local function explode(position)
 	Effects:Play("Fire", position, { Size = 120, Rate = 150, Duration = 0.4 })
 	Effects:Play("Smoke", position, { Duration = 2 })
-end</pre></div></div>
+end</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Explosion.ts</span><pre data-example-kind="snippet">function explode(position: Vector3) {
+	Effects.play("Fire", position, { size: 120, rate: 150, duration: 0.4 });
+	Effects.play("Smoke", position, { duration: 2 });
+}</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Explosion.js</span><pre data-example-kind="snippet">function explode(position) {
+	Effects.play("Fire", position, { size: 120, rate: 150, duration: 0.4 });
+	Effects.play("Smoke", position, { duration: 2 });
+}</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Explosion.py</span><pre data-example-kind="snippet">def explode(position):
+    Effects.play("Fire", position, {"size": 120, "rate": 150, "duration": 0.4})
+    Effects.play("Smoke", position, {"duration": 2})</pre></div>
+    </div>
 
     <h3 id="environment">Time of day and weather (API 1.4 and 1.11)</h3>
     <p>Every server has one sky, shared by every player. <code>Environment.TimeOfDay</code> runs from 0 to 24 (servers start at 9, and a day lasts 30 real minutes), <code>IsNight</code> is true while the sun is down, and <code>Weather</code> is <code>Clear</code>, <code>PartlyCloudy</code>, <code>Overcast</code>, <code>Rain</code>, <code>Storm</code>, <code>Cloudy</code>, <code>Foggy</code>, <code>LightRain</code>, <code>LightSnow</code>, <code>Snow</code>, <code>Blizzard</code>, <code>DustCalm</code> or <code>DustStorm</code>. On its own the weather moves between Clear (32%), PartlyCloudy (25%), Cloudy (15%), Overcast (10%), LightRain (6%), Rain (5%), Foggy (5%) and Storm (2%), and after a Storm comes Rain, LightRain or Overcast. LightSnow, Snow, Blizzard, DustCalm and DustStorm never come on their own: they only appear when a script or the place's settings ask for them. <code>WeatherChanged</code> fires when the weather turns, and <code>LightningStrike</code> <span class="side c">Client</span> fires with each flash; the default sky already shows the bolt and plays its thunder. From API 1.11, server scripts can change it: set <code>ClockTime</code> or <code>TimeScale</code>, <code>FreezeClock()</code>, hold the weather with <code>SetWeather</code> until <code>ResumeNaturalWeather</code>, and adjust the fog, stars, sun and the picture's color. <code>PropertyChanged</code> fires everywhere when a script changes one of these.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Storm.luau</span><pre data-example-kind="snippet">Environment.ClockTime = 21        -- jump to night
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Storm.luau</span><pre data-example-kind="snippet">Environment.ClockTime = 21        -- jump to night
 Environment:SetWeather("Storm", 30)  -- blend into a storm over 30 s
 task.wait(120)
-Environment:ResumeNaturalWeather()</pre></div></div>
+Environment:ResumeNaturalWeather()</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Storm.ts</span><pre data-example-kind="snippet">Environment.clockTime = 21;        // jump to night
+Environment.setWeather("Storm", 30);  // blend into a storm over 30 s
+task.delay(120, () =&gt; Environment.resumeNaturalWeather());</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Storm.js</span><pre data-example-kind="snippet">Environment.clockTime = 21;        // jump to night
+Environment.setWeather("Storm", 30);  // blend into a storm over 30 s
+task.delay(120, () =&gt; Environment.resumeNaturalWeather());</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Storm.py</span><pre data-example-kind="snippet">Environment.clock_time = 21        # jump to night
+Environment.set_weather("Storm", 30)  # blend into a storm over 30 s
+task.delay(120, lambda: Environment.resume_natural_weather())</pre></div>
+    </div>
     <p>From API 1.27, a server script can also set <code>Bloom</code> (0 to 4, how strongly bright things glow) and a fixed color-grading look with <code>ColorGrading</code> (<code>"Warm"</code>, <code>"Cool"</code>, <code>"Noir"</code>, <code>"Sepia"</code>, <code>"Vivid"</code> or <code>"Faded"</code>) and <code>ColorGradingIntensity</code> (0 to 1, how strongly it shows). Creators can't upload their own color-grading textures yet.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Flashback.luau</span><pre data-example-kind="snippet">-- A black-and-white flashback with a strong glow, fading back to color.
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Flashback.luau</span><pre data-example-kind="snippet">-- A black-and-white flashback with a strong glow, fading back to color.
 Environment.ColorGrading = "Noir"
 Environment.Bloom = 4
 task.wait(10)
@@ -302,35 +543,122 @@ for i = 10, 0, -1 do
 end
 Environment.ColorGrading = nil
 Environment.ColorGradingIntensity = 1
-Environment.Bloom = nil</pre></div></div>
+Environment.Bloom = nil</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Flashback.ts</span><pre data-example-kind="snippet">// A black-and-white flashback with a strong glow, fading back to color.
+task.spawn(async () =&gt; {
+	Environment.colorGrading = "Noir";
+	Environment.bloom = 4;
+	await task.wait(10);
+	for (let i = 10; i &gt;= 0; i--) {
+		Environment.colorGradingIntensity = i / 10;
+		await task.wait(0.2);
+	}
+	Environment.colorGrading = undefined;
+	Environment.colorGradingIntensity = 1;
+	Environment.bloom = undefined;
+});</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Flashback.js</span><pre data-example-kind="snippet">// A black-and-white flashback with a strong glow, fading back to color.
+task.spawn(async () =&gt; {
+	Environment.colorGrading = "Noir";
+	Environment.bloom = 4;
+	await task.wait(10);
+	for (let i = 10; i &gt;= 0; i--) {
+		Environment.colorGradingIntensity = i / 10;
+		await task.wait(0.2);
+	}
+	Environment.colorGrading = undefined;
+	Environment.colorGradingIntensity = 1;
+	Environment.bloom = undefined;
+});</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Flashback.py</span><pre data-example-kind="snippet"># A black-and-white flashback with a strong glow, fading back to color.
+def flashback():
+    Environment.color_grading = "Noir"
+    Environment.bloom = 4
+    yield task.wait(10)
+    for i in range(10, -1, -1):
+        Environment.color_grading_intensity = i / 10
+        yield task.wait(0.2)
+    Environment.color_grading = None
+    Environment.color_grading_intensity = 1
+    Environment.bloom = None
+
+task.spawn(flashback)</pre></div>
+    </div>
     <p>From API 1.29, a client script can give one player their own look on top of the server's, with <code>Environment:SetLocalLook(look)</code> <span class="side c">Client</span>. <code>look</code> takes any of <code>ExposureBias</code>, <code>Saturation</code>, <code>Contrast</code>, <code>Vignette</code>, <code>ColorTint</code>, <code>Bloom</code>, <code>ColorGrading</code> and <code>ColorGradingIntensity</code>, each clamped the same way as the server property of the same name. What the look sets wins over the server's value; what it leaves out follows the server, including later server changes. Each call replaces the whole look, no other player sees it, and the look goes when the script that set it stops. <code>Environment:ClearLocalLook()</code> <span class="side c">Client</span> gives the server's look back.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Client/HauntedWing.luau</span><pre data-example-kind="snippet">-- This player only: gray and vignetted, with a Noir grade the server's own bloom shows through.
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Client/HauntedWing.luau</span><pre data-example-kind="snippet">-- This player only: gray and vignetted, with a Noir grade the server's own bloom shows through.
 Environment:SetLocalLook({ Saturation = 0, Vignette = 0.6, ColorGrading = "Noir" })
 task.wait(5)
-Environment:ClearLocalLook()</pre></div></div>
+Environment:ClearLocalLook()</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Client/HauntedWing.ts</span><pre data-example-kind="snippet">// This player only: gray and vignetted, with a Noir grade the server's own bloom shows through.
+Environment.setLocalLook({ saturation: 0, vignette: 0.6, colorGrading: "Noir" });
+task.delay(5, () =&gt; Environment.clearLocalLook());</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Client/HauntedWing.js</span><pre data-example-kind="snippet">// This player only: gray and vignetted, with a Noir grade the server's own bloom shows through.
+Environment.setLocalLook({ saturation: 0, vignette: 0.6, colorGrading: "Noir" });
+task.delay(5, () =&gt; Environment.clearLocalLook());</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Client/HauntedWing.py</span><pre data-example-kind="snippet"># This player only: gray and vignetted, with a Noir grade the server's own bloom shows through.
+Environment.set_local_look({"saturation": 0, "vignette": 0.6, "color_grading": "Noir"})
+task.delay(5, lambda: Environment.clear_local_look())</pre></div>
+    </div>
 
     <h3 id="leaderboard">Leaderboard (API 1.26)</h3>
     <p>Mantle has one built-in leaderboard panel. A server script picks the board with <code>Leaderboard:Configure(store, options?)</code> <span class="side s">Server</span>, where <code>store</code> is the name of an ordered store from <code>DataStore:GetOrderedDataStore</code>. Players press <b>Tab</b> (or, on a gamepad, the settings drawer's Leaderboard row) to see its top 10, each row with the player's picture, name and value; <code>options.title</code> (up to 32 characters) and <code>options.valueLabel</code> (up to 16) head the panel and its value column, and <code>options.ascending</code> shows lowest first. Key the store by <code>player.UserId</code> so each row shows the player's name and picture; any other key shows as written. The title is "Leaderboard" and the value label "Score" unless you set them, and an unknown option is an error. The panel re-reads the store every 30 seconds while anyone is playing. <code>Leaderboard:Clear()</code> <span class="side s">Server</span> takes the panel down. One board shows at a time; call <code>Configure</code> again to switch.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Wins.luau</span><pre data-example-kind="snippet">local wins = DataStore:GetOrderedDataStore("wins")
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Wins.luau</span><pre data-example-kind="snippet">local wins = DataStore:GetOrderedDataStore("wins")
 Leaderboard:Configure("wins", { title = "Most wins", valueLabel = "Wins" })
 
 local function onRoundWon(player)
 	wins:IncrementAsync(player.UserId, 1)
-end</pre></div></div>
+end</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Wins.ts</span><pre data-example-kind="snippet">const wins = DataStore.getOrderedDataStore("wins");
+Leaderboard.configure("wins", { title: "Most wins", valueLabel: "Wins" });
+
+function onRoundWon(player: Player) {
+	wins.incrementAsync(player.userId, 1);
+}</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Wins.js</span><pre data-example-kind="snippet">const wins = DataStore.getOrderedDataStore("wins");
+Leaderboard.configure("wins", { title: "Most wins", valueLabel: "Wins" });
+
+function onRoundWon(player) {
+	wins.incrementAsync(player.userId, 1);
+}</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Wins.py</span><pre data-example-kind="snippet">wins = DataStore.get_ordered_data_store("wins")
+Leaderboard.configure("wins", {"title": "Most wins", "value_label": "Wins"})
+
+def on_round_won(player):
+    wins.increment_async(player.user_id, 1)</pre></div>
+    </div>
     <p>See the <a href="/docs/scripting/recipes/#r-leaderboard">leaderboard recipe</a> for the manual, <code>GetSortedAsync</code>-driven version, useful when you want your own on-screen leaderboard instead of the built-in panel.</p>
 
     <h3 id="chat-hooks">Chat (API 1.14)</h3>
     <p><code>Chat.MessagePosted(player, text)</code> fires for what players say, with the text already filtered. On the server it fires for every player's line; on a client, for each line that player's chat box shows. <code>Chat:SendSystemMessage(text, player?)</code> <span class="side s">Server</span> posts a line from the place, to everyone or to one player. It goes through the same chat filter, is at most 500 characters, and a server can send 10 a minute. Text that is empty or over 500 characters is an error. It returns false when it can't be sent right now: over the limit, the player isn't verified yet, or the place has no online session (a local test run). These lines never fire <code>Chat.MessagePosted</code>.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Commands.luau</span><pre data-example-kind="snippet">Chat.MessagePosted:Connect(function(player, text)
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Commands.luau</span><pre data-example-kind="snippet">Chat.MessagePosted:Connect(function(player, text)
 	if text == "!spawn" then
 		player:Respawn()
 		Chat:SendSystemMessage("Sent you back to the start.", player)
 	end
-end)</pre></div></div>
+end)</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Commands.ts</span><pre data-example-kind="snippet">Chat.messagePosted.connect((player, text) =&gt; {
+	if (text === "!spawn") {
+		player.respawn();
+		Chat.sendSystemMessage("Sent you back to the start.", player);
+	}
+});</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Commands.js</span><pre data-example-kind="snippet">Chat.messagePosted.connect((player, text) =&gt; {
+	if (text === "!spawn") {
+		player.respawn();
+		Chat.sendSystemMessage("Sent you back to the start.", player);
+	}
+});</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Commands.py</span><pre data-example-kind="snippet">def on_message(player, text):
+    if text == "!spawn":
+        player.respawn()
+        Chat.send_system_message("Sent you back to the start.", player)
+
+Chat.message_posted.connect(on_message)</pre></div>
+    </div>
 
     <h3 id="npcs">NPCs (API 1.17)</h3>
     <p><code>NPCs:Spawn(position, look?, yaw?)</code> <span class="side s">Server</span> adds a character that the server walks and animates, and every player sees. <code>look</code> takes <code>AvatarItemId</code> (the item id of a published avatar body, such as the one <code>Player.Avatar</code> reads; without it the NPC has no body to draw), <code>SkinTone</code> and <code>EyeColor</code> (avatar palette ids such as <code>"tone_05"</code>) and <code>Height</code> (a percent from 95 to 105; values outside are clamped). Any other key is an error. <code>MoveTo(position)</code> walks it around walls and obstacles, and <code>MoveCompleted(success)</code> fires when the walk ends. <code>PlayClip</code> plays <code>"walk"</code>, <code>"idle"</code>, <code>"turn_left"</code> or <code>"turn_right"</code>. From API 1.23 NPCs have <code>Health</code>, take weapon damage and <code>TakeDamage</code>, fire <code>Died</code>, and can play the place's own animation clips with <code>PlayAssetClip</code>. A place holds at most 50 NPCs at once, and spawning past that is an error. <code>NPCs:FromEntity</code> turns a raycast hit back into its NPC. To play one of the place's own clips on an NPC, use <code>PlayAssetClip</code>. <code>PlayClip</code> only takes a clip id from API 1.23. From API 1.37 an NPC can drive: <code>DriveTo(vehicle, position, options?)</code> puts it in the driver's seat of a car within 4.5 m and drives it straight at the point (there are no roads to follow, and it doesn't steer round walls), <code>DriveAlong(vehicle, points, options?)</code> drives through up to 64 points, and <code>DriveFinished(result)</code> fires with <code>"arrived"</code>, <code>"stuck"</code> or <code>"cancelled"</code>. <code>StopDriving()</code> brakes the car to a stop, and <code>ExitVehicle()</code> gets the NPC out once the car is slower than a walk. <code>options</code> takes <code>MaxSpeed</code> (cm/s, 1,400 by default) and <code>ArriveRadius</code> (cm, 600 by default); they're clamped to 100 to 3,000 and 100 to 5,000. Only cars and trucks work, and the vehicle must have no driver. <code>MoveTo</code> returns false at once for a target more than 500 m away or a dead NPC. From API 1.42, <code>Follow</code> walks an NPC after a player, an entity or another NPC, and <code>Attack</code> makes one its enemy <span class="status wip">Next release</span>. See <a href="#combat">Explosions, projectiles and NPC attacks</a>.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Guard.luau</span><pre data-example-kind="snippet">local a, b = Vector3.new(0, 0, 0), Vector3.new(2000, 0, 0)
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Guard.luau</span><pre data-example-kind="snippet">local a, b = Vector3.new(0, 0, 0), Vector3.new(2000, 0, 0)
 local AVATAR = "itm_u…"   -- the item id of a published avatar body
 local guard = NPCs:Spawn(a, { AvatarItemId = AVATAR, Height = 100 })
 
@@ -340,53 +668,179 @@ guard.MoveCompleted:Connect(function(success)
 	task.wait(2)
 	guard:MoveTo(target)
 end)
-guard:MoveTo(target)</pre></div></div>
+guard:MoveTo(target)</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Guard.ts</span><pre data-example-kind="snippet">const a = new Vector3(0, 0, 0);
+const b = new Vector3(2000, 0, 0);
+const AVATAR = "itm_u…";   // the item id of a published avatar body
+const guard = NPCs.spawn(a, { avatarItemId: AVATAR, height: 100 });
+
+let target = b;
+guard.moveCompleted.connect(async (success) =&gt; {
+	target = target.equals(a) ? b : a;
+	await task.wait(2);
+	guard.moveTo(target);
+});
+guard.moveTo(target);</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Guard.js</span><pre data-example-kind="snippet">const a = new Vector3(0, 0, 0);
+const b = new Vector3(2000, 0, 0);
+const AVATAR = "itm_u…";   // the item id of a published avatar body
+const guard = NPCs.spawn(a, { avatarItemId: AVATAR, height: 100 });
+
+let target = b;
+guard.moveCompleted.connect(async (success) =&gt; {
+	target = target.equals(a) ? b : a;
+	await task.wait(2);
+	guard.moveTo(target);
+});
+guard.moveTo(target);</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Guard.py</span><pre data-example-kind="snippet">a, b = Vector3(0, 0, 0), Vector3(2000, 0, 0)
+AVATAR = "itm_u…"   # the item id of a published avatar body
+guard = NPCs.spawn(a, {"avatar_item_id": AVATAR, "height": 100})
+
+target = b
+
+def on_move_completed(success):
+    global target
+    target = b if target == a else a
+    yield task.wait(2)
+    guard.move_to(target)
+
+guard.move_completed.connect(on_move_completed)
+guard.move_to(target)</pre></div>
+    </div>
 
     <h3 id="animated-meshes">Animated meshes (API 1.18)</h3>
     <p>A Skeletal Mesh Actor set to <b>Use Animation Asset</b> publishes as an animated mesh that plays its clip in step on every screen (see <a href="/docs/creators/building/">Building a place</a>). <code>PlayClip(clipAssetId?, params?)</code> plays one of the place's animation clips on it, or restarts the one it plays now when you leave the id out. <code>params</code> takes <code>Loop</code> (true by default; false holds the last frame), <code>PlayRate</code> (0 to 10) and <code>StartOffset</code> in seconds. <code>StopClip()</code> returns it to its resting pose, and <code>ClipTime</code> reads how far into the clip it is. From the server every player sees it, late joiners included; from a client only that player does. The clip must be made for the mesh's own skeleton.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Windmill.luau</span><pre data-example-kind="snippet">local windmill = World:FindFirst("Windmill")
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Windmill.luau</span><pre data-example-kind="snippet">local windmill = World:FindFirst("Windmill")
 windmill:PlayClip(nil, { PlayRate = 3 })   -- spin three times as fast
 task.wait(10)
-windmill:StopClip()</pre></div></div>
+windmill:StopClip()</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Windmill.ts</span><pre data-example-kind="snippet">const windmill = World.findFirst("Windmill")!;
+windmill.playClip(undefined, { playRate: 3 });   // spin three times as fast
+task.delay(10, () =&gt; windmill.stopClip());</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Windmill.js</span><pre data-example-kind="snippet">const windmill = World.findFirst("Windmill");
+windmill.playClip(undefined, { playRate: 3 });   // spin three times as fast
+task.delay(10, () =&gt; windmill.stopClip());</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Windmill.py</span><pre data-example-kind="snippet">windmill = World.find_first("Windmill")
+windmill.play_clip(None, {"play_rate": 3})   # spin three times as fast
+task.delay(10, lambda: windmill.stop_clip())</pre></div>
+    </div>
 
     <h3 id="crowds">Crowds (API 1.16)</h3>
     <p>A <b>Mantle Crowd Spawner</b> placed in the level fills its lanes with ambient walkers. <code>Crowds:Get(spawner)</code> <span class="side s">Server</span> returns its <code>Crowd</code> (it's an error for a clone of a spawner): set <code>Density</code> (0 to 1 of the count you authored; other values are an error), <code>Enabled</code>, <code>Paused</code> or, from API 1.21, <code>Seed</code>, and every player sees it. From API 1.24, <code>Crowds.PointReached(spawner, point, npc)</code> <span class="side c">Client</span> fires when one of the crowd's people arrives at one of the spawner's points of interest.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Rush.luau</span><pre data-example-kind="snippet">local crowd = Crowds:Get(World:FindFirst("MarketCrowd"))
-crowd.Density = if Environment.IsNight then 0.2 else 1</pre></div></div>
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Rush.luau</span><pre data-example-kind="snippet">local crowd = Crowds:Get(World:FindFirst("MarketCrowd"))
+crowd.Density = if Environment.IsNight then 0.2 else 1</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Rush.ts</span><pre data-example-kind="snippet">const crowd = Crowds.get(World.findFirst("MarketCrowd")!);
+crowd.density = Environment.isNight ? 0.2 : 1;</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Rush.js</span><pre data-example-kind="snippet">const crowd = Crowds.get(World.findFirst("MarketCrowd"));
+crowd.density = Environment.isNight ? 0.2 : 1;</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Rush.py</span><pre data-example-kind="snippet">crowd = Crowds.get(World.find_first("MarketCrowd"))
+crowd.density = 0.2 if Environment.is_night else 1</pre></div>
+    </div>
 
     <h3 id="vehicles-api">Vehicles</h3>
     <p><code>Vehicles:Spawn(item, position)</code> <span class="side s">Server</span> (API 1.1) spawns a vehicle your place stores and returns the car as an <code>Entity</code>. Since API 1.34, <code>item</code> must be the library item id that <code>Storage:Get(name)</code> returns for an entry in the place's storage (add one with <b>Tools → Mantle → Library...</b>). Any other value, such as an asset id or the name of a built-in car, is an error. The name is case-sensitive, and <code>Storage:Get</code> is an error if the place's storage has no entry with that name. <code>Seat</code>, <code>Eject</code>, <code>GetSpeed</code> and <code>SetPaintColor</code> work with it, and from API 1.32 so do <code>Lock</code>, <code>Unlock</code> and <code>IsLocked</code>. <code>Vehicles:SetLivery(vehicle, index)</code> (API 1.20) puts on one of that vehicle's liveries, or takes it off with -1. A car nobody is driving holds its brakes, so players running into it don't send it rolling.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Taxi.luau</span><pre data-example-kind="snippet">local TAXI = Storage:Get("Taxi")   -- the name in the place's storage
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Taxi.luau</span><pre data-example-kind="snippet">local TAXI = Storage:Get("Taxi")   -- the name in the place's storage
 
 Players:OnPlayer(function(player)
 	local car = Vehicles:Spawn(TAXI, Vector3.new(0, 400, 50))
 	Vehicles:SetPaintColor(car, "#F4C20D")
-end)</pre></div></div>
+end)</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Taxi.ts</span><pre data-example-kind="snippet">const TAXI = Storage.get("Taxi");   // the name in the place's storage
+
+Players.onPlayer((player) =&gt; {
+	const car = Vehicles.spawn(TAXI, new Vector3(0, 400, 50));
+	Vehicles.setPaintColor(car, "#F4C20D");
+});</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Taxi.js</span><pre data-example-kind="snippet">const TAXI = Storage.get("Taxi");   // the name in the place's storage
+
+Players.onPlayer((player) =&gt; {
+	const car = Vehicles.spawn(TAXI, new Vector3(0, 400, 50));
+	Vehicles.setPaintColor(car, "#F4C20D");
+});</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Taxi.py</span><pre data-example-kind="snippet">TAXI = Storage.get("Taxi")   # the name in the place's storage
+
+def on_player(player):
+    car = Vehicles.spawn(TAXI, Vector3(0, 400, 50))
+    Vehicles.set_paint_color(car, "#F4C20D")
+
+Players.on_player(on_player)</pre></div>
+    </div>
 
     <h3 id="backpack">Tools in the Backpack (API 1.5)</h3>
     <p><code>Backpack:GrantBuiltIn(player, tool)</code> <span class="side s">Server</span> gives a player one of the built-in Tools: <code>"grenade"</code>, <code>"healthpack"</code> or <code>"spawnpad"</code>. It returns the new Tool's id, or nil when the player has no character right now, already has that Tool or has a full Backpack. From API 1.34, <code>Backpack:Grant(player, item)</code> gives a weapon your place stores, with the item id from <code>Storage:Get</code>. It's an error, not nil, for a wrong item, a vehicle, or a player who can't receive it. <code>GetTools</code>, <code>Remove</code>, <code>Clear</code>, <code>EquipSlot</code> and <code>SetWeaponColor</code> work with what a player holds.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Supplies.luau</span><pre data-example-kind="snippet">World:OnTagged("supplies", function(crate)
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Supplies.luau</span><pre data-example-kind="snippet">World:OnTagged("supplies", function(crate)
 	crate.Touched:Connect(function(player)
 		Backpack:GrantBuiltIn(player, "healthpack")
 	end)
-end)</pre></div></div>
+end)</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Supplies.ts</span><pre data-example-kind="snippet">World.onTagged("supplies", (crate) =&gt; {
+	crate.touched.connect((player) =&gt; {
+		Backpack.grantBuiltIn(player, "healthpack");
+	});
+});</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Supplies.js</span><pre data-example-kind="snippet">World.onTagged("supplies", (crate) =&gt; {
+	crate.touched.connect((player) =&gt; {
+		Backpack.grantBuiltIn(player, "healthpack");
+	});
+});</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Supplies.py</span><pre data-example-kind="snippet">def on_crate(crate):
+    crate.touched.connect(lambda player: Backpack.grant_built_in(player, "healthpack"))
+
+World.on_tagged("supplies", on_crate)</pre></div>
+    </div>
 
     <h3 id="datastore">Saving data</h3>
     <p><code>DataStore</code> <span class="side s">Server</span> keeps values between sessions. <code>Set</code> and <code>Get</code> save a value for the whole place, and <code>SetForPlayer</code> and <code>GetForPlayer</code> save one for a single player. A value is a boolean, a number, a string or a table of those, nested up to 4 levels deep and up to 64 KB once encoded. A place or a player can hold 1,024 keys, a key is up to 128 characters (letters, digits and <code>. _ : -</code>), and a server can make 300 requests a minute. A write changes what <code>Get</code> returns at once and reaches the backend a moment later. <code>Get</code> returns nil for a key that was never set. See <a href="/docs/scripting/recipes/#r-highscore">Saving data across sessions</a> and <a href="/docs/scripting/api/#errors">Errors and limits</a>.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/RecordWin.luau</span><pre data-example-kind="snippet">local function recordWin(player)
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/RecordWin.luau</span><pre data-example-kind="snippet">local function recordWin(player)
 	local wins = DataStore:GetForPlayer(player, "wins") or 0
 	DataStore:SetForPlayer(player, "wins", wins + 1)
-end</pre></div></div>
+end</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/RecordWin.ts</span><pre data-example-kind="snippet">function recordWin(player: Player) {
+	const wins = DataStore.getForPlayer(player, "wins") ?? 0;
+	DataStore.setForPlayer(player, "wins", wins + 1);
+}</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/RecordWin.js</span><pre data-example-kind="snippet">function recordWin(player) {
+	const wins = DataStore.getForPlayer(player, "wins") ?? 0;
+	DataStore.setForPlayer(player, "wins", wins + 1);
+}</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/RecordWin.py</span><pre data-example-kind="snippet">def record_win(player):
+    wins = DataStore.get_for_player(player, "wins") or 0
+    DataStore.set_for_player(player, "wins", wins + 1)</pre></div>
+    </div>
 
     <h3 id="ui-docs-service">UI documents (API 1.31)</h3>
     <p><code>UI:OpenDocument(path, mode?)</code> <span class="side c">Client</span> opens one of the place's UI documents, a screen written as markup and a stylesheet in the <code>UI/</code> folder beside <code>Scripts/</code>, and returns a <code>UiDocument</code>. It opens as a <code>"modal"</code> (the default: gameplay input stops and Back closes it), an <code>"overlay"</code> (play goes on and the mouse works on its controls) or a <code>"hud"</code> (drawn only). Fill it with <code>SetData</code>, hear its buttons through <code>Event</code>, and close it with <code>Close</code>. See <a href="/docs/scripting/ui-documents/">UI documents</a> for the whole guide.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Client/Shop.luau</span><pre data-example-kind="snippet">local shop = UI:OpenDocument("UI/shop.rml")
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Client/Shop.luau</span><pre data-example-kind="snippet">local shop = UI:OpenDocument("UI/shop.rml")
 shop:SetData("coins", 120)
 shop.Event:Connect(function(name, args)
 	if name == "buy" then
 		Net:Remote("Buy"):FireServer(args[1])   -- the server checks and charges
 	end
-end)</pre></div></div>
+end)</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Client/Shop.ts</span><pre data-example-kind="snippet">const shop = UI.openDocument("UI/shop.rml");
+shop.setData("coins", 120);
+shop.event.connect((name, args) =&gt; {
+	if (name === "buy") {
+		Net.remote("Buy").fireServer(args[0]);   // the server checks and charges
+	}
+});</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Client/Shop.js</span><pre data-example-kind="snippet">const shop = UI.openDocument("UI/shop.rml");
+shop.setData("coins", 120);
+shop.event.connect((name, args) =&gt; {
+	if (name === "buy") {
+		Net.remote("Buy").fireServer(args[0]);   // the server checks and charges
+	}
+});</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Client/Shop.py</span><pre data-example-kind="snippet">shop = UI.open_document("UI/shop.rml")
+shop.set_data("coins", 120)
+
+def on_event(name, args):
+    if name == "buy":
+        Net.remote("Buy").fire_server(args[0])   # the server checks and charges
+
+shop.event.connect(on_event)</pre></div>
+    </div>
 
     <h3 id="packages">Script packages and Script Points (API 1.35)</h3>
     <p>A <a href="/docs/creators/script-packages/">script package</a> is a set of scripts a place stores from the library, or keeps in a <code>Packages/&lt;Name&gt;/</code> folder beside <code>Scripts/</code> while you build it. Its <code>Server/</code> and <code>Client/</code> scripts start like the place's own, once on each side, and its <code>Shared/</code> and <code>Modules</code> folders only hold modules. Its scripts have the same abilities and limits as any other script on their side.</p>
@@ -397,9 +851,18 @@ end)</pre></div></div>
       <li><b><code>Storage:Get(name)</code></b> (API 1.34) also answers a stored package's library item id.</li>
     </ul>
     <p>A package's scripts run once per side however many points there are, so loop over the points rather than expecting one script per point:</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Packages/Hazards/Client/Markers.luau</span><pre data-example-kind="snippet">for _, point in Script.Points do
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Packages/Hazards/Client/Markers.luau</span><pre data-example-kind="snippet">for _, point in Script.Points do
 	print(`{Script.Package} zone, radius {point:GetAttribute("Radius")}`)
-end</pre></div></div>
+end</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Packages/Hazards/Client/Markers.ts</span><pre data-example-kind="snippet">for (const point of Script.points) {
+	console.log(`${Script.package} zone, radius ${point.getAttribute("Radius")}`);
+}</pre></div>
+      <div class="code" data-v="js"><span class="tag">Packages/Hazards/Client/Markers.js</span><pre data-example-kind="snippet">for (const point of Script.points) {
+	console.log(`${Script.package} zone, radius ${point.getAttribute("Radius")}`);
+}</pre></div>
+      <div class="code" data-v="py"><span class="tag">Packages/Hazards/Client/Markers.py</span><pre data-example-kind="snippet">for point in Script.points:
+    print(f"{Script.package} zone, radius {point.get_attribute('Radius')}")</pre></div>
+    </div>
     <p><b>Requiring across the boundary:</b></p>
     <ul>
       <li>From a place script, <code>require("@Hazards/Config")</code> reaches <code>Packages/Hazards/Shared/Config</code>. Only a package's <code>Shared/</code> modules are reachable this way, and a place script can't name a path inside <code>Packages/</code> directly.</li>
@@ -407,12 +870,19 @@ end</pre></div></div>
       <li>A package can't require the place's own scripts, or another package's. Packages and place scripts talk through <a href="#languages">Events, State and Remotes</a>, like scripts in different languages do.</li>
       <li>The same rules apply to <code>import</code> in JavaScript and TypeScript and to <code>require</code> in Python.</li>
     </ul>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Rounds.luau</span><pre data-example-kind="snippet">local HazardConfig = require("@Hazards/Config")   -- the stored package's Shared/Config
-Events:Get("RoundStarted"):Fire()                  -- a package script can connect to this</pre></div></div>
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Rounds.luau</span><pre data-example-kind="snippet">local HazardConfig = require("@Hazards/Config")   -- the stored package's Shared/Config
+Events:Get("RoundStarted"):Fire()                  -- a package script can connect to this</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Rounds.ts</span><pre data-example-kind="snippet">import * as HazardConfig from "@Hazards/Config";   // the stored package's Shared/Config
+Events.get("RoundStarted").fire();                   // a package script can connect to this</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Rounds.js</span><pre data-example-kind="snippet">import * as HazardConfig from "@Hazards/Config";   // the stored package's Shared/Config
+Events.get("RoundStarted").fire();                   // a package script can connect to this</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Rounds.py</span><pre data-example-kind="snippet">HazardConfig = require("@Hazards/Config")   # the stored package's Shared/Config
+Events.get("RoundStarted").fire()            # a package script can connect to this</pre></div>
+    </div>
 
     <h3 id="teams-rounds">Teams and rounds (API 1.39) <span class="status wip">Next release</span></h3>
     <p>The server owns teams and rounds, and a client can only read them. <code>Teams:Create(name, color?)</code> <span class="side s">Server</span> defines a team (up to 16, named by 1 to 32 characters, with a <code>"#RRGGBB"</code> color for a HUD or a nameplate to use). Setting <code>Player.Team</code> on the server puts a player on a team, and nil takes them off. Every machine can read <code>Player.Team</code>, <code>Teams:GetPlayers</code>, <code>Teams:GetColor</code> and <code>Teams:List</code>, and <code>Teams.PlayerTeamChanged</code> fires on the server and on every client. Teammates can't hurt each other until you set <code>Teams.FriendlyFire = true</code>. <code>Match</code> is a small round clock that you drive: <code>StartRound(seconds?)</code>, <code>EndRound(winner?)</code>, <code>EndMatch(winner?)</code> and <code>Reset()</code> only work on the server, and a client can read <code>Match.State</code> (<code>"Waiting"</code>, <code>"InProgress"</code> or <code>"Ended"</code>), <code>Match.Round</code> and <code>Match.TimeRemaining</code>. <code>RoundStarted</code>, <code>RoundEnded</code> and <code>StateChanged</code> fire on the server only. <code>Match</code> never picks winners, moves players or restarts anything: your script does that. <code>Respawn.Delay</code> and <code>Respawn.AutoRespawn</code> <span class="side s">Server</span> set how a death becomes a respawn, and <code>Player.Respawned</code> fires on the server when a player gets a fresh character. From API 1.39, <code>TakeDamage</code> takes a <code>damageType</code>, <code>Player.Damaged</code> reports each hit on the server, and <code>Armor</code> and <code>Shield</code> on <code>Player</code> soak up damage before health. See <a href="/docs/scripting/api/#ref-teams">Teams</a>, <a href="/docs/scripting/api/#ref-match">Match</a>, <a href="/docs/scripting/api/#ref-respawn">Respawn</a> and <a href="/docs/scripting/api/#ref-player">Player</a>, and the <a href="/docs/scripting/recipes/#r-teams-rounds">teams and rounds recipe</a>.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Rounds.luau</span><pre data-example-kind="snippet">Teams:Create("Red", "#E53935")
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Rounds.luau</span><pre data-example-kind="snippet">Teams:Create("Red", "#E53935")
 Teams:Create("Blue", "#1E88E5")
 Players:OnPlayer(function(player)
 	player.Team = if #Teams:GetPlayers("Red") &lt;= #Teams:GetPlayers("Blue") then "Red" else "Blue"
@@ -420,7 +890,41 @@ end)
 Match.RoundEnded:Connect(function(round, winner, reason)
 	print(round, winner, reason)   -- reason: "Ended", "Time" or "MatchEnded"
 end)
-Match:StartRound(90)</pre></div></div>
+Match:StartRound(90)</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Rounds.ts</span><pre data-example-kind="snippet">Teams.create("Red", "#E53935");
+Teams.create("Blue", "#1E88E5");
+Players.onPlayer((player) =&gt; {
+	player.team = Teams.getPlayers("Red").length &lt;= Teams.getPlayers("Blue").length ? "Red" : "Blue";
+});
+Match.roundEnded.connect((round, winner, reason) =&gt; {
+	console.log(round, winner, reason);   // reason: "Ended", "Time" or "MatchEnded"
+});
+Match.startRound(90);</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Rounds.js</span><pre data-example-kind="snippet">Teams.create("Red", "#E53935");
+Teams.create("Blue", "#1E88E5");
+Players.onPlayer((player) =&gt; {
+	player.team = Teams.getPlayers("Red").length &lt;= Teams.getPlayers("Blue").length ? "Red" : "Blue";
+});
+Match.roundEnded.connect((round, winner, reason) =&gt; {
+	console.log(round, winner, reason);   // reason: "Ended", "Time" or "MatchEnded"
+});
+Match.startRound(90);</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Rounds.py</span><pre data-example-kind="snippet">Teams.create("Red", "#E53935")
+Teams.create("Blue", "#1E88E5")
+
+def on_player(player):
+    red = len(Teams.get_players("Red"))
+    blue = len(Teams.get_players("Blue"))
+    player.team = "Red" if red &lt;= blue else "Blue"
+
+Players.on_player(on_player)
+
+def on_round_ended(round, winner, reason):
+    print(round, winner, reason)   # reason: "Ended", "Time" or "MatchEnded"
+
+Match.round_ended.connect(on_round_ended)
+Match.start_round(90)</pre></div>
+    </div>
 
     <h3 id="movement-stamina">Sprint, crouch, stamina and ragdoll (API 1.40) <span class="status wip">Next release</span></h3>
     <p>Every machine can read <code>IsSprinting</code>, <code>IsCrouched</code>, <code>IsRagdolled</code>, <code>Stamina</code> and the settings next to them on <code>Player</code>. Only the server can set them. <code>SprintEnabled</code>, <code>SprintSpeed</code>, <code>CrouchEnabled</code> and <code>CrouchSpeed</code> change what the sprint and crouch keys do, and <code>ForceCrouch</code> holds a player crouched until <code>ReleaseCrouch</code>. Stamina is off until a script sets <code>StaminaEnabled = true</code>, so places that never use it play as before. <code>Ragdoll(seconds?, velocity?)</code> knocks a character down for 0.1 to 300 seconds. The signals <code>SprintStarted</code>, <code>SprintStopped</code>, <code>CrouchStarted</code>, <code>CrouchStopped</code>, <code>Ragdolled</code> and <code>StaminaChanged</code> fire on the server and on every client. See the <a href="/docs/scripting/recipes/#r-stamina">stamina recipe</a> and <a href="/docs/scripting/api/#ref-player">Player</a>.</p>
@@ -436,12 +940,31 @@ Match:StartRound(90)</pre></div></div>
       <li><b>NPC combat:</b> <code>NPC:Follow</code> walks an NPC after a target. <code>NPC:Attack</code> walks it up and hurts the target every <code>Interval</code> (1 second by default), or fires a projectile if you give it a <code>Projectile</code> table. <code>TargetChanged</code> fires when its target changes. A kill by an NPC credits nobody, and friendly fire doesn't protect a player from an NPC.</li>
     </ul>
     <p>From API 1.43, a vehicle can also have health, fuel and boost: each is off until a script turns it on. See <a href="/docs/scripting/api/#ref-vehicles">Vehicles</a>. The reference lists every option: <a href="/docs/scripting/api/#ref-explosions">Explosions</a>, <a href="/docs/scripting/api/#ref-projectiles">Projectiles</a> and <a href="/docs/scripting/api/#ref-npc">NPC</a>. For examples, see the <a href="/docs/scripting/recipes/#r-barrel">barrel</a>, <a href="/docs/scripting/recipes/#r-turret">turret</a> and <a href="/docs/scripting/recipes/#r-guard-npc">guard</a> recipes.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Rocket.luau</span><pre data-example-kind="snippet">Projectiles:Fire({
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Rocket.luau</span><pre data-example-kind="snippet">Projectiles:Fire({
 	Position = Vector3.new(0, 0, 150),
 	Velocity = Vector3.new(2500, 0, 0),
 	Look = "Rocket",
 	Explosion = { Radius = 400, Damage = 90 },
-})</pre></div></div>
+})</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Rocket.ts</span><pre data-example-kind="snippet">Projectiles.fire({
+	position: new Vector3(0, 0, 150),
+	velocity: new Vector3(2500, 0, 0),
+	look: "Rocket",
+	explosion: { radius: 400, damage: 90 },
+});</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Rocket.js</span><pre data-example-kind="snippet">Projectiles.fire({
+	position: new Vector3(0, 0, 150),
+	velocity: new Vector3(2500, 0, 0),
+	look: "Rocket",
+	explosion: { radius: 400, damage: 90 },
+});</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Rocket.py</span><pre data-example-kind="snippet">Projectiles.fire({
+    "position": Vector3(0, 0, 150),
+    "velocity": Vector3(2500, 0, 0),
+    "look": "Rocket",
+    "explosion": {"radius": 400, "damage": 90},
+})</pre></div>
+    </div>
 
     <h3 id="collision-layers">Collision layers (API 1.43) <span class="status wip">Next release</span></h3>
     <p>A collision layer is a named group of objects. <code>Collision:CreateLayer(name)</code> <span class="side s">Server</span> makes one (up to 8 per place), <code>entity.CollisionLayer = "Name"</code> puts an object on it and <code>Collision:SetLayerCollides(a, b, false)</code> lets two layers pass through each other. A layer can pass through itself. Every object starts on the <code>"Default"</code> layer, which collides with everything and can't be changed.</p>
@@ -451,9 +974,19 @@ Match:StartRound(90)</pre></div></div>
       <li><b>Queries:</b> <code>World:Raycast</code>, <code>Spherecast</code>, <code>Blockcast</code>, <code>GetEntitiesInRadius</code> and <code>GetEntitiesInBox</code> take <code>Layers</code> (only these layers count) and <code>ExcludeLayers</code> (look through these layers) in their <code>params</code>, in server scripts.</li>
     </ul>
     <p>See <a href="/docs/scripting/api/#ref-collision">Collision</a> and the <a href="/docs/scripting/recipes/#r-collision-layers">collision layers recipe</a>.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Debris.luau</span><pre data-example-kind="snippet">Collision:CreateLayer("Debris")
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/Debris.luau</span><pre data-example-kind="snippet">Collision:CreateLayer("Debris")
 Collision:SetLayerCollides("Debris", "Debris", false)   -- debris falls through other debris
-World:FindFirst("Rubble").CollisionLayer = "Debris"</pre></div></div>
+World:FindFirst("Rubble").CollisionLayer = "Debris"</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/Debris.ts</span><pre data-example-kind="snippet">Collision.createLayer("Debris");
+Collision.setLayerCollides("Debris", "Debris", false);   // debris falls through other debris
+World.findFirst("Rubble")!.collisionLayer = "Debris";</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/Debris.js</span><pre data-example-kind="snippet">Collision.createLayer("Debris");
+Collision.setLayerCollides("Debris", "Debris", false);   // debris falls through other debris
+World.findFirst("Rubble").collisionLayer = "Debris";</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/Debris.py</span><pre data-example-kind="snippet">Collision.create_layer("Debris")
+Collision.set_layer_collides("Debris", "Debris", False)   # debris falls through other debris
+World.find_first("Rubble").collision_layer = "Debris"</pre></div>
+    </div>
 
     <h3 id="private-chat-voice">Private chat and voice (API 1.44) <span class="status wip">Next release</span></h3>
     <p>A server script can narrow who sees a chat line or hears a voice. <code>Chat:SendToPlayers(players, text)</code> <span class="side s">Server</span> posts a line from the place to up to 10 players. <code>Chat:SetAudience(player, recipients?)</code> turns what a player types into a team channel for up to 128 players. Players whisper with <code>/w name message</code>, and <code>Chat:SetWhisperMode</code> and <code>Chat:SetWhisperBlocked</code> decide who may. <code>Chat.WhisperSent</code> tells you who whispered to whom, never what they said. For voice, <code>Voice:SetMuted</code> silences a player for everyone, <code>Voice:MuteFor</code> does it for one listener and <code>Voice:SetAudience</code> makes a speaker heard only by a list of players. <code>Voice:CanHear</code>, <code>IsMuted</code> and <code>IsSpeaking</code> read the state, and <code>Voice:Reset</code> clears the rules.</p>
@@ -466,7 +999,19 @@ World:FindFirst("Rubble").CollisionLayer = "Debris"</pre></div></div>
       <li><b>Only ever quieter:</b> your rules can only show a line to fewer people or silence a voice, never the reverse. A player who has muted or blocked someone keeps them muted whatever your script does.</li>
     </ul>
     <p>Voice goes straight between players' games, not through the server, so the server can't hear or record it, and each listener's game applies the mute. A player running a modified game could ignore a mute, so use these calls to run a game, never to protect a secret. In a local place with no online session, <code>Chat:SendToPlayers</code> and <code>Chat:SendSystemMessage</code> return false. See <a href="/docs/scripting/api/#ref-chat">Chat</a>, <a href="/docs/scripting/api/#ref-voice">Voice</a> and the <a href="/docs/scripting/recipes/#r-team-chat">team chat recipe</a>.</p>
-    <div class="v"><div class="code" data-v="luau"><span class="tag">Scripts/Server/FlagAlert.luau</span><pre data-example-kind="snippet">local sent = Chat:SendToPlayers(Teams:GetPlayers("Red"), "Your flag was taken!")
+    <div class="v has-ts"><div class="code" data-v="luau"><span class="tag">Scripts/Server/FlagAlert.luau</span><pre data-example-kind="snippet">local sent = Chat:SendToPlayers(Teams:GetPlayers("Red"), "Your flag was taken!")
 if not sent then
 	warn("not sent: over the limit, nobody verified yet, or a local test run")
-end</pre></div></div>
+end</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/FlagAlert.ts</span><pre data-example-kind="snippet">const sent = Chat.sendToPlayers(Teams.getPlayers("Red"), "Your flag was taken!");
+if (!sent) {
+	console.warn("not sent: over the limit, nobody verified yet, or a local test run");
+}</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/FlagAlert.js</span><pre data-example-kind="snippet">const sent = Chat.sendToPlayers(Teams.getPlayers("Red"), "Your flag was taken!");
+if (!sent) {
+	console.warn("not sent: over the limit, nobody verified yet, or a local test run");
+}</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/FlagAlert.py</span><pre data-example-kind="snippet">sent = Chat.send_to_players(Teams.get_players("Red"), "Your flag was taken!")
+if not sent:
+    warn("not sent: over the limit, nobody verified yet, or a local test run")</pre></div>
+    </div>
