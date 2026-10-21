@@ -43,6 +43,7 @@
 <ul>
 <li><b>Tools → Mantle</b>, and the <b>Mantle</b> dropdown next to Play, hold the same commands: Test Locally, Stop Preview, Start a new place, Place settings, Check this place, Check what players receive, Save to Mantle, Publish, the vehicle, weapon, Cosmetics and Library tools, and signing in. See <a href="/docs/creators/#editor">The Mantle editor tools</a>.</li>
 <li>The <b>Mantle Scripts</b> panel and <b>Mantle Script Graph</b> assets. See <a href="/docs/scripting/api/#editor">Editor setup</a>.</li>
+<li>The <code>Mantle.Check</code> console command, which runs Publish's check and export without publishing. See <a href="/docs/creators/#mantle-check">Checking from the console</a>.</li>
 <li><b>Editor Preferences → Plugins → Mantle</b>: which world each level publishes to, and the Mantle client Test Locally uses. These settings are yours only. They're saved in your own editor settings, not shared with the project or your teammates.</li>
 </ul>
 
@@ -58,7 +59,7 @@
 <h2 id="test-locally">Testing with Test Locally <span class="status live">Live</span></h2>
 <p><b>Test Locally</b> exports the level you have open and runs it in the Mantle game on your PC, with your scripts and UI. Nothing is uploaded or published, and you don't need to sign in. Press it again after a change to replace the running test.</p>
 <ul>
-<li><b>Mantle Preview</b> opens beside the editor. It says what Test Locally is doing, which Mantle client it found, whether the place's geometry, scripts and spawn are ready, and every message the game reports, including script errors. <b>Copy messages</b> copies them all.</li>
+<li><b>Mantle Preview</b> opens beside the editor. It says what Test Locally is doing, which Mantle client it found, whether the place's geometry, scripts and spawn are ready, and every message the game reports, including script errors. Under <b>Export coverage</b> it lists what the export kept, changed and left out. <b>Copy messages</b> copies them all.</li>
 <li>The test runs offline. Anything that tries to reach Mantle's online services is blocked, and the panel counts it.</li>
 <li>What your scripts save is kept between runs, separately for each level. <b>Reset local data</b> clears it so the next run starts fresh.</li>
 <li><b>Stop</b> or <b>Stop Preview</b> closes the test. It only closes the copy of Mantle the editor started, never one you started yourself, and the test also closes with the editor.</li>
