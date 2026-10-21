@@ -276,7 +276,7 @@ a.docs-card:hover { border-color: var(--ember-line); transform: translateY(-2px)
 .docs[data-lang="ts"] .docs-content .v:not(:has(> [data-v="ts"])):not(:has(> [data-v="js"])) > [data-v="luau"],
 .docs[data-lang="js"] .docs-content .v:not(:has(> [data-v="js"])) > [data-v="luau"],
 .docs[data-lang="py"] .docs-content .v:not(:has(> [data-v="py"])) > [data-v="luau"] { display: block; }
-.docs:not([data-lang="luau"]) .docs-content .v:not([data-v]):not(:has(> [data-v]:not([data-v="luau"])))::before {
+.docs:not([data-lang="luau"]) .docs-content .v:not([data-v]):not(:has(> [data-v]:not([data-v="luau"]))):not(:has(> .v))::before {
   content: "Shown in Luau; the other languages work the same way with their own naming."; display: block; font-size: 0.8rem; color: var(--ink-faint); margin: 6px 0 -4px;
 }
 .docs[data-lang="luau"] .docs-content .n-js { display: none; }
