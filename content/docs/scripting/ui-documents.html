@@ -273,9 +273,9 @@ shop.event.connect(on_event)</pre></div>
     <p><code>Closed</code> doesn't fire for your own <code>Close</code>, or when your script stops. <code>IsOpen</code> is already false when your handler runs.</p>
 
     <h3 id="uidoc-server">Buying things: check on the server</h3>
-    <p>A document runs on the player's machine, and so does the client script that hears its events. Treat an event like any other message from a player: fine for choosing a tab, never enough on its own to give out coins or items. Send the request to the server with a remote, check it there, and send the result back for the document to show. Shown in Luau; the other languages work the same way.</p>
-    <div class="v">
-<div class="code"><span class="tag">Scripts/Server/ShopServer.luau</span><pre id="ex-uidoc-shopserver-luau" data-example-kind="source" data-language="luau">local PRICES = { ember_cape = 120, spark_trail = 80 }
+    <p>A document runs on the player's machine, and so does the client script that hears its events. Treat an event like any other message from a player: fine for choosing a tab, never enough on its own to give out coins or items. Send the request to the server with a remote, check it there, and send the result back for the document to show.</p>
+    <div class="v has-ts">
+      <div class="code" data-v="luau"><span class="tag">Scripts/Server/ShopServer.luau</span><pre id="ex-uidoc-shopserver-luau" data-example-kind="source" data-language="luau">local PRICES = { ember_cape = 120, spark_trail = 80 }
 local buy = Net:Remote(&quot;ShopBuy&quot;)
 local coins = Net:Remote(&quot;ShopCoins&quot;)
 local wallet = {}
@@ -298,7 +298,83 @@ buy.OnServerEvent:Connect(function(player, itemId)
 	coins:FireClient(player, wallet[player])
 end)
 </pre></div>
-<div class="code"><span class="tag">Scripts/Client/Shop.luau</span><pre id="ex-uidoc-shopclient-luau" data-example-kind="source" data-language="luau">local shop = UI:OpenDocument(&quot;UI/shop.rml&quot;)
+      <div class="code" data-v="ts"><span class="tag">Scripts/Server/ShopServer.ts</span><pre id="ex-uidoc-shopserver-ts" data-example-kind="source" data-language="typescript">const PRICES: Record&lt;string, number&gt; = { ember_cape: 120, spark_trail: 80 };
+const buy = Net.remote(&quot;ShopBuy&quot;);
+const coins = Net.remote(&quot;ShopCoins&quot;);
+const wallet = new Map&lt;Player, number&gt;();
+
+Players.onPlayer((player) =&gt; {
+	wallet.set(player, 500);
+	coins.fireClient(player, wallet.get(player));
+});
+
+Players.playerRemoving.connect((player) =&gt; {
+	wallet.delete(player);
+});
+
+buy.onServerEvent.connect((player, itemId) =&gt; {
+	const price = PRICES[itemId];
+	const balance = wallet.get(player);
+	if (price === undefined || balance === undefined || balance &lt; price) {
+		return;
+	}
+	wallet.set(player, balance - price);
+	coins.fireClient(player, balance - price);
+});
+</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Server/ShopServer.js</span><pre id="ex-uidoc-shopserver-js" data-example-kind="source" data-language="javascript">/** @type {Record&lt;string, number&gt;} */
+const PRICES = { ember_cape: 120, spark_trail: 80 };
+const buy = Net.remote(&quot;ShopBuy&quot;);
+const coins = Net.remote(&quot;ShopCoins&quot;);
+const wallet = new Map();
+
+Players.onPlayer((player) =&gt; {
+	wallet.set(player, 500);
+	coins.fireClient(player, wallet.get(player));
+});
+
+Players.playerRemoving.connect((player) =&gt; {
+	wallet.delete(player);
+});
+
+buy.onServerEvent.connect((player, itemId) =&gt; {
+	const price = PRICES[itemId];
+	const balance = wallet.get(player);
+	if (price === undefined || balance === undefined || balance &lt; price) {
+		return;
+	}
+	wallet.set(player, balance - price);
+	coins.fireClient(player, balance - price);
+});
+</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Server/ShopServer.py</span><pre id="ex-uidoc-shopserver-py" data-example-kind="source" data-language="python">PRICES = {&quot;ember_cape&quot;: 120, &quot;spark_trail&quot;: 80}
+buy = Net.remote(&quot;ShopBuy&quot;)
+coins = Net.remote(&quot;ShopCoins&quot;)
+wallet = {}
+
+def on_player(player):
+    wallet[player] = 500
+    coins.fire_client(player, wallet[player])
+
+Players.on_player(on_player)
+
+def on_player_removing(player):
+    wallet.pop(player, None)
+
+Players.player_removing.connect(on_player_removing)
+
+def on_buy(player, item_id):
+    price = PRICES.get(item_id)
+    if price is None or player not in wallet or wallet[player] &lt; price:
+        return
+    wallet[player] -= price
+    coins.fire_client(player, wallet[player])
+
+buy.on_server_event.connect(on_buy)
+</pre></div>
+    </div>
+    <div class="v has-ts">
+      <div class="code" data-v="luau"><span class="tag">Scripts/Client/Shop.luau</span><pre id="ex-uidoc-shopclient-luau" data-example-kind="source" data-language="luau">local shop = UI:OpenDocument(&quot;UI/shop.rml&quot;)
 shop:SetData(&quot;items&quot;, {
 	{ id = &quot;ember_cape&quot;, name = &quot;Ember Cape&quot;, price = 120 },
 	{ id = &quot;spark_trail&quot;, name = &quot;Spark Trail&quot;, price = 80 },
@@ -313,6 +389,55 @@ shop.Event:Connect(function(name, args)
 		Net:Remote(&quot;ShopBuy&quot;):FireServer(args[1])
 	end
 end)
+</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Client/Shop.ts</span><pre id="ex-uidoc-shopclient-ts" data-example-kind="source" data-language="typescript">const shop = UI.openDocument(&quot;UI/shop.rml&quot;);
+shop.setData(&quot;items&quot;, [
+	{ id: &quot;ember_cape&quot;, name: &quot;Ember Cape&quot;, price: 120 },
+	{ id: &quot;spark_trail&quot;, name: &quot;Spark Trail&quot;, price: 80 },
+]);
+
+Net.remote(&quot;ShopCoins&quot;).onClientEvent.connect((amount) =&gt; {
+	shop.setData(&quot;coins&quot;, amount);
+});
+
+shop.event.connect((name, args) =&gt; {
+	if (name === &quot;buy&quot;) {
+		Net.remote(&quot;ShopBuy&quot;).fireServer(args[0]);
+	}
+});
+</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Client/Shop.js</span><pre id="ex-uidoc-shopclient-js" data-example-kind="source" data-language="javascript">const shop = UI.openDocument(&quot;UI/shop.rml&quot;);
+shop.setData(&quot;items&quot;, [
+	{ id: &quot;ember_cape&quot;, name: &quot;Ember Cape&quot;, price: 120 },
+	{ id: &quot;spark_trail&quot;, name: &quot;Spark Trail&quot;, price: 80 },
+]);
+
+Net.remote(&quot;ShopCoins&quot;).onClientEvent.connect((amount) =&gt; {
+	shop.setData(&quot;coins&quot;, amount);
+});
+
+shop.event.connect((name, args) =&gt; {
+	if (name === &quot;buy&quot;) {
+		Net.remote(&quot;ShopBuy&quot;).fireServer(args[0]);
+	}
+});
+</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Client/Shop.py</span><pre id="ex-uidoc-shopclient-py" data-example-kind="source" data-language="python">shop = UI.open_document(&quot;UI/shop.rml&quot;)
+shop.set_data(&quot;items&quot;, [
+    {&quot;id&quot;: &quot;ember_cape&quot;, &quot;name&quot;: &quot;Ember Cape&quot;, &quot;price&quot;: 120},
+    {&quot;id&quot;: &quot;spark_trail&quot;, &quot;name&quot;: &quot;Spark Trail&quot;, &quot;price&quot;: 80},
+])
+
+def on_coins(amount):
+    shop.set_data(&quot;coins&quot;, amount)
+
+Net.remote(&quot;ShopCoins&quot;).on_client_event.connect(on_coins)
+
+def on_event(name, args):
+    if name == &quot;buy&quot;:
+        Net.remote(&quot;ShopBuy&quot;).fire_server(args[0])
+
+shop.event.connect(on_event)
 </pre></div>
     </div>
 <div class="code"><span class="tag">UI/shop.rml</span><pre data-example-kind="source">&lt;rml&gt;
@@ -498,7 +623,8 @@ end)
 .item { position: relative; width: 84dp; height: 84dp; drag: clone; }
 .icon { position: absolute; left: 10dp; top: 10dp; width: 64dp; height: 64dp; }
 .count { position: absolute; right: 6dp; bottom: 2dp; font-weight: bold; color: #FFFFFF; }</pre></div>
-<div class="code"><span class="tag">Scripts/Client/Inventory.luau</span><pre id="ex-uidoc-inventory-luau" data-example-kind="source" data-language="luau">local SLOTS = 12
+    <div class="v has-ts">
+      <div class="code" data-v="luau"><span class="tag">Scripts/Client/Inventory.luau</span><pre id="ex-uidoc-inventory-luau" data-example-kind="source" data-language="luau">local SLOTS = 12
 local slots = { -- index -&gt; { id, count }; a gap is an empty slot
 	{ id = &quot;sword&quot;, count = 1 },
 	nil,
@@ -535,6 +661,127 @@ doc.Event:Connect(function(name, args)
 	end
 end)
 </pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Client/Inventory.ts</span><pre id="ex-uidoc-inventory-ts" data-example-kind="source" data-language="typescript">const SLOTS = 12;
+// index -&gt; { id, count }; null is an empty slot
+const slots: ({ id: string; count: number } | null)[] = [
+	{ id: &quot;sword&quot;, count: 1 },
+	null,
+	{ id: &quot;potion&quot;, count: 3 },
+];
+while (slots.length &lt; SLOTS) {
+	slots.push(null);
+}
+const ITEMS: Record&lt;string, { name: string; icon: string }&gt; = {
+	sword: { name: &quot;Ember Sword&quot;, icon: &quot;icons/sword.png&quot; },
+	potion: { name: &quot;Health Potion&quot;, icon: &quot;icons/potion.png&quot; },
+};
+
+const doc = UI.openDocument(&quot;UI/inventory.rml&quot;, &quot;modal&quot;);
+let dragFrom = -1;
+
+function refresh() {
+	const view = slots.map((slot) =&gt;
+		slot
+			? { empty: false, name: ITEMS[slot.id].name, icon: ITEMS[slot.id].icon, count: slot.count }
+			: { empty: true, name: &quot;&quot;, icon: &quot;&quot;, count: 0 },
+	);
+	doc.setData(&quot;slots&quot;, view);
+}
+refresh();
+
+doc.event.connect((name, args) =&gt; {
+	const i = args[0]; // the 0-based slot index data-for gave the element
+	if (name === &quot;pick&quot;) {
+		dragFrom = i;
+	} else if (name === &quot;drop&quot; &amp;&amp; dragFrom &gt;= 0) {
+		[slots[dragFrom], slots[i]] = [slots[i], slots[dragFrom]];
+		dragFrom = -1;
+		refresh();
+	}
+});
+</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Client/Inventory.js</span><pre id="ex-uidoc-inventory-js" data-example-kind="source" data-language="javascript">const SLOTS = 12;
+// index -&gt; { id, count }; null is an empty slot
+/** @type {({ id: string, count: number } | null)[]} */
+const slots = [
+	{ id: &quot;sword&quot;, count: 1 },
+	null,
+	{ id: &quot;potion&quot;, count: 3 },
+];
+while (slots.length &lt; SLOTS) {
+	slots.push(null);
+}
+/** @type {Record&lt;string, { name: string, icon: string }&gt;} */
+const ITEMS = {
+	sword: { name: &quot;Ember Sword&quot;, icon: &quot;icons/sword.png&quot; },
+	potion: { name: &quot;Health Potion&quot;, icon: &quot;icons/potion.png&quot; },
+};
+
+const doc = UI.openDocument(&quot;UI/inventory.rml&quot;, &quot;modal&quot;);
+let dragFrom = -1;
+
+function refresh() {
+	const view = slots.map((slot) =&gt;
+		slot
+			? { empty: false, name: ITEMS[slot.id].name, icon: ITEMS[slot.id].icon, count: slot.count }
+			: { empty: true, name: &quot;&quot;, icon: &quot;&quot;, count: 0 },
+	);
+	doc.setData(&quot;slots&quot;, view);
+}
+refresh();
+
+doc.event.connect((name, args) =&gt; {
+	const i = args[0]; // the 0-based slot index data-for gave the element
+	if (name === &quot;pick&quot;) {
+		dragFrom = i;
+	} else if (name === &quot;drop&quot; &amp;&amp; dragFrom &gt;= 0) {
+		[slots[dragFrom], slots[i]] = [slots[i], slots[dragFrom]];
+		dragFrom = -1;
+		refresh();
+	}
+});
+</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Client/Inventory.py</span><pre id="ex-uidoc-inventory-py" data-example-kind="source" data-language="python">SLOTS = 12
+# index -&gt; {&quot;id&quot;, &quot;count&quot;}; None is an empty slot
+slots = [
+    {&quot;id&quot;: &quot;sword&quot;, &quot;count&quot;: 1},
+    None,
+    {&quot;id&quot;: &quot;potion&quot;, &quot;count&quot;: 3},
+]
+slots += [None] * (SLOTS - len(slots))
+ITEMS = {
+    &quot;sword&quot;: {&quot;name&quot;: &quot;Ember Sword&quot;, &quot;icon&quot;: &quot;icons/sword.png&quot;},
+    &quot;potion&quot;: {&quot;name&quot;: &quot;Health Potion&quot;, &quot;icon&quot;: &quot;icons/potion.png&quot;},
+}
+
+doc = UI.open_document(&quot;UI/inventory.rml&quot;, &quot;modal&quot;)
+drag_from = -1
+
+def refresh():
+    view = []
+    for slot in slots:
+        if slot:
+            item = ITEMS[slot[&quot;id&quot;]]
+            view.append({&quot;empty&quot;: False, &quot;name&quot;: item[&quot;name&quot;], &quot;icon&quot;: item[&quot;icon&quot;], &quot;count&quot;: slot[&quot;count&quot;]})
+        else:
+            view.append({&quot;empty&quot;: True, &quot;name&quot;: &quot;&quot;, &quot;icon&quot;: &quot;&quot;, &quot;count&quot;: 0})
+    doc.set_data(&quot;slots&quot;, view)
+
+refresh()
+
+def on_event(name, args):
+    global drag_from
+    i = args[0]  # the 0-based slot index data-for gave the element
+    if name == &quot;pick&quot;:
+        drag_from = i
+    elif name == &quot;drop&quot; and drag_from &gt;= 0:
+        slots[drag_from], slots[i] = slots[i], slots[drag_from]
+        drag_from = -1
+        refresh()
+
+doc.event.connect(on_event)
+</pre></div>
+    </div>
     <p>The icons (<code>UI/icons/sword.png</code>, <code>UI/icons/potion.png</code>) sit next to the document and are chosen per slot with <code>data-attr-src</code>, so adding an item is just a new entry in <code>ITEMS</code> and a new file under <code>UI/icons/</code>. RCSS's <code>drag: clone</code> is what makes the picked-up item's clone follow the cursor while it's dragged; the clone keeps its icon, and <code>dragstart</code>/<code>dragdrop</code> on the source and target slots are how the script hears where it started and landed. A fuller version can add stacking, a click-and-place path for gamepad players, and a <code>Closed</code> handler that reopens the panel; the document and script keep the same shape.</p>
 
     <h2 id="uidoc-from-web">Coming from browser-based game UIs</h2>
