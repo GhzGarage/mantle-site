@@ -330,7 +330,7 @@ See <a href="/docs/creators/#validation">What "Check this place" catches</a>.</l
 <p>A server script's changes to the environment still win over these: they're the starting point a script's writes build on, not a floor under them. See <a href="/docs/scripting/api/#ref-environment">Environment</a> in the API reference for the full script API.</p>
 
 <h3 id="exposure-fog">Exposure and fog <span class="status live">Live</span></h3>
-<p>Place settings has no exposure or fog field. You set both in the level, and the place carries them: exposure from the Post Process Volume, fog from the Exponential Height Fog. Each value is held to the range below, and <a href="#export-report">the export report</a> says when one was clamped.</p>
+<p>Place settings has no exposure or fog field. You set both in the level, and the place carries them: exposure from the Post Process Volume, fog from the Exponential Height Fog. Each value is held to the range below. <a href="#export-report">The export report</a> notes some of these clamps, as each row says.</p>
 <p><b>Exposure</b> comes from the Post Process Volume's <b>Exposure</b> group (the enabled volume with the highest priority).</p>
 <div class="table-wrap"><table><thead><tr><th>In the editor</th><th>What players get</th></tr></thead><tbody>
 <tr><td><b>Metering Mode</b></td><td><b>Manual</b> is a fixed exposure: the same brightness wherever players look, like the game's own. <b>Auto Exposure Histogram</b> and <b>Auto Exposure Basic</b> adapt to what the player is looking at, as the editor does. With no Metering Mode override, your project's default is used, which adapts unless your project turned auto exposure off.</td></tr>
