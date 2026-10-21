@@ -46,6 +46,16 @@
 </ol>
 <p>The Preview section also has an <b>Automatic source size (preview)</b> box. It only changes the preview: "Uploads automatically select from every authored size for each fit source."</p>
 
+<h3 id="garment-sizes">Sizes for a skeletal mesh garment <span class="status wip">In progress</span></h3>
+<p>A Skeletal Mesh garment, or a Chaos cloth asset, can upload in Epic's standard body sizes like a parametric Outfit. You don't have to make the Outfit yourself. This is in the plugin's latest source and isn't in the 0.1.0 release on Fab yet.</p>
+<p>Mantle tries these in order:</p>
+<ol>
+<li><b>Made on a MetaHuman body:</b> Mantle makes the garment into an Outfit directly.</li>
+<li><b>A bare character body next to it:</b> Mantle makes the Outfit from that body. The body must be the whole character, at least about 120 cm tall, with a skin section and no clothing sections. It must also list the garment as one of its separate clothing meshes. Keep it in the garment's folder or in the folder above or two above. Your assets aren't changed. Mantle saves the Outfit in <code>Converted</code> next to the body, as <code>[Body]_Outfit</code>. You'll see "The bare-skin step was confirmed automatically for [body]: it has no clothing sections and a skin section."</li>
+<li><b>Neither:</b> the garment uploads in one size. You'll see "Uploads in one size: it could not be made in sizes ([why])", for example "no whole bare character body was found next to it".</li>
+</ol>
+<p>When it works, the check says "Made as a MetaHuman Outfit ([route]), so it uploads in Epic's standard body sizes." To get sizes, put the character's whole bare body next to the garment and tick all of the garment's sections. Checking a skeletal garment takes longer than before, because Mantle builds the fit bodies.</p>
+
 <h3 id="colours">Clothing colors <span class="status live">Live</span></h3>
 <p>Players can recolor the areas of a garment you mark. Only tops, bottoms, shoes and accessories can be recolored. Mantle finds the areas on its own for all four.</p>
 <p>The <b>Clothing colors</b> section only shows when you've chosen <b>Clothing</b>. So you can mark areas by hand only on tops, bottoms and shoes. Changing the kind of item clears them. If you declare areas on something that isn't clothing, the check says "Declared clothing colors are supported only on clothing items."</p>
