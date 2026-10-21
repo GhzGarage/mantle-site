@@ -10,7 +10,7 @@
 <li><b>Use someone else's:</b> get a public package from the <a href="/docs/players/playing/#assets">ASSETS tab</a> in Mantle or from <b>Tools → Mantle → Library...</b> in Unreal, add it to your place's storage, and it runs in your place.</li>
 <li><b>Add Script Points:</b> drop them where the package should act, and set each point's parameters in the Details panel.</li>
 </ul>
-<p>A place that uses script packages or Script Points needs script API 1.36. You don't set this yourself. Mantle sets it when your place has a package (in the level's <code>Packages/</code> folder or stored in Place Settings → Storage) or a Script Point.</p>
+<p>A place that uses script packages or Script Points needs script API 1.36. You don't set this yourself. Mantle makes sure it's at least 1.36 when your place has a package (in the level's <code>Packages/</code> folder or stored in Place Settings → Storage) or a Script Point.</p>
 <p>A package's scripts run <b>once per side</b> (once on the server, once on each player's machine), not once per Script Point. The scripts loop over their points with <a href="/docs/scripting/concepts/#packages"><code>Script.Points</code></a>. A stored package with no Script Points still runs, which suits things that apply to the whole place, such as a double jump.</p>
 
 <h2 id="make">Making a package</h2>
@@ -67,7 +67,7 @@
 <p>Other keys in <code>package.json</code> are ignored.</p>
 
 <h3 id="example">A package's script</h3>
-<p>This server script runs once and checks every zone. Each Script Point sits at the point's position. The script reads its parameters with <code>GetAttribute</code>, as the numbers and true/false values the manifest declares. A player's <code>Position</code> is nil while they respawn, so the script checks it first.</p>
+<p>This server script runs once and checks every zone. Each Script Point is an entity at the point's position. The script reads its parameters with <code>GetAttribute</code>, as the numbers and true/false values the manifest declares. A player's <code>Position</code> is nil while they respawn, so the script checks it first.</p>
 <div class="code"><span class="tag">Packages/Hazards/Shared/Config.luau</span><pre data-example-kind="snippet">return { DamageScale = 1 }</pre></div>
 <div class="code"><span class="tag">Packages/Hazards/Server/Main.luau</span><pre data-example-kind="snippet">local Config = require("Config")   -- this package's Shared/Config.luau
 
@@ -118,7 +118,7 @@ end</pre></div>
 <h2 id="script-points">Script Points <span class="status live">Live</span></h2>
 <p>Choose <b>Tools → Mantle → Add Script Point</b>. The point appears in front of you in the viewport, with the package's name floating above it in the editor (players never see a Script Point). In its Details panel:</p>
 <div class="table-wrap"><table><thead><tr><th>Field</th><th>What it does</th></tr></thead><tbody>
-<tr><td>Storage Item</td><td>A dropdown of the place's script packages. It lists stored packages and packages in the level's <code>Packages/</code> folder that aren't stored yet ("(in Packages/, stored when you publish)"). You can also type a storage entry by hand. If there are none: "This place has no script package. Add one with Tools &gt; Mantle &gt; Library (Scripts), or make one in a Packages folder beside the level's Scripts folder."</td></tr>
+<tr><td>Storage Item</td><td>A dropdown of the place's script packages. It lists stored packages first, then packages in the level's <code>Packages/</code> folder that aren't stored yet ("(in Packages/, stored when you publish)"), then any entry you typed into Place Settings → Storage ("(typed in by hand: Mantle checks it is a script package when you publish)"). If there are none: "This place has no script package. Add one with Tools &gt; Mantle &gt; Library (Scripts), or make one in a Packages folder beside the level's Scripts folder."</td></tr>
 <tr><td>Parameters</td><td>One row for each parameter the package declares, labeled with its name and type (for example "Speed (number, 1 to 10, required)"), its help text, and its default as a hint. The row is a text box for a string or a number, a slider for a number with both a <code>min</code> and a <code>max</code>, a checkbox for a boolean and a dropdown for a choice. <b>Default</b> clears the value, so the package's default applies. A red note under the name flags a value that doesn't fit, or a required parameter with no value: "Hazards needs Radius."</td></tr>
 <tr><td>Enabled</td><td>Untick to keep the point in the level without the package's scripts seeing it.</td></tr>
 </tbody></table></div>
