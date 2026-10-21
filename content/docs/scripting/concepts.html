@@ -173,7 +173,7 @@ State.observe(&quot;guide.example.timeLeft&quot;, lambda s: label.set_text(f&quo
       <li><b>Events</b>: <code>Events:Get("GoalScored")</code> is a named signal for scripts on the same side. Any script can <code>Fire</code> it or connect to it.</li>
       <li><b>Remotes</b> between server and clients.</li>
     </ul>
-    <p>The <a href="/docs/scripting/recipes/#r-cross">checkpoint recipe</a> pairs <code>Server/GuideCheckpoint.ts</code> with <code>Server/GuideKillBricks.luau</code>: TypeScript writes a checkpoint vector into State; Luau reads it when the player touches a kill brick. Neither language imports the other's module.</p>
+    <p>The <a href="/docs/scripting/recipes/#r-cross">checkpoint recipe</a> shows how: the checkpoint script writes a respawn position into State, and the kill brick script reads it when a player touches a hazard. They only share State, so you can write the checkpoints in TypeScript and the kill brick in Luau, and neither imports the other's module.</p>
 
     <h2 id="services">More services</h2>
     <p>The sections below cover services added in script API 1.4 to 1.37, and the newest changes in 1.39 to 1.44. The newest game release carries 1.4 to 1.37, and Check All and the type files know all of them. Each section names the version it needs. When a new plugin version adds members, they're marked <span class="status wip">Next release</span> until a game release carries them (see <a href="/docs/scripting/api/#versions">API versions</a>). Each example comes in all four languages: switch the language to see the others. Every member is listed in the <a href="/docs/scripting/api/#reference">full reference</a>.</p>
