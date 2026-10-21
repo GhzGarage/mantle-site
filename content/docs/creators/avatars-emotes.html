@@ -142,12 +142,12 @@
 <h3 id="emote-rules">Emote rules</h3>
 <div class="table-wrap"><table><thead><tr><th>Rule</th><th>Value</th></tr></thead><tbody>
 <tr><td>Skeleton</td><td>The UEFN mannequin, a MetaHuman body, the UE5 Mannequin (<code>SK_Mannequin</code>) or the UE4 Mannequin (<code>SK_UE4_Mannequin</code>). Every animated bone must be one of that skeleton's bones (names match whatever their case). A MetaHuman, UE5 Mannequin or UE4 Mannequin clip is retargeted onto the UEFN mannequin automatically. The Mantle plugin turns IK Rig on for you. You don't need a UEFN mannequin in your project, because the plugin has its own. If you have one, the plugin uses yours. The clip's skeleton does need a skeletal mesh, either the clip's preview mesh or one the plugin finds.</td></tr>
-<tr><td>Length</td><td>Up to 10 seconds</td></tr>
+<tr><td>Length</td><td>Up to 30 seconds</td></tr>
 <tr><td>Frame rate</td><td>Any. Emotes play at 30 frames a second.</td></tr>
 <tr><td>Required track</td><td><code>pelvis</code></td></tr>
 <tr><td>Root motion</td><td>The <code>root</code> bone can move at most 50 cm from its first frame. Emotes play in place: the player doesn't travel with the root.</td></tr>
 <tr><td>Anim Notifies</td><td>Only <code>footstep_l</code>, <code>footstep_r</code>, <code>impact</code> and <code>loop_start</code> are kept, up to 64. Other notifies are left out.</td></tr>
-<tr><td>Size</td><td>Up to 512 KiB once converted. Shorter clips that animate fewer bones are smaller.</td></tr>
+<tr><td>Size</td><td>Up to 512 KiB once converted. Shorter clips that animate fewer bones are smaller. A long full-body dance can reach this limit before 30 seconds.</td></tr>
 </tbody></table></div>
 
 <h3 id="looping">Looping</h3>
@@ -167,7 +167,7 @@
 <tr><td>Problem: the emote could not be retargeted onto the UEFN mannequin: [clip] is on the [metahuman, ue5mannequin or ue4mannequin] skeleton and emotes play on the UEFN mannequin, but this project has none and the Mantle plugin could not make its own to retarget it onto (see the Output Log): reinstall the Mantle plugin, or add SKM_UEFN_Mannequin (from the Game Animation Sample) to the project, and upload again.</td><td>Reinstall the Mantle plugin, or add a UEFN mannequin skeletal mesh to your project, then upload again.</td></tr>
 <tr><td>Problem: the emote could not be retargeted onto the UEFN mannequin: no skeletal mesh in this project uses [clip]'s skeleton [skeleton], so it cannot be retargeted. Give the skeleton a preview mesh and upload again.</td><td>As the message says.</td></tr>
 <tr><td>Problem: the emote could not be retargeted onto the UEFN mannequin: IK Rig's batch retarget cannot be called (…): enable the IK Rig plugin and restart the editor.</td><td>Restart the editor. The Mantle plugin turns IK Rig on itself, so if this keeps happening, reinstall the plugin.</td></tr>
-<tr><td>Problem: the clip is [N] s long, the limit is 10 s. Trim the animation (Animation editor > Remove frames) and try again.</td><td>As the message says.</td></tr>
+<tr><td>Problem: the clip is [N] s long, the limit is 30 s. Trim the animation (Animation editor > Remove frames) and try again.</td><td>As the message says.</td></tr>
 <tr><td>Problem: the clip has no "pelvis" track.</td><td>Key the <code>pelvis</code> bone.</td></tr>
 <tr><td>Problem: the root moves [N] cm, the limit is 50 cm. Emotes play in place: remove the root motion (or keep it within the limit).</td><td>As the message says.</td></tr>
 <tr><td>Problem: bone "[bone]" has a translation of [N] cm.</td><td>A bone is more than 100 m from its parent. Fix the stray key.</td></tr>
