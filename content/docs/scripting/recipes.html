@@ -1498,6 +1498,112 @@ def on_stamina(_, old, new_value):
 Players.local_player.stamina_changed.connect(on_stamina)
 </pre></div></div></div>
 <p>Only the server can set these values. <code>Ragdoll</code> returns false when the player is dead, in a vehicle or already knocked down. <code>SprintStarted</code> and <code>SprintStopped</code> fire too, and <code>IsSprinting</code> and <code>IsRagdolled</code> read the state (see <a href="/docs/scripting/api/#ref-player">Player</a>).</p>
+<h3 id="r-breath">Breath and a breath bar for swimmers <span class="status wip">Next release</span></h3>
+<p>This turns on breath for players who touch a pad, warns them when they run out of air, and shows how much air they have left. It needs API 1.45, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). Players can swim only in levels that already have Water plugin bodies in them, so you can't add swimmable water to a published place yet (see <a href="/docs/scripting/concepts/#swimming-breath">Swimming and breath</a>). Tag a pad <code>guide_code_divepad</code>. Touching it turns <code>BreathEnabled</code> on for that player and sets <code>MaxBreath</code> to 15, so a full breath lasts 15 seconds under water. It's off for everyone until a script does that, and turning it on starts the breath full. <code>OutOfBreath</code> fires once when the breath reaches 0, and the server script sends that player a chat line. From then on the character loses <code>DrownDamage</code> (10 by default) health every second it stays under, and a drowning death fires <code>Died</code> with the damage type <code>"Drown"</code>. Mantle has no built-in breath bar, so the client script draws one with text: ten characters, filled in as the breath drops, and hidden while the breath is full. <code>BreathChanged</code> passes the player, the old value and the new one, in steps of about half a percent of <code>MaxBreath</code>. It fires on the server and on every client, so the client script reads it for the local player.</p>
+<div class="v has-ts has-js has-py"><div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Server/GuideBreath.luau</span><pre data-example-kind="source" data-language="luau">World:OnTagged(&quot;guide_code_divepad&quot;, function(pad)
+	pad.Touched:Connect(function(player)
+		player.BreathEnabled = true
+		player.MaxBreath = 15
+	end)
+end)
+
+Players:OnPlayer(function(player)
+	player.OutOfBreath:Connect(function()
+		Chat:SendSystemMessage(&quot;Out of air! Swim up.&quot;, player)
+	end)
+end)
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideBreathHud.luau</span><pre data-example-kind="source" data-language="luau">local player = Players.LocalPlayer
+local bar = UI:Create(&quot;text&quot;)
+
+if bar then
+	bar:SetVisible(false)
+	player.BreathChanged:Connect(function(_, old, new)
+		local max = player.MaxBreath or 20
+		local filled = math.floor(new / max * 10 + 0.5)
+		bar:SetText(&quot;Air [&quot; .. string.rep(&quot;#&quot;, filled) .. string.rep(&quot;-&quot;, 10 - filled) .. &quot;]&quot;)
+		bar:SetVisible(new &lt; max)
+	end)
+end
+</pre></div></div><div class="v" data-v="ts"><div class="code"><span class="tag">Scripts/Server/GuideBreath.ts</span><pre data-example-kind="source" data-language="typescript">World.onTagged(&quot;guide_code_divepad&quot;, (pad: Entity) =&gt; {
+	pad.touched.connect((player: Player) =&gt; {
+		player.breathEnabled = true;
+		player.maxBreath = 15;
+	});
+});
+
+Players.onPlayer((player: Player) =&gt; {
+	player.outOfBreath.connect(() =&gt; {
+		Chat.sendSystemMessage(&quot;Out of air! Swim up.&quot;, player);
+	});
+});
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideBreathHud.ts</span><pre data-example-kind="source" data-language="typescript">const player = Players.localPlayer;
+const bar = UI.create(&quot;text&quot;);
+
+if (bar) {
+	bar.setVisible(false);
+	player.breathChanged.connect((_, old, newValue) =&gt; {
+		const max = player.maxBreath ?? 20;
+		const filled = Math.round((newValue / max) * 10);
+		bar.setText(`Air [${&quot;#&quot;.repeat(filled)}${&quot;-&quot;.repeat(10 - filled)}]`);
+		bar.setVisible(newValue &lt; max);
+	});
+}
+</pre></div></div><div class="v" data-v="js"><div class="code"><span class="tag">Scripts/Server/GuideBreath.js</span><pre data-example-kind="source" data-language="javascript">World.onTagged(&quot;guide_code_divepad&quot;, (pad) =&gt; {
+	pad.touched.connect((player) =&gt; {
+		player.breathEnabled = true;
+		player.maxBreath = 15;
+	});
+});
+
+Players.onPlayer((player) =&gt; {
+	player.outOfBreath.connect(() =&gt; {
+		Chat.sendSystemMessage(&quot;Out of air! Swim up.&quot;, player);
+	});
+});
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideBreathHud.js</span><pre data-example-kind="source" data-language="javascript">const player = Players.localPlayer;
+const bar = UI.create(&quot;text&quot;);
+
+if (bar) {
+	bar.setVisible(false);
+	player.breathChanged.connect((_, old, newValue) =&gt; {
+		const max = player.maxBreath ?? 20;
+		const filled = Math.round((newValue / max) * 10);
+		bar.setText(`Air [${&quot;#&quot;.repeat(filled)}${&quot;-&quot;.repeat(10 - filled)}]`);
+		bar.setVisible(newValue &lt; max);
+	});
+}
+</pre></div></div><div class="v" data-v="py"><div class="code"><span class="tag">Scripts/Server/GuideBreath.py</span><pre data-example-kind="source" data-language="python">def setup(pad):
+    def on_touch(player):
+        player.breath_enabled = True
+        player.max_breath = 15
+    pad.touched.connect(on_touch)
+
+World.on_tagged(&quot;guide_code_divepad&quot;, setup)
+
+def on_player(player):
+    def on_out(_):
+        Chat.send_system_message(&quot;Out of air! Swim up.&quot;, player)
+    player.out_of_breath.connect(on_out)
+
+Players.on_player(on_player)
+</pre></div><div class="code"><span class="tag">Scripts/Client/GuideBreathHud.py</span><pre data-example-kind="source" data-language="python">player = Players.local_player
+
+def watch(bar):
+    bar.set_visible(False)
+
+    def on_breath(_, old, new_value):
+        max_breath = player.max_breath or 20
+        filled = round(new_value / max_breath * 10)
+        bar.set_text(f&quot;Air [{'#' * filled}{'-' * (10 - filled)}]&quot;)
+        bar.set_visible(new_value &lt; max_breath)
+
+    player.breath_changed.connect(on_breath)
+
+bar = UI.create(&quot;text&quot;)
+if bar:
+    watch(bar)
+</pre></div></div></div>
+<p>Only the server can set these values. <code>BreathRestored</code> fires when the breath is full again, <code>IsSwimming</code> and <code>IsUnderwater</code> read the state, and <code>DrownDamage = 0</code> lets a character stay under forever (see <a href="/docs/scripting/api/#ref-player">Player</a>).</p>
 <h3 id="r-nameplates">A nameplate over each player <span class="status wip">Next release</span></h3>
 <p>This puts a name over every other player's head, on your screen only. It needs API 1.41, which no game release carries yet, so publishing a place that uses it is refused until one does (see <a href="/docs/scripting/api/#versions">API versions</a>). It's a client script, and there's nothing to tag. The script makes a text node for each player and calls <a href="/docs/scripting/api/#ref-uinode"><code>UiNode:AttachToWorld</code></a> on it. <code>Bone = "head"</code> puts the plate on the head, <code>Offset</code> lifts it 30 cm, <code>MaxDistance</code> hides it past 2,500 cm, <code>FadeDistance</code> fades it out over the last 500 cm and <code>HideForSelf</code> keeps it off your own character. A plate follows its player and hides while they have no character. A script can float up to 32 nodes at once, and <code>AttachToWorld</code> returns false past that. The script destroys the plate then, and again when the player leaves, so it never wastes the node budget (256 nodes per script).</p>
 <div class="v has-ts has-js has-py"><div class="code" data-v="luau"><span class="tag">Scripts/Client/GuideNameplates.luau</span><pre data-example-kind="source" data-language="luau">local plates = {}
