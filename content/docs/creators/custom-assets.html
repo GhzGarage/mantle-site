@@ -37,7 +37,7 @@
 <tr><td>Lower-detail LODs per mesh</td><td>2, at most 250,000 and 125,000 triangles</td><td>That LOD is left off, with a warning</td></tr>
 <tr><td>Simple collision per mesh</td><td>64 boxes, spheres and capsules, and 64 convex hulls of up to 255 points (8,192 in all)</td><td>The mesh collides with its triangles, with a warning</td></tr>
 <tr><td>Converted mesh file</td><td class="num">64 MB</td><td>Error while preparing, or the LODs are left off if they're what takes it over</td></tr>
-<tr><td>Draw distance per mesh</td><td>Above 0, up to 10 km (1,000,000 cm)</td><td>A longer one is ignored, and players always see the mesh</td></tr>
+<tr><td>Draw distance per placed mesh</td><td>Above 0, up to 10 km (1,000,000 cm)</td><td>A longer one is ignored, and players always see the mesh</td></tr>
 <tr><td>Texture size</td><td>2048 on the longest side</td><td>Scaled down, with a warning</td></tr>
 <tr><td>Texture file</td><td class="num">8 MB</td><td>Re-compressed or scaled down, with a warning</td></tr>
 <tr><td>Emissive strength</td><td>Up to 100</td><td>Capped, with a warning</td></tr>
@@ -51,9 +51,9 @@
 
 <h3 id="meshes">Meshes <span class="status live">Live</span></h3>
 <ul>
-<li><b>Levels of detail:</b> the mesh's own LOD1 and LOD2 are published with the screen sizes set in the editor, so players far away see the lighter versions. A LOD with more triangles than the one before it, or past the limits above, is left off with a warning: "Mesh '…': LOD[N] was left off because …; players see the LODs before it at every distance." (when more LODs follow, it says "LOD[N] and the LODs after it"). If the LODs make the file bigger than 64 MB, only LOD0 is published, with a warning. UV channel 1 and painted vertex colors are published too.</li>
-<li><b>Bad LOD screen sizes:</b> if your LOD screen sizes don't each go down, Mantle fixes them in its copy and warns you: "Mesh '…': its LOD screen sizes (…) were not each below the one before, so they were published as (…)." Your mesh isn't changed. To use your own sizes, set each LOD's screen size smaller than the one before.</li>
-<li><b>Draw distance:</b> players stop seeing small things when they're far away. To choose the distance yourself, set <b>Desired Max Draw Distance</b> on the mesh. Turn on <b>Never Distance Cull</b> to always show it. Otherwise Mantle picks a distance from the mesh's size, as the table shows. A distance must be above 0 and at most 10 km (1,000,000 cm). A longer one is ignored, and players always see the mesh.</li>
+<li><b>Levels of detail:</b> the mesh's own LOD1 and LOD2 are published with the screen sizes set in the editor, so players far away see the lighter versions. A LOD with more triangles than the one before it, or past the limits above, is left off with a warning: "Mesh '…': LOD[N] was left off because …; players see the LODs before it at every distance.". If the LODs make the file bigger than 64 MB, only LOD0 is published, with a warning. UV channel 1 and painted vertex colors are published too.</li>
+<li><b>Bad LOD screen sizes:</b> if your LOD screen sizes don't each go down, or LOD0's is above 1, Mantle fixes them in its copy and warns you: "Mesh '…': its LOD screen sizes (…) were not each below the one before, so they were published as (…)." Your mesh isn't changed. To use your own sizes, set each LOD's screen size smaller than the one before.</li>
+<li><b>Draw distance:</b> players stop seeing small things when they're far away. To choose the distance yourself, set <b>Desired Max Draw Distance</b> on the mesh you placed in the level (in its Details panel). Turn on <b>Never Distance Cull</b> there to always show it. Foliage and other instanced meshes use their <b>Instance End Cull Distance</b>. Otherwise Mantle picks a distance from the mesh's size, as the table shows. A distance must be above 0 and at most 10 km (1,000,000 cm). A longer one is ignored, and players always see the mesh.</li>
 <li><b>Sky domes:</b> a huge dome or sphere mesh with a sky material is left out, because Mantle supplies its own sky. Check this place warns you: "a sky mesh; Mantle supplies its own sky, so it isn't published." (or, for a Blueprint with a sky mesh, "has a sky mesh ('…'); Mantle supplies its own sky, so it isn't published."). The rest of the actor still publishes.</li>
 <li><b>Mesh actors with no mesh:</b> a Static Mesh Actor with no mesh assigned is left out of the place instead of stopping the publish. Check this place warns you: "has no mesh assigned, so there is nothing to show and it is left out of the place." Pick a mesh for it to keep it.</li>
 <li><b>Over the triangle or vertex limit:</b> Mantle doesn't change your mesh. It publishes the mesh's first lower LOD that fits (and draws with the same material slots), which then becomes its LOD0, and the LODs after it move up. If no LOD fits, it reduces a copy of the mesh to about 90% of the limit. The copy is published as a single LOD, so players see it at every distance. Either way, Check this place warns you. If the mesh can't be reduced, that's an error, and the message says why.</li>
@@ -78,28 +78,28 @@
 <li><b>Per-texture tiling, offset and rotation</b>, normal and occlusion strength, ambient occlusion on UV channel 1, and vertex color multiplying the base color.</li>
 <li><b>Car paint:</b> an opaque, one-sided Clear Coat material publishes as Mantle's car paint, a clear coat over its base color, with optional metallic flakes (give it <code>FlakeDensity</code>, <code>FlakeSize</code> or <code>FlakeTint</code> parameters). "Check this place" notes it: "it is a Clear Coat material, so it publishes as Mantle's car-paint shading".</li>
 <li><b>Scrolling textures:</b> a Panner feeding a Texture Sample's UVs keeps scrolling in game at the same speed. The sample must go straight into Base Color, Normal or Emissive (or the ORM group). On a masked or translucent material, the opacity has to be that same sample's alpha.</li>
-<li><b>Swaying grass and foliage:</b> a SimpleGrassWind node on World Position Offset, with constant Wind Intensity and Wind Speed and a Wind Weight of Vertex Color's red, <code>1 - V</code> of the first UV, or a constant 1, sways in game instead of standing still. It stops swaying past 50 m, and doesn't work on translucent materials.</li>
+<li><b>Swaying grass and foliage:</b> a SimpleGrassWind node on World Position Offset sways in game instead of standing still. Give it constant Wind Intensity and Wind Speed, and a Wind Weight of Vertex Color's red, <code>1 - V</code> of the first UV, or a constant 1. It stops swaying past 50 m, and doesn't work on translucent materials.</li>
 <li><b>World-aligned textures:</b> a WorldAlignedTexture (or WorldAlignedNormal) node on Base Color, Normal or the ORM group keeps its pattern running on unbroken across neighboring meshes. Give it one constant tile size and sharpness. It works on opaque materials only.</li>
-<li><b>Vertex-painted layer blends:</b> a Lerp between two plain Texture Samples by one Vertex Color channel, on Base Color (with Normal and the ORM group blending the same way, or staying a plain sample), keeps the painted layer in game instead of dropping it. Opaque materials only.</li>
+<li><b>Vertex-painted layer blends:</b> a Lerp between two plain Texture Samples by one Vertex Color channel, on Base Color, keeps the painted layer in game. Normal and the ORM group can blend the same way. Opaque materials only.</li>
 <li><b>Additive materials:</b> an Additive blend publishes as an additive material, which shows only its glow. The glow is the emissive (or, for an unlit material, its color), scaled by a constant opacity. The base color and its vertex-color tint aren't kept.</li>
 <li><b>Glass:</b> an unlit translucent material that draws the scene behind it (Scene Color on its emissive path) publishes as see-through tinted glass.</li>
-<li><b>Refraction:</b> glass that bends light publishes as smooth, tinted glass. The scene behind it isn't bent. A solid (opaque) material's refraction is dropped, with a warning.</li>
-<li><b>Water:</b> a near-opaque, depth-faded translucent material, or a Single Layer Water material such as the Water plugin's, publishes as Mantle's water. It keeps the surface color, roughness and up to two moving normal maps. Its textures, glow, metallic look and waves are dropped, with a warning. Mantle's water is a flat surface.</li>
+<li><b>Refraction:</b> glass that bends light publishes as smooth, tinted glass. The scene behind it isn't bent. On an opaque or masked material, the index of refraction is dropped, and you see "Material '…': its ior part is dropped."</li>
+<li><b>Water:</b> a water material (Single Layer Water, or a see-through material that fades with depth) publishes as Mantle's water. It keeps the surface color, roughness and up to two moving normal maps. Its color, roughness, metallic and occlusion textures, glow, metallic look and waves are dropped, with a warning. Mantle's water is a flat surface.</li>
 <li><b>Foliage shading:</b> a masked, two-sided material built as foliage keeps its tint, strength and vertex-color weight.</li>
 </ul>
-<p>Mantle only keeps scrolling, swaying, world-aligned and layer-blend effects when they're built the simple, common way described above. Anything built differently, even if it looks the same in the material editor, publishes without the effect. A material keeps only one of swaying, world-aligned and layer blend: swaying comes first, then world-aligned. These effects aren't kept on car paint, and mostly not on unlit materials either.</p>
+<p>Mantle only keeps scrolling, swaying, world-aligned and layer-blend effects when they're built the simple, common way described above. Anything built differently, even if it looks the same in the material editor, publishes without the effect. A material keeps only one of swaying, world-aligned and layer blend: swaying comes first, then world-aligned. None of them are kept on car paint. On an unlit material, only swaying and a scrolling glow are kept.</p>
 <p>Some effects can't be kept. Check this place names each one as a warning, and the material still publishes without it. The rows in italics are the exceptions: when the effect is built the simple way above, it carries across.</p>
 <div class="table-wrap"><table><thead><tr><th>Effect</th><th>What players see</th></tr></thead><tbody>
 <tr><td>Time, Panner, Rotator, flipbooks</td><td>Frozen, <i>unless it's a recognized scrolling texture: then it keeps scrolling</i></td></tr>
 <tr><td>World Position Offset (wind, vertex animation)</td><td>The mesh doesn't sway or move, <i>unless it's recognized swaying grass: then it sways within 50 m</i></td></tr>
 <tr><td>World-aligned or triplanar mapping</td><td>The pattern doesn't line up across neighboring meshes, <i>unless it's a recognized world-aligned texture: then it does</i></td></tr>
-<tr><td>Refraction</td><td>Smooth tinted glass that isn't bent, with its index of refraction changing how solid it looks (an unlit material that draws the scene behind it becomes see-through glass)</td></tr>
+<tr><td>Refraction</td><td>Smooth tinted glass. The scene behind it isn't bent (an unlit material that draws the scene behind it becomes see-through glass)</td></tr>
 <tr><td>Subsurface shading models</td><td>Flatter skin, wax and leaves</td></tr>
 <tr><td>Bump offset and parallax</td><td>A flat surface up close</td></tr>
 <tr><td>Vertex color used for anything but multiplying the base color</td><td>Layers painted per vertex don't show, <i>unless it's a recognized layer blend: then the painted layer shows</i></td></tr>
 <tr><td>Detail normal maps (two or more normal textures)</td><td>Fine detail may soften</td></tr>
 <tr><td>Pixel depth offset, displacement</td><td>Dropped</td></tr>
-<tr><td>Hair, cloth, eye, thin translucent, and clear coat on a two-sided or translucent material</td><td>Standard shading</td></tr>
+<tr><td>Hair, cloth, eye, thin translucent and clear coat on a two-sided or translucent material</td><td>Standard shading</td></tr>
 <tr><td>Decal, light function and post-process materials</td><td>Flattened as a plain surface</td></tr>
 </tbody></table></div>
 <p>If an effect matters to how your place looks, bake it into the material's textures or pick another material.</p>
@@ -139,7 +139,7 @@
 <li>refraction is approximated: it publishes as smooth, tinted glass that is a little more reflective and opaque (by its index of refraction), but the scene behind it is not bent.</li>
 <li>subsurface scattering is dropped, so skin, wax and leaves look flatter.</li>
 <li>parallax depth is flattened, so the surface looks flat up close.</li>
-<li>vertex-colour blending is dropped, so layers painted per vertex will not show (only Vertex Colour's RGB multiplying the base colour, and on an opaque material a Lerp between two textures by one Vertex Colour channel, are kept).</li>
+<li>vertex-colour blending is dropped, so layers painted per vertex will not show (only Vertex Color's RGB multiplying the base colour, and on an opaque material a Lerp between two textures by one Vertex Color channel, are kept).</li>
 <li>its detail normals are baked at the material's texture size, so fine surface detail may soften.</li>
 <li>pixel depth offset is dropped.</li>
 <li>displacement is dropped, so the surface keeps the mesh's own shape.</li>
@@ -151,7 +151,7 @@
 <li>it varies its look per instance (Per Instance Random, Custom Data or Fade Amount), which a published material cannot, so it publishes at the average: Per Instance Random as 0.5, Custom Data as its default value.</li>
 <li>it is a lit additive material; Mantle draws additive blending unlit (the glow, with no lighting on the surface), so its lighting is lost.</li>
 <li>its Fresnel rim glow is dropped, so the edges no longer glow brighter than the face (the baked glow is seen face-on, where a Fresnel is 0).</li>
-<li>it draws the scene behind it (Scene Colour), which Mantle cannot, so it publishes as tinted see-through glass.</li>
+<li>it draws the scene behind it (Scene Color), which Mantle cannot, so it publishes as tinted see-through glass.</li>
 </ul></td><td>"It still publishes. Nothing to do unless the effect matters to how your place looks; if it does, bake the effect into the material's textures or pick another material."</td></tr>
 <tr><td>Material '…' (used by '…'): it is a Clear Coat material, so it publishes as Mantle's car-paint shading (a clear coat over its base colour).</td><td>"Nothing to do. Its Clear Coat and Clear Coat Roughness carry over. Without flake parameters it is a plain clear coat with no flakes; for metallic flakes, give it FlakeDensity, FlakeSize or FlakeTint parameters (Mantle's defaults fill in any it lacks)."</td></tr>
 </tbody></table></div>
@@ -192,11 +192,17 @@
 </tbody></table></div>
 
 <h3 id="sound-messages">Messages for sounds <span class="status live">Live</span></h3>
-<p>A sound that breaks one of these errors stops the publish. Re-import it after you fix it. The table gives the prepare step's wording. The first four errors also come from Check this place, which words them around the actor, for example "'[actor]' uses sound '[name]', which has N channels, and Mantle plays mono or stereo sounds." The 12 MB error comes only from the prepare step. The decoded total and the warnings come only from Check this place. Mantle only publishes sound waves imported from a WAV: a MetaSound or a sound generated while the game runs gets an error of its own that says so. A Sound Cue on an Ambient Sound is the exception: it publishes as the first sound wave it plays, with a warning (below). A Sound Cue for a car's horn still gets an error of its own.</p>
+<p>A sound that breaks one of these errors stops the publish. Re-import it after you fix it. The table gives the prepare step's wording.</p>
+<ul>
+<li>The first four errors also come from Check this place, which names the actor too, for example "'[actor]' uses sound '[name]', which has N channels, and Mantle plays mono or stereo sounds."</li>
+<li>The 12 MB error comes only from the prepare step. The decoded total and the warnings come only from Check this place.</li>
+<li>Mantle only publishes sound waves imported from a WAV. A MetaSound or a sound generated while the game runs gets an error of its own that says so.</li>
+<li>A Sound Cue on an Ambient Sound publishes as the first sound wave it plays, with a warning. A Sound Cue for a car's horn still gets an error.</li>
+</ul>
 <div class="table-wrap"><table><thead><tr><th>Level</th><th>Message</th><th>How to fix it</th></tr></thead><tbody>
 <tr><td>Error</td><td>Sound '…' has no imported audio in this project to publish.</td><td>"Re-import it from its WAV file (Reimport in the Content Browser), then try again."</td></tr>
 <tr><td>Error</td><td>Sound '…' has N channels, and Mantle plays mono or stereo sounds.</td><td>"Export it from your audio editor as mono or stereo, re-import it, then try again."</td></tr>
-<tr><td>Error</td><td>Sound '…' is recorded at N Hz, and Mantle plays sounds at 22,050 to 48,000 Hz.</td><td>"Export it at 44,100 or 48,000 Hz, re-import it, then try again."</td></tr>
+<tr><td>Error</td><td>Sound '…' is recorded at N Hz, and Mantle plays sounds at 22050 to 48000 Hz.</td><td>"Export it at 44,100 or 48,000 Hz, re-import it, then try again."</td></tr>
 <tr><td>Error</td><td>Sound '…' is N seconds long, and a sound may be at most 60 seconds.</td><td>"Trim it to 60 seconds or less (a loop needs only one pass), re-import it, then try again."</td></tr>
 <tr><td>Error</td><td>Sound '…' is N MB as a WAV file; a sound may be at most 12 MB.</td><td>"Shorten it, or make it mono or a lower sample rate, re-import it, then try again."</td></tr>
 <tr><td>Error</td><td>This place's N sound(s) come to N MB of audio once decoded; a place may use at most 64 MB, which every player's client holds in memory.</td><td>"Use fewer or shorter sounds, or mono instead of stereo, or a lower sample rate (22,050 Hz halves a 44,100 Hz sound)."</td></tr>
