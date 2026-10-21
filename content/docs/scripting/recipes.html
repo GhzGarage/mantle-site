@@ -810,7 +810,7 @@ async function topTen() {
 		names[player.userId] = player.name;
 	}
 	const rows: { name: string; wins: number }[] = [];
-	for (const entry of result.entries) {
+	for (const entry of result.entries ?? []) {
 		rows.push({ name: names[entry.key] ?? &quot;Someone&quot;, wins: entry.value });
 	}
 	return rows;
@@ -856,7 +856,7 @@ async function topTen() {
 		names[player.userId] = player.name;
 	}
 	const rows = [];
-	for (const entry of result.entries) {
+	for (const entry of result.entries ?? []) {
 		rows.push({ name: names[entry.key] ?? &quot;Someone&quot;, wins: entry.value });
 	}
 	return rows;
@@ -2255,9 +2255,9 @@ State:Observe(&quot;alt.timeLeft&quot;, function(value) time:SetText(&quot;Time 
         }
     }
 });
-</pre></div><div class="code"><span class="tag">Scripts/Client/Hud.ts</span><pre id="ex-hud-ts" data-example-kind="source" data-language="typescript">const frame = UI.create(&quot;frame&quot;);
-const round = UI.create(&quot;text&quot;);
-const time = UI.create(&quot;text&quot;);
+</pre></div><div class="code"><span class="tag">Scripts/Client/Hud.ts</span><pre id="ex-hud-ts" data-example-kind="source" data-language="typescript">const frame = UI.create(&quot;frame&quot;)!;
+const round = UI.create(&quot;text&quot;)!;
+const time = UI.create(&quot;text&quot;)!;
 round.setParent(frame);
 time.setParent(frame);
 State.observe(&quot;alt.round&quot;, (value) =&gt; round.setText(&quot;Round &quot; + (value ?? 0)));
