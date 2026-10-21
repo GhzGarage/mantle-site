@@ -147,7 +147,7 @@ State:Observe(&quot;guide.example.timeLeft&quot;, function(seconds)
 end)
 </pre></div></div>
       <div class="v" data-v="ts"><div class="code"><span class="tag">Scripts/Server/NetworkState.ts</span><pre id="ex-state-server-ts" data-example-kind="source" data-language="typescript">State.set(&quot;guide.example.timeLeft&quot;, 30);
-</pre></div><div class="code"><span class="tag">Scripts/Client/NetworkHud.ts</span><pre id="ex-state-client-ts" data-example-kind="source" data-language="typescript">const label = UI.create(&quot;text&quot;);
+</pre></div><div class="code"><span class="tag">Scripts/Client/NetworkHud.ts</span><pre id="ex-state-client-ts" data-example-kind="source" data-language="typescript">const label = UI.create(&quot;text&quot;)!;
 State.observe(&quot;guide.example.timeLeft&quot;, (seconds: number) =&gt; {
 	label.setText(`Time left: ${seconds}s`);
 });
@@ -226,7 +226,7 @@ crate.Transparency = 0.5</pre></div>
 
 task.spawn(async () =&gt; {
 	const crate = Assets.spawn(CRATE, new Vector3(200, 0, 100), {
-		scale: new Vector3(1.5, 1.5, 1.5), color: "#C0392B", collision: "Blocking",
+		scale: 1.5, color: "#C0392B", collision: "Blocking",
 	});
 	await task.wait(3);
 	crate.tween({ color: "#FFFFFF" }, 1);   // fade the tint away
@@ -236,7 +236,7 @@ task.spawn(async () =&gt; {
 
 task.spawn(async () =&gt; {
 	const crate = Assets.spawn(CRATE, new Vector3(200, 0, 100), {
-		scale: new Vector3(1.5, 1.5, 1.5), color: "#C0392B", collision: "Blocking",
+		scale: 1.5, color: "#C0392B", collision: "Blocking",
 	});
 	await task.wait(3);
 	crate.tween({ color: "#FFFFFF" }, 1);   // fade the tint away
