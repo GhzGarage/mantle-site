@@ -70,6 +70,7 @@ export const docsNav: DocSection[] = [
           { slug: ["creators", "clothing"], title: "Clothing, hair and accessories", description: "Build 3D clothing, one-piece outfits, hair and accessories in Unreal that pass Mantle's checks and fit every avatar: skeletons, slots, sections, sockets, budgets and the messages you'll see." },
           { slug: ["creators", "avatars-emotes"], title: "Avatars and emotes", description: "Make whole avatars on a supported skeleton, and emotes players can play from the emote wheel." },
           { slug: ["creators", "vehicles"], title: "Vehicles", description: "Build a vehicle from a kind you pick, or convert a car model, then place it with a Vehicle Spawn." },
+          { slug: ["creators", "weapons"], title: "Weapons", description: "Turn a 3D model into a weapon with the weapon builder, then try it, publish it and place it with a Weapon Spawn." },
           { slug: ["creators", "script-packages"], title: "Script packages and Script Points", description: "Publish scripts from a Packages folder for other creators, use theirs from the library, anchor them in the level with Script Points, and set parameters and package settings." },
         ],
       },

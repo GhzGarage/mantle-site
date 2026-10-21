@@ -1,0 +1,133 @@
+<div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
+
+<p>You can turn a 3D model into a weapon players can hold and use. You pick a weapon type, choose your model, check its size and direction, place the hand and action points, set the numbers, and add parts and sounds if you like. Then you create the weapon, try it and publish it. You place it in a level with a <b>Mantle Weapon Spawn</b>.</p>
+
+<h2 id="what-you-can-build">What you can build <span class="status live">Live</span></h2>
+<p>There are 16 weapon types: 8 guns, 3 melee weapons, a spear, a staff, a bow, a shield and a throwable. Each one has its own grip, animations and attacks. The weapon types are the only starting points: there are no other ready-made presets. There's no crossbow, wand or dual wield.</p>
+
+<h2 id="where">Where to find it <span class="status live">Live</span></h2>
+<p>In the Unreal Editor, choose <b>Tools → Mantle → Build a weapon...</b> The <b>Build a weapon</b> tab opens with seven steps. Use <b>Back</b> and <b>Next</b>. On the last step the button says <b>Create weapon</b>. To change a weapon you made earlier, use <b>Open a saved weapon to edit</b> in step 1. It lists the weapons in your project's <code>MantleWeapons</code> folder.</p>
+<div class="callout tip"><strong>Made a weapon a while ago?</strong><p>Earlier versions of the builder could lose some of a model's triangles. Open the weapon and press <b>Create weapon</b> again to rebuild it.</p></div>
+
+<h2 id="steps">Building a weapon <span class="status live">Live</span></h2>
+<ol class="steps">
+<li><b>What kind of weapon?</b><p>Pick the closest card. This decides how the character holds your weapon. Type a name in <b>Name your weapon</b>: players see it. You can't go on without one. If you already have a weapon with that name, the new one is saved as "Name 2", "Name 3" and so on, and the window tells you. A name is saved as a folder name: spaces and dashes become underscores, and it's cut to 60 characters.</p></li>
+<li><b>Choose the 3D model</b><p>Pick a Static Mesh or a Skeletal Mesh from your project, or drag one in. A Skeletal Mesh is read in its reference pose. Every weapon needs a model, fist weapons too: pick the knuckles, claws or gauntlet.</p></li>
+<li><b>Size and direction</b><p>The window guesses which way the weapon points and how big it should be, and tells you in a sentence ("The longest side of this weapon model is about 85 cm."). If the model looks like it was made in meters, inches or millimeters, it's scaled for you. A grey figure shows the weapon next to a character. Fix mistakes with <b>Model size (1 = as imported)</b> (0.01 to 100), <b>Reset size</b>, <b>Flip front and back</b> and <b>Turn upside down</b>. For a gun, if the length is far from normal for the type, an orange message says so, and it may offer a <b>Switch to Pistol</b> or <b>Switch to Rifle</b> button.</p></li>
+<li><b>Place hands and action points</b><p>Pick a point in the list, then drag it in the picture onto the right spot on your model. Hand points go in the middle of the palm. A point marked "(optional)" can be skipped. <b>Reset this point</b> and <b>Reset all points</b> put points back where the window guessed them. <b>Next</b> stays off until every required point is placed. The window's guesses are only a start, so check each one. A posed figure holds your weapon so you can see if the hands reach. A gun's notes show under the picture in orange (see <a href="#messages">Messages you may see</a>). A gun, staff or bow also has a <b>Show aiming</b> box that shows the player's eye and line of sight.</p></li>
+<li><b>Attack and effect</b><p>Every setting starts with a sensible value for the type. Only the settings that apply to your type show. Each number stays inside its allowed range. <b>Go back to the usual attack numbers</b> resets damage, attacks per second, rounds, reload time, range, shot spread and recoil. It leaves the other settings alone. See <a href="#settings">Settings and their ranges</a>.</p></li>
+<li><b>Parts and sound</b><p>Optional. Add a magazine that moves while you reload, fixed model details and effects, and your own attack sound. See <a href="#parts">Parts</a>.</p></li>
+<li><b>Create</b><p>Check the summary, then press <b>Create weapon</b>. It says "Your weapon is ready: [name]." and "Your weapon's files are in MantleWeapons/[name].", and the files appear in <code>Content/MantleWeapons/[name]</code> in your project. Then you can press <b>Test locally</b> to hold the weapon in the game, or publish it (see <a href="#publish">Publishing a weapon</a>). If you change anything after <b>Create weapon</b>, both buttons switch off until you press <b>Create weapon</b> again.</p></li>
+</ol>
+
+<h2 id="types">Weapon types <span class="status live">Live</span></h2>
+<div class="table-wrap"><table><thead><tr><th>Type</th><th>How it attacks</th><th>What it uses</th></tr></thead><tbody>
+<tr><td>Pistol, Revolver, Rifle, SMG, Marksman rifle, Shotgun, Sniper rifle, Machine gun</td><td><b>Attack style</b>: Instant shot (the usual), "Flying round (grenade or rocket launcher)" or "Beam (laser, flamethrower)"</td><td>A magazine plus spare rounds. The pistol and revolver are held in one hand and the others in two. You can change this with <b>Change how many hands hold it</b>. The revolver counts rounds in its cylinder and the shotgun loads one shell at a time (it has no pump motion).</td></tr>
+<tr><td>One-handed blade, Two-handed blade, Fist weapon (knuckles, claws)</td><td>Melee swing. A charged heavy attack and a block are optional.</td><td>No ammo</td></tr>
+<tr><td>Spear</td><td>"Melee swing" or "Flying projectile", held in both hands. A charged attack and a block are optional.</td><td>No ammo</td></tr>
+<tr><td>Staff</td><td>"Held beam" or "Flying projectile" (a flying spell). A charged attack is optional. Tick <b>Also throws spells</b> on a beam staff: a tap throws a spell and holding the button channels the beam.</td><td>Charges that come back over time (3 to start, one back every 4 seconds), or none</td></tr>
+<tr><td>Bow</td><td>A flying arrow. You always draw before you release. No block.</td><td>A quiver</td></tr>
+<tr><td>Shield</td><td>A bash. It's held in the left hand and always blocks.</td><td>No ammo</td></tr>
+<tr><td>Throwable</td><td>Thrown with one hand. Tick <b>Explodes (a grenade)</b> for a blast or <b>Leaves fire where it lands (a molotov)</b> for fire, but not both.</td><td>No ammo</td></tr>
+</tbody></table></div>
+<p>If you switch a gun to a beam, it starts from a laser rifle's numbers and the Laser effect. Switching to a flying round starts from a launcher's numbers. Changing the weapon type removes the points the new type doesn't use and puts every setting back to the new type's usual value.</p>
+<p>A gun's instant shot uses the Rifle, Pistol or Shotgun effect style. A staff, bow or throwable, and a gun's flying round or beam, use an element: Laser, Fire, Ice, Lightning, Arcane, Venom, Water, Wind, Rock, Sand, Void, Dark, Light, Generic, Heal, Lava or Nature. Tick <b>Choose a custom effect color</b> to tint it with red, green and blue values from 0 to 255.</p>
+
+<h2 id="points">Grip points <span class="status live">Live</span></h2>
+<p>Hand points mark the middle of a palm. The other points are named for their job. Step 4 shows the points your type needs:</p>
+<div class="table-wrap"><table><thead><tr><th>Type</th><th>Required points</th><th>Optional points</th></tr></thead><tbody>
+<tr><td>Pistol, Revolver</td><td>Right hand, Shot origin, Aim point</td><td>Left hand, Magazine position, Case exit</td></tr>
+<tr><td>Rifle, SMG, Marksman rifle, Shotgun, Sniper rifle, Machine gun</td><td>Right hand, Left hand, Shot origin, Aim point</td><td>Magazine position, Case exit</td></tr>
+<tr><td>One-handed blade</td><td>Right hand, Blade base, Blade tip</td><td>Left hand</td></tr>
+<tr><td>Two-handed blade</td><td>Right hand, Left hand, Blade base, Blade tip</td><td>None</td></tr>
+<tr><td>Spear</td><td>Right hand, Left hand, Weapon point, Blade base</td><td>Blade tip</td></tr>
+<tr><td>Staff</td><td>Right hand, Left hand, Cast point</td><td>Aim point</td></tr>
+<tr><td>Bow</td><td>Left hand, Top of string, Bottom of string, Arrow position</td><td>Aim point</td></tr>
+<tr><td>Fist weapon</td><td>None</td><td>Right hand, Left hand</td></tr>
+<tr><td>Shield</td><td>Left hand on shield, Shield face</td><td>None</td></tr>
+<tr><td>Throwable</td><td>Right hand</td><td>Weapon point</td></tr>
+</tbody></table></div>
+<p>For a melee weapon, <b>Swing starts at</b> and <b>Swing ends at</b> (step 5) let you pick which two of your points the swing runs between. Leave both on "Use this hold's usual points" for the usual swing.</p>
+<p>Only guns get the reach and "inside the gun" notes. Other types only tell you when a required point is missing.</p>
+
+<h2 id="parts">Parts <span class="status wip">In progress</span></h2>
+<p>Step 6 has two lists, each with up to 16 entries:</p>
+<ul>
+<li><b>Moving parts:</b> press <b>Add moving part</b>, then pick a <b>Part type</b>, a model, a position, a rotation and a size. <b>Show during:</b> lists the actions where the part shows. Leave <b>Use this hold's usual loading or drawing timing</b> ticked unless it should show during different actions. Today only the <b>Magazine</b> part works, and only the first one counts. It's there on the pistol, rifle, SMG, marksman rifle, sniper rifle and machine gun. <b>Round or shell</b> and <b>Arrow</b> parts are accepted, but they don't show in the game yet. To change how a flying round or an arrow looks, use <b>Round or arrow model</b> in step 5. Other types say "This weapon type has no separate magazine, round or arrow parts."</li>
+<li><b>Fixed details and effects:</b> press <b>Add model detail</b> or <b>Add built-in effect</b>. A detail has a model, an effect or both. Give each one a different <b>Detail name</b> with only letters, numbers and underscores, such as "Scope_Ring". <b>Attach at</b> picks the weapon root or one of your placed points. <b>Start hidden</b> makes the detail start out of sight.</li>
+</ul>
+<p>Sounds: <b>Fire or attack sound</b> takes a Sound Wave. <b>Quieter attack sound</b> plays when you tick <b>Use the quieter sound while suppressed</b>. Leave a sound empty to use the usual one for the type.</p>
+
+<h2 id="settings">Settings and their ranges <span class="status live">Live</span></h2>
+<div class="table-wrap"><table><thead><tr><th>Setting</th><th>Range</th></tr></thead><tbody>
+<tr><td>Damage</td><td class="num">0 to 1,000</td></tr>
+<tr><td>Attacks per second</td><td class="num">0.1 to 100</td></tr>
+<tr><td>Rounds or arrows carried / Extra rounds or arrows</td><td class="num">1 to 1,000 / 0 to 10,000</td></tr>
+<tr><td>Reload or nock time (seconds)</td><td class="num">0.01 to 30. Guns use their animation's time, so this is only a fallback.</td></tr>
+<tr><td>Maximum range</td><td class="num">0 for the usual range, or 100 to 100,000 cm</td></tr>
+<tr><td>Shot width / Shots in one attack / Shot spread</td><td class="num">0 to 50 cm / 1 to 32 / 0 to 10 degrees</td></tr>
+<tr><td>Recoil</td><td class="num">-1 for the usual recoil, or 0 to 30</td></tr>
+<tr><td>Time to charge (seconds)</td><td class="num"><b>0.1 to 10.</b> The box lets you type 0.01 to 30, but <b>Create weapon</b> refuses anything outside 0.1 to 10.</td></tr>
+<tr><td>Swing reach / Combo steps / Heavy attack multiplier</td><td class="num">30 to 400 cm / 1 to 5 / 1 to 5</td></tr>
+<tr><td>Projectile speed / Projectile gravity</td><td class="num">100 to 30,000 cm/s / 0 (straight) to 3</td></tr>
+<tr><td>Blast radius</td><td class="num">0 to 2,000 cm</td></tr>
+<tr><td>Explosion radius / Fuse</td><td class="num">10 to 2,000 cm / 0.1 to 30 seconds</td></tr>
+<tr><td>Fire radius / Fire lasts / Fire damage per second</td><td class="num">10 to 2,000 cm / 0.1 to 30 seconds / 0 to 1,000</td></tr>
+<tr><td>Beam damage checks per second / Beam damage per second</td><td class="num">1 to 30 / 0 to 1,000</td></tr>
+<tr><td>Maximum beam time / Beam thickness / Beam reach</td><td class="num">0.1 to 30 seconds / 0 (a thin laser) to 200 cm / 0 for the maximum range, or 100 to 100,000 cm</td></tr>
+<tr><td>Casts it holds / Seconds to get one cast back</td><td class="num">1 to 100 / 0.1 to 600</td></tr>
+<tr><td>Bow string thickness (cm)</td><td>No effect yet <span class="status wip">In progress</span>. Ignore this box: the string looks the same whatever you set.</td></tr>
+</tbody></table></div>
+<p>Other settings are ticks: <b>Keep firing while the trigger is held</b> and <b>Fire a short burst per click</b> for guns, <b>Allow a charged attack</b> with <b>Require a full charge before attacking</b>, <b>Release automatically when full</b> and <b>Let players cancel a charge</b>, <b>Can block</b> with <b>A heavy attack can break the guard</b>, and <b>Stick to what it hits</b> for projectiles, and <b>Let players pick it up</b> for a bow's arrows. A thrown knife or axe flies as itself, sticks where it lands and can be picked up.</p>
+
+<h2 id="publish">Publishing a weapon <span class="status live">Live</span></h2>
+<p>On the last step, <b>Publish to your library</b> adds the weapon to your Mantle library. Pick "Public: other creators can find it and use it in their places" or "Private: only you can use it". A public weapon needs you to tick "I own this content or its licence permits public redistribution on Mantle". Publishing again after a change adds a new version. Press <b>Create weapon</b> first, and again after any change.</p>
+<p>The weapon's model, extra parts and sounds go up with it and follow the same limits as other meshes and sounds in a place:</p>
+<ul>
+<li><b>Weapon model:</b> up to 100,000 triangles, 8 material slots and 256 bones.</li>
+<li><b>Moving parts:</b> a moving part's model is built into the weapon model, so it counts toward the weapon model's limits above.</li>
+<li><b>Detail and round models:</b> static meshes up to 500,000 triangles and 8 material slots. Skeletal ones follow the weapon model's limits.</li>
+<li><b>Textures and sounds:</b> see <a href="/docs/creators/custom-assets/">Custom meshes and materials</a>. An attack sound is a WAV file, mono or stereo, 22,050 to 48,000 Hz, up to 60 seconds and 12 MiB.</li>
+</ul>
+
+<h2 id="messages">Messages you may see <span class="status live">Live</span></h2>
+<div class="table-wrap"><table><thead><tr><th>If you see…</th><th>What to do</th></tr></thead><tbody>
+<tr><td>Give your weapon a name first.</td><td>Type a name in step 1.</td></tr>
+<tr><td>Pick the 3D model of your weapon. / Fist weapons need a 3D model: pick the model of the knuckles, claws or gauntlet the hand wears.</td><td>Choose a model in step 2.</td></tr>
+<tr><td>Place the [point] to continue.</td><td>Place that point in step 4. Points marked "(optional)" don't block <b>Next</b>.</td></tr>
+<tr><td>This is long for a [type] ([N] cm). Try the [type] weapon type. (Guns only.)</td><td>Your model's size is far from normal for the type. Check <b>Model size (1 = as imported)</b>, or press the <b>Switch to [type]</b> button. ("short" appears when it's too small.)</td></tr>
+<tr><td>The right hand is inside the gun. Drag it back or down onto the grip.</td><td>Move the right hand point onto the grip. (Guns only.)</td></tr>
+<tr><td>The left hand is inside the gun. Drag it down until it sits under the front of the gun. / …Drag it out to the side of the grip.</td><td>Move the left hand point as the message says. The second one is for a pistol or revolver, or any gun held in one hand. (Guns only.)</td></tr>
+<tr><td>The sight point is inside the gun. Move it up onto the top of the sight.</td><td>Move the aim point. (Guns only.)</td></tr>
+<tr><td>The right hand can't reach that spot while aiming. Move the grip closer to the sight.</td><td>Move the right hand point closer to the aim point. (Guns only.)</td></tr>
+<tr><td>The left hand can't reach that spot. Move it closer to the right hand.</td><td>Move the left hand point. (Guns only.)</td></tr>
+<tr><td>The muzzle is behind the grip. Use Flip if the gun faces backwards.</td><td>Go back to step 3 and press <b>Flip front and back</b>. (Guns only.)</td></tr>
+<tr><td>The sight is below the barrel; aiming will look off.</td><td>Raise the aim point. (Guns only.)</td></tr>
+<tr><td>A gun's instant shot uses the rifle, pistol or shotgun effect style. Pick a flying round or a beam for an element such as laser or fire.</td><td>Change the <b>Attack style</b> or the <b>Effect style</b>.</td></tr>
+<tr><td>Pick an element (fire, ice, lightning, arcane...) for this weapon's effect style.</td><td>Pick an element in <b>Effect style</b>.</td></tr>
+<tr><td>Pick two weapon points for the swept edge, or leave both choices empty for the hold's edge.</td><td>Set both <b>Swing starts at</b> and <b>Swing ends at</b>, or leave both on "Use this hold's usual points".</td></tr>
+<tr><td>Set the attack rate between 0.1 and 100 attacks per second.</td><td>Change <b>Attacks per second</b>.</td></tr>
+<tr><td>Set the charges between 1 and 100, and the time to get one back between 0.1 and 600 seconds.</td><td>Change <b>Casts it holds</b> or <b>Seconds to get one cast back</b>.</td></tr>
+<tr><td>/charge/seconds is 15, above the most it may be: lower it to 10 or less</td><td>A setting is outside its range. This form can name any setting. Bring the number inside the range (<b>Time to charge (seconds)</b> is 0.1 to 10).</td></tr>
+<tr><td>Choose a model for this part, or remove it before creating the weapon. / Pick a model for each separate part, or remove the empty part.</td><td>Pick a model for each moving part in step 6, or press <b>Remove</b>.</td></tr>
+<tr><td>Choose a model or add a built-in effect before creating the weapon.</td><td>Give each fixed detail a model or an effect, or press <b>Remove</b>.</td></tr>
+<tr><td>Sections of the same separate part must use the same visible actions.</td><td>Give two parts of the same type the same <b>Show during:</b> actions.</td></tr>
+<tr><td>Keep the original models and sounds outside this weapon's output folder, then try again.</td><td>Don't pick a model or sound that already lives in <code>Content/MantleWeapons/[name]</code>. Move it elsewhere in your project.</td></tr>
+<tr><td>The model has no shape to read. Pick a model that has geometry.</td><td>Choose a different model in step 2.</td></tr>
+<tr><td>The [point] point names a model bone that no longer exists. Place that point again.</td><td>The model changed since you placed the point. Place it again in step 4.</td></tr>
+<tr><td>A weapon called [name] already exists, so this one is saved as [name 2].</td><td>Nothing: this is only a note. Rename the weapon in step 1 if you want a different name.</td></tr>
+<tr><td>The weapon could not be saved.</td><td>Check that your project's files aren't read-only, then try again.</td></tr>
+<tr><td>Press Create weapon first, and again after any change. Then you can try it here. / …Then you can publish it.</td><td>Press <b>Create weapon</b>. <b>Test locally</b> and <b>Publish</b> only work on what you just created.</td></tr>
+<tr><td>A selected model or sound changed. Create the weapon again before testing it.</td><td>Press <b>Create weapon</b> again.</td></tr>
+<tr><td>The level you have open has changes that are not saved...</td><td>Save the level (<b>File → Save Current Level As...</b>) or start a new empty level, then press <b>Test locally</b> again. If the level you have open was never saved and has no changes, <b>Test locally</b> opens a small test range for you instead.</td></tr>
+<tr><td>A public weapon needs the rights declaration: tick it, or choose Private.</td><td>Tick the box, or choose Private.</td></tr>
+<tr><td>The weapon '[name]' has no settings file. Press Create weapon, then Publish. / The weapon '[name]' has no 3D model. Press Create weapon, then Publish.</td><td>Press <b>Create weapon</b>, then <b>Publish</b>.</td></tr>
+<tr><td>The weapon '[name]' could not be loaded. Press Create weapon again, then Publish.</td><td>As the message says.</td></tr>
+<tr><td>… Sign in again (Tools > Mantle) and choose Publish again; nothing was uploaded.</td><td>Sign in again from the <b>Tools → Mantle</b> menu, then press <b>Publish</b>.</td></tr>
+</tbody></table></div>
+
+<h2 id="placing">Putting it in a place <span class="status live">Live</span></h2>
+<p>Choose <b>Tools → Mantle → Add Weapon Spawn</b> and pick your weapon in its <b>Weapon</b> list, or use a <b>Storage Item</b> for a weapon from your place's storage. See <a href="/docs/creators/building/#weapons">Weapon spawns</a> for every setting, the 32-per-place limit and what "Check this place" reports.</p>
+
+<h2 id="get-help">Get help</h2>
+<p>Stuck, or found something that doesn't work? Email <a href="mailto:contact@mantleplatform.com">contact@mantleplatform.com</a> or ask in the <a href="https://discord.gg/xj4s9kUe7x">Mantle Discord</a>.</p>
