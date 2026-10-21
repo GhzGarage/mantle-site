@@ -231,6 +231,7 @@ a.docs-card:hover { border-color: var(--ember-line); transform: translateY(-2px)
 .docs-content td.wrap code { white-space: normal; overflow-wrap: anywhere; }
 .docs-content td.num { font-variant-numeric: tabular-nums; }
 .docs-content .api td:first-child { width: 30%; }
+.docs-content .api td:last-child code { white-space: normal; }
 
 /* ---------- code ---------- */
 .docs-content .code { position: relative; margin: 18px 0 24px; }
