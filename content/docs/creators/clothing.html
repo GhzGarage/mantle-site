@@ -110,7 +110,7 @@ Anything you set up here replaces the areas Mantle found. Very dark areas need a
 <li><b>Preview it</b><p>Under <b>Preview</b>, try the hair on its source head or on a catalog avatar. Nothing is uploaded.</p></li>
 <li><b>Check only, then upload</b></li>
 </ol>
-<h3 id="hair-cards">Generate cards from strands</h3>
+<h3 id="hair-cards">Generate cards from strands <span class="status live">Live</span></h3>
 <p>If you pick a strand groom, <b>Generate cards from strands</b> starts the installed Hair Card Generator, which opens its own settings window. The settings start at 500 cards, the slot's triangle limit and a 2,048-pixel atlas. Change them there if you like. After it finishes, the tab says "Cards generated. Check the item and preview their placement before uploading." and runs the check. Review the result before you publish.</p>
 <p>The button needs Epic's optional Hair Card Generator plugin (it's experimental and off by default) turned on in your project, with its Python setup done, and an interactive editor. The Mantle plugin turns on the other plugins it needs, but not this one, and it doesn't install anything for you. If it isn't available, the tab says so: "the optional Hair Card Generator is unavailable: enable it in this creator project and complete its Python setup, or use MetaHuman Optimized build cards; Mantle does not enable plugins or install dependencies".</p>
 <div class="table-wrap"><table><thead><tr><th>Limit (per hair item)</th><th><code>hair</code></th><th><code>facial_hair</code></th><th><code>eyebrows</code></th><th><code>eyelashes</code></th></tr></thead><tbody>
@@ -123,6 +123,29 @@ Anything you set up here replaces the areas Mantle found. Very dark areas need a
 <tr><td>LODs</td><td>The tab makes lower LODs by dropping whole cards. A card is never collapsed.</td></tr>
 </tbody></table></div>
 <p>Hair is only worn by converted avatars (a converted MetaHuman with its face). In game, hair is drawn masked, using its opacity texture or the base color's own alpha. Translucent hair gets "its material is translucent; Mantle draws hair masked (the alpha dithered, then smoothed over frames), so soft edges look a little harder."</p>
+
+<h3 id="hair-fit">Hair bought for another head <span class="status live">Live</span></h3>
+<p>Hair cards you bought often weren't made for a MetaHuman. When you pick a hair cards Static Mesh like that, Mantle sizes and places it on the standard head for you. It works for short, long, braided and ponytail styles. Grooms and skeletal mesh sections are left as they are, and so are cards that come from a MetaHuman groom.</p>
+<ol class="steps">
+<li><b>Choose the hair and its face</b><p>Pick the cards under <b>Asset</b>. For hair made for another head, pick any converted MetaHuman body under <b>Authored on</b> and its face under <b>Source MetaHuman face</b>, and Mantle fits the hair to that face. Then choose <b>Check only</b>.</p></li>
+<li><b>Read the fit card</b><p>A card under the checks says "We sized your hair to fit the standard head". Any warnings show under it. Open <b>Preview</b> and look closely at how the hair sits.</p></li>
+<li><b>Accept it or place it yourself</b><p>Choose <b>Looks good</b> to keep the fit: the card changes to "Hair fit confirmed." Choose <b>Adjust</b> to upload the hair where you made it instead, so you can place it by hand. Hover over <b>Adjust</b> to read "Upload this hair where you made it instead, so you can place it by hand."</p></li>
+<li><b>Go back to the automatic fit</b><p>After <b>Adjust</b>, the card says "This hair uploads where you made it; it was not sized to the standard head." Choose <b>Fit it for me</b> to size it again.</p></li>
+</ol>
+<p>Some packs have a solid skullcap under the cards. Mantle finds it, splits it off and wraps it onto the head. Under <b>Files and details</b>, the cap notes start "Hair cap:". When Mantle finds a cap, the note reads "Hair cap: found [N] cap piece(s)[ in section [name]] among [N] pieces, [N] cap triangles; its open edge is wrapped onto the head." The section part shows only when the cap is in one named section. Without a cap, it reads "Hair cap: none found, so the hair is fitted as cards only." A big piece that hangs off the head is treated as hair, not a cap: "Hair cap: the big piece hangs [N] cm from the head, so it is treated as hair, not a cap." So are big pieces that don't spread over the top of the head, such as tails and braids: "Hair cap: the big pieces do not spread over the top of the head (tails or braids), so they are treated as hair, not a cap." Either of those two notes is followed by "Hair cap: none found, so the hair is fitted as cards only."</p>
+<div class="table-wrap"><table><thead><tr><th>If you see</th><th>What to do</th></tr></thead><tbody>
+<tr><td>We are not sure this hair sits right on the head. Look closely at the picture; if it is off, press Adjust and the hair uploads where you made it.</td><td>Check the preview. If the hair is off, choose <b>Adjust</b> and place it by hand.</td></tr>
+<tr><td>We couldn't find a size and position that keeps this hair out of the head, so check that it sits on the head. (under <b>Files and details</b>)</td><td>Check the preview. If the hair sits in the head, choose <b>Adjust</b> and place it by hand.</td></tr>
+<tr><td>This hair file has a head built into it ("[section]"). We used only the hair to size it, and the built-in head is still in the file, so check that it does not show through or remove it before you upload.</td><td>Check the preview. Remove the head from the hair file if it shows.</td></tr>
+<tr><td>Note: the hair could not be fitted to the head ([reason]), so it uploads as it is.</td><td>Place the hair by hand where you made it, or fix what the reason says and check again.</td></tr>
+<tr><td>Note: the hair could not be fitted to the head (no hair was found in it), so it uploads as it is.</td><td>Make sure the mesh holds hair cards and not only a head.</td></tr>
+<tr><td>Note: the hair could not be settled on the scalp ([reason]), so it keeps the size and position it was given.</td><td>It's already sized for the standard head. Check the preview, and choose <b>Adjust</b> if the hair is off.</td></tr>
+</tbody></table></div>
+<p>Two limits are known, and neither is fixed yet:</p>
+<ul>
+<li><b>Very dense packs:</b> the <code>hair</code> slot allows 14,000 triangles. Mantle thins a pack over that by dropping whole cards, and it can lose a lot of them. If a section can't fit without splitting a card, the pack is refused with "Problem: a hair section cannot fit its budget without splitting a card; provide a coarser authored cards LOD". Use a lighter version of the pack if it has one.</li>
+<li><b>OBJ packs:</b> hair imported from an OBJ file lies on its side. Stand it upright by hand before you check it.</li>
+</ul>
 
 <h2 id="accessories">Accessories <span class="status live">Live</span></h2>
 <p>An accessory is a rigid piece, normally a Static Mesh, that attaches to one socket on the avatar's skeleton. It doesn't bend. You can also pick a MetaHuman Outfit under <b>Asset</b>: Mantle makes one rigid piece from it on the reference head and notes "Outfit source size: [size], as a rigid accessory." A player can wear one accessory per socket, so 8 at most.</p>
