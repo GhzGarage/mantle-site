@@ -59,6 +59,7 @@ export const docsNav: DocSection[] = [
         title: "Ship",
         pages: [
           { slug: ["creators", "publishing"], title: "Publishing and managing worlds", description: "How publishing works, what can stop it, using an AI agent, going back to an earlier version, and helping players find your world." },
+          { slug: ["creators", "ai"], title: "Working with AI", description: "Use an AI agent in the Unreal editor to check, preview and publish your place and make avatar items: turning on Epic's Unreal MCP plugin, connecting your agent and what to know first." },
           { slug: ["creators", "hosting-data"], title: "Hosting, data and monetization", description: "Official and community hosting, upload limits, saving player data, your creator page, stats, avatar items and plans for earning." },
         ],
       },

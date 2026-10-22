@@ -1,0 +1,30 @@
+<div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
+
+<p>Mantle supports AI-assisted workflows in the Unreal editor. You can connect an AI agent to the editor with the Model Context Protocol (MCP), and the Mantle plugin gives it tools for much of what Mantle can do.</p>
+
+<h2 id="what-it-does">What an agent can do <span class="status live">Live</span></h2>
+<p>When you ask it to, an AI agent can check your place, preview what players would receive, explain a problem the check found and publish the place. It can also check and upload avatar items, convert a character so it can be uploaded, and list your places on Mantle.</p>
+<p>The agent works in your open editor, with the same checks as the menus. It doesn't replace them. Anything you can do from <b>Tools → Mantle</b>, you can still do yourself.</p>
+<p>For the full list of tools and what each one does, see <a href="/docs/creators/publishing/#agent-tools">Using an AI agent</a>.</p>
+
+<h2 id="setup">Setting it up <span class="status live">Live</span></h2>
+<p>You need Epic's <b>Unreal MCP</b> plugin. Epic marks it Experimental. It's off by default, and Mantle doesn't turn it on for you. Without it, the Mantle plugin works exactly as it always has.</p>
+<ol class="steps">
+<li><b>Turn on Unreal MCP</b><p>In <b>Edit → Plugins</b>, enable <b>Unreal MCP</b>. It turns on Epic's <b>Toolset Registry</b> plugin with it. Restart the editor when it asks.</p></li>
+<li><b>Start the server</b><p>Run the console command <code>ModelContextProtocol.StartServer</code>. To start it every time you open the editor, turn on <b>Auto Start Server</b> under <b>Editor Preferences → General → Model Context Protocol</b>. By default it listens on <code>http://127.0.0.1:8000/mcp</code>. You can change the port and path in those same settings.</p></li>
+<li><b>Connect your agent</b><p>Point your agent at that address. Any agent that can talk to an MCP server over HTTP will do. In Claude Code, for example, run <code>claude mcp add --transport http unreal-mcp http://127.0.0.1:8000/mcp</code>.</p></li>
+<li><b>Sign in yourself</b><p>To publish, upload avatar items or list your places, <a href="/docs/creators/#sign-in">sign in</a> in the editor first. The agent never sees your creator token, and no tool asks for one. If an agent asks you to paste your token into its chat, don't.</p></li>
+</ol>
+<p>Then ask your agent what you'd like done, for example "check my place and tell me what's wrong."</p>
+
+<h2 id="good-to-know">Good to know <span class="status live">Live</span></h2>
+<ul>
+<li><b>It's experimental in Unreal.</b> Epic's Unreal MCP and Toolset Registry plugins are both Experimental, so they may change or go away in a later Unreal release. If that happens, only the agent tools are affected. See <a href="/docs/creators/plugin/#agent-dependency">Experimental dependency: Toolset Registry</a>.</li>
+<li><b>The editor has to be open.</b> The agent works through your running editor, so the server has to be started each session unless you turned on Auto Start Server.</li>
+<li><b>Anything it uploads is Private.</b> An agent can't make the rights declaration that sharing an item needs, so avatar items, vehicles, weapons and script packages it uploads stay Private. If a vehicle, weapon or script package in the level is already Public, an agent publish changes it back to Private. To make an item Public, upload it yourself from the Cosmetics panel, or publish the place from the <b>Mantle Publish</b> tab and choose Public. See <a href="/docs/creators/publishing/#rights-declaration">The rights declaration</a>.</li>
+<li><b>You stay in control.</b> The agent is told to publish only when you've asked for that publish. Publishing a place makes it live for players, so be clear about when you want it.</li>
+<li><b>Check its work.</b> An agent can make mistakes. Use <b>Check this place</b> and <b>Check what players receive</b> before you publish, as you would without one.</li>
+</ul>
+
+<h2 id="get-help">Get help</h2>
+<p>Stuck, or found something that doesn't work? Email <a href="mailto:contact@mantleplatform.com">contact@mantleplatform.com</a> or ask in the <a href="https://discord.gg/xj4s9kUe7x">Mantle Discord</a>.</p>

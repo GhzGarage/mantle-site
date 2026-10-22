@@ -27,14 +27,9 @@
 <p>When a place goes live, each <a href="/docs/creators/script-packages/">script package</a> in the level's <code>Packages/</code> folder is published as a library item, public or private, in the same step that asks about vehicles and weapons, and the place stores it under the folder's name. A later publish adds a new version only when a package's files or <code>package.json</code> changed. <b>Save to Mantle</b> doesn't publish packages, so a draft leaves out the Script Points of packages that aren't stored yet. See <a href="/docs/creators/script-packages/#publish">Publishing a package</a>.</p>
 
 <h3 id="agent-tools">Using an AI agent <span class="status live">Live</span></h3>
-<p>An AI agent, such as Claude Code, can check or publish your place for you. The Mantle plugin gives it tools through Unreal's own Model Context Protocol (MCP) server.</p>
-<p>You need two of Epic's experimental plugins: <b>Unreal MCP</b> and <b>Toolset Registry</b>. Both are off by default, and Mantle doesn't turn them on for you. Without them, the Mantle plugin works as it always has.</p>
-<ol class="steps">
-<li><b>Turn on the plugins</b><p>In <b>Edit → Plugins</b>, enable <b>Unreal MCP</b>, which turns on <b>Toolset Registry</b> with it, then restart the editor.</p></li>
-<li><b>Start the server</b><p>Run the console command <code>ModelContextProtocol.StartServer</code>, or turn on <b>Auto Start Server</b> under <b>Editor Preferences → General → Model Context Protocol</b>. By default it listens on <code>http://127.0.0.1:8000/mcp</code>.</p></li>
-<li><b>Connect your agent</b><p>Point your agent at that address, for example <code>claude mcp add --transport http unreal-mcp http://127.0.0.1:8000/mcp</code>.</p></li>
-<li><b>Sign in yourself</b><p>To publish or list your places, <a href="/docs/creators/#sign-in">sign in</a> in the editor first. The agent never sees your creator token, and no tool asks for one. If an agent asks you to paste your token into its chat, don't.</p></li>
-</ol>
+<p>An AI agent, such as Claude Code, can check or publish your place for you. The Mantle plugin gives it tools through Unreal's own Model Context Protocol (MCP) server. For a short overview, see <a href="/docs/creators/ai/">Working with AI</a>.</p>
+<p>To turn it on and connect your agent, follow <a href="/docs/creators/ai/#setup">Working with AI</a>. You need two of Epic's experimental plugins, <b>Unreal MCP</b> and <b>Toolset Registry</b>, and Mantle doesn't turn them on for you. Without them, the Mantle plugin works as it always has.</p>
+<p>These are the tools your agent gets:</p>
 <div class="table-wrap"><table><thead><tr><th>Tool</th><th>What it does</th></tr></thead><tbody>
 <tr><td><code>CheckPlace</code></td><td>Runs "Check this place" on the open level and returns every issue.</td></tr>
 <tr><td><code>ExportPreview</code></td><td>Exports the level in memory and summarizes what would publish. Writes nothing.</td></tr>
