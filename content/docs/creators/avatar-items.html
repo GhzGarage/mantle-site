@@ -61,9 +61,9 @@
 <p>Previewing on a catalog avatar needs you to be signed in. Clothing and hair say "Sign in to preview on avatars from the Mantle catalog." and accessories say "Sign in to preview accessories on catalog avatars." Avatar previews need no UEFN mannequin in your project. To see the avatar idle, add <code>SKM_UEFN_Mannequin</code> and its idle from the Game Animation Sample.</p>
 
 <h2 id="thumbnail">The Thumbnail section <span class="status live">Live</span></h2>
-<p>Every Mantle uploader has the same <b>Thumbnail</b> section. It sets the picture players and creators see for your item. It looks and works the same everywhere, so this page explains it once. You find it here:</p>
+<p>Avatar items, worlds, vehicles and weapons share the same <b>Thumbnail</b> section. It sets the picture players and creators see for your item. It looks and works the same everywhere, so this page explains it once. You find it here:</p>
 <ul>
-<li><b>The Mantle Cosmetics tab:</b> for every kind (clothing, accessories, hair, avatars, emotes, tattoos and scars), below the other sections and above the upload buttons.</li>
+<li><b>The Mantle Cosmetics tab:</b> for every kind (clothing, accessories, hair, avatars, emotes, tattoos and scars), below Preview and above the upload buttons (an emote has no Preview, so it comes after Who can use it).</li>
 <li><b>The Publish window:</b> for a world. See <a href="/docs/creators/building/#place-settings">Place settings</a>.</li>
 <li><b>Build a vehicle:</b> above <b>Build my vehicle</b>. See <a href="/docs/creators/vehicles/#builder">Building a vehicle</a>.</li>
 <li><b>Build a weapon:</b> the <b>Thumbnail</b> step, just before <b>Create</b>. Consumables have it too. See <a href="/docs/creators/weapons/#steps">Building a weapon</a>.</li>
@@ -82,8 +82,8 @@
 <li><b>Clothing:</b> on the body it was made on, framed on the clothing, with only the sections the item takes.</li>
 <li><b>Accessory:</b> on its own, in a three-quarter view from above. An accessory made from a skinned source, such as a hat from a MetaHuman Outfit, is turned upright as it's worn, so its picture is from the front and a little above instead, and it also shows the piece's inside.</li>
 <li><b>Hair:</b> the asset's own Unreal thumbnail. A groom's thumbnail is an empty frame, so the panel uses the cards mesh that gets exported instead. Choose the angle doesn't change it. To pick your own picture, use Custom image.</li>
-<li><b>Emote:</b> Mantle's standard body, at the moment of the emote when the hands, head and feet are farthest from their average places. If the panel can't pose the body, it uses the asset's own Unreal thumbnail.</li>
-<li><b>Tattoo or scar:</b> the body wearing the mark. If the panel can't draw that, it uses the mask, drawn light on dark.</li>
+<li><b>Emote:</b> Mantle's standard body, at its most expressive moment. If the panel can't pose the body, it uses the asset's own Unreal thumbnail.</li>
+<li><b>Overlay (tattoo or scar):</b> the body wearing the mark. If the panel can't draw that, it uses the mask, drawn light on dark.</li>
 </ul>
 <p>If nothing can be rendered at all, the thumbnail is a plain dark square.</p>
 
@@ -110,7 +110,7 @@
 </ul>
 
 <h3 id="thumbnail-preview">The preview</h3>
-<p>The section always shows the exact picture that will upload, under "This is the picture that will be uploaded (512 x 512)." (1280 x 720 for a world). <b>Refresh picture</b> ("Draw the picture again from the current choice.") draws it again.</p>
+<p>The section shows the exact picture that will upload (a vehicle on Automatic is the exception: the preview shows the model, and the uploaded picture is taken when you build the vehicle), under "This is the picture that will be uploaded (512 x 512)." (1280 x 720 for a world). <b>Refresh picture</b> ("Draw the picture again from the current choice.") draws it again.</p>
 <p>In the Cosmetics panel, a Custom image shows at once. The Automatic and Choose the angle pictures appear after you choose <b>Check only</b>. Until then, the preview says "Choose Check only to draw this picture." If you change the choice, choose <b>Check only</b> again. <b>Upload to Mantle</b> runs the check for you.</p>
 
 <h3 id="thumbnail-kept">Where your choice is kept</h3>
