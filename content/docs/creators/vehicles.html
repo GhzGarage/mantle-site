@@ -64,7 +64,15 @@
 <p>A vehicle asset has a movement type: wheeled, plane, helicopter or hover. A plane or jet has aerofoils, thrusters and propellers; a helicopter has rotors and a hover collective; a hovercraft has lift pads, a fan and a fin. The seats have a kind too: car, motorcycle or pilot. A motorcycle rider holds the handlebar, rests on foot pegs and leans. A seat can also have a gun aim arc, and can hide whoever sits in it. The <a href="#builder">builder</a> fills all of this in for you from the kind you pick.</p>
 
 <h2 id="publishing">Publishing a vehicle <span class="status live">Live</span></h2>
-<p>When a place goes live, each vehicle in it becomes an item in your library, and the place stores it. The <b>Mantle Publish</b> tab asks "Vehicles, weapons and script packages in this place: who can use them". Choose "Public: listed in the library for every creator" (selected to begin with; tick "I own this content or its licence permits public redistribution on Mantle" to go live with public items) or "Private: only you can use them". Without the tick, the tab says "Tick the declaration to go live with public items, or choose Private." The tick is asked for again on every publish. Another creator can only use your vehicle if it's Public; see <a href="/docs/creators/publishing/#who-can-use">Who can use your items</a>. Other creators can get a public vehicle and add it to their own place's storage with <b>Tools → Mantle → Library...</b>. Only Publish turns vehicles into library items; <b>Save to Mantle</b> doesn't. Publishing points each spawn at the library item in the place's Storage.</p>
+<p>When a place goes live, each vehicle in it becomes an item in your library, and the place stores it. Publishing points each spawn at the library item in the place's Storage.</p>
+<ul>
+<li>The <b>Mantle Publish</b> tab asks "Vehicles, weapons and script packages in this place: who can use them".</li>
+<li>Choose "Public: listed in the library for every creator". It's selected to begin with.</li>
+<li>To go live with public items, tick "I own this content or its licence permits public redistribution on Mantle". Without the tick, the tab says "Tick the declaration to go live with public items, or choose Private." It asks again on every publish.</li>
+<li>Or choose "Private: only you can use them".</li>
+<li>Other creators can use your vehicle only if it's Public. They get it and add it to their own place's storage with <b>Tools → Mantle → Library...</b>. See <a href="/docs/creators/publishing/#who-can-use">Who can use your items</a>.</li>
+<li>Only Publish turns vehicles into library items. <b>Save to Mantle</b> doesn't.</li>
+</ul>
 <div class="callout tip"><strong>Paint Color is 0 to 1, not 0 to 255</strong><p>The vehicle asset's <b>Paint &gt; Color</b> field is a color picker whose red, green and blue values run from 0 to 1 (as most of Unreal's color pickers do), not 0 to 255. If you're typing values in rather than using the picker, a full-strength red is <code>(1, 0, 0)</code>, not <code>(255, 0, 0)</code>.</p></div>
 <h2 id="parts">Attached parts <span class="status live">Live</span></h2>
 <p>Converting a car finds its attached parts for you, so you usually don't add them by hand:</p>

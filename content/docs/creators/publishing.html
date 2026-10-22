@@ -64,7 +64,7 @@
 <tr><td>Scripts rejected</td><td>Some scripts in this place were rejected in review. Remove them to publish.</td></tr>
 <tr><td>A script package's scripts still being screened</td><td>Mantle is still screening the scripts of package '…', so nothing went live yet. Choose Publish again in a minute; nothing is uploaded twice.</td></tr>
 <tr><td>A stored item the place's owner can't use: not theirs, not got from the library, or removed from their library</td><td>This item is not available to this place's owner: it does not exist, is not theirs, or they have not got it from the library. Get it first, or remove it from the place's storage.</td></tr>
-<tr><td>A Storage entry used by the wrong kind of spawn, such as a weapon on a vehicle spawn</td><td>"[name]" is a weapon; a VehicleSpawn parks a vehicle (and "a WeaponSpawn holds a weapon", "a ScriptPoint anchors a script package")</td></tr>
+<tr><td>A Storage entry used by the wrong kind of spawn, such as a weapon on a vehicle spawn</td><td>"[name]" is a [kind]; a VehicleSpawn parks a vehicle (or "a WeaponSpawn holds a weapon" / "a ScriptPoint anchors a script package"), where the kind is vehicle, weapon or script</td></tr>
 <tr><td>A stored package's setting, or a Script Point's parameter, that the package doesn't declare, that doesn't fit its type, range or options, or that's required and missing</td><td>This place's storage settings or ScriptPoint parameters don't fit the item they're set on. KillBricks needs RoundLength. Set it in this storage entry's settings. First: /storage/0/settings/RoundLength.</td></tr>
 <tr><td>Too many uploads in an hour</td><td>Mantle limits how much one account uploads per hour, and this account can upload again in about [time]. Everything uploaded so far is kept: choose Publish again then and it continues from here. You only see this when the wait is longer than about 65 minutes: for a shorter wait, Publish pauses uploads and carries on by itself. See <a href="/docs/creators/hosting-data/#official-hosting">upload limits</a>. At other steps you'll see: You've uploaded too much in the last hour. Try again in N minutes.</td></tr>
 <tr><td>The world this level published to was deleted</td><td>The Mantle place this level used to publish to (…) no longer exists, so the level has been unlinked from it. Save or publish again to create a new place; links to the old one will not work.</td></tr>
@@ -73,24 +73,37 @@
 <p>Mantle screens new or changed scripts automatically before they can go live. If screening is still going, Publish tries again by itself for a short while.</p>
 
 <h2 id="who-can-use">Who can use your items <span class="status live">Live</span></h2>
-<p>Two separate choices decide what happens to an item you publish. Don't mix them up.</p>
+<p>Two separate choices decide what happens to an item you publish.</p>
 <ul>
 <li><span class="status live">Live</span> <b>Private or Public</b> decides who can find and use the item. <b>Private</b> means only you can. <b>Public</b> lists it for other players or creators.</li>
 <li><span class="status planned">Planned</span> <b>Free or paid</b> decides how someone gets a public item. Nothing is sold yet: every item is free, and you can't set a price. Don't count on selling an item.</li>
 </ul>
 <h3 id="rights-declaration">The rights declaration</h3>
-<p>Public is selected to begin with. To publish an item publicly, you have to tick "I own this content or its licence permits public redistribution on Mantle". Without the tick, the panel stops you. The Cosmetics panel and the weapon builder say "Tick the declaration to publish publicly, or choose Private." and the <b>Mantle Publish</b> tab says "Tick the declaration to go live with public items, or choose Private." The tab asks again on every publish. Mantle keeps the declaration with the item, with your account and the time. Content you bought, for example on Fab, usually isn't yours to share. Publish it as Private, unless its license says you can redistribute it. Mantle doesn't check licenses for you.</p>
-<p>Mantle also compares public items with other creators' uploads. See <a href="/docs/creators/avatar-items/#visibility">Public and private items</a> for the messages you can get. The checks run on vehicles and weapons too.</p>
-<p>Anything a headless run, the console or the Mantle agent publishes goes up Private, because none of them can make the declaration for you.</p>
-<h3 id="who-avatar-items">Avatar items belong to the player's wardrobe</h3>
-<p>Avatar bodies, clothing, hair and accessories belong to each player's wardrobe, not to a world. A place doesn't list them, you don't add them to its <b>Storage</b>, and a place has no setting that limits which wardrobe items players can wear. Whatever you publish with the <a href="/docs/creators/avatar-items/">Cosmetics panel</a> shows up on the Avatar screen for you, and for everyone else if it's Public. A Private item is only ever yours: another player can't find it, get it or wear it. When you wear one in a world, other players currently see a stand-in. See <a href="/docs/creators/avatar-items/#visibility">Public and private items</a>.</p>
-<h3 id="who-library">Vehicles, weapons and script packages are library items</h3>
-<p>Each one is a versioned item in your Mantle library. A place can only use one that sits in its <b>Storage</b>, and each Storage entry names an item and one version. Publishing a newer version of an item doesn't change a place until you update its entry. Mantle checks every Storage entry when you publish.</p>
+<p>Public is selected to begin with. To publish an item publicly, you have to tick this box:</p>
 <ul>
-<li>Your own items always work in your own places, Private or Public.</li>
+<li>"I own this content or its licence permits public redistribution on Mantle"</li>
+</ul>
+<p>Without the tick, you can't upload.</p>
+<ul>
+<li>The Cosmetics panel and the weapon builder say "Tick the declaration to publish publicly, or choose Private."</li>
+<li>The <b>Mantle Publish</b> tab says "Tick the declaration to go live with public items, or choose Private." It asks again on every publish.</li>
+</ul>
+<p>Mantle keeps the declaration with the item, with your account and the time. Content you bought, for example on Fab, usually isn't yours to share. Publish it as Private, unless its license says you can redistribute it. Mantle doesn't check licenses for you.</p>
+<p>Mantle also compares public items with other creators' uploads. See <a href="/docs/creators/avatar-items/#visibility">Public and private items</a> for the messages you can get. The checks run on vehicles and weapons too.</p>
+<p>An AI agent always publishes Private, because it can't make the declaration for you.</p>
+<h3 id="who-avatar-items">Avatar items belong to the player's wardrobe</h3>
+<p>Avatar bodies, clothing, hair and accessories belong to each player's wardrobe, not to a world. A place doesn't list them, you don't add them to its <b>Storage</b>, and a place has no setting that limits which wardrobe items players can wear (apart from the looks you give NPCs, which can name avatar items you own). Whatever you publish with the <a href="/docs/creators/avatar-items/">Cosmetics panel</a> shows up on the Avatar screen for you, and for everyone else if it's Public. A Private item is only ever yours: another player can't find it, get it or wear it. When you wear one in a world, other players currently see a stand-in. See <a href="/docs/creators/avatar-items/#visibility">Public and private items</a>.</p>
+<h3 id="who-library">Vehicles, weapons and script packages are library items</h3>
+<p>Each one is a versioned item in your Mantle library. A place can only use one that sits in its <b>Storage</b>, and each Storage entry names an item and one version. Mantle checks every Storage entry when you publish.</p>
+<ul>
+<li>For another creator's item, a newer version doesn't change your place until you update its entry.</li>
+<li>Your own vehicles, weapons and packages move to their new version each time you publish the place.</li>
+</ul>
+<ul>
+<li>Your own items work in your own places, Private or Public, unless you delisted them or a moderator took them down.</li>
 <li>Another creator's item works only if it's Public and you've got it with <b>Get</b> in <b>Tools → Mantle → Library...</b>. See <a href="/docs/creators/script-packages/#use">Using another creator's package</a>.</li>
-<li>Someone else's Private item acts as if it doesn't exist, whether you guessed its ID or not. You can't tell it from an item that isn't there, so a Private item never gives itself away. Publishing a place that stores one stops with the message in the table below.</li>
-<li>A moderator can take an item down after a complaint. Every place that stores it stops using it, and no place can publish with it. In the Library panel it shows "Taken down" and says "This item was taken down by a Mantle moderator after a complaint, so a place can no longer use it."</li>
+<li>Someone else's Private item acts as if it doesn't exist, whether you guessed its ID or not. Publishing a place that stores one stops with the message in the table below.</li>
+<li>A moderator can take an item down after a complaint. Every place that stores it stops using it, and no place can publish with it. In the Library panel it shows a "Taken down" badge. Its tooltip says "This item was taken down by a Mantle moderator after a complaint, so a place can no longer use it."</li>
 </ul>
 <p>These pages show where you make the choice: <a href="/docs/creators/vehicles/#publishing">Publishing a vehicle</a>, <a href="/docs/creators/weapons/#publish">Publishing a weapon</a>, <a href="/docs/creators/script-packages/#publish">Publishing a package</a> and the <a href="/docs/creators/avatar-items/#visibility">Cosmetics panel</a>.</p>
 
