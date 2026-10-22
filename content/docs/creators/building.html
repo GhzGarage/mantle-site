@@ -276,16 +276,16 @@ See <a href="/docs/creators/#validation">What "Check this place" catches</a>.</l
 <ol class="steps">
 <li><b>Add the component</b><p>Select the prop in the level (or open its Blueprint). Click <b>Add</b> in the Details panel, then pick <b>Mantle Seat</b>. A new seat starts 45 cm above the prop's origin, about the height of a bench.</p></li>
 <li><b>Move it to the hips</b><p>Move the seat to where the sitter's hips rest. Turn it so its forward direction (X) points the way the sitter faces. Only the turn around the vertical axis counts. Tilting it does nothing.</p></li>
-<li><b>Read the gizmo</b><p>The editor draws the seat so you can line it up. The box is where the hips go. The arrow is the way the sitter faces. The line down is the floor Mantle found under the hips, with a small cross where it lands. The line is dashed when "Check this place" would refuse the height. A label above the seat reads "Hip N cm", the distance from the hips down to that floor. With no floor under it, the label reads "Nothing to sit on".</p></li>
-<li><b>Check and publish</b><p>Run <b>Tools → Mantle → Check this place</b>, then publish as usual. Each seat is saved in the place next to the prop it's on.</p></li>
+<li><b>Read the gizmo</b><p>Select the prop to see it. The box is where the hips go. The arrow is the way the sitter faces. A line runs down from the hips to the floor Mantle found, with a small cross where it lands. The line is dashed when "Check this place" would refuse the height. A label above the seat reads "Hip N cm", the distance from the hips down to that floor. With no floor under it, the label reads "Nothing to sit on".</p></li>
+<li><b>Check and publish</b><p>Run <b>Tools → Mantle → Check this place</b>, then publish as usual. Each seat is saved with the place, tied to the prop it's on.</p></li>
 </ol>
 <ul>
 <li><b>Style:</b> the seat's only setting. <b>Bench</b> is the one style today, and it works for a bench, a chair, a stool or a ledge.</li>
-<li><b>Height:</b> the hips need a floor below them, 15 to 110 cm down. Put them about 45 cm up for a bench. The sitter's legs and feet are fitted to the floor Mantle finds, so you don't set the height of a chair or stool anywhere else. The prop itself doesn't count as floor.</li>
-<li><b>The prop:</b> it has to publish as its own object, and it has to stay put. It can't simulate physics or be Movable. A seat on a Blueprint works when the Blueprint's parts can't move either.</li>
+<li><b>Height:</b> the hips need a floor below them, 15 to 110 cm down. Put them about 45 cm up for a bench. Mantle fits the sitter's legs to that floor, so there's no seat height to set. The prop itself doesn't count as floor.</li>
+<li><b>The prop:</b> it has to publish as its own object, and it has to stay put. It can't simulate physics or be Movable. On a Blueprint, every part has to be Static, and the Blueprint can't have logic of its own.</li>
 <li><b>How many:</b> a place can have 256 seats.</li>
 </ul>
-<p>In the game, a player walks up to the seat and presses <kbd>E</kbd> (B or X on a gamepad when unarmed) when the prompt says "Sit". It works from up to 2 meters away. The player sits on the nearest free seat of that prop. Pressing the same key again stands them back up, and they stand on the floor beside the seat. A seat holds one person, so a taken seat is skipped, and a prop with every seat taken has no prompt. A player who is dead or already sitting can't sit. If a seated player leaves or disconnects, the seat frees up.</p>
+<p>In the game, a player walks up to the seat and presses <kbd>E</kbd> (B on a gamepad, or X while holding a weapon) when the prompt says "Sit". It works within 2 meters of the prop's origin, so on a long bench keep the origin near the middle. The player sits on the nearest free seat of that prop. Pressing the same key again stands them back up, and they stand on the floor beside the seat. A seat holds one person, so a taken seat is skipped, and a prop with every seat taken has no prompt. A player who is dead or already sitting can't sit. If a seated player leaves or disconnects, the seat frees up.</p>
 <p>"Check this place" tells you about a seat that can't publish:</p>
 <div class="table-wrap"><table><thead><tr><th>If you see</th><th>What to do</th></tr></thead><tbody>
 <tr><td>"has a Mantle Seat, but the prop itself is not published, so the seat has nothing to belong to."</td><td>Make the prop publishable, or move the seat onto a prop that publishes.</td></tr>
@@ -296,8 +296,6 @@ See <a href="/docs/creators/#validation">What "Check this place" catches</a>.</l
 <tr><td>"has a seat with nothing to sit on: its hip is N cm above the floor, and at most 110 cm is allowed."</td><td>Put the seat's hip point about 45 cm above the floor it sits on, with a floor under it.</td></tr>
 <tr><td>"This level has N Mantle Seats; a place holds at most 256."</td><td>Remove some seats.</td></tr>
 </tbody></table></div>
-<p>Publishing also stops with "'…' holds seat number N; a place may have at most 256. Remove some seats." if the count is over the limit when you publish.</p>
-
 <h2 id="assets">Assets</h2>
 <h3 id="library">Built-in library <span class="status live">Live</span></h3>
 <p>The library has 6 items. Use them straight from this folder so Mantle recognizes them:</p>
