@@ -4,7 +4,7 @@ import { join } from "node:path";
 type StaticDocument = { body: string; styles: string };
 
 /** Preserves design-approved HTML while Next owns routing and static generation. */
-export function readStaticDocument(filename: "index.html" | "privacy.html"): StaticDocument {
+export function readStaticDocument(filename: "index.html" | "privacy.html" | "terms.html" | "server-terms.html"): StaticDocument {
   const document = readFileSync(join(process.cwd(), filename), "utf8");
   const styles = [...document.matchAll(/<style>([\s\S]*?)<\/style>/gi)].map((match) => match[1]).join("\n");
   const body = document.match(/<body[^>]*>([\s\S]*?)<\/body>/i)?.[1];
@@ -15,6 +15,8 @@ export function readStaticDocument(filename: "index.html" | "privacy.html"): Sta
       .replace(/<main(?![^>]*\bid=)/i, '<main id="main-content"')
       .replaceAll('src="assets/', 'src="/assets/')
       .replaceAll('href="privacy.html"', 'href="/privacy/"')
+      .replaceAll('href="terms.html"', 'href="/terms/"')
+      .replaceAll('href="server-terms.html"', 'href="/server-terms/"')
       .replaceAll('href="index.html"', 'href="/"'),
   };
 }

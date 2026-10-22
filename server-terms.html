@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Mantle Community Server Operator Terms">
+<title>Community Server Operator Terms — Mantle</title>
+<link rel="icon" href="assets/mantle-logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#090c13;--card:#121722;--line:rgba(237,241,247,.10);--ink:#edf1f7;--dim:#a8b0be;--faint:#778191;--ember:#ff6916;--gold:#ffae28;--max:820px}*{box-sizing:border-box}body{margin:0;background:radial-gradient(900px 500px at 8% -5%,rgba(255,105,22,.12),transparent 62%),var(--bg);color:var(--ink);font:400 16px/1.7 Inter,Arial,sans-serif}.wrap{max-width:var(--max);margin:auto;padding:0 28px}.nav{height:72px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:10px;color:var(--ink);font:700 1.05rem 'Space Grotesk',sans-serif;text-decoration:none}.brand img{width:27px;height:27px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(255,105,22,.32))}.back{color:var(--dim);font-size:.88rem;text-decoration:none}.back:hover{color:var(--ink)}main{padding:100px 0}h1,h2{font-family:'Space Grotesk',sans-serif;line-height:1.12;margin:0}h1{font-size:clamp(2.5rem,6vw,4.4rem);letter-spacing:-.04em}h2{font-size:1.3rem;margin-top:48px}.eyebrow{margin:0 0 15px;color:var(--gold);font:600 .75rem 'Space Grotesk',sans-serif;letter-spacing:.13em;text-transform:uppercase}.date{color:var(--faint);font-size:.84rem;margin:18px 0 38px}p{color:var(--dim);margin:16px 0}a{color:var(--ink);text-decoration-color:var(--ember);text-underline-offset:3px}.notice{margin-top:30px;padding:24px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--dim)}footer{border-top:1px solid var(--line);padding:28px 0 42px;color:var(--faint);font-size:.83rem}@media(max-width:600px){main{padding:70px 0}.wrap{padding:0 20px}}
+ul,ol{color:var(--dim);margin:16px 0;padding-left:1.4em}li{margin:6px 0}h3{font:600 1.05rem 'Space Grotesk',sans-serif;margin:32px 0 0}code{font-size:.9em;background:var(--card);padding:1px 6px;border-radius:6px}strong{color:var(--ink)}.notice a{word-break:break-word}
+</style>
+</head>
+<body>
+  <header class="wrap nav"><a class="brand" href="index.html"><img src="assets/mantle-logo.png" alt="">MANTLE</a><a class="back" href="index.html">Back to Mantle</a></header>
+  <main class="wrap">
+    <p class="eyebrow">Mantle / Server Terms</p>
+    <h1>Community Server Operator Terms</h1>
+    <p class="date">Effective date: October 21, 2026</p>
+    <p>These terms are for people who run a <strong>community server</strong>: the <code>mantle-server</code> program on their own machine, using a server key from their Mantle account. They are an agreement between you and <strong>Joshua Eger</strong>, an individual in Quincy, Illinois, USA, who runs Mantle ("we", "us").</p>
+    <p>They add to the <a href="terms.html">Mantle Terms of Service</a>, which still apply to you. If the two disagree about running a server, these terms win.</p>
+    <p>You accept these terms by creating a server key or by starting a server with <code>-accept-terms</code> (or <code>"acceptedTerms": true</code>). If you do not agree, do not run a server.</p>
+    <h2>1. Who can run a server</h2>
+    <ul>
+    <li>You must be <strong>18 or older</strong> (or the age of majority where you live, if that is higher).</li>
+    <li>You need a Mantle account in good standing. Your server is tied to that account, and players see your display name on it.</li>
+    <li>You may run a server only for <strong>your own places</strong>, or for places whose creator has allowed community servers. Mantle checks this each time your server registers.</li>
+    </ul>
+    <h2>2. Your key and your machine</h2>
+    <ul>
+    <li>Your server key works like a password. <strong>Anyone holding it can run a server as you</strong>, and you are responsible for everything done with it. If it leaks, revoke it.</li>
+    <li>You run, pay for and secure your own machine, network and software. We do not pay for, support or insure your hosting.</li>
+    <li>Run the server build Mantle provides, unchanged. Do not alter it, or the content it downloads, to change gameplay, get around Mantle&rsquo;s checks, fake reports or summaries to Mantle, or misreport who or where you are.</li>
+    <li>You may turn off script web requests (<code>"scriptHttp": "off"</code>). You may not otherwise interfere with what the server reports to Mantle.</li>
+    </ul>
+    <h2>3. Players&rsquo; information</h2>
+    <p>Your server receives information about the players who join it, including their <strong>IP address</strong>, <strong>Mantle user ID</strong>, <strong>display name</strong>, the <strong>chat</strong> they send, game data, and what places&rsquo; scripts do. Your server logs may record some of this.</p>
+    <p>You must:</p>
+    <ul>
+    <li>use it <strong>only to run, secure and fix your server</strong>, and to report problems to us;</li>
+    <li><strong>not sell, share or publish it</strong>, or use it to track, contact, profile or harass anyone;</li>
+    <li>keep logs no longer than you need them, and <strong>no longer than 90 days</strong>, unless we or the law ask you to keep them;</li>
+    <li>delete it if we ask, and follow any privacy law that applies to you;</li>
+    <li>tell us at once if you think it has been stolen or leaked.</li>
+    </ul>
+    <p>Voice chat does not pass through your server. Do not try to capture it.</p>
+    <h2>4. Other creators&rsquo; content</h2>
+    <p>To run a place, your server downloads its content and its scripts, including server scripts that are otherwise private to their creator. That content belongs to its creators and to us.</p>
+    <p>You may use it <strong>only to run that place on your server, for players on Mantle</strong>. You must not extract, copy, keep, share, sell or reuse any of it, including models, textures, sounds and script source, or use it to train or build anything else. When your server stops running a place, you have no right to its content.</p>
+    <h2>5. Running your server fairly</h2>
+    <ul>
+    <li>Follow the content and conduct rules in the Mantle Terms of Service. You are responsible for how your server is run and for anything you do on it.</li>
+    <li><strong>Do not charge players</strong> for anything to do with Mantle, including access to your server, unless we have agreed in writing.</li>
+    <li>Do not pretend to be Mantle, or claim your server is official or endorsed by us.</li>
+    <li>Tell us about serious problems on your server, such as threats, illegal content, or anything involving the safety of a child, at <strong>contact@mantleplatform.com</strong>.</li>
+    </ul>
+    <h2>6. What we can do</h2>
+    <ul>
+    <li>We may <strong>shut off your server</strong> or <strong>revoke your keys</strong> at any time, for any reason, without notice, including if we think you broke these terms or to protect players, creators or Mantle. A shut-off server stops within about a minute and cannot be undone.</li>
+    <li>We may also act on your account under the Mantle Terms of Service, including removing your right to host.</li>
+    <li>We may change, limit or stop community hosting at any time. Mantle owes you nothing if we do.</li>
+    <li>We do not watch community servers and are not responsible for what happens on them.</li>
+    </ul>
+    <h2>7. No warranty, limits of liability, and your responsibility</h2>
+    <ul>
+    <li>The server software and hosting service are provided <strong>"as is" and "as available", without warranties of any kind</strong>, including implied warranties of merchantability, fitness for a particular purpose or non-infringement. You run them at your own risk, including any risk to your machine or network.</li>
+    <li>The limits of liability in the Mantle Terms of Service apply to hosting too: our total liability to you is what you paid us in the 12 months before the claim (normally $0), or US $50 if a court will not enforce that.</li>
+    <li>If someone makes a claim against us because of your server, how you handled players&rsquo; information, or your breach of these terms, <strong>you will cover our losses and costs, including legal fees</strong>.</li>
+    </ul>
+    <h2>8. Copyright</h2>
+    <p>Copyright complaints about content on community servers go to our designated agent, as section 8 of the Mantle Terms of Service explains (registration DMCA-1083758). Repeat infringers lose hosting as well as public publishing.</p>
+    <h2>9. Disputes, changes and contact</h2>
+    <ul>
+    <li>Illinois law, the Adams County courts, and the dispute rules in section 15 of the Mantle Terms of Service apply.</li>
+    <li>We may change these terms. For important changes we will give <strong>30 days&rsquo;</strong> notice in Mantle, on our website or in the server download, unless a change is needed sooner for legal or safety reasons. If you keep running a server after a change applies, you accept it.</li>
+    <li>Contact: Joshua Eger, 619 Meadow Circle, Quincy, IL 62305, United States, <strong>contact@mantleplatform.com</strong>.</li>
+    </ul>
+  </main>
+  <footer><div class="wrap">© 2026 Joshua Eger. Mantle is in active development. · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="server-terms.html">Server Terms</a></div></footer>
+</body>
+</html>

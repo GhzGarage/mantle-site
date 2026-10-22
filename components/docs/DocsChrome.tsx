@@ -96,7 +96,7 @@ export default function DocsChrome({ sections, searchIndex, children }: { sectio
         <main id="main-content" className="docs-main" onClick={copyCode}>{children}</main>
       </div>
 
-      <footer className="docs-footer">© 2026 QBCore Studios. Mantle is in active development. · <Link href="/privacy/">Privacy</Link></footer>
+      <footer className="docs-footer">© 2026 Joshua Eger. Mantle is in active development. · <Link href="/privacy/">Privacy</Link> · <Link href="/terms/">Terms</Link> · <Link href="/server-terms/">Server Terms</Link></footer>
       {searchOpen && <DocsSearch entries={searchIndex} onClose={() => setSearchOpen(false)} />}
     </div>
   );
