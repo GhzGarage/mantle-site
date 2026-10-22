@@ -26,6 +26,7 @@
 <tr><td>Mantle Script Point</td><td>An anchor for a script package, with the parameters the package declares. Players don't see it.</td><td><span class="status live">Live</span> see <a href="/docs/creators/script-packages/#script-points">Script Points</a></td></tr>
 <tr><td>Mantle Vehicle Spawn</td><td>A vehicle players can drive, built with <b>Build a vehicle</b> or made with <b>Convert vehicle</b>, or one from your place's storage</td><td><span class="status live">Live</span> see <a href="/docs/creators/vehicles/">Vehicles</a></td></tr>
 <tr><td>Mantle Weapon Spawn</td><td>A weapon waiting to be picked up, built with <b>Build a weapon</b> or taken from your place's storage</td><td><span class="status live">Live</span> see <a href="#weapons">Weapon spawns</a></td></tr>
+<tr><td>Mantle Seat (a component on a prop)</td><td>Where someone sits: the hip point, the way they face and the style</td><td><span class="status live">Live</span> see <a href="#seats">Seats</a></td></tr>
 <tr><td>Mantle Scatter Volume</td><td>A seeded field of instanced meshes, the same for every player</td><td><span class="status live">Live</span> see <a href="#scatter">Scatter fields</a></td></tr>
 <tr><td>Physics Constraint Actor</td><td>A joint (weld, hinge or rope) between two physics objects, or one and the world</td><td><span class="status live">Live</span> see <a href="#joints">Joints</a></td></tr>
 <tr><td>Reflection Capture (Box or Sphere)</td><td>Its size, influence and brightness. Every player's game captures it again in the place's own lighting.</td><td><span class="status live">Live</span> see <a href="#probes">Reflection captures</a></td></tr>
@@ -84,6 +85,7 @@ See <a href="/docs/creators/#validation">What "Check this place" catches</a>.</l
 <tr><td>Crowds</td><td class="num">8 Crowd Spawners and 200 people per place</td></tr>
 <tr><td>Vehicle Spawns</td><td class="num">32 per place</td></tr>
 <tr><td>Weapon Spawns</td><td class="num">32 per place</td></tr>
+<tr><td>Mantle Seats</td><td class="num">256 per place</td></tr>
 <tr><td>Library items in Storage</td><td class="num">32 per place</td></tr>
 <tr><td>Script Points</td><td class="num">64 per place, each with up to 16 parameters</td></tr>
 <tr><td>Scatter instances</td><td class="num">200,000 per Scatter volume and per place</td></tr>
@@ -269,6 +271,31 @@ See <a href="/docs/creators/#validation">What "Check this place" catches</a>.</l
 </ul>
 <p>A place can have 32 weapon spawns. "Check this place" names a spawn with no weapon, one that sets both and a weapon whose files aren't in your <code>MantleWeapons</code> folder.</p>
 
+<h3 id="seats">Seats <span class="status live">Live</span></h3>
+<p>Any prop can have seats: a bench, a chair, a stool, a ledge, a log. Add a <b>Mantle Seat</b> component to the prop, one for each spot where someone can sit.</p>
+<ol class="steps">
+<li><b>Add the component</b><p>Select the prop in the level (or open its Blueprint). Click <b>Add</b> in the Details panel, then pick <b>Mantle Seat</b>. A new seat starts 45 cm above the prop's origin, about the height of a bench.</p></li>
+<li><b>Move it to the hips</b><p>Move the seat to where the sitter's hips rest. Turn it so its forward direction (X) points the way the sitter faces. Only the turn around the vertical axis counts. Tilting it does nothing.</p></li>
+<li><b>Read the gizmo</b><p>Select the prop to see it. The box is where the hips go. The arrow is the way the sitter faces. A line runs down from the hips to the floor Mantle found, with a small cross where it lands. The line is dashed when "Check this place" would refuse the height. A label above the seat reads "Hip N cm", the distance from the hips down to that floor. With no floor under it, the label reads "Nothing to sit on".</p></li>
+<li><b>Check and publish</b><p>Run <b>Tools → Mantle → Check this place</b>, then publish as usual. Each seat is saved with the place, tied to the prop it's on.</p></li>
+</ol>
+<ul>
+<li><b>Style:</b> the seat's only setting. <b>Bench</b> is the one style today, and it works for a bench, a chair, a stool or a ledge.</li>
+<li><b>Height:</b> the hips need a floor below them, 15 to 110 cm down. Put them about 45 cm up for a bench. Mantle fits the sitter's legs to that floor, so there's no seat height to set. The prop itself doesn't count as floor.</li>
+<li><b>The prop:</b> it has to publish as its own object, and it has to stay put. It can't simulate physics or be Movable. On a Blueprint, every part has to be Static, and the Blueprint can't have logic of its own.</li>
+<li><b>How many:</b> a place can have 256 seats.</li>
+</ul>
+<p>In the game, a player walks up to the seat and presses <kbd>E</kbd> (B on a gamepad, or X while holding a weapon) when the prompt says "Sit". It works within 2 meters of the prop's origin, so on a long bench keep the origin near the middle. The player sits on the nearest free seat of that prop. Pressing the same key again stands them back up, and they stand on the floor beside the seat. A seat holds one person, so a taken seat is skipped, and a prop with every seat taken has no prompt. A player who is dead or already sitting can't sit. If a seated player leaves or disconnects, the seat frees up.</p>
+<p>"Check this place" tells you about a seat that can't publish:</p>
+<div class="table-wrap"><table><thead><tr><th>If you see</th><th>What to do</th></tr></thead><tbody>
+<tr><td>"has a Mantle Seat, but the prop itself is not published, so the seat has nothing to belong to."</td><td>Make the prop publishable, or move the seat onto a prop that publishes.</td></tr>
+<tr><td>"has a Mantle Seat, but the prop simulates physics, so the seat would move."</td><td>Turn Simulate Physics off and make the prop Static, or move the seat onto a fixed prop.</td></tr>
+<tr><td>"has a Mantle Seat, but the prop is Movable, so the seat could move."</td><td>Turn Simulate Physics off and make the prop Static, or move the seat onto a fixed prop.</td></tr>
+<tr><td>"has a seat with nothing to sit on: no floor was found under its hip point."</td><td>Put the seat's hip point about 45 cm above the floor it sits on, with a floor under it.</td></tr>
+<tr><td>"has a seat whose hip is only N cm above the floor; it needs at least 15 cm."</td><td>Put the seat's hip point about 45 cm above the floor it sits on, with a floor under it.</td></tr>
+<tr><td>"has a seat with nothing to sit on: its hip is N cm above the floor, and at most 110 cm is allowed."</td><td>Put the seat's hip point about 45 cm above the floor it sits on, with a floor under it.</td></tr>
+<tr><td>"This level has N Mantle Seats; a place holds at most 256."</td><td>Remove some seats.</td></tr>
+</tbody></table></div>
 <h2 id="assets">Assets</h2>
 <h3 id="library">Built-in library <span class="status live">Live</span></h3>
 <p>The library has 6 items. Use them straight from this folder so Mantle recognizes them:</p>
