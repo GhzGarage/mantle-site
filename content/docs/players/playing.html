@@ -103,7 +103,7 @@ With no slot picked, wearing an emote fills the first empty slot. If all 8 are f
 <li>Scripts can react to a use: see <a href="/docs/scripting/api/#ref-backpack">Backpack</a> in the API reference.</li>
 </ul></li>
 <li><b>Dying:</b> tools you got from pickups can drop when you die, if that pickup allows it.</li>
-<li><b>On screen:</b> health (100 unless the world changes it), an ammo counter, "RELOADING", and the hotbar with counts and cooldowns.</li>
+<li><b>On screen:</b> health (100 unless the world changes it), an ammo counter, "RELOADING", and the hotbar with counts and cooldowns. Each hotbar slot shows the tool's picture. If a tool has none, the slot shows up to two capital letters from its name instead, such as "SS" for "Short Sword". A world's creator can give a weapon or consumable a picture when they build it.</li>
 </ul>
 <div class="table-wrap"><table><thead><tr><th>Tool</th><th>Behavior</th></tr></thead><tbody>
 <tr><td>Fists</td><td>20 damage, 100 cm reach. You hold these whenever you're not holding anything else.</td></tr>
@@ -147,7 +147,7 @@ With no slot picked, wearing an emote fills the first empty slot. If all 8 are f
 <li><b>Gamepad:</b> the D-pad or left stick moves between controls, and A presses one.</li>
 <li><b>Closing:</b> <kbd>Esc</kbd> or B goes back. On a screen that has taken over, that usually closes it, unless the world uses it for its own "back" step.</li>
 <li><b>Screens you play alongside:</b> the mouse works on them right away. On a gamepad, press View to move around one, and View or B to go back to playing. While one is on screen, View doesn't open text chat.</li>
-<li><b>Screen readers</b> can read the parts of these screens that the world's creator has labeled.</li>
+<li><b>Screen readers:</b> screen reader support is on by default, so Windows Narrator can read the game without you turning anything on. Mantle's own buttons that have no text are named for it: "Scroll left" and "Scroll right" on the home screen rows, "Add to favourites" or "Remove from favourites" on a world's card, "Settings" in the top bar, and "Close settings". On the screens that a world's creator builds, a screen reader reads the parts the creator has labeled.</li>
 </ul>
 
 <h2 id="settings">Menu and settings <span class="status live">Live</span></h2>
@@ -161,7 +161,7 @@ With no slot picked, wearing an emote fills the first empty slot. If all 8 are f
 <tr><td>Display</td><td>Window mode (Fullscreen / Windowed fullscreen / Windowed), Resolution, VSync, Frame rate limit (30–240 or Unlimited), Background frame rate limit (5 / 15 / 30 / 60 FPS or Unlimited), Brightness (50–150%), Interface scale (85–125%), Performance stats (Off / FPS / Full)</td></tr>
 <tr><td>Audio</td><td>Master volume, Music (0–100%)</td></tr>
 <tr><td>Chat</td><td>Voice chat (Off / Push to talk / Open mic), Text chat. While you're in voice in a world, also "Your microphone" and "Other players' voices" (On / Muted), which only last until you leave that world</td></tr>
-<tr><td>Accessibility</td><td>Subtitles <span class="status live">Live</span>; Reduce motion and High contrast <span class="status wip">In progress</span> (these work in some menus that world creators build, but not yet in Mantle's own menus or in every world screen)</td></tr>
+<tr><td>Accessibility</td><td>Screen reader support (Narrator) <span class="status live">Live</span>: always on, so it has no setting; Subtitles <span class="status live">Live</span>; Reduce motion and High contrast <span class="status wip">In progress</span> (these work in some menus that world creators build, but not yet in Mantle's own menus or in every world screen)</td></tr>
 <tr><td>Account</td><td>Profile picture (PNG or JPEG, up to 2048 by 2048 and 8 MB). My Places (on the home screen only; see below). Creator tokens and Hosting (when available), for creators who publish from Unreal Editor or run their own servers.</td></tr>
 <tr><td>Safety</td><td>Blocked players, with Unblock. Support: "Open log folder" and "Copy diagnostics" (see <a href="/docs/players/troubleshooting/#get-help">Getting help</a>)</td></tr>
 </tbody></table></div>
