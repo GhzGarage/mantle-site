@@ -308,7 +308,7 @@
   .footer-brand{display:flex;align-items:center;gap:10px;color:var(--ink-dim);font-size:0.9rem;}
   .footer-brand img{height:20px;}
   .footer-note{color:var(--ink-faint);font-size:0.82rem;max-width:520px;}
-  .footer-links{display:flex;gap:22px;font-size:0.88rem;color:var(--ink-dim);}
+  .footer-links{display:flex;flex-wrap:wrap;gap:12px 22px;font-size:0.88rem;color:var(--ink-dim);}
   .footer-links a{text-decoration:none;}
   .footer-links a:hover{color:var(--ink);}
 
@@ -350,7 +350,7 @@
         no waiting.
       </p>
       <div class="cta-row">
-        <span class="btn btn-primary soon">Coming to Steam</span>
+        <span class="btn btn-primary soon">In closed testing on Steam and Epic</span>
         <a class="btn btn-ghost" href="#how-it-works">See how it works</a>
       </div>
       <div class="hero-note">A project by QBCore Studios — currently in active development.</div>
@@ -389,7 +389,7 @@
             <li>Build your level in the Unreal Editor, the way you already do</li>
             <li>Press Publish — your world uploads in seconds, not hours</li>
             <li>Players open one shared app and join instantly</li>
-            <li>Every update reaches everyone the moment they join</li>
+            <li>Publish an update, and players get it with nothing to reinstall</li>
           </ul>
         </div>
       </div>
@@ -459,15 +459,16 @@
           <li>
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#ff7a3d" opacity="0.15"/><path d="M5 9.5l2.5 2.5L13 6.5" stroke="#ff9a5f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             <div><strong>Or bring the language you already use.</strong> Write gameplay in
-            JavaScript or TypeScript if that's more your speed, or in Python if that's
-            what you already know. All three can work together in the same world.</div>
+            JavaScript or TypeScript if that's more your speed, in Python if that's
+            what you already know, or build it visually with script graphs. You can
+            mix them all in the same world.</div>
           </li>
           <li>
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#ff7a3d" opacity="0.15"/><path d="M5 9.5l2.5 2.5L13 6.5" stroke="#ff9a5f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             <div><strong>Safe for every player, no matter the language.</strong> Every script
-            runs in the same sealed sandbox. A creator's logic can never touch
-            another player's computer, reach outside the game, or bring down
-            anyone else's session.</div>
+            runs in the same sandbox. A creator's logic can never touch a player's
+            computer or bring down anyone else's session. Only server scripts can
+            call web services, and they can never reach a private network.</div>
           </li>
           <li>
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#ff7a3d" opacity="0.15"/><path d="M5 9.5l2.5 2.5L13 6.5" stroke="#ff9a5f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -480,22 +481,25 @@
         <div class="code-card">
           <div class="code-head">
             <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-            <span class="code-title">VaultDoor.script</span>
+            <span class="code-title">Scripts/Server/VaultDoor.luau</span>
           </div>
-          <pre class="code-body"><code><span class="kw">function</span> <span class="fn">onPlayerTouch</span>(player)
-    <span class="var">door</span>:<span class="fn">Open</span>()
-    <span class="fn">playSound</span>(<span class="str">"vault_unlock"</span>)
-<span class="kw">end</span>
+          <pre class="code-body"><code><span class="var">World</span>:<span class="fn">OnTagged</span>(<span class="str">"vault_door"</span>, <span class="kw">function</span>(door)
+    <span class="kw">local</span> up = door.Position + <span class="var">Vector3</span>.<span class="fn">new</span>(<span class="num">0</span>, <span class="num">0</span>, <span class="num">390</span>)
+    door.Touched:<span class="fn">Connect</span>(<span class="kw">function</span>(player)
+        <span class="fn">print</span>(<span class="str">`{player.Name} opened the vault`</span>)
+        door:<span class="fn">Tween</span>({ Position = up }, <span class="num">0.6</span>)
+    <span class="kw">end</span>)
+<span class="kw">end</span>)
 
-<span class="kw">function</span> <span class="fn">onMatchStart</span>()
-    <span class="var">roundTimer</span>:<span class="fn">start</span>(<span class="num">180</span>)
-    <span class="var">scoreboard</span>:<span class="fn">reset</span>()
-<span class="kw">end</span></code></pre>
+<span class="var">Players</span>:<span class="fn">OnPlayer</span>(<span class="kw">function</span>(player)
+    <span class="fn">print</span>(<span class="str">`{player.Name} joined the heist`</span>)
+<span class="kw">end</span>)</code></pre>
           <div class="code-footer">
             <span class="code-footer-label">Also write gameplay in</span>
             <span class="lang-chip">JavaScript</span>
             <span class="lang-chip">TypeScript</span>
             <span class="lang-chip">Python</span>
+            <span class="lang-chip">Visual scripts</span>
           </div>
         </div>
       </div>
@@ -555,7 +559,7 @@
             <li><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#ff7a3d" opacity="0.15"/><path d="M5 9.5l2.5 2.5L13 6.5" stroke="#ff9a5f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Publish straight from the editor — no separate build for every world</li>
             <li><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#ff7a3d" opacity="0.15"/><path d="M5 9.5l2.5 2.5L13 6.5" stroke="#ff9a5f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Hosting, servers, and matchmaking are handled for you</li>
             <li><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#ff7a3d" opacity="0.15"/><path d="M5 9.5l2.5 2.5L13 6.5" stroke="#ff9a5f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Script your own rules, interactions, and game modes, in a language that fits you</li>
-            <li><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#ff7a3d" opacity="0.15"/><path d="M5 9.5l2.5 2.5L13 6.5" stroke="#ff9a5f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Your project stays yours — edit and republish anytime, from any machine</li>
+            <li><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#ff7a3d" opacity="0.15"/><path d="M5 9.5l2.5 2.5L13 6.5" stroke="#ff9a5f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Your project stays yours — edit and republish anytime</li>
           </ul>
         </div>
 
@@ -568,7 +572,7 @@
             <li><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#ff7a3d" opacity="0.15"/><path d="M5 9.5l2.5 2.5L13 6.5" stroke="#ff9a5f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>One character that travels with you between worlds</li>
             <li><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#ff7a3d" opacity="0.15"/><path d="M5 9.5l2.5 2.5L13 6.5" stroke="#ff9a5f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Dedicated servers — no host advantage, no lag from someone else's connection</li>
             <li><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#ff7a3d" opacity="0.15"/><path d="M5 9.5l2.5 2.5L13 6.5" stroke="#ff9a5f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Built-in reporting and safety tools from day one</li>
-            <li><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#ff7a3d" opacity="0.15"/><path d="M5 9.5l2.5 2.5L13 6.5" stroke="#ff9a5f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Play with friends on Steam or the Epic Games Store — one account, one friends list, no split player base</li>
+            <li><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#ff7a3d" opacity="0.15"/><path d="M5 9.5l2.5 2.5L13 6.5" stroke="#ff9a5f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Steam and Epic Games Store players play together in the same worlds</li>
           </ul>
         </div>
       </div>
@@ -595,7 +599,7 @@
         <div class="pillar">
           <div class="icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="3" stroke="#ff9a5f" stroke-width="1.6"/><path d="M3 8h14M8 3v14" stroke="#ff9a5f" stroke-width="1.6"/></svg></div>
           <h4>Worlds that scale</h4>
-          <p>Large, detailed worlds stream in as players explore them, so ambitious builds still load fast and run smooth.</p>
+          <p>Big, detailed maps publish with each mesh keeping its own draw distance, and a world can hold up to 100 players on one server.</p>
         </div>
         <div class="pillar">
           <div class="icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2v16M2 10h16" stroke="#ff9a5f" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="10" r="7" stroke="#ff9a5f" stroke-width="1.6"/></svg></div>
@@ -620,11 +624,11 @@
         <div class="status-text">
           <h3>Creator to player, end to end</h3>
           <p>
-            This isn't just the plan — it's already running. A world built in the
+            This isn't just the plan: it's already running. A world built in the
             Unreal Editor can be validated, published, and pulled back down by the
-            Mantle app, which reconstructs it into a playable, joinable space on
-            the spot. That loop is the foundation everything else on this page is
-            built on, and it's live in our internal builds today.
+            Mantle app, which rebuilds it into a playable, joinable space on the
+            spot. The Mantle Core plugin is free on Fab, and the Mantle app is in
+            closed testing on Steam and the Epic Games Store.
           </p>
         </div>
         <div class="flow">
@@ -685,7 +689,7 @@
         </details>
         <details class="faq-item">
           <summary>When can I try it?</summary>
-          <p>Mantle is in active development right now. We'll share dates as we get closer to a public test.</p>
+          <p>Mantle is in closed testing on Steam and the Epic Games Store right now. We'll share dates as we get closer to a public test.</p>
         </details>
       </div>
     </div>
