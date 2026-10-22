@@ -220,6 +220,7 @@ See <a href="/docs/creators/#validation">What "Check this place" catches</a>.</l
 
 <h3 id="effects">Particle effects <span class="status live">Live</span></h3>
 <p>Place a <b>Mantle Effect</b> (Place Actors → All Classes) and pick one of five built-in effects: Smoke, Fire, Sparks, Dust or Glow. You can change its color, particle size (1 to 1,000 cm), rate (up to 200 a second), speed (up to 5,000 cm/s) and lifetime (0.05 to 10 s). <b>Autoplay</b> starts it when a player joins; with it off, the effect waits for a script. <b>Loop</b> keeps it emitting; with it off, it emits for one second each time it starts. Particles leave along the actor's up direction. A place can have 64 effects.</p>
+<p>Fire is a realistic flame with embers, sparks and its own light. Its color starts white, which keeps the flames' own colors; any other color recolors the flames and their light, and a darker color dims them. For Fire, size is the size of the whole fire: 40, the default, is a campfire about a meter tall. Rate, speed and lifetime change it from there. The sparks follow only rate, lifetime and speed.</p>
 <p>The <b>Sprites</b> effect is a general emitter you tune yourself, and the only one that takes your own image. Scripts can't pick it. It has:</p>
 <ul>
 <li><b>Look:</b> a texture (empty draws a soft round dot), <b>Blend</b> (Translucent or Additive), color at the start and end of a particle's life, opacity at its peak (0 to 1) and at its end and a fade-in (0 to 1 of its life).</li>
