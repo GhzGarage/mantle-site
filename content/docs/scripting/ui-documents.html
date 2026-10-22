@@ -152,7 +152,7 @@ welcome.event.connect(on_event)
     <p>A few things decide whether a document takes input at all:</p>
     <ul>
       <li><b>It needs something to focus.</b> A modal or overlay document only takes input when it has at least one visible focusable element. The base stylesheet makes <code>&lt;button&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;textarea&gt;</code> and <code>&lt;select&gt;</code> focusable. To make any other element a control, give it <code>tab-index: auto; nav: auto;</code> in RCSS. <code>nav: auto</code> lets the arrow keys, D-pad and stick move to it. A document with nothing focusable is drawn but takes no input, like a HUD.</li>
-      <li><b>It waits its turn.</b> If something else already shows the cursor, such as the game menu, a script's interactive UI nodes or another open modal or overlay document, the document waits and takes input once that lets go. When the document closes, the player's input goes back exactly as it was.</li>
+      <li><b>It waits its turn.</b> If something else already shows the cursor, such as the game menu, a script's UI nodes while they show the cursor (a modal UI, see <a href="/docs/scripting/concepts/#ui-input">Overlay or modal UI</a>) or another open modal or overlay document, the document waits and takes input once that lets go. When the document closes, the player's input goes back exactly as it was.</li>
       <li><b>The script chooses the mode.</b> The mode you pass to <code>OpenDocument</code> or <code>SetMode</code> is the one that counts.</li>
     </ul>
     <p>Back always closes a modal document, and your script hears it as <code>Closed("back")</code>. If you want to react to that, for example to reopen a shop later or unpause a timer, connect to <code>Closed</code>.</p>
