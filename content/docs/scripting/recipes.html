@@ -2623,3 +2623,204 @@ def on_key(phase, key):
 
 Input.bind_action(&quot;barber&quot;, [&quot;J&quot;], on_key)
 </pre></div></div></div>
+<h3 id="r-consumables">Potions that boost speed and heal</h3>
+<p>This gives players two potions and reacts when they drink them. It needs API 1.49 (see <a href="/docs/scripting/api/#versions">API versions</a>). Make the items in the weapon builder with the Consumable hold (see <a href="/docs/creators/weapons/">Weapons</a>) and add both to your place's storage as <code>HealthPotion</code> and <code>SpeedPotion</code>. Name them <code>Health Potion</code> and <code>Speed Potion</code>, because the script tells them apart by that name (<code>docName</code>). Leave the health potion on its usual effect, heal. Give the speed potion the effect "none", so the game does nothing for it and the script is the whole effect. Tag a crate in your level <code>guide_code_supplies</code>. The first time a player touches it, <code>Backpack:Grant</code> puts one of each potion in their Backpack. <code>ItemUsed</code> fires on the server when a drink lands, and not when it's cancelled. <code>usesLeft</code> is how many uses the item has now, and <code>builtInEffect</code> says whether its own heal ran. The health potion's handler only logs the use, because the game already heals the player. The speed potion raises <code>WalkSpeed</code> by half for 8 seconds, then puts it back. Drinking a second potion while the first is running keeps the boost until the last one runs out. A boost isn't cut short if the player dies: <code>WalkSpeed</code> lasts through respawns, so the script restores it either way.</p>
+<div class="v has-ts has-js has-py"><div class="v" data-v="luau"><div class="code"><span class="tag">Scripts/Server/GuidePotions.luau</span><pre data-example-kind="source" data-language="luau">local HEALTH_POTION = Storage:Get(&quot;HealthPotion&quot;)
+local SPEED_POTION = Storage:Get(&quot;SpeedPotion&quot;)
+local BOOST_FACTOR = 1.5
+local BOOST_SECONDS = 8
+
+-- User id -&gt; the speed before the first boost, and how many boosts are still running
+local boosts = {}
+
+local function speedUp(player)
+	local walk = player.WalkSpeed
+	if walk == nil then
+		return
+	end
+	local state = boosts[player.UserId]
+	if state == nil then
+		state = { normal = walk, running = 0 }
+		boosts[player.UserId] = state
+	end
+	state.running += 1
+	player.WalkSpeed = state.normal * BOOST_FACTOR
+	task.delay(BOOST_SECONDS, function()
+		state.running -= 1
+		if state.running == 0 then
+			boosts[player.UserId] = nil
+			player.WalkSpeed = state.normal
+		end
+	end)
+end
+
+Backpack.ItemUsed:Connect(function(player, toolId, docName, usesLeft, builtInEffect)
+	if docName == &quot;Speed Potion&quot; then
+		speedUp(player)
+	elseif docName == &quot;Health Potion&quot; then
+		print(`{player.Name} used {docName}: {usesLeft} left, heal ran: {builtInEffect}`)
+	end
+end)
+
+local stocked = {}
+
+World:OnTagged(&quot;guide_code_supplies&quot;, function(crate)
+	crate.Touched:Connect(function(player)
+		if stocked[player.UserId] then
+			return
+		end
+		stocked[player.UserId] = true
+		Backpack:Grant(player, HEALTH_POTION)
+		Backpack:Grant(player, SPEED_POTION)
+	end)
+end)
+</pre></div></div><div class="v" data-v="ts"><div class="code"><span class="tag">Scripts/Server/GuidePotions.ts</span><pre data-example-kind="source" data-language="typescript">const HEALTH_POTION = Storage.get(&quot;HealthPotion&quot;);
+const SPEED_POTION = Storage.get(&quot;SpeedPotion&quot;);
+const BOOST_FACTOR = 1.5;
+const BOOST_SECONDS = 8;
+
+// User id -&gt; the speed before the first boost, and how many boosts are still running
+const boosts = new Map&lt;string, { normal: number; running: number }&gt;();
+
+function speedUp(player: Player) {
+	const walk = player.walkSpeed;
+	if (walk === undefined) {
+		return;
+	}
+	let state = boosts.get(player.userId);
+	if (state === undefined) {
+		state = { normal: walk, running: 0 };
+		boosts.set(player.userId, state);
+	}
+	const boost = state;
+	boost.running += 1;
+	player.walkSpeed = boost.normal * BOOST_FACTOR;
+	task.delay(BOOST_SECONDS, () =&gt; {
+		boost.running -= 1;
+		if (boost.running === 0) {
+			boosts.delete(player.userId);
+			player.walkSpeed = boost.normal;
+		}
+	});
+}
+
+Backpack.itemUsed.connect((player, toolId, docName, usesLeft, builtInEffect) =&gt; {
+	if (docName === &quot;Speed Potion&quot;) {
+		speedUp(player);
+	} else if (docName === &quot;Health Potion&quot;) {
+		console.log(`${player.name} used ${docName}: ${usesLeft} left, heal ran: ${builtInEffect}`);
+	}
+});
+
+const stocked = new Set&lt;string&gt;();
+
+World.onTagged(&quot;guide_code_supplies&quot;, (crate) =&gt; {
+	crate.touched.connect((player) =&gt; {
+		if (stocked.has(player.userId)) {
+			return;
+		}
+		stocked.add(player.userId);
+		Backpack.grant(player, HEALTH_POTION);
+		Backpack.grant(player, SPEED_POTION);
+	});
+});
+</pre></div></div><div class="v" data-v="js"><div class="code"><span class="tag">Scripts/Server/GuidePotions.js</span><pre data-example-kind="source" data-language="javascript">const HEALTH_POTION = Storage.get(&quot;HealthPotion&quot;);
+const SPEED_POTION = Storage.get(&quot;SpeedPotion&quot;);
+const BOOST_FACTOR = 1.5;
+const BOOST_SECONDS = 8;
+
+// User id -&gt; the speed before the first boost, and how many boosts are still running
+const boosts = new Map();
+
+function speedUp(player) {
+	const walk = player.walkSpeed;
+	if (walk === undefined) {
+		return;
+	}
+	let state = boosts.get(player.userId);
+	if (state === undefined) {
+		state = { normal: walk, running: 0 };
+		boosts.set(player.userId, state);
+	}
+	const boost = state;
+	boost.running += 1;
+	player.walkSpeed = boost.normal * BOOST_FACTOR;
+	task.delay(BOOST_SECONDS, () =&gt; {
+		boost.running -= 1;
+		if (boost.running === 0) {
+			boosts.delete(player.userId);
+			player.walkSpeed = boost.normal;
+		}
+	});
+}
+
+Backpack.itemUsed.connect((player, toolId, docName, usesLeft, builtInEffect) =&gt; {
+	if (docName === &quot;Speed Potion&quot;) {
+		speedUp(player);
+	} else if (docName === &quot;Health Potion&quot;) {
+		console.log(`${player.name} used ${docName}: ${usesLeft} left, heal ran: ${builtInEffect}`);
+	}
+});
+
+const stocked = new Set();
+
+World.onTagged(&quot;guide_code_supplies&quot;, (crate) =&gt; {
+	crate.touched.connect((player) =&gt; {
+		if (stocked.has(player.userId)) {
+			return;
+		}
+		stocked.add(player.userId);
+		Backpack.grant(player, HEALTH_POTION);
+		Backpack.grant(player, SPEED_POTION);
+	});
+});
+</pre></div></div><div class="v" data-v="py"><div class="code"><span class="tag">Scripts/Server/GuidePotions.py</span><pre data-example-kind="source" data-language="python">HEALTH_POTION = Storage.get(&quot;HealthPotion&quot;)
+SPEED_POTION = Storage.get(&quot;SpeedPotion&quot;)
+BOOST_FACTOR = 1.5
+BOOST_SECONDS = 8
+
+# User id -&gt; the speed before the first boost, and how many boosts are still running
+boosts = {}
+
+def speed_up(player):
+    walk = player.walk_speed
+    if walk is None:
+        return
+    state = boosts.get(player.user_id)
+    if state is None:
+        state = {&quot;normal&quot;: walk, &quot;running&quot;: 0}
+        boosts[player.user_id] = state
+    state[&quot;running&quot;] += 1
+    player.walk_speed = state[&quot;normal&quot;] * BOOST_FACTOR
+
+    def restore():
+        state[&quot;running&quot;] -= 1
+        if state[&quot;running&quot;] == 0:
+            boosts.pop(player.user_id, None)
+            player.walk_speed = state[&quot;normal&quot;]
+
+    task.delay(BOOST_SECONDS, restore)
+
+def on_item_used(player, tool_id, doc_name, uses_left, built_in_effect):
+    if doc_name == &quot;Speed Potion&quot;:
+        speed_up(player)
+    elif doc_name == &quot;Health Potion&quot;:
+        print(f&quot;{player.name} used {doc_name}: {uses_left} left, heal ran: {built_in_effect}&quot;)
+
+Backpack.item_used.connect(on_item_used)
+
+stocked = set()
+
+def on_crate(crate):
+    def on_touch(player):
+        if player.user_id in stocked:
+            return
+        stocked.add(player.user_id)
+        Backpack.grant(player, HEALTH_POTION)
+        Backpack.grant(player, SPEED_POTION)
+
+    crate.touched.connect(on_touch)
+
+World.on_tagged(&quot;guide_code_supplies&quot;, on_crate)
+</pre></div></div></div>
+<p>The same handler can do anything else a place needs, such as adding to a score, opening a door or starting a round. See <a href="/docs/scripting/api/#ref-backpack">Backpack</a> for every member.</p>
