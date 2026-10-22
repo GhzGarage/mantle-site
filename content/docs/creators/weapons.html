@@ -3,7 +3,7 @@
 <p>You can turn a 3D model into a weapon players can hold and use. You pick a weapon type, choose your model, check its size and direction, place the hand and action points, set the numbers, and add parts and sounds if you like. Then you create the weapon, try it and publish it. You place it in a level with a <b>Mantle Weapon Spawn</b>.</p>
 
 <h2 id="what-you-can-build">What you can build <span class="status live">Live</span></h2>
-<p>There are 16 weapon types: 8 guns, 3 melee weapons, a spear, a staff, a bow, a shield and a throwable. Each one has its own grip, animations and attacks. The weapon types are the only starting points: there are no other ready-made presets. There's no crossbow, wand or dual wield.</p>
+<p>There are 17 weapon types: 8 guns, 3 melee weapons, a spear, a staff, a bow, a shield, a throwable and a consumable. Each one has its own grip, animations and attacks (a consumable is used up instead of fired). The weapon types are the only starting points: there are no other ready-made presets. There's no crossbow, wand or dual wield.</p>
 
 <h2 id="where">Where to find it <span class="status live">Live</span></h2>
 <p>In the Unreal Editor, choose <b>Tools → Mantle → Build a weapon...</b> The <b>Build a weapon</b> tab opens with seven steps. Use <b>Back</b> and <b>Next</b>. On the last step the button says <b>Create weapon</b>. To change a weapon you made earlier, use <b>Open a saved weapon to edit</b> in step 1. It lists the weapons in your project's <code>MantleWeapons</code> folder.</p>
@@ -29,6 +29,7 @@
 <tr><td>Bow</td><td>A flying arrow. You always draw before you release. No block.</td><td>A quiver</td></tr>
 <tr><td>Shield</td><td>A bash. It's held in the left hand and always blocks.</td><td>No ammo</td></tr>
 <tr><td>Throwable</td><td>Thrown with one hand. Tick <b>Explodes (a grenade)</b> for a blast or <b>Leaves fire where it lands (a molotov)</b> for fire, but not both.</td><td>No ammo</td></tr>
+<tr><td>Consumable</td><td>Used up, not fired: a potion, medkit or snack the character drinks, eats or uses to heal. It has no attack. See <a href="#consumables">Consumables</a>.</td><td>A number of uses (1 to 100)</td></tr>
 </tbody></table></div>
 <p>If you switch a gun to a beam, it starts from a laser rifle's numbers and the Laser effect. Switching to a flying round starts from a launcher's numbers. Changing the weapon type removes the points the new type doesn't use and puts every setting back to the new type's usual value.</p>
 <p>A gun's instant shot uses the Rifle, Pistol or Shotgun effect style. A staff, bow or throwable, and a gun's flying round or beam, use an element: Laser, Fire, Ice, Lightning, Arcane, Venom, Water, Wind, Rock, Sand, Void, Dark, Light, Generic, Heal, Lava or Nature. Tick <b>Choose a custom effect color</b> to tint it with red, green and blue values from 0 to 255.</p>
@@ -46,9 +47,24 @@
 <tr><td>Fist weapon</td><td>None</td><td>Right hand, Left hand</td></tr>
 <tr><td>Shield</td><td>Left hand on shield, Shield face</td><td>None</td></tr>
 <tr><td>Throwable</td><td>Right hand</td><td>Weapon point</td></tr>
+<tr><td>Consumable</td><td>None</td><td>Grip</td></tr>
 </tbody></table></div>
 <p>For a melee weapon, <b>Swing starts at</b> and <b>Swing ends at</b> (step 5) let you pick which two of your points the swing runs between. Leave both on "Use this hold's usual points" for the usual swing.</p>
 <p>Only guns get the reach and "inside the gun" notes. Other types only tell you when a required point is missing.</p>
+
+<h2 id="consumables">Consumables <span class="status live">Live</span></h2>
+<p>A consumable is a potion, a medkit or a snack. The character holds it in one hand and uses it up. Step 5 shows these settings instead of the attack ones:</p>
+<ul>
+<li><b>How it is used:</b> "Eat or drink (bottle to the lips)" (the usual) plays the drinking animation. "Use (lift the hand and crush; medkits)" plays a lift-and-crush animation, a good fit for a medkit.</li>
+<li><b>What it does:</b> "Heal" (the usual) gives health. "Nothing of its own (a script does it)" gives none: a script in your place does the rest. See <a href="/docs/scripting/api/#ref-backpack">Backpack</a> in the API reference for how a script hears that someone used one.</li>
+<li><b>Health given:</b> 1 to 1,000 (usually 50), up to the character's maximum health. It only shows when <b>What it does</b> is "Heal".</li>
+<li><b>Spread over (seconds):</b> 0 to 60 (usually 0). 0 gives all the health at once. A higher number spreads it evenly over that many seconds. It only shows for "Heal".</li>
+<li><b>Uses:</b> 1 to 100 (usually 1). The consumable is gone after its last use.</li>
+<li><b>Choose how long one use takes:</b> off (the usual), a use takes as long as the animation, 2.5 seconds. Tick it to set <b>Use time (seconds)</b>, 0.5 to 10. The animation plays faster or slower to fit.</li>
+<li><b>Wait between uses (seconds):</b> 0 to 600 (usually 0, no wait).</li>
+<li><b>Can walk while using:</b> ticked by default. Untick it and the character stands still until the use ends.</li>
+</ul>
+<p>Step 4 has one optional point, <b>Grip</b>: the middle of the palm where the hand holds the item. A consumable has no moving parts, extra details or custom sounds, so step 6 only says "A consumable has no moving parts, extra details or custom sounds. Go on to Create." Players see how to use one in <a href="/docs/players/playing/#tools">Tools, backpack and weapons</a>.</p>
 
 <h2 id="parts">Parts <span class="status wip">In progress</span></h2>
 <p>Step 6 has two lists, each with up to 16 entries:</p>
@@ -76,6 +92,8 @@
 <tr><td>Beam damage checks per second / Beam damage per second</td><td class="num">1 to 30 / 0 to 1,000</td></tr>
 <tr><td>Maximum beam time / Beam thickness / Beam reach</td><td class="num">0.1 to 30 seconds / 0 (a thin laser) to 200 cm / 0 for the maximum range, or 100 to 100,000 cm</td></tr>
 <tr><td>Casts it holds / Seconds to get one cast back</td><td class="num">1 to 100 / 0.1 to 600</td></tr>
+<tr><td>Health given / Spread over (seconds) (consumable)</td><td class="num">1 to 1,000 / 0 (all at once) to 60</td></tr>
+<tr><td>Uses / Use time (seconds) / Wait between uses (seconds) (consumable)</td><td class="num">1 to 100 / 0.5 to 10 / 0 to 600</td></tr>
 <tr><td>Bow string thickness (cm)</td><td>No effect yet <span class="status wip">In progress</span>. Ignore this box: the string looks the same whatever you set.</td></tr>
 </tbody></table></div>
 <p>Other settings are ticks: <b>Keep firing while the trigger is held</b> and <b>Fire a short burst per click</b> for guns, <b>Allow a charged attack</b> with <b>Require a full charge before attacking</b>, <b>Release automatically when full</b> and <b>Let players cancel a charge</b>, <b>Can block</b> with <b>A heavy attack can break the guard</b>, and <b>Stick to what it hits</b> for projectiles, and <b>Let players pick it up</b> for a bow's arrows. A thrown knife or axe flies as itself, sticks where it lands and can be picked up.</p>
@@ -108,6 +126,10 @@
 <tr><td>Pick two weapon points for the swept edge, or leave both choices empty for the hold's edge.</td><td>Set both <b>Swing starts at</b> and <b>Swing ends at</b>, or leave both on "Use this hold's usual points".</td></tr>
 <tr><td>Set the attack rate between 0.1 and 100 attacks per second.</td><td>Change <b>Attacks per second</b>.</td></tr>
 <tr><td>Set the charges between 1 and 100, and the time to get one back between 0.1 and 600 seconds.</td><td>Change <b>Casts it holds</b> or <b>Seconds to get one cast back</b>.</td></tr>
+<tr><td>Set the health between 1 and 1000, and the time to spread it over between 0 and 60 seconds.</td><td>Change <b>Health given</b> or <b>Spread over (seconds)</b> on a consumable.</td></tr>
+<tr><td>Set the uses between 1 and 100.</td><td>Change <b>Uses</b>.</td></tr>
+<tr><td>Set the use time between 0.5 and 10 seconds.</td><td>Change <b>Use time (seconds)</b>, or untick <b>Choose how long one use takes</b>.</td></tr>
+<tr><td>Set the wait between uses between 0 and 600 seconds.</td><td>Change <b>Wait between uses (seconds)</b>.</td></tr>
 <tr><td>/charge/seconds is 15, above the most it may be: lower it to 10 or less</td><td>A setting is outside its range. This form can name any setting. Bring the number inside the range (<b>Time to charge (seconds)</b> is 0.1 to 10).</td></tr>
 <tr><td>Choose a model for this part, or remove it before creating the weapon. / Pick a model for each separate part, or remove the empty part.</td><td>Pick a model for each moving part in step 6, or press <b>Remove</b>.</td></tr>
 <tr><td>Choose a model or add a built-in effect before creating the weapon.</td><td>Give each fixed detail a model or an effect, or press <b>Remove</b>.</td></tr>
