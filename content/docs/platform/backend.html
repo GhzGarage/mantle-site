@@ -107,6 +107,7 @@
 <h2 id="retention">Account deletion and data retention</h2>
 <p>Deleting an account takes effect right away: your profile and saved progress are removed, your published worlds are taken down and your creator tokens and server keys are revoked. Your published library items and avatar items are delisted, so a place that stores one of your library items has its next publish refused. Items you got are removed, private servers you own are deleted, and assets and scripts you uploaded are kept. The backend has a <code>DELETE /me</code> route that needs a <code>confirm</code> body, but you can't delete your account from inside Mantle yet. See <a href="/docs/players/safety/#account-deletion">Deleting your account or data</a> for how to ask.</p>
 <ul>
+<li><b>The empty account record</b> of a deleted account is deleted 30 days after the deletion. It holds no personal data. It stays while records that must be kept still point to it (chat, reports, moderation records, deleted worlds), until those expire. An account with a publishing strike keeps an anonymous record.</li>
 <li><b>Chat messages</b> are deleted after about 90 days.</li>
 <li><b>Play history</b> is deleted after about a year.</li>
 <li><b>Saved data changes</b> (the audit log of writes and deletes) are kept for about a year.</li>
@@ -115,5 +116,7 @@
 <li><b>Delisted avatar items</b> lose their name, description and thumbnail after 30 days.</li>
 <li><b>Resolved reports</b> are deleted a year after they're resolved. Reports nobody reviewed are deleted a year after they were filed.</li>
 <li><b>Deleted worlds</b>, including worlds you delete from My Places, are removed for good after 180 days.</li>
+<li><b>Old drafts</b> are deleted 180 days after the world was last saved or published. Saving again starts the 180 days over. The world and everything it has published stay.</li>
+<li><b>Worlds you never publish</b> are deleted a year after you last saved them, the same as deleting them yourself. They're removed for good 180 days after that. Published worlds are never deleted this way.</li>
 <li><b>Old world versions</b> can be rolled back to for 180 days after they stop being live (30 days for previews and staged versions that never went live). After that they're deleted.</li>
 </ul>
