@@ -6,7 +6,7 @@
 <p>There are 17 weapon types: 8 guns, 3 melee weapons, a spear, a staff, a bow, a shield, a throwable and a consumable. Each one has its own grip, animations and attacks (a consumable is used up instead of fired). The weapon types are the only starting points: there are no other ready-made presets. There's no crossbow, wand or dual wield.</p>
 
 <h2 id="where">Where to find it <span class="status live">Live</span></h2>
-<p>In the Unreal Editor, choose <b>Tools → Mantle → Build a weapon...</b> The <b>Build a weapon</b> tab opens with seven steps. Use <b>Back</b> and <b>Next</b>. On the last step the button says <b>Create weapon</b>. To change a weapon you made earlier, use <b>Open a saved weapon to edit</b> in step 1. It lists the weapons in your project's <code>MantleWeapons</code> folder.</p>
+<p>In the Unreal Editor, choose <b>Tools → Mantle → Build a weapon...</b> The <b>Build a weapon</b> tab opens with eight steps. Use <b>Back</b> and <b>Next</b>. On the last step the button says <b>Create weapon</b>. To change a weapon you made earlier, use <b>Open a saved weapon to edit</b> in step 1. It lists the weapons in your project's <code>MantleWeapons</code> folder.</p>
 <div class="callout tip"><strong>Made a weapon a while ago?</strong><p>Earlier versions of the builder could lose some of a model's triangles. Open the weapon and press <b>Create weapon</b> again to rebuild it.</p></div>
 
 <h2 id="steps">Building a weapon <span class="status live">Live</span></h2>
@@ -17,7 +17,8 @@
 <li><b>Place hands and action points</b><p>Pick a point in the list, then drag it in the picture onto the right spot on your model. Hand points go in the middle of the palm. A point marked "(optional)" can be skipped. <b>Reset this point</b> and <b>Reset all points</b> put points back where the window guessed them. <b>Next</b> stays off until every required point is placed. The window's guesses are only a start, so check each one. A posed figure holds your weapon so you can see if the hands reach. A gun's notes show under the picture in orange (see <a href="#messages">Messages you may see</a>). A gun, staff or bow also has a <b>Show aiming</b> box that shows the player's eye and line of sight.</p></li>
 <li><b>Attack and effect</b><p>Every setting starts with a sensible value for the type. Only the settings that apply to your type show. Each number stays inside its allowed range. <b>Go back to the usual attack numbers</b> resets damage, attacks per second, rounds, reload time, range, shot spread and recoil. It leaves the other settings alone. See <a href="#settings">Settings and their ranges</a>.</p></li>
 <li><b>Parts and sound</b><p>Optional. Add a magazine that moves while you reload, fixed model details and effects, and your own attack sound. See <a href="#parts">Parts</a>.</p></li>
-<li><b>Create</b><p>Check the summary, then press <b>Create weapon</b>. It says "Your weapon is ready: [name]." and "Your weapon's files are in MantleWeapons/[name].", and the files appear in <code>Content/MantleWeapons/[name]</code> in your project. Then you can press <b>Test locally</b> to hold the weapon in the game, or publish it (see <a href="#publish">Publishing a weapon</a>). If you change anything after <b>Create weapon</b>, both buttons switch off until you press <b>Create weapon</b> again.</p></li>
+<li><b>Thumbnail</b><p>The picture of your weapon in the library. "Mantle takes one for you; you can choose the angle or use your own picture." Automatic shows your model on its own. Consumables get a picture too. See <a href="/docs/creators/avatar-items/#thumbnail">The Thumbnail section</a> for the three choices. Mantle remembers the choice for each weapon by its name.</p></li>
+<li><b>Create</b><p>Check the summary, then press <b>Create weapon</b>. It says "Your weapon is ready: [name]." and "Your weapon's files are in MantleWeapons/[name].", and the files appear in <code>Content/MantleWeapons/[name]</code> in your project. Then you can press <b>Test locally</b> to hold the weapon in the game, or publish it (see <a href="#publish">Publishing a weapon</a>). If you change anything after <b>Create weapon</b>, both buttons switch off until you press <b>Create weapon</b> again. The Thumbnail step is the exception: a new choice there is saved at once and used the next time you publish, so you don't need to create the weapon again.</p></li>
 </ol>
 
 <h2 id="types">Weapon types <span class="status live">Live</span></h2>
@@ -64,7 +65,7 @@
 <li><b>Wait between uses (seconds):</b> 0 to 600 (usually 0, no wait).</li>
 <li><b>Can walk while using:</b> ticked by default. Untick it and the character stands still until the use ends.</li>
 </ul>
-<p>Step 4 has one optional point, <b>Grip</b>: the middle of the palm where the hand holds the item. A consumable has no moving parts, extra details or custom sounds, so step 6 only says "A consumable has no moving parts, extra details or custom sounds. Go on to Create." Players see how to use one in <a href="/docs/players/playing/#tools">Tools, backpack and weapons</a>.</p>
+<p>Step 4 has one optional point, <b>Grip</b>: the middle of the palm where the hand holds the item. A consumable has no moving parts, extra details or custom sounds, so step 6 only says "A consumable has no moving parts, extra details or custom sounds. Go on to Create." The Thumbnail step comes next. Players see how to use one in <a href="/docs/players/playing/#tools">Tools, backpack and weapons</a>.</p>
 
 <h2 id="parts">Parts <span class="status wip">In progress</span></h2>
 <p>Step 6 has two lists, each with up to 16 entries:</p>
@@ -99,7 +100,8 @@
 <p>Other settings are ticks: <b>Keep firing while the trigger is held</b> and <b>Fire a short burst per click</b> for guns, <b>Allow a charged attack</b> with <b>Require a full charge before attacking</b>, <b>Release automatically when full</b> and <b>Let players cancel a charge</b>, <b>Can block</b> with <b>A heavy attack can break the guard</b>, and <b>Stick to what it hits</b> for projectiles, and <b>Let players pick it up</b> for a bow's arrows. A thrown knife or axe flies as itself, sticks where it lands and can be picked up.</p>
 
 <h2 id="publish">Publishing a weapon <span class="status live">Live</span></h2>
-<p>On the last step, <b>Publish to your library</b> adds the weapon to your Mantle library. Pick "Public: other creators can find it and use it in their places" or "Private: only you can use it". A public weapon needs you to tick "I own this content or its licence permits public redistribution on Mantle". See <a href="/docs/creators/publishing/#who-can-use">Who can use your items</a> for what Public and Private mean, and for how a place uses a weapon from its Storage. Publishing again after a change adds a new version. Press <b>Create weapon</b> first, and again after any change.</p>
+<p>On the last step, <b>Publish to your library</b> adds the weapon to your Mantle library. Pick "Public: other creators can find it and use it in their places" or "Private: only you can use it". A public weapon needs you to tick "I own this content or its licence permits public redistribution on Mantle". See <a href="/docs/creators/publishing/#who-can-use">Who can use your items</a> for what Public and Private mean, and for how a place uses a weapon from its Storage. Publishing again after a change adds a new version. Press <b>Create weapon</b> first, and again after any change except a new Thumbnail choice.</p>
+<p>The weapon's library card shows the picture from the Thumbnail step once Mantle has approved it. A consumable gets one too.</p>
 <p>The weapon's model, extra parts and sounds go up with it and follow the same limits as other meshes and sounds in a place:</p>
 <ul>
 <li><b>Weapon model:</b> up to 100,000 triangles, 8 material slots and 256 bones.</li>
@@ -145,6 +147,9 @@
 <tr><td>A public weapon needs the rights declaration: tick it, or choose Private.</td><td>Tick the box, or choose Private.</td></tr>
 <tr><td>The weapon '[name]' has no settings file. Press Create weapon, then Publish. / The weapon '[name]' has no 3D model. Press Create weapon, then Publish.</td><td>Press <b>Create weapon</b>, then <b>Publish</b>.</td></tr>
 <tr><td>The weapon '[name]' could not be loaded. Press Create weapon again, then Publish.</td><td>As the message says.</td></tr>
+<tr><td>The weapon '[name]' thumbnail's custom image could not be used: [reason]</td><td>Open <b>Tools → Mantle → Build a weapon</b>, choose another picture in the Thumbnail step, press <b>Create weapon</b>, then publish again. The publish stops until you do.</td></tr>
+<tr><td>The weapon '[name]' thumbnail could not be taken ([reason]), so its library card has no picture.</td><td>Publish again. If it keeps happening, choose a Custom image in the Thumbnail step. The weapon still publishes.</td></tr>
+<tr><td>The weapon '[name]' thumbnail: [warning]</td><td>Only a warning, for example that your picture was enlarged. Use a bigger picture in the Thumbnail step. See <a href="/docs/creators/avatar-items/#thumbnail-messages">The Thumbnail section</a>.</td></tr>
 <tr><td>… Sign in again (Tools > Mantle) and choose Publish again; nothing was uploaded.</td><td>Sign in again from the <b>Tools → Mantle</b> menu, then press <b>Publish</b>.</td></tr>
 </tbody></table></div>
 
