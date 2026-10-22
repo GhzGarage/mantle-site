@@ -79,8 +79,27 @@
     border:1px solid var(--line-strong);color:var(--ink-dim);
     white-space:nowrap;
   }
-  @media (max-width:640px){
+  .menu{display:none;position:relative;}
+  .menu summary{
+    list-style:none;cursor:pointer;
+    font-size:0.85rem;padding:6px 13px;border-radius:999px;
+    border:1px solid var(--line-strong);color:var(--ink);
+  }
+  .menu summary::-webkit-details-marker{display:none;}
+  .menu nav{
+    position:absolute;right:0;top:calc(100% + 10px);min-width:200px;
+    display:flex;flex-direction:column;padding:8px;
+    background:var(--bg-raised);border:1px solid var(--line-strong);border-radius:14px;
+    box-shadow:0 20px 40px -20px rgba(0,0,0,0.7);
+  }
+  .menu nav a{text-decoration:none;color:var(--ink-dim);padding:10px 12px;border-radius:9px;font-size:0.95rem;}
+  .menu nav a:hover{color:var(--ink);background:rgba(237,241,247,0.05);}
+  .nav-end{display:flex;align-items:center;gap:10px;}
+  @media (max-width:980px){
     nav.links{display:none;}
+    .menu{display:block;}
+  }
+  @media (max-width:640px){
     .pill{font-size:0.72rem;padding:5px 10px;}
   }
 
@@ -328,13 +347,29 @@
       <nav class="links">
         <a href="#how-it-works">How it works</a>
         <a href="#scripting">Scripting</a>
-        <a href="#creators">Creators</a>
-        <a href="#players">Players</a>
+        <a href="#build">Build</a>
+        <a href="#servers">Servers</a>
         <a href="#status">Status</a>
         <a href="#faq">FAQ</a>
         <a href="/docs/">Docs</a>
+        <a href="/docs/platform/releases/">Updates</a>
       </nav>
-      <span class="pill">In development</span>
+      <div class="nav-end">
+        <span class="pill">In development</span>
+        <details class="menu">
+          <summary>Menu</summary>
+          <nav onclick="if(event.target.closest('a'))this.parentNode.open=false">
+            <a href="#how-it-works">How it works</a>
+            <a href="#scripting">Scripting</a>
+            <a href="#build">Build</a>
+            <a href="#servers">Servers</a>
+            <a href="#status">Status</a>
+            <a href="#faq">FAQ</a>
+            <a href="/docs/">Docs</a>
+            <a href="/docs/platform/releases/">Updates</a>
+          </nav>
+        </details>
+      </div>
     </div>
   </header>
 
@@ -351,6 +386,7 @@
       </p>
       <div class="cta-row">
         <span class="btn btn-primary soon">In closed testing on Steam and Epic</span>
+        <a class="btn btn-ghost" href="https://www.fab.com/listings/0ab720ef-e3da-4dc7-81ee-7eafb573c6bc" rel="noopener">Get Mantle Core on Fab</a>
         <a class="btn btn-ghost" href="#how-it-works">See how it works</a>
       </div>
       <div class="hero-note">A project by QBCore Studios — currently in active development.</div>
@@ -508,6 +544,41 @@
 
   <div class="divider"></div>
 
+  <!-- WHAT YOU CAN BUILD -->
+  <section class="section-pad" id="build">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">What you can build</div>
+        <h2>More than a level. Weapons, vehicles and scripts to share.</h2>
+        <p>
+          The Mantle plugin has builders for the things worlds need most, right in
+          the Unreal Editor. Publish what you make to the Mantle library as public or
+          private, and other creators can add your public ones to their worlds.
+        </p>
+      </div>
+
+      <div class="pillars">
+        <div class="pillar">
+          <div class="icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 17l9-9M12 8l3-5 2 2-5 3M5 12l3 3" stroke="#ff9a5f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h4>Weapons</h4>
+          <p>Turn a 3D model into one of 17 weapon types: guns, blades, spears, staffs, bows, shields, throwables and consumables like potions. Place the hands, set the numbers and publish.</p>
+        </div>
+        <div class="pillar">
+          <div class="icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 12l1.5-4.5h11L17 12v3H3v-3z" stroke="#ff9a5f" stroke-width="1.6" stroke-linejoin="round"/><circle cx="6.5" cy="15" r="1.5" fill="#ff9a5f"/><circle cx="13.5" cy="15" r="1.5" fill="#ff9a5f"/></svg></div>
+          <h4>Vehicles</h4>
+          <p>Shape cars, trucks, motorcycles, planes, jets, helicopters and hovercraft with sliders, or convert a car model you already have. Passengers can aim and fire from their seats.</p>
+        </div>
+        <div class="pillar">
+          <div class="icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2l7 4v8l-7 4-7-4V6l7-4z" stroke="#ff9a5f" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 6l7 4 7-4M10 10v8" stroke="#ff9a5f" stroke-width="1.4" opacity="0.6"/></svg></div>
+          <h4>Script packages</h4>
+          <p>Publish a folder of scripts once, and other creators can add it to their own worlds without copying the code. Script Points mark where it acts, each with its own settings.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
   <!-- IDENTITY -->
   <section class="section-pad" id="identity">
     <div class="wrap">
@@ -574,6 +645,37 @@
             <li><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#ff7a3d" opacity="0.15"/><path d="M5 9.5l2.5 2.5L13 6.5" stroke="#ff9a5f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Built-in reporting and safety tools from day one</li>
             <li><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#ff7a3d" opacity="0.15"/><path d="M5 9.5l2.5 2.5L13 6.5" stroke="#ff9a5f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Steam and Epic Games Store players play together in the same worlds</li>
           </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SERVERS -->
+  <section class="section-pad" id="servers">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">Servers</div>
+        <h2>Play on ours, or run your own.</h2>
+        <p>Mantle hosts every world for you. Players who want a server of their own can have one too.</p>
+      </div>
+
+      <div class="pillars">
+        <div class="pillar">
+          <div class="icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="5" rx="1.5" stroke="#ff9a5f" stroke-width="1.6"/><rect x="3" y="11" width="14" height="5" rx="1.5" stroke="#ff9a5f" stroke-width="1.6"/><circle cx="6" cy="6.5" r="1" fill="#ff9a5f"/><circle cx="6" cy="13.5" r="1" fill="#ff9a5f"/></svg></div>
+          <h4>Official servers</h4>
+          <p>Press Play and Mantle starts a server near you. Worlds take 16 players by default, and creators can raise that to 100 per server.</p>
+        </div>
+        <div class="pillar">
+          <div class="icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="4" y="9" width="12" height="8" rx="2" stroke="#ff9a5f" stroke-width="1.6"/><path d="M7 9V6.5a3 3 0 016 0V9" stroke="#ff9a5f" stroke-width="1.6"/></svg></div>
+          <h4>Private servers</h4>
+          <p>Make a server for one world that only its members can join, and invite friends with a code. It works for your own worlds and for others whose creator allows it.</p>
+        </div>
+        <div class="pillar">
+          <div class="icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 9l7-6 7 6v8H3V9z" stroke="#ff9a5f" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 17v-5h4v5" stroke="#ff9a5f" stroke-width="1.4" opacity="0.6"/></svg></div>
+          <h4>Community servers</h4>
+          <p>Run a world's server on your own Windows or Linux machine, and players find it on that world's Servers tab. Mantle's safety tools still work there.</p>
         </div>
       </div>
     </div>
@@ -709,6 +811,7 @@
         <a href="#creators">Creators</a>
         <a href="#players">Players</a>
         <a href="/docs/">Docs</a>
+        <a href="/docs/platform/releases/">Updates</a>
         <a href="privacy.html">Privacy</a>
         <a href="terms.html">Terms</a>
         <a href="server-terms.html">Server Terms</a>
