@@ -53,14 +53,14 @@
 <p>Only guns get the reach and "inside the gun" notes. Other types only tell you when a required point is missing.</p>
 
 <h2 id="consumables">Consumables <span class="status live">Live</span></h2>
-<p>A consumable is a potion, a medkit or a snack. The character holds it in the left hand and uses it up. Step 5 shows these settings instead of the attack ones:</p>
+<p>A consumable is a potion, a medkit or a snack. The character holds it in one hand and uses it up. Step 5 shows these settings instead of the attack ones:</p>
 <ul>
 <li><b>How it is used:</b> "Eat or drink (bottle to the lips)" (the usual) plays the drinking animation. "Use (lift the hand and crush; medkits)" plays a lift-and-crush animation, a good fit for a medkit.</li>
 <li><b>What it does:</b> "Heal" (the usual) gives health. "Nothing of its own (a script does it)" gives none: a script in your place does the rest. See <a href="/docs/scripting/api/#ref-backpack">Backpack</a> in the API reference for how a script hears that someone used one.</li>
 <li><b>Health given:</b> 1 to 1,000 (usually 50), up to the character's maximum health. It only shows when <b>What it does</b> is "Heal".</li>
 <li><b>Spread over (seconds):</b> 0 to 60 (usually 0). 0 gives all the health at once. A higher number spreads it evenly over that many seconds. It only shows for "Heal".</li>
 <li><b>Uses:</b> 1 to 100 (usually 1). The consumable is gone after its last use.</li>
-<li><b>Choose how long one use takes:</b> off, one use takes as long as the animation, 2.5 seconds. Tick it to set <b>Use time (seconds)</b>, 0.5 to 10. The animation plays faster or slower to fit.</li>
+<li><b>Choose how long one use takes:</b> off (the usual), a use takes as long as the animation, 2.5 seconds. Tick it to set <b>Use time (seconds)</b>, 0.5 to 10. The animation plays faster or slower to fit.</li>
 <li><b>Wait between uses (seconds):</b> 0 to 600 (usually 0, no wait).</li>
 <li><b>Can walk while using:</b> ticked by default. Untick it and the character stands still until the use ends.</li>
 </ul>

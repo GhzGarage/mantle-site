@@ -86,8 +86,15 @@
 <ul>
 <li><b>Picking up:</b> walk to a pickup and press <kbd>E</kbd> ("Pick up [tool]"). By default, a pickup comes back after 10 s.</li>
 <li><b>Backpack:</b> 10 hotbar slots and room for up to 32 tools. Press the slot of the tool you're holding to put it away and go back to Fists.</li>
-<li><b>Dropping:</b> press <kbd>G</kbd> to drop your tool in front of you. It becomes a pickup that keeps the ammo it had left. You can't drop your fists. You also can't drop a consumable while it's being used, or once it's partly used (it would come back full).</li>
-<li><b>Consumables:</b> a potion, medkit or snack heals you or does whatever the world's creator set. With empty hands, press its hotbar key to hold it, then press Use tool (left mouse or right trigger) to use it. While you're holding a weapon, press the consumable's hotbar key to use it in place. Guns, a spear without a shield and throwables are put away first and drawn again afterward. Bows, melee weapons, staffs and shields stay in your hand. Walking and running are fine, but sprinting, jumping, falling, sliding, vaulting or switching tools before the effect lands cancels the use, and nothing is spent. Some consumables hold you still while you use them. Some have a wait before the next use. The hotbar shows how many uses are left. There's no quick-use key. Scripts can react to a use: see <a href="/docs/scripting/api/#ref-backpack">Backpack</a> in the API reference.</li>
+<li><b>Dropping:</b> press <kbd>G</kbd> to drop your tool in front of you. It becomes a pickup that keeps the ammo it had left. You can't drop your fists. While a consumable is being used, you can't drop anything, including the weapon you're holding. You also can't drop a consumable that's partly used (it would come back full).</li>
+<li><b>Consumables:</b> a potion, medkit or snack heals you or does whatever the world's creator set.
+<ul>
+<li><b>Using one:</b> with empty hands, press its hotbar key to hold it, then press Use tool (left mouse or right trigger). While you're holding a weapon on keyboard, press its number key to use it in place. On a gamepad, cycling skips it while you hold a weapon, so put the weapon away first.</li>
+<li><b>Your weapon:</b> a gun, a spear without a shield or a throwable is put away first and drawn again afterward. A bow, a melee weapon, a staff, a shield or a spear with a shield stays in your hand.</li>
+<li><b>Cancelling:</b> walking and running are fine. Sprinting, jumping, falling, sliding, climbing over things, being knocked down or switching tools before the effect lands cancels the use, and nothing is spent. There's no quick-use key.</li>
+<li><b>Limits:</b> some consumables hold you still while you use them, and some have a wait before the next use. The hotbar shows how many uses are left.</li>
+<li>Scripts can react to a use: see <a href="/docs/scripting/api/#ref-backpack">Backpack</a> in the API reference.</li>
+</ul></li>
 <li><b>Dying:</b> tools you got from pickups can drop when you die, if that pickup allows it.</li>
 <li><b>On screen:</b> health (100 unless the world changes it), an ammo counter, "RELOADING", and the hotbar with counts and cooldowns.</li>
 </ul>
