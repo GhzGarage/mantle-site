@@ -878,6 +878,200 @@ def on_event(name, args):
 shop.event.connect(on_event)</pre></div>
     </div>
 
+    <h3 id="ui-input">Overlay or modal UI (API 1.50)</h3>
+    <p>When your script builds UI nodes with <code>UI:Create</code>, <code>UI:SetInputMode(mode)</code> <span class="side c">Client</span> decides what an interactive node does to the game while it's on screen. An interactive node is a button, a toggle, or a prompt with an action. Pick the mode that fits the screen:</p>
+    <ul>
+      <li><b><code>"overlay"</code> (the default):</b> a HUD the player uses while playing. No cursor shows, so the mouse keeps turning the camera. The keyboard and gamepad stay with the game, so the player keeps moving. To let the player press a HUD button, bind a key with <code>Input:BindAction</code> and run the same code from it. If you want a mouse click too, call <code>UI:SetCursorVisible(true)</code> to show the cursor.</li>
+      <li><b><code>"modal"</code>:</b> a screen the player stops to use, such as a shop. The cursor shows, and the UI takes keyboard and gamepad focus. Movement, attack, look and gamepad input stop until the last interactive node is gone, then come back as they were. Hide or destroy the panel to give the game back.</li>
+    </ul>
+    <p>The mode is one setting for all of the place's UI nodes on that player's screen. Every script of the place shares it, and it goes back to <code>"overlay"</code> when they all stop. Any other value is an error: <code>mode must be "modal" or "overlay", got "…"</code>, followed by what you passed.</p>
+    <p>In a modal UI, <kbd>Esc</kbd> still opens the game menu. When the player closes the menu (or chat), your UI gets its cursor and focus back. <b>Not available yet:</b> <kbd>Esc</kbd> and the gamepad's B button don't close a modal UI by themselves, so give it a close button of your own. The gamepad's View button doesn't switch into an overlay UI either. A UI document has both: Back closes a modal one, and View switches into an overlay one (see <a href="/docs/scripting/ui-documents/#uidoc-modes">Modes and input</a>).</p>
+    <p><code>UI:SetCursorVisible(nil)</code> goes back to the automatic cursor: shown only while a modal UI has an interactive node. Before API 1.50, the cursor also showed for an overlay-style UI, so call <code>UI:SetCursorVisible(true)</code> if your script relied on that. A button or toggle no longer needs <code>SetAction</code> to take clicks: without it, <code>Activated</code> carries an empty string. A prompt still needs an action.</p>
+    <p>This shop opens when the player presses <kbd>K</kbd> and closes with its own button. The second script is a HUD button that the player presses with <kbd>H</kbd>.</p>
+<div class="v has-ts">
+<div class="code" data-v="luau"><span class="tag">Scripts/Client/ShopPanel.luau</span><pre data-example-kind="snippet">UI:SetInputMode("modal")   -- API 1.50: the shop takes the cursor and stops play while it's up
+
+local panel = UI:Create("frame")
+panel:SetStyle({ width = 300, padding = 16, gap = 8 })
+panel:SetVisible(false)
+
+local title = UI:Create("text")
+title:SetText("Shop")
+title:SetParent(panel)
+
+local buy = UI:Create("button")
+buy:SetText("Buy a potion")
+buy:SetParent(panel)   -- no SetAction needed (API 1.50)
+buy.Activated:Connect(function()
+	UI:Toast("You bought a potion!")
+end)
+
+local close = UI:Create("button")
+close:SetText("Close")
+close:SetParent(panel)
+close.Activated:Connect(function()
+	panel:SetVisible(false)   -- the last button is gone, so play comes back
+end)
+
+Input:BindAction("shop", { "K" }, function(phase)
+	if phase == "Began" then
+		panel:SetVisible(true)
+	end
+end)</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Client/ShopPanel.ts</span><pre data-example-kind="snippet">UI.setInputMode("modal");   // API 1.50: the shop takes the cursor and stops play while it's up
+
+const panel = UI.create("frame")!;
+panel.setStyle({ width: 300, padding: 16, gap: 8 });
+panel.setVisible(false);
+
+const title = UI.create("text")!;
+title.setText("Shop");
+title.setParent(panel);
+
+const buy = UI.create("button")!;
+buy.setText("Buy a potion");
+buy.setParent(panel);   // no setAction needed (API 1.50)
+buy.activated.connect(() =&gt; {
+	UI.toast("You bought a potion!");
+});
+
+const close = UI.create("button")!;
+close.setText("Close");
+close.setParent(panel);
+close.activated.connect(() =&gt; {
+	panel.setVisible(false);   // the last button is gone, so play comes back
+});
+
+Input.bindAction("shop", ["K"], (phase) =&gt; {
+	if (phase === "Began") {
+		panel.setVisible(true);
+	}
+});</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Client/ShopPanel.js</span><pre data-example-kind="snippet">UI.setInputMode("modal");   // API 1.50: the shop takes the cursor and stops play while it's up
+
+const panel = UI.create("frame");
+panel.setStyle({ width: 300, padding: 16, gap: 8 });
+panel.setVisible(false);
+
+const title = UI.create("text");
+title.setText("Shop");
+title.setParent(panel);
+
+const buy = UI.create("button");
+buy.setText("Buy a potion");
+buy.setParent(panel);   // no setAction needed (API 1.50)
+buy.activated.connect(() =&gt; {
+	UI.toast("You bought a potion!");
+});
+
+const close = UI.create("button");
+close.setText("Close");
+close.setParent(panel);
+close.activated.connect(() =&gt; {
+	panel.setVisible(false);   // the last button is gone, so play comes back
+});
+
+Input.bindAction("shop", ["K"], (phase) =&gt; {
+	if (phase === "Began") {
+		panel.setVisible(true);
+	}
+});</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Client/ShopPanel.py</span><pre data-example-kind="snippet">UI.set_input_mode("modal")   # API 1.50: the shop takes the cursor and stops play while it's up
+
+panel = UI.create("frame")
+panel.set_style({"width": 300, "padding": 16, "gap": 8})
+panel.set_visible(False)
+
+title = UI.create("text")
+title.set_text("Shop")
+title.set_parent(panel)
+
+buy = UI.create("button")
+buy.set_text("Buy a potion")
+buy.set_parent(panel)   # no set_action needed (API 1.50)
+
+def on_buy(*_):
+    UI.toast("You bought a potion!")
+
+buy.activated.connect(on_buy)
+
+close = UI.create("button")
+close.set_text("Close")
+close.set_parent(panel)
+
+def on_close(*_):
+    panel.set_visible(False)   # the last button is gone, so play comes back
+
+close.activated.connect(on_close)
+
+def on_shop_key(phase, key):
+    if phase == "Began":
+        panel.set_visible(True)
+
+Input.bind_action("shop", ["K"], on_shop_key)</pre></div>
+    </div>
+<div class="v has-ts">
+<div class="code" data-v="luau"><span class="tag">Scripts/Client/HealButton.luau</span><pre data-example-kind="snippet">UI:SetInputMode("overlay")   -- the default: no cursor, and play goes on
+
+local function heal()
+	UI:Toast("Healed!")
+end
+
+local button = UI:Create("button")
+button:SetText("Heal (H)")
+button.Activated:Connect(heal)   -- a click, if you show the cursor with UI:SetCursorVisible(true)
+
+Input:BindAction("heal", { "H" }, function(phase)
+	if phase == "Began" then
+		heal()
+	end
+end)</pre></div>
+      <div class="code" data-v="ts"><span class="tag">Scripts/Client/HealButton.ts</span><pre data-example-kind="snippet">UI.setInputMode("overlay");   // the default: no cursor, and play goes on
+
+function heal() {
+	UI.toast("Healed!");
+}
+
+const button = UI.create("button")!;
+button.setText("Heal (H)");
+button.activated.connect(heal);   // a click, if you show the cursor with UI.setCursorVisible(true)
+
+Input.bindAction("heal", ["H"], (phase) =&gt; {
+	if (phase === "Began") {
+		heal();
+	}
+});</pre></div>
+      <div class="code" data-v="js"><span class="tag">Scripts/Client/HealButton.js</span><pre data-example-kind="snippet">UI.setInputMode("overlay");   // the default: no cursor, and play goes on
+
+function heal() {
+	UI.toast("Healed!");
+}
+
+const button = UI.create("button");
+button.setText("Heal (H)");
+button.activated.connect(heal);   // a click, if you show the cursor with UI.setCursorVisible(true)
+
+Input.bindAction("heal", ["H"], (phase) =&gt; {
+	if (phase === "Began") {
+		heal();
+	}
+});</pre></div>
+      <div class="code" data-v="py"><span class="tag">Scripts/Client/HealButton.py</span><pre data-example-kind="snippet">UI.set_input_mode("overlay")   # the default: no cursor, and play goes on
+
+def heal():
+    UI.toast("Healed!")
+
+button = UI.create("button")
+button.set_text("Heal (H)")
+button.activated.connect(lambda *_: heal())   # a click, if you show the cursor with UI.set_cursor_visible(True)
+
+def on_heal_key(phase, key):
+    if phase == "Began":
+        heal()
+
+Input.bind_action("heal", ["H"], on_heal_key)</pre></div>
+    </div>
+
     <h3 id="packages">Script packages and Script Points (API 1.35)</h3>
     <p>A <a href="/docs/creators/script-packages/">script package</a> is a set of scripts a place stores from the library, or keeps in a <code>Packages/&lt;Name&gt;/</code> folder beside <code>Scripts/</code> while you build it. Its <code>Server/</code> and <code>Client/</code> scripts start like the place's own, once on each side, and its <code>Shared/</code> and <code>Modules</code> folders only hold modules. Its scripts have the same abilities and limits as any other script on their side.</p>
     <ul>
