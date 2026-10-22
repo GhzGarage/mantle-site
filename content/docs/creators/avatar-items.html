@@ -17,7 +17,7 @@
 <h2 id="publish">Publishing an item</h2>
 <ol class="steps">
 <li><b>Sign in</b><p>Uploading needs a creator token. See <a href="/docs/creators/#sign-in">Signing in to publish</a>. The top of the panel shows "Signed in as [your name]", or "Not signed in: Upload asks for a creator token (Tools > Mantle > Sign in with creator token)." If you aren't signed in, <b>Upload to Mantle</b> opens the sign-in window with "Sign in to publish this item to Mantle." once your checks pass. <b>Check only</b> and <b>Preview</b> on your own body need no sign-in.</p></li>
-<li><b>Open the panel</b><p>Choose <b>Tools → Mantle → Cosmetics...</b>. The <b>Mantle Cosmetics</b> tab opens, headed "Publish to the Mantle catalogue".</p></li>
+<li><b>Open the panel</b><p>Choose <b>Tools → Mantle → Cosmetics...</b>. The <b>Mantle Cosmetics</b> tab opens, headed "Publish to the Mantle catalog".</p></li>
 <li><b>Pick the kind and slot</b><p>Under "What are you publishing?", pick the kind and then the slot. A line under them describes what that kind takes.</p></li>
 <li><b>Pick the asset</b><p>Under "Asset", choose it from your project. The picker only offers the right type of asset for the kind. For an avatar, use <b>Convert a character</b> instead: see <a href="/docs/creators/avatars-emotes/#avatar-steps">Publishing an avatar</a>.</p></li>
 <li><b>Fill in the kind's details</b><p>Some kinds show extra sections. See <a href="#panel">The panel's fields</a>.</p></li>
@@ -65,12 +65,13 @@
 <li><b>Avatars:</b> posed the way players' games pose them, copying the UEFN mannequin's standing idle. The Mantle plugin turns IK Rig on itself and has its own UEFN mannequin, so there's nothing to add. If your project has a UEFN mannequin, the plugin uses yours instead. It likes <code>SKM_UEFN_Mannequin</code> from the Game Animation Sample best. If there's no idle clip to play, the avatar holds the A-pose.</li>
 <li><b>Overlays:</b> drawn on a converted MetaHuman body or face with the same skin material players' clients use. Pick the body and face under <b>Overlay images</b>, or leave them empty to use Mantle's reference ones when your project has built them. The skin material is project content (<code>/Game/Avatars/Appearance/Shared</code>): without it the preview shows the mesh as it is, and the text next to <b>Preview</b> says the mask isn't drawn.</li>
 </ul>
-<p>Previewing on a catalog avatar needs you to be signed in. Clothing and hair say "Sign in to preview on avatars from the Mantle catalogue." and accessories say "Sign in to preview accessories on catalogue avatars." Avatar previews need no UEFN mannequin in your project. To see the avatar idle, add <code>SKM_UEFN_Mannequin</code> and its idle from the Game Animation Sample.</p>
+<p>Previewing on a catalog avatar needs you to be signed in. Clothing and hair say "Sign in to preview on avatars from the Mantle catalog." and accessories say "Sign in to preview accessories on catalog avatars." Avatar previews need no UEFN mannequin in your project. To see the avatar idle, add <code>SKM_UEFN_Mannequin</code> and its idle from the Game Animation Sample.</p>
 
 <h2 id="visibility">Public and private items <span class="status wip">In progress</span></h2>
+<p>This page covers avatar items. Vehicles, weapons and script packages follow the same Public and Private choice, with extra rules: see <a href="/docs/creators/publishing/#who-can-use">Who can use your items</a>. Avatar items belong to the player's wardrobe, so a world doesn't list them for players or limit what players wear.</p>
 <p>Under "Who can use it" you choose one of two options:</p>
 <ul>
-<li><span class="status live">Live</span> <b>Public:</b> "Public: listed in the catalogue for every player". This is the default. You also have to tick "I own this content or its licence permits public redistribution on Mantle". Without the tick you'll see "Tick the declaration to publish publicly, or choose Private." and <b>Upload to Mantle</b> stays grayed out. Choosing a new asset clears the tick.</li>
+<li><span class="status live">Live</span> <b>Public:</b> "Public: listed in the catalog for every player". This is the default. You also have to tick "I own this content or its licence permits public redistribution on Mantle". Without the tick you'll see "Tick the declaration to publish publicly, or choose Private." and <b>Upload to Mantle</b> stays grayed out. Choosing a new asset clears the tick.</li>
 <li><span class="status wip">In progress</span> <b>Private:</b> "Private: only you can use it". It needs no declaration. Other players see a stand-in for a private item you wear, because showing it to them isn't built yet.</li>
 </ul>
 <p>Mantle also checks public items for copies. If another account uploaded the same content (or a re-exported copy of the same shape) first, you'll see "Another account uploaded this content first. Publish it privately, or contact support if it is yours." After three copyright strikes, public publishing is turned off for the account: "Public publishing is turned off for this account after repeated copyright strikes. You can still publish privately."</p>
@@ -79,7 +80,7 @@
 <p>Each check result is a line starting "Problem:" (it must be fixed), "Note:" (worth knowing, but it doesn't stop an upload) or "Done:" (something the plugin handled for you, such as uploading a lower LOD). When nothing is listed, you'll see "Every check passed." The line above the list says "Fix the problems below, then choose Upload to Mantle." or "Ready: choose Upload to Mantle."</p>
 <p>These checks come up for several kinds (the table says where one is for a single kind). The kind pages list the rest (skeletons, triangle and texture budgets, sizes and so on).</p>
 <div class="table-wrap"><table><thead><tr><th>Check</th><th>Message</th></tr></thead><tbody>
-<tr><td>No name</td><td>Problem: the item needs a name. Players see it in the catalogue.</td></tr>
+<tr><td>No name</td><td>Problem: the item needs a name. Players see it in the catalog.</td></tr>
 <tr><td>Name over 64 characters</td><td>Problem: the name is N characters, the limit is 64.</td></tr>
 <tr><td>Description over 1,000 characters</td><td>Problem: the description is N characters, the limit is 1000.</td></tr>
 <tr><td>Slot doesn't fit the kind</td><td>Problem: "[slot]" is not a slot for [kind]. Choose a slot from the list.</td></tr>
@@ -106,9 +107,9 @@
 </ol>
 <p>When it finishes, the status line says one of:</p>
 <ul>
-<li>"Published [item id]. Players can find it in the catalogue now."</li>
-<li>"Published [item id]. A moderator will look at it; it appears in the catalogue once approved."</li>
-<li>"Published [item id]. Mantle is still screening it; it appears in the catalogue once it passes." (if screening takes more than 5 minutes)</li>
+<li>"Published [item id]. Players can find it in the catalog now."</li>
+<li>"Published [item id]. A moderator will look at it; it appears in the catalog once approved."</li>
+<li>"Published [item id]. Mantle is still screening it; it appears in the catalog once it passes." (if screening takes more than 5 minutes)</li>
 </ul>
 <p>An item that hangs below the knee (footwear aside) is published with an extra line: "It hangs below the knee, so Mantle marks it "may clip in motion": the legs can show through it when the wearer moves."</p>
 <p>Once approved, a public item is listed in the catalog for everyone, and players can find more of your public items with "More by [creator]". A private item shows only for you. If the panel stops following an item before it's decided, look for it on the Avatar screen: it shows up there once it passes.</p>
@@ -129,7 +130,7 @@
 <tr><td>Hourly upload limit</td><td>Mantle limits how much one account uploads per hour. [followed by Mantle's own message, which says when you can upload again]</td></tr>
 <tr><td>File too large</td><td>[file] is too large for Mantle. [followed by Mantle's own message with the limit]</td></tr>
 <tr><td>The same file used for two jobs</td><td>[file]: these exact bytes are already on Mantle as a [kind] ([role]), and one upload is one kind. Make a copy of the source asset for this use. (The role is left out when the file has none. If Mantle itself answers, it says "these exact bytes were uploaded before as a different kind of file" and ends "Make a copy of the source asset for the second use.")</td></tr>
-<tr><td>A moderator removed the file from your account</td><td>A moderator removed [file] from your account (usually after a license complaint), so it cannot be uploaded or used again. Use different content.</td></tr>
+<tr><td>A moderator removed the file from your account</td><td>A moderator removed [file] from your account (usually after a licence complaint), so it cannot be uploaded or used again. Use different content.</td></tr>
 <tr><td>The item uses a file your account doesn't hold</td><td>the item names a file your account holds no claim on (a moderator removed it, or it was never uploaded from this project). Upload the item again from your own files.</td></tr>
 <tr><td>Another account uploaded the content first</td><td>Mantle refused the item. Another account uploaded this content first. Publish it privately, or contact support if it is yours.</td></tr>
 <tr><td>Public publishing is turned off</td><td>Mantle refused the item. Public publishing is turned off for this account after repeated copyright strikes. You can still publish privately.</td></tr>
