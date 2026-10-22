@@ -133,9 +133,9 @@
 <ol class="steps">
 <li><b>Make the animation</b><p>Animate on <code>SK_UEFN_Mannequin</code>, a MetaHuman body, the UE5 Mannequin or the UE4 Mannequin, or retarget an existing animation onto one of them (right-click it and choose <b>Retarget Animations</b>) and use the retargeted copy.</p></li>
 <li><b>Keep it in place</b><p>Keep the <code>root</code> bone within 50 cm of where it starts, and animate <code>pelvis</code>. See <a href="#emote-rules">Emote rules</a>.</p></li>
-<li><b>Mark a loop if you want one</b><p>Add an Anim Notify named <code>loop_start</code> where the loop should begin. See <a href="#looping">Looping</a>.</p></li>
 <li><b>Pick Emote</b><p>In the <b>Mantle Cosmetics</b> tab, pick <b>Emote</b> under "What are you publishing?". The slot is <code>emote</code>. Under "Asset", choose the Anim Sequence.</p></li>
 <li><b>Say which character it was made on (optional)</b><p>Mantle finds the character itself. Pick one under "Animated on" only if the animation has no preview mesh and the mesh Mantle finds isn't the character you animated on. A MetaHuman, UE5 Mannequin or UE4 Mannequin clip is retargeted from this body's proportions.</p></li>
+<li><b>Choose how it plays</b><p>Under "Playback", "Loop until the player moves" is on by default. Turn it off for an emote that plays once, like a bow. See <a href="#looping">Looping</a>.</p></li>
 <li><b>Check and upload</b><p>Check the rights box or choose Private, then choose <b>Upload to Mantle</b>. It checks first and stops at any "Problem" line. Choose <b>Check only</b> to see the list without uploading. The panel has no <b>Preview</b> for emotes. If your clip is on a MetaHuman, UE5 Mannequin or UE4 Mannequin skeleton, <b>Files and details</b> notes that it was retargeted onto the UEFN mannequin.</p></li>
 </ol>
 
@@ -151,7 +151,13 @@
 </tbody></table></div>
 
 <h3 id="looping">Looping</h3>
-<p>Without a <code>loop_start</code> notify, the emote plays once and blends out when it reaches the end. With one, it plays to the end, then loops from the notify's time until the player stops it. Put <code>loop_start</code> at 0 to loop the whole clip.</p>
+<p>The "Playback" section of the <b>Mantle Cosmetics</b> tab has one checkbox: "Loop until the player moves". It's on by default.</p>
+<ul>
+<li><b>On:</b> the whole clip loops, and its end blends into its first frame so the jump back is seamless. The emote keeps playing until the player moves, jumps or falls, sits down, gets hit, dies or ragdolls.</li>
+<li><b>Off:</b> the emote plays once and blends out when it reaches the end.</li>
+</ul>
+<p>To loop only part of a clip, add an Anim Notify named <code>loop_start</code> where the loop should begin. With Loop on, the emote plays to the end, then loops from the notify's time. With Loop off, Mantle leaves the notify out. <b>Files and details</b> tells you when it adds a loop or leaves one out.</p>
+<p>Emotes you uploaded before this setting existed play once, unless they already had a <code>loop_start</code> notify. To make one loop, upload it again with Loop on.</p>
 
 <h3 id="emote-play">How players use emotes</h3>
 <ul>
