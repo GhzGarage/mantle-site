@@ -1,6 +1,6 @@
 <div class="status-key"><span><span class="status live">Live</span> available today</span><span><span class="status wip">In progress</span> partly available</span><span><span class="status planned">Planned</span> coming later</span></div>
 
-<p><span class="status live">Live</span> The <b>Mantle Cosmetics</b> tab in the editor publishes avatar items to the Mantle catalog with one button. You pick what you're making, the asset and a name. The plugin checks it against Mantle's rules, exports it, makes a thumbnail, uploads everything and follows the item through screening. Players find published items on the <a href="/docs/players/playing/#avatar">Avatar screen</a>.</p>
+<p><span class="status live">Live</span> The <b>Mantle Cosmetics</b> tab in the editor publishes avatar items to the Mantle catalog with one button. You pick what you're making, the asset and a name. The plugin checks it against Mantle's rules, exports it, makes a thumbnail (or uses your own picture), uploads everything and follows the item through screening. Players find published items on the <a href="/docs/players/playing/#avatar">Avatar screen</a>.</p>
 
 <h2 id="kinds">What you can make</h2>
 <p>The panel's first drop-down picks the kind of item, and the second picks its slot. Each kind has its own page with the rules its asset has to meet.</p>
@@ -45,17 +45,10 @@
 <tr><td>Listing</td><td>Every kind</td><td>Name and Description.</td></tr>
 <tr><td>Who can use it</td><td>Every kind</td><td>Public or Private, and the rights box. See <a href="#visibility">Public and private items</a>.</td></tr>
 <tr><td>Preview</td><td>Clothing, Hair, Accessory, Avatar, Overlay</td><td>See the item the way players will, without uploading anything. See <a href="#preview">Previewing</a>.</td></tr>
+<tr><td>Thumbnail</td><td>Every kind</td><td>The picture players see for the item: Automatic, Choose the angle or Custom image. See <a href="#thumbnail">The Thumbnail section</a>.</td></tr>
 </tbody></table></div>
 <p>Socket offsets and the accessory's attachment use the same ranges: location up to 50 cm from the socket on each axis, rotation from -180 to 180 degrees (pitch, yaw, roll) and scale from 0.5 to 2. The attachment boxes stop at those values. Socket offsets let you type past them, and the check then refuses the value instead of clamping it.</p>
-<p>You don't make the thumbnail yourself. The panel renders a 512 x 512 picture of the item every time it checks:</p>
-<ul>
-<li><b>Avatar:</b> a headshot with its face.</li>
-<li><b>Clothing:</b> on the body it was made on, framed on the clothing, with only the sections the item takes.</li>
-<li><b>Accessory:</b> on its own, in a three-quarter view from above. An accessory made from a skinned source, such as a hat from a MetaHuman Outfit, is turned upright as it's worn, so its picture is from the front and a little above instead, and it also shows the piece's inside.</li>
-<li><b>Hair and emotes:</b> the asset's own Unreal thumbnail. A groom's thumbnail is an empty frame, so the panel uses the cards mesh that gets exported instead.</li>
-<li><b>Overlay:</b> the mask, drawn light on dark.</li>
-</ul>
-<p>If nothing can be rendered, the thumbnail is a plain dark square. <b>Files and details</b>, at the bottom of the panel, lists each file the item uploads with its size, and says how the thumbnail was made. Once an upload starts, it lists each file's progress instead.</p>
+<p><b>Files and details</b>, at the bottom of the panel, lists each file the item uploads with its size, and says how the thumbnail was made. Once an upload starts, it lists each file's progress instead.</p>
 
 <h3 id="preview">Previewing</h3>
 <p>Under <b>Preview</b>, choose <b>Preview</b> to see the item without uploading anything.</p>
@@ -66,6 +59,78 @@
 <li><b>Overlays:</b> drawn on a converted MetaHuman body or face with the same skin material players' clients use. Pick the body and face under <b>Overlay images</b>, or leave them empty to use Mantle's reference ones when your project has built them. The skin material is project content (<code>/Game/Avatars/Appearance/Shared</code>): without it the preview shows the mesh as it is, and the text next to <b>Preview</b> says the mask isn't drawn.</li>
 </ul>
 <p>Previewing on a catalog avatar needs you to be signed in. Clothing and hair say "Sign in to preview on avatars from the Mantle catalog." and accessories say "Sign in to preview accessories on catalog avatars." Avatar previews need no UEFN mannequin in your project. To see the avatar idle, add <code>SKM_UEFN_Mannequin</code> and its idle from the Game Animation Sample.</p>
+
+<h2 id="thumbnail">The Thumbnail section <span class="status live">Live</span></h2>
+<p>Avatar items, worlds, vehicles and weapons share the same <b>Thumbnail</b> section. It sets the picture players and creators see for your item. It looks and works the same everywhere, so this page explains it once. You find it here:</p>
+<ul>
+<li><b>The Mantle Cosmetics tab:</b> for every kind (clothing, accessories, hair, avatars, emotes, tattoos and scars), below Preview and above the upload buttons (an emote has no Preview, so it comes after Who can use it).</li>
+<li><b>The Publish window:</b> for a world. See <a href="/docs/creators/building/#place-settings">Place settings</a>.</li>
+<li><b>Build a vehicle:</b> above <b>Build my vehicle</b>. See <a href="/docs/creators/vehicles/#builder">Building a vehicle</a>.</li>
+<li><b>Build a weapon:</b> the <b>Thumbnail</b> step, just before <b>Create</b>. Consumables have it too. See <a href="/docs/creators/weapons/#steps">Building a weapon</a>.</li>
+</ul>
+<p>You pick one of three choices. <b>Automatic</b> is the default, so you never have to touch the section.</p>
+<div class="table-wrap"><table><thead><tr><th>Choice</th><th>What it does</th></tr></thead><tbody>
+<tr><td><b>Automatic</b></td><td>"Mantle takes the picture for you." See <a href="#thumbnail-automatic">What Automatic draws</a>.</td></tr>
+<tr><td><b>Choose the angle</b></td><td>"The same picture, taken from the angle you choose." See <a href="#thumbnail-angle">Choosing the angle</a>.</td></tr>
+<tr><td><b>Custom image</b></td><td>"Use your own picture: a PNG file or a texture. It is cut to the shape below and resized for you." See <a href="#thumbnail-custom">Using your own picture</a>.</td></tr>
+</tbody></table></div>
+<p>Every picture is a 512 x 512 square, except a world's, which is 1280 x 720.</p>
+
+<h3 id="thumbnail-automatic">What Automatic draws</h3>
+<ul>
+<li><b>Avatar:</b> a headshot with its face.</li>
+<li><b>Clothing:</b> on the body it was made on, framed on the clothing, with only the sections the item takes.</li>
+<li><b>Accessory:</b> on its own, in a three-quarter view from above. An accessory made from a skinned source, such as a hat from a MetaHuman Outfit, is turned upright as it's worn, so its picture is from the front and a little above instead, and it also shows the piece's inside.</li>
+<li><b>Hair:</b> the asset's own Unreal thumbnail. A groom's thumbnail is an empty frame, so the panel uses the cards mesh that gets exported instead. Choose the angle doesn't change it. To pick your own picture, use Custom image.</li>
+<li><b>Emote:</b> Mantle's standard body, at its most expressive moment. If the panel can't pose the body, it uses the asset's own Unreal thumbnail.</li>
+<li><b>Overlay (tattoo or scar):</b> the body wearing the mark. If the panel can't draw that, it uses the mask, drawn light on dark.</li>
+</ul>
+<p>If nothing can be rendered at all, the thumbnail is a plain dark square.</p>
+
+<h3 id="thumbnail-angle">Choosing the angle</h3>
+<p>Choose the angle shows three sliders. The picture is the same as Automatic's, but from where you put the camera:</p>
+<div class="table-wrap"><table><thead><tr><th>Slider</th><th>Range</th><th>What it does</th></tr></thead><tbody>
+<tr><td><b>Turn</b></td><td class="num">-180 to 180 degrees</td><td>Turns the model left or right.</td></tr>
+<tr><td><b>Tilt</b></td><td class="num">-89 to 89 degrees</td><td>Looks from above or below.</td></tr>
+<tr><td><b>Zoom</b></td><td class="num">0.25 to 4</td><td>"1 is the whole model; more is closer."</td></tr>
+</tbody></table></div>
+<p>The first time you choose it, the sliders start from a standard view of the item. In the Cosmetics panel, the picture from your angle appears after you choose <b>Check only</b>. The panel reminds you above the sliders: "Choose Check only to see the picture from this angle." A world has no sliders. You frame the shot in the level instead, and choose <b>Use current view</b>.</p>
+
+<h3 id="thumbnail-custom">Using your own picture</h3>
+<ol class="steps">
+<li><b>Choose Custom image</b><p>Two boxes appear under it.</p></li>
+<li><b>Pick the picture</b><p><b>Texture</b> takes a texture from your project. <b>PNG file</b> takes the path to a <code>.png</code> file: type it, or choose <b>Browse...</b> (the file window is titled "Choose the thumbnail picture"). Use one or the other. Picking one clears the other.</p></li>
+<li><b>Check the preview</b><p>Look at the picture under the boxes, and at any orange or red message below it.</p></li>
+</ol>
+<p>Mantle cuts your picture to the right shape from the middle (a square, or 16:9 for a world) and resizes it. Transparent parts are laid over a near-black card. What happens next depends on the size of the cut picture:</p>
+<ul>
+<li><b>At least 512 x 512</b> (1280 x 720 for a world): it's shrunk to fit.</li>
+<li><b>From 256 x 256 up to that</b> (640 x 360 for a world): it's enlarged, with a warning that it may look soft.</li>
+<li><b>Under 256 x 256</b> (640 x 360 for a world): Mantle refuses it. Use a bigger picture.</li>
+</ul>
+
+<h3 id="thumbnail-preview">The preview</h3>
+<p>The section shows the exact picture that will upload, under "This is the picture that will be uploaded (512 x 512)." (1280 x 720 for a world). <b>Refresh picture</b> ("Draw the picture again from the current choice.") draws it again.</p>
+<p>In the Cosmetics panel, a Custom image shows at once. The Automatic and Choose the angle pictures appear after you choose <b>Check only</b>. Until then, the preview says "Choose Check only to draw this picture." If you change the choice, choose <b>Check only</b> again. <b>Upload to Mantle</b> runs the check for you.</p>
+
+<h3 id="thumbnail-kept">Where your choice is kept</h3>
+<p>Mantle remembers your choice for each asset, so you don't set it again. (An overlay whose mask is a PNG file, with no asset picked, doesn't keep it.) For avatar items, vehicles and weapons, it's saved in your project, in <code>Config/MantleThumbnailChoices.ini</code>. That file goes with the project and with source control. A world keeps its choice in the level itself.</p>
+<p>A PNG file from outside your project works on your computer only. Mantle warns you in orange under the preview: "This picture is outside your project, so it will not move with the project. Put the PNG inside the project folder, or use a texture." Another computer that opens the project won't find the file. Put the PNG in the project folder, or import it as a texture, and the choice goes with the project.</p>
+
+<h3 id="thumbnail-messages">If you see a message under the picture</h3>
+<div class="table-wrap"><table><thead><tr><th>If you see…</th><th>What to do</th></tr></thead><tbody>
+<tr><td>Choose Check only to draw this picture.</td><td>In the Cosmetics panel, choose <b>Check only</b>.</td></tr>
+<tr><td>Choose a PNG file or a texture for the custom image.</td><td>Pick a texture or a PNG file, or go back to Automatic.</td></tr>
+<tr><td>The picture [path] was not found.</td><td>The file isn't there. Pick it again.</td></tr>
+<tr><td>The custom image must be a PNG file or a texture.</td><td>Choose a <code>.png</code> file. Save other formats as PNG first, or import them as a texture.</td></tr>
+<tr><td>[file] is not a PNG Mantle can read.</td><td>Save the picture as a PNG again.</td></tr>
+<tr><td>[texture] is not a plain 2D picture Mantle can read. Use a PNG file or an ordinary texture.</td><td>Pick an ordinary 2D texture, or a PNG file.</td></tr>
+<tr><td>The thumbnail texture [path] could not be loaded.</td><td>Pick the texture again.</td></tr>
+<tr><td>That picture is too small: cut to a square shape it is N x N, and the thumbnail needs at least 256 x 256. Use a bigger picture. (A world says "cut to 16:9 shape" and "at least 640 x 360".)</td><td>Use a bigger picture.</td></tr>
+<tr><td>That picture is N x N after cutting to a square shape, smaller than the 512 x 512 thumbnail, so it was enlarged and may look soft. (orange)</td><td>Nothing has to change. Use a bigger picture for a sharper thumbnail.</td></tr>
+<tr><td>This picture is outside your project, so it will not move with the project. Put the PNG inside the project folder, or use a texture. (orange)</td><td>See <a href="#thumbnail-kept">Where your choice is kept</a>.</td></tr>
+<tr><td>Problem: the thumbnail's custom image could not be used: [reason] Choose another picture in the Thumbnail section, or go back to Automatic.</td><td>The check found one of the problems above in your custom image. Fix it, or choose Automatic.</td></tr>
+</tbody></table></div>
 
 <h2 id="visibility">Public and private items <span class="status live">Live</span></h2>
 <p>This page covers avatar items. Vehicles, weapons and script packages follow the same Public and Private choice, with extra rules: see <a href="/docs/creators/publishing/#who-can-use">Who can use your items</a>. Avatar items belong to the player's wardrobe, so a world doesn't list them for players or limit what players wear.</p>
@@ -152,7 +217,7 @@
 
 <h2 id="editing">Changing an item <span class="status wip">In progress</span></h2>
 <p>Mantle can update a published item in place, but the Cosmetics panel doesn't offer it yet. If you change the asset, slot, name, description or any other setting and choose <b>Upload to Mantle</b>, the panel publishes a separate new item, and the old one stays in the catalog. If nothing changed, uploading the same asset to the same slot again doesn't make a copy: the log under <b>Files and details</b> says "This item was already published ([item id]); following it" and the panel follows the existing item.</p>
-<p>When editing arrives, an edited item is checked and screened again like a new one, and it leaves the catalog until the new version passes. Each edit counts towards the hourly item limit.</p>
+<p>When editing arrives, an edited item is checked and screened again like a new one, and it leaves the catalog until the new version passes. Each edit counts toward the hourly item limit.</p>
 
 <h2 id="delisting">Delisting an item <span class="status wip">In progress</span></h2>
 <p>Delisting takes an item out of the catalog for good. The panel can't delist yet. A delisted item can't be worn or edited, and players wearing it have it taken off, and the Avatar screen tells them (for example "1 item is no longer available and was taken off"). To publish it again, upload it as a new item.</p>
@@ -172,7 +237,7 @@
 <tr><td>Files uploaded per account</td><td class="num">300 an hour (textures and accessory meshes: 5,000 an hour)</td></tr>
 <tr><td>One file</td><td class="num">64 MiB (textures 8 MiB)</td></tr>
 <tr><td>Texture size</td><td class="num">2048 x 2048, accessories 1024 x 1024 (larger ones are scaled down). Overlay images: 1024 x 1024 at most, never scaled down</td></tr>
-<tr><td>Thumbnail</td><td class="num">512 x 512, made by the panel</td></tr>
+<tr><td>Thumbnail</td><td class="num">512 x 512 (a world: 1280 x 720). Mantle takes it, or cuts and resizes your own picture to fit. See <a href="#thumbnail">The Thumbnail section</a></td></tr>
 <tr><td>Name</td><td class="num">1 to 64 characters</td></tr>
 <tr><td>Description</td><td class="num">Up to 1,000 characters</td></tr>
 <tr><td>Items worn at once</td><td class="num">24 (8 of them accessories)</td></tr>

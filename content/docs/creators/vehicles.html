@@ -14,6 +14,7 @@
 <li><b>A car with separate wheels:</b> a car whose wheels are separate parts named like <code>Wheel_FL</code> and <code>Wheel_FR</code> is fitted to its own wheels. Mantle converts it as <b>Convert vehicle</b> does (see <a href="#overview">How converting works</a>), but the source car's collision boxes, center of mass and default seat aren't used, because the kind's chassis replaces them. It applies the kind's handling and suggests a <b>Size</b> so the driver fits (<b>Reset to suggested</b> goes back to it).</li>
 <li><b>Any other model:</b> a spaceship, a plane or a bike goes on the grey vehicle as its skin.</li>
 <li><b>Set it up:</b> say which way the front of your model faces. A plane with two propellers has a tick box for that. <b>Parts that move (optional)</b> lets you point out which bone or material section is a part that should move. Leave a row at "(nothing: it stays still)" and the model still drives or flies, but that part stays still. Tick "This model has no inside — hide the driver and passenger" for a model that is only an outside shell.</li>
+<li><b>Choose its picture (optional):</b> the <b>Thumbnail</b> section above <b>Build my vehicle</b> sets the picture of your vehicle on its library card. Automatic shows the vehicle as it's built. You can also choose the angle or use your own image. See <a href="/docs/creators/avatar-items/#thumbnail">The Thumbnail section</a> for all three. Mantle remembers the choice for each model. The picture is made when you press <b>Build my vehicle</b>, so press it again after you change the choice. Until you do, the preview says "The vehicle's picture is taken when you build it. Press Build to see it here." If the choice can't be used, the result says "Your thumbnail choice could not be used ([reason]), so the vehicle keeps the automatic picture."</li>
 <li><b>Build it:</b> press <b>Build my vehicle</b>. When it says "Your [kind] is ready.", press <b>Put it in my level</b>, then press <b>Test Locally</b> to drive it. <b>Show its settings</b> opens the vehicle asset. When you're happy with it, press <b>Done</b>.</li>
 </ul></li>
 </ol>
@@ -72,6 +73,7 @@
 <li>Or choose "Private: only you can use them".</li>
 <li>Other creators can use your vehicle only if it's Public. They get it and add it to their own place's storage with <b>Tools → Mantle → Library...</b>. See <a href="/docs/creators/publishing/#who-can-use">Who can use your items</a>.</li>
 <li>Only Publish turns vehicles into library items. <b>Save to Mantle</b> doesn't.</li>
+<li>The library card shows the vehicle's picture (see <a href="/docs/creators/avatar-items/#thumbnail">The Thumbnail section</a>) once Mantle has approved it.</li>
 </ul>
 <div class="callout tip"><strong>Paint Color is 0 to 1, not 0 to 255</strong><p>The vehicle asset's <b>Paint &gt; Color</b> field is a color picker whose red, green and blue values run from 0 to 1 (as most of Unreal's color pickers do), not 0 to 255. If you're typing values in rather than using the picker, a full-strength red is <code>(1, 0, 0)</code>, not <code>(255, 0, 0)</code>.</p></div>
 <h2 id="parts">Attached parts <span class="status live">Live</span></h2>
